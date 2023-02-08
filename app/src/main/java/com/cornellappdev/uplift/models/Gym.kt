@@ -1,5 +1,8 @@
 package com.cornellappdev.uplift.models
 
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
+
 data class Gym(
     val name: String,
 
@@ -43,6 +46,8 @@ data class Gym(
 
     val miscellaneous : List<String>,
 
-    val classesToday : List<Class>
+    val classesToday : List<UpliftClass>,
+
+    val favoriteState : State<Boolean> = mutableStateOf(false)
 )
 

@@ -1,8 +1,10 @@
 package com.cornellappdev.uplift.models
 
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
 import java.util.*
 
-data class Class(
+data class UpliftClass(
     val name: String,
     val location: String,
     val instructorName: String,
@@ -12,5 +14,7 @@ data class Class(
     val functions : List<String>,
     val preparation : String,
     val description : String,
-    val nextSessions : List<Class>
+    val nextSessions : List<UpliftClass>,
+
+    val favoriteState : State<Boolean> = mutableStateOf(false)
 )
