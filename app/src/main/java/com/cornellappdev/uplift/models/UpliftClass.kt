@@ -4,6 +4,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import java.util.*
 
+/** An [UpliftClass] object represents all the data needed about a particular fitness class. */
 data class UpliftClass(
     val name: String,
     val location: String,

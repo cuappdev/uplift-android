@@ -3,9 +3,11 @@ package com.cornellappdev.uplift.models
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 
+/**
+ * A [Gym] object represents all the information needed about one particular gym.
+ */
 data class Gym(
     val name: String,
-
     /**
      * A list of exactly 7 lists of time intervals. Each list of time intervals corresponds to a particular
      * day (index 0=Monday, ..., 6=Sunday), and the times in said list indicates the hours of
@@ -18,11 +20,8 @@ data class Gym(
      * If an index of this list is null, that indicates the gym is closed on that day.
      */
     val hours: List<List<TimeInterval>?>,
-
     val popularTimes : PopularTimes,
-
     val equipmentGroupings : List<EquipmentGrouping>,
-
     /**
      * A list of exactly 7 [GymnasiumInfo] objects. Each object corresponds to a particular
      * day (index 0=Monday, ..., 6=Sunday). A null object indicates that the gymnasium is closed
@@ -43,11 +42,8 @@ data class Gym(
      * that day.
      */
     val bowlingInfo : List<BowlingInfo?>,
-
     val miscellaneous : List<String>,
-
     val classesToday : List<UpliftClass>,
-
     val favoriteState : State<Boolean> = mutableStateOf(false)
 )
 

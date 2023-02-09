@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
+/** A [GymDetailViewModel] is a view model for GymDetailScreen. */
 class GymDetailViewModel {
 
     private val _gymFlow : MutableStateFlow<Gym?> = MutableStateFlow(null)

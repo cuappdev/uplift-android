@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
+/** A [ClassViewModel] is a view model for ClassDetailScreen.*/
 class ClassViewModel {
     private val _classFlow: MutableStateFlow<UpliftClass?> = MutableStateFlow(null)
 
