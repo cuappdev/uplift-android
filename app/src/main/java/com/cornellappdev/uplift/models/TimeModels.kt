@@ -31,9 +31,9 @@ data class TimeOfDay(
 data class PopularTimes(
     val startTime: TimeOfDay,
     /**
-     * A list of floats in [0..100] that indicates how busy a gym is at a particular hour.
-     * The first float in [busyList] represents the time designated by [startTime]. All other floats
-     * represent one hour after the previous float in the list.
+     * A list of ints in [0..100] that indicates how busy a gym is at a particular hour.
+     * The first int in [busyList] represents the time designated by [startTime]. All other floats
+     * represent one hour after the previous int in the list.
      */
-    val busyList : List<Float>
+    val busyList: List<Int>
 )

@@ -12,10 +12,10 @@ data class UpliftClass(
     val minutes: Int,
     val date: Calendar,
     val time: TimeInterval,
-    val functions : List<String>,
-    val preparation : String,
-    val description : String,
-    val nextSessions : List<UpliftClass>,
+    val functions: List<String>,
+    val preparation: String,
+    val description: String,
+    val nextSessions: List<UpliftClass>,
 
-    val favoriteState : State<Boolean> = mutableStateOf(false)
+    val favoriteState: State<Boolean> = mutableStateOf(false)
 )
