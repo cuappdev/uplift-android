@@ -2,7 +2,9 @@ package com.cornellappdev.uplift.ui.components
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
@@ -45,15 +47,21 @@ fun GymFacilitySection(gym: Gym) {
                 openedFacility = if (openedFacility == 1) -1 else 1
             }
         ) {
-            Text(
-                text = "Example Text",
-                fontFamily = montserratFamily,
-                fontSize = 16.sp,
-                fontWeight = FontWeight(500),
-                lineHeight = 19.5.sp,
-                textAlign = TextAlign.Left,
-                modifier = Modifier.padding(start = 8.dp)
-            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 12.dp)
+                    .horizontalScroll(
+                        rememberScrollState()
+                    )
+            ) {
+                Spacer(modifier = Modifier.width(24.dp))
+                for (group in gym.equipmentGroupings) {
+                    EquipmentGroup(group = group)
+                    Spacer(modifier = Modifier.width(10.dp))
+                }
+                Spacer(modifier = Modifier.width(14.dp))
+            }
         }
 
         LineSpacer(paddingStart = 24.dp, paddingEnd = 24.dp)
