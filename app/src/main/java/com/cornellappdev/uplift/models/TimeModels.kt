@@ -19,6 +19,18 @@ data class TimeOfDay(
     val minute: Int,
     val isAM: Boolean
 ) {
+    fun getTimeLater(deltaMinutes: Int, deltaHours: Int): TimeOfDay {
+        var newHour = (hour + deltaHours + (minute + deltaMinutes) / 60) % 12
+        val overlaps = (hour + deltaHours + (minute + deltaMinutes) / 60) / 12
+        if (newHour == 0) newHour = 12
+
+        return TimeOfDay(
+            newHour,
+            (minute + deltaMinutes) % 60,
+            if ((overlaps % 2 == 0)) isAM else !isAM
+        )
+    }
+
     override fun toString(): String {
         return "$hour:${if (minute.toString().length == 1) "0$minute" else "$minute"}${if (isAM) "AM" else "PM"}"
     }

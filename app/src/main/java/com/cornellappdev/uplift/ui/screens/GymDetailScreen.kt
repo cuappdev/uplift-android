@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.cornellappdev.uplift.R
+import com.cornellappdev.uplift.ui.components.PopularTimesSection
 import com.cornellappdev.uplift.ui.viewmodels.GymDetailViewModel
 import com.cornellappdev.uplift.util.GRAY01
 import com.cornellappdev.uplift.util.montserratFamily
@@ -109,10 +110,25 @@ fun GymDetailScreen(
                 )
             }
             Spacer(modifier = Modifier.height(32.dp))
-            Spacer(modifier = Modifier
-                .fillMaxWidth()
-                .height(1.dp)
-                .background(GRAY01))
+            if (gym != null) {
+                LineSpacer()
+                PopularTimesSection(gym!!.popularTimes)
+                LineSpacer()
+            }
+
         }
     }
+}
+
+/**
+ * A [LineSpacer] is a gray line separating sections of a detail screen.
+ */
+@Composable
+fun LineSpacer() {
+    Spacer(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(1.dp)
+            .background(GRAY01)
+    )
 }
