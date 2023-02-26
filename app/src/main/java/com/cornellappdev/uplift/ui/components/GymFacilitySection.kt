@@ -23,7 +23,7 @@ import com.cornellappdev.uplift.ui.screens.LineSpacer
 import com.cornellappdev.uplift.util.montserratFamily
 
 @Composable
-fun GymFacilitySection(gym: Gym) {
+fun GymFacilitySection(gym: Gym, today: Int) {
     var openedFacility by remember { mutableStateOf(-1) }
 
     Column(modifier = Modifier.fillMaxWidth()) {
@@ -50,7 +50,7 @@ fun GymFacilitySection(gym: Gym) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 12.dp)
+                    .padding(bottom = 12.dp, top = 12.dp)
                     .horizontalScroll(
                         rememberScrollState()
                     )
@@ -74,15 +74,9 @@ fun GymFacilitySection(gym: Gym) {
                 openedFacility = if (openedFacility == 2) -1 else 2
             }
         ) {
-            Text(
-                text = "Example Text",
-                fontFamily = montserratFamily,
-                fontSize = 16.sp,
-                fontWeight = FontWeight(500),
-                lineHeight = 19.5.sp,
-                textAlign = TextAlign.Left,
-                modifier = Modifier.padding(start = 8.dp)
-            )
+            DayOfWeekSelector(today = today) { day ->
+
+            }
         }
 
         LineSpacer(paddingStart = 24.dp, paddingEnd = 24.dp)
@@ -95,15 +89,8 @@ fun GymFacilitySection(gym: Gym) {
                 openedFacility = if (openedFacility == 3) -1 else 3
             }
         ) {
-            Text(
-                text = "Example Text",
-                fontFamily = montserratFamily,
-                fontSize = 16.sp,
-                fontWeight = FontWeight(500),
-                lineHeight = 19.5.sp,
-                textAlign = TextAlign.Left,
-                modifier = Modifier.padding(start = 8.dp)
-            )
+            Spacer(Modifier.height(5.dp))
+            GymSwimmingSection(today = today, gym = gym)
         }
 
         LineSpacer(paddingStart = 24.dp, paddingEnd = 24.dp)

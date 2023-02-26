@@ -2,6 +2,82 @@ package com.cornellappdev.uplift.util
 
 import com.cornellappdev.uplift.models.*
 
+val exampleSwimmingList2 = listOf(
+    SwimmingTime(
+        time = TimeInterval(
+            start = TimeOfDay(7, 0, true),
+            end = TimeOfDay(7, 30, true)
+        ),
+        womenOnly = false
+    ),
+    SwimmingTime(
+        time = TimeInterval(
+            start = TimeOfDay(8, 0, true),
+            end = TimeOfDay(8, 55, true)
+        ),
+        womenOnly = true
+    ),
+    SwimmingTime(
+        time = TimeInterval(
+            start = TimeOfDay(10, 0, true),
+            end = TimeOfDay(1, 15, false)
+        ),
+        womenOnly = false
+    ),
+    SwimmingTime(
+        time = TimeInterval(
+            start = TimeOfDay(4, 0, false),
+            end = TimeOfDay(6, 45, false)
+        ),
+        womenOnly = true
+    ),
+    SwimmingTime(
+        time = TimeInterval(
+            start = TimeOfDay(8, 30, false),
+            end = TimeOfDay(11, 0, false)
+        ),
+        womenOnly = false
+    )
+)
+
+val exampleSwimmingList1 = listOf(
+    SwimmingTime(
+        time = TimeInterval(
+            start = TimeOfDay(7, 0, true),
+            end = TimeOfDay(7, 45, true)
+        ),
+        womenOnly = false
+    ),
+    SwimmingTime(
+        time = TimeInterval(
+            start = TimeOfDay(8, 0, true),
+            end = TimeOfDay(8, 45, true)
+        ),
+        womenOnly = true
+    ),
+    SwimmingTime(
+        time = TimeInterval(
+            start = TimeOfDay(11, 0, true),
+            end = TimeOfDay(1, 30, false)
+        ),
+        womenOnly = false
+    ),
+    SwimmingTime(
+        time = TimeInterval(
+            start = TimeOfDay(5, 0, false),
+            end = TimeOfDay(6, 30, false)
+        ),
+        womenOnly = true
+    ),
+    SwimmingTime(
+        time = TimeInterval(
+            start = TimeOfDay(8, 30, false),
+            end = TimeOfDay(10, 0, false)
+        ),
+        womenOnly = false
+    )
+)
+
 val testMorrison = Gym(
     name = "Toni Morrison Gym",
     hours = listOf(
@@ -63,7 +139,8 @@ val testMorrison = Gym(
     equipmentGroupings = listOf(
         EquipmentGrouping(
             "Cardio Machines",
-            listOf(Pair("Precor treadmills", 10),
+            listOf(
+                Pair("Precor treadmills", 10),
                 Pair("Elliptical trainers", 12),
                 Pair("AMTs", 4),
                 Pair("Expresso bikes", 5),
@@ -87,7 +164,15 @@ val testMorrison = Gym(
         )
     ),
     gymnasiumInfo = listOf(),
-    swimmingInfo = listOf(),
+    swimmingInfo = listOf(
+        SwimmingInfo(swimmingTimes = exampleSwimmingList1),
+        SwimmingInfo(swimmingTimes = exampleSwimmingList2),
+        SwimmingInfo(swimmingTimes = exampleSwimmingList1),
+        SwimmingInfo(swimmingTimes = exampleSwimmingList2),
+        SwimmingInfo(swimmingTimes = exampleSwimmingList1),
+        SwimmingInfo(swimmingTimes = exampleSwimmingList2),
+        SwimmingInfo(swimmingTimes = exampleSwimmingList1),
+    ),
     bowlingInfo = listOf(),
     miscellaneous = listOf(),
     classesToday = listOf(),

@@ -34,7 +34,7 @@ fun GymDetailScreen(
     gymDetailViewModel: GymDetailViewModel
 ) {
     val gym by gymDetailViewModel.gymFlow.collectAsState()
-    val day = (Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 2) % 7
+    val day = ((Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 2) + 7) % 7
 
     Column(
         modifier = Modifier
@@ -87,7 +87,7 @@ fun GymDetailScreen(
                 LineSpacer()
                 PopularTimesSection(gym!!.popularTimes)
                 LineSpacer()
-                GymFacilitySection(gym!!)
+                GymFacilitySection(gym!!, day)
             }
         }
     }
