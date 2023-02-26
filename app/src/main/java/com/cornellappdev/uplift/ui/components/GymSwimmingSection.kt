@@ -11,6 +11,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cornellappdev.uplift.models.Gym
+import com.cornellappdev.uplift.util.ACCENT_CLOSED
 import com.cornellappdev.uplift.util.LIGHT_YELLOW
 import com.cornellappdev.uplift.util.PRIMARY_YELLOW
 import com.cornellappdev.uplift.util.montserratFamily
@@ -21,9 +22,10 @@ fun GymSwimmingSection(today: Int, gym: Gym) {
     DayOfWeekSelector(today = today) { day ->
         selectedDay = day
     }
+    Spacer(Modifier.height(12.dp))
     Row(modifier = Modifier.fillMaxWidth()) {
         Spacer(modifier = Modifier.weight(1f))
-        Column {
+        Column(horizontalAlignment = Alignment.Start) {
             val swimmingInfo = gym.swimmingInfo[selectedDay]
             if (swimmingInfo != null) {
                 for (swimmingTime in swimmingInfo.swimmingTimes) {
@@ -73,13 +75,14 @@ fun GymSwimmingSection(today: Int, gym: Gym) {
                 }
             } else {
                 Text(
-                    text = "CLOSED",
+                    text = "Closed",
                     fontFamily = montserratFamily,
                     fontSize = 16.sp,
-                    fontWeight = FontWeight(300),
+                    fontWeight = FontWeight(500),
                     lineHeight = 26.sp,
-                    textAlign = TextAlign.Left,
-                    modifier = Modifier.padding(start = 8.dp)
+                    textAlign = TextAlign.Center,
+                    color = ACCENT_CLOSED,
+                    modifier = Modifier.fillMaxWidth()
                 )
             }
             Spacer(Modifier.height(12.dp))

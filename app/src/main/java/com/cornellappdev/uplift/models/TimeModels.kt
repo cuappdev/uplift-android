@@ -16,8 +16,8 @@ data class TimeInterval(
  * */
 data class TimeOfDay(
     val hour: Int,
-    val minute: Int,
-    val isAM: Boolean
+    val minute: Int = 0,
+    val isAM: Boolean = true
 ) {
     fun getTimeLater(deltaMinutes: Int, deltaHours: Int): TimeOfDay {
         var newHour = (hour + deltaHours + (minute + deltaMinutes) / 60) % 12

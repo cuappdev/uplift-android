@@ -78,9 +78,7 @@ fun GymFacilitySection(gym: Gym, today: Int) {
             },
             open = OpenType.OPEN
         ) {
-            DayOfWeekSelector(today = today) { day ->
-
-            }
+            GymGymnasiumSection(today = today, gym = gym)
         }
 
         LineSpacer(paddingStart = 24.dp, paddingEnd = 24.dp)

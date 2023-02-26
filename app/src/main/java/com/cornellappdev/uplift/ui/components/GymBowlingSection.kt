@@ -35,8 +35,9 @@ fun GymBowlingSection(today: Int, gym: Gym) {
                     fontWeight = FontWeight(300),
                     lineHeight = 26.sp,
                     textAlign = TextAlign.Left,
-                    modifier = Modifier.padding(bottom = 11.dp)
+                    modifier = Modifier.padding(bottom = 5.dp)
                 )
+                Spacer(Modifier.padding(bottom = 6.dp))
             }
             Row(modifier = Modifier.fillMaxWidth()) {
                 Spacer(Modifier.weight(1f))
@@ -104,7 +105,8 @@ fun GymBowlingSection(today: Int, gym: Gym) {
                 fontWeight = FontWeight(500),
                 lineHeight = 26.sp,
                 textAlign = TextAlign.Left,
-                color = ACCENT_CLOSED
+                color = ACCENT_CLOSED,
+                modifier = Modifier.padding(bottom = 12.dp)
             )
         }
     }

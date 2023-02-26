@@ -123,16 +123,7 @@ val exampleBowlingList = listOf(
         pricePerGame = "$3.50",
         shoeRental = "$2.50"
     ),
-    BowlingInfo(
-        hours = listOf(
-            TimeInterval(
-                start = TimeOfDay(hour = 3, minute = 0, isAM = false),
-                end = TimeOfDay(hour = 7, minute = 0, isAM = false)
-            )
-        ),
-        pricePerGame = "$3.50",
-        shoeRental = "$2.50"
-    ),
+    null,
     BowlingInfo(
         hours = listOf(
             TimeInterval(
@@ -240,10 +231,37 @@ val testMorrison = Gym(
             )
         )
     ),
-    gymnasiumInfo = listOf(),
+    gymnasiumInfo = listOf(
+        GymnasiumInfo(
+            hours = listOf(
+                TimeInterval(start = TimeOfDay(6), end = TimeOfDay(7)),
+                TimeInterval(start = TimeOfDay(7, 30), end = TimeOfDay(10)),
+            ),
+            courts = listOf(
+                CourtInfo(
+                    "Basketball", hours = listOf(
+                        TimeInterval(start = TimeOfDay(6), end = TimeOfDay(7)),
+                        TimeInterval(start = TimeOfDay(7, 30), end = TimeOfDay(10)),
+                    )
+                ),
+                CourtInfo(
+                    "Volleyball", hours = listOf(
+                        TimeInterval(start = TimeOfDay(7, 30), end = TimeOfDay(10)),
+                    )
+                )
+            )
+        ),
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+
+        ),
     swimmingInfo = listOf(
         SwimmingInfo(swimmingTimes = exampleSwimmingList1),
-        SwimmingInfo(swimmingTimes = exampleSwimmingList2),
+        null,
         SwimmingInfo(swimmingTimes = exampleSwimmingList1),
         SwimmingInfo(swimmingTimes = exampleSwimmingList2),
         SwimmingInfo(swimmingTimes = exampleSwimmingList1),
