@@ -16,10 +16,12 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.cornellappdev.uplift.R
+import com.cornellappdev.uplift.ui.components.GymFacilitySection
 import com.cornellappdev.uplift.ui.components.GymHours
 import com.cornellappdev.uplift.ui.components.PopularTimesSection
 import com.cornellappdev.uplift.ui.viewmodels.GymDetailViewModel
@@ -34,9 +36,11 @@ fun GymDetailScreen(
     val gym by gymDetailViewModel.gymFlow.collectAsState()
     val day = (Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 2) % 7
 
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .verticalScroll(rememberScrollState())) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+    ) {
         // Top Part
         Box(modifier = Modifier.fillMaxWidth()) {
             AsyncImage(
@@ -77,25 +81,14 @@ fun GymDetailScreen(
                 fontFamily = montserratFamily
             )
         }
-        // Hours
         Column(modifier = Modifier.fillMaxWidth()) {
             if (gym != null) {
                 GymHours(hours = gym!!.hours, day)
                 LineSpacer()
                 PopularTimesSection(gym!!.popularTimes)
                 LineSpacer()
-                Spacer(modifier = Modifier.height(24.dp))
+                GymFacilitySection(gym!!)
             }
-            Text(
-                text = "FACILITIES",
-                fontFamily = montserratFamily,
-                fontSize = 16.sp,
-                fontWeight = FontWeight(700),
-                lineHeight = 19.5.sp,
-                modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Center
-            )
-            Spacer(modifier = Modifier.height(24.dp))
         }
     }
 }
@@ -104,10 +97,11 @@ fun GymDetailScreen(
  * A [LineSpacer] is a gray line separating sections of a detail screen.
  */
 @Composable
-fun LineSpacer() {
+fun LineSpacer(paddingStart: Dp = 0.dp, paddingEnd: Dp = 0.dp) {
     Spacer(
         modifier = Modifier
             .fillMaxWidth()
+            .padding(start = paddingStart, end = paddingEnd)
             .height(1.dp)
             .background(GRAY01)
     )
