@@ -23,6 +23,10 @@ val testMorrison = Gym(
         listOf(
             TimeInterval(
                 TimeOfDay(hour = 2, minute = 0, isAM = false),
+                TimeOfDay(hour = 4, minute = 0, isAM = false),
+            ),
+            TimeInterval(
+                TimeOfDay(hour = 6, minute = 0, isAM = false),
                 TimeOfDay(hour = 11, minute = 0, isAM = false),
             )
         ),
@@ -40,8 +44,12 @@ val testMorrison = Gym(
         ),
         listOf(
             TimeInterval(
-                TimeOfDay(hour = 12, minute = 0, isAM = false),
-                TimeOfDay(hour = 10, minute = 0, isAM = false),
+                TimeOfDay(hour = 2, minute = 0, isAM = true),
+                TimeOfDay(hour = 4, minute = 0, isAM = true),
+            ),
+            TimeInterval(
+                TimeOfDay(hour = 6, minute = 0, isAM = false),
+                TimeOfDay(hour = 11, minute = 0, isAM = false),
             )
         ),
         listOf(

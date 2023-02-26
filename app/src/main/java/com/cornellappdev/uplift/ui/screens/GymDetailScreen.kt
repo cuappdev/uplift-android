@@ -2,6 +2,8 @@ package com.cornellappdev.uplift.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -18,18 +20,23 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.cornellappdev.uplift.R
+import com.cornellappdev.uplift.ui.components.GymHours
 import com.cornellappdev.uplift.ui.components.PopularTimesSection
 import com.cornellappdev.uplift.ui.viewmodels.GymDetailViewModel
 import com.cornellappdev.uplift.util.GRAY01
 import com.cornellappdev.uplift.util.montserratFamily
+import java.util.*
 
 @Composable
 fun GymDetailScreen(
     gymDetailViewModel: GymDetailViewModel
 ) {
     val gym by gymDetailViewModel.gymFlow.collectAsState()
+    val day = (Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 2) % 7
 
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(modifier = Modifier
+        .fillMaxSize()
+        .verticalScroll(rememberScrollState())) {
         // Top Part
         Box(modifier = Modifier.fillMaxWidth()) {
             AsyncImage(
@@ -72,9 +79,15 @@ fun GymDetailScreen(
         }
         // Hours
         Column(modifier = Modifier.fillMaxWidth()) {
-            Spacer(modifier = Modifier.height(32.dp))
+            if (gym != null) {
+                GymHours(hours = gym!!.hours, day)
+                LineSpacer()
+                PopularTimesSection(gym!!.popularTimes)
+                LineSpacer()
+                Spacer(modifier = Modifier.height(24.dp))
+            }
             Text(
-                text = "HOURS",
+                text = "FACILITIES",
                 fontFamily = montserratFamily,
                 fontSize = 16.sp,
                 fontWeight = FontWeight(700),
@@ -82,40 +95,7 @@ fun GymDetailScreen(
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center
             )
-            Spacer(modifier = Modifier.height(12.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_clock),
-                    contentDescription = null,
-                    tint = Color.Black
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = "0:00AM - 0:00AM",
-                    fontFamily = montserratFamily,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight(500),
-                    lineHeight = 19.5.sp,
-                    textAlign = TextAlign.Center
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Icon(
-                    painter = painterResource(R.drawable.ic_caret_right),
-                    contentDescription = null,
-                    tint = Color.Black
-                )
-            }
-            Spacer(modifier = Modifier.height(32.dp))
-            if (gym != null) {
-                LineSpacer()
-                PopularTimesSection(gym!!.popularTimes)
-                LineSpacer()
-            }
-
+            Spacer(modifier = Modifier.height(24.dp))
         }
     }
 }
