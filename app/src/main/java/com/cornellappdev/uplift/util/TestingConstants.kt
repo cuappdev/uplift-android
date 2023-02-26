@@ -174,7 +174,7 @@ val testMorrison = Gym(
         SwimmingInfo(swimmingTimes = exampleSwimmingList1),
     ),
     bowlingInfo = listOf(),
-    miscellaneous = listOf(),
+    miscellaneous = listOf("Game area", "Outdoor basketball court", "Bouldering wall"),
     classesToday = listOf(),
     imageUrl = "https://recreation.athletics.cornell.edu/sites/recreation.athletics.cornell.edu/files/photo-galleries/DB%20_%20Benches_TM.jpeg"
 )

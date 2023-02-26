@@ -24,9 +24,11 @@ fun EquipmentGroup(group: EquipmentGrouping) {
         shape = RoundedCornerShape(4.dp),
         elevation = 4.dp
     ) {
-        Column(modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+        ) {
             Text(
                 text = group.name,
                 fontWeight = FontWeight(700),
@@ -52,7 +54,7 @@ fun EquipmentGroup(group: EquipmentGrouping) {
                         color = PRIMARY_BLACK,
                         fontFamily = montserratFamily
                     )
-                    Spacer(modifier=Modifier.weight(1f))
+                    Spacer(modifier = Modifier.weight(1f))
                     Text(
                         text = num.toString(),
                         fontWeight = FontWeight(300),

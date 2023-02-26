@@ -102,7 +102,9 @@ fun GymHours(hours: List<List<TimeInterval>?>, today: Int) {
                 painter = painterResource(R.drawable.ic_caret_right),
                 contentDescription = null,
                 tint = Color.Black,
-                modifier = Modifier.padding(top = 7.dp).rotate(rotationAnimation)
+                modifier = Modifier
+                    .padding(top = 7.dp)
+                    .rotate(rotationAnimation)
             )
         }
         if (!collapsed)

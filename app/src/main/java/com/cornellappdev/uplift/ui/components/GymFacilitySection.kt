@@ -124,16 +124,25 @@ fun GymFacilitySection(gym: Gym, today: Int) {
                 openedFacility = if (openedFacility == 5) -1 else 5
             }
         ) {
-            Text(
-                text = "Example Text",
-                fontFamily = montserratFamily,
-                fontSize = 16.sp,
-                fontWeight = FontWeight(500),
-                lineHeight = 19.5.sp,
-                textAlign = TextAlign.Left,
-                modifier = Modifier.padding(start = 8.dp)
-            )
+            Column(modifier = Modifier.padding(start = 46.dp, bottom = 12.dp)) {
+                Spacer(Modifier.height(2.dp))
+                for (misc in gym.miscellaneous) {
+                    Text(
+                        text = misc,
+                        fontFamily = montserratFamily,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight(400),
+                        lineHeight = 20.sp,
+                        textAlign = TextAlign.Left,
+                        modifier = Modifier.padding(start = 8.dp)
+                    )
+                }
+            }
         }
+
+        LineSpacer(paddingStart = 24.dp, paddingEnd = 24.dp)
+
+
     }
 }
 
