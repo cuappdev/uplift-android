@@ -20,6 +20,8 @@ import androidx.compose.ui.unit.sp
 import com.cornellappdev.uplift.R
 import com.cornellappdev.uplift.models.Gym
 import com.cornellappdev.uplift.ui.screens.LineSpacer
+import com.cornellappdev.uplift.util.ACCENT_CLOSED
+import com.cornellappdev.uplift.util.ACCENT_OPEN
 import com.cornellappdev.uplift.util.montserratFamily
 
 @Composable
@@ -45,7 +47,8 @@ fun GymFacilitySection(gym: Gym, today: Int) {
             openedFacility != 1,
             onClick = {
                 openedFacility = if (openedFacility == 1) -1 else 1
-            }
+            },
+            open = OpenType.NOT_APPLICABLE
         ) {
             Row(
                 modifier = Modifier
@@ -72,7 +75,8 @@ fun GymFacilitySection(gym: Gym, today: Int) {
             openedFacility != 2,
             onClick = {
                 openedFacility = if (openedFacility == 2) -1 else 2
-            }
+            },
+            open = OpenType.OPEN
         ) {
             DayOfWeekSelector(today = today) { day ->
 
@@ -87,7 +91,8 @@ fun GymFacilitySection(gym: Gym, today: Int) {
             openedFacility != 3,
             onClick = {
                 openedFacility = if (openedFacility == 3) -1 else 3
-            }
+            },
+            open = OpenType.OPEN
         ) {
             Spacer(Modifier.height(5.dp))
             GymSwimmingSection(today = today, gym = gym)
@@ -101,17 +106,10 @@ fun GymFacilitySection(gym: Gym, today: Int) {
             openedFacility != 4,
             onClick = {
                 openedFacility = if (openedFacility == 4) -1 else 4
-            }
+            },
+            open = OpenType.CLOSED
         ) {
-            Text(
-                text = "Example Text",
-                fontFamily = montserratFamily,
-                fontSize = 16.sp,
-                fontWeight = FontWeight(500),
-                lineHeight = 19.5.sp,
-                textAlign = TextAlign.Left,
-                modifier = Modifier.padding(start = 8.dp)
-            )
+            GymBowlingSection(today = today, gym = gym)
         }
 
         LineSpacer(paddingStart = 24.dp, paddingEnd = 24.dp)
@@ -122,7 +120,8 @@ fun GymFacilitySection(gym: Gym, today: Int) {
             openedFacility != 5,
             onClick = {
                 openedFacility = if (openedFacility == 5) -1 else 5
-            }
+            },
+            open = OpenType.NOT_APPLICABLE
         ) {
             Column(modifier = Modifier.padding(start = 46.dp, bottom = 12.dp)) {
                 Spacer(Modifier.height(2.dp))
@@ -146,12 +145,17 @@ fun GymFacilitySection(gym: Gym, today: Int) {
     }
 }
 
+enum class OpenType {
+    NOT_APPLICABLE, OPEN, CLOSED
+}
+
 @Composable
 fun FacilityTab(
     painter: Painter,
     title: String,
     collapsed: Boolean,
     onClick: () -> Unit,
+    open : OpenType,
     content: @Composable () -> Unit
 ) {
     Column(modifier = Modifier.animateContentSize()) {
@@ -182,6 +186,17 @@ fun FacilityTab(
                 modifier = Modifier.padding(start = 8.dp)
             )
             Spacer(modifier = Modifier.weight(1f))
+            if (open != OpenType.NOT_APPLICABLE)
+                Text(
+                    text = if (open == OpenType.OPEN) "Open" else "Closed",
+                    fontFamily = montserratFamily,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight(500),
+                    lineHeight = 19.5.sp,
+                    textAlign = TextAlign.Left,
+                    modifier = Modifier.padding(end = 16.dp),
+                    color = if (open == OpenType.OPEN) ACCENT_OPEN else ACCENT_CLOSED
+                )
             Icon(
                 painter = painterResource(id = R.drawable.ic_caret_right),
                 contentDescription = null,

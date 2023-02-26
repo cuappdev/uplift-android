@@ -78,6 +78,83 @@ val exampleSwimmingList1 = listOf(
     )
 )
 
+val exampleBowlingList = listOf(
+    BowlingInfo(
+        hours = listOf(
+            TimeInterval(
+                start = TimeOfDay(hour = 5, minute = 0, isAM = false),
+                end = TimeOfDay(hour = 10, minute = 0, isAM = false)
+            )
+        ),
+        pricePerGame = "$3.50",
+        shoeRental = "$2.50"
+    ),
+    BowlingInfo(
+        hours = listOf(
+            TimeInterval(
+                start = TimeOfDay(hour = 3, minute = 0, isAM = false),
+                end = TimeOfDay(hour = 7, minute = 0, isAM = false)
+            )
+        ),
+        pricePerGame = "$3.50",
+        shoeRental = "$2.50"
+    ),
+    BowlingInfo(
+        hours = listOf(
+            TimeInterval(
+                start = TimeOfDay(hour = 3, minute = 0, isAM = false),
+                end = TimeOfDay(hour = 5, minute = 0, isAM = false)
+            ),
+            TimeInterval(
+                start = TimeOfDay(hour = 5, minute = 30, isAM = false),
+                end = TimeOfDay(hour = 10, minute = 0, isAM = false)
+            )
+        ),
+        pricePerGame = "$5.50",
+        shoeRental = "$3.50"
+    ),
+    BowlingInfo(
+        hours = listOf(
+            TimeInterval(
+                start = TimeOfDay(hour = 3, minute = 0, isAM = false),
+                end = TimeOfDay(hour = 7, minute = 0, isAM = false)
+            )
+        ),
+        pricePerGame = "$3.50",
+        shoeRental = "$2.50"
+    ),
+    BowlingInfo(
+        hours = listOf(
+            TimeInterval(
+                start = TimeOfDay(hour = 3, minute = 0, isAM = false),
+                end = TimeOfDay(hour = 7, minute = 0, isAM = false)
+            )
+        ),
+        pricePerGame = "$3.50",
+        shoeRental = "$2.50"
+    ),
+    BowlingInfo(
+        hours = listOf(
+            TimeInterval(
+                start = TimeOfDay(hour = 3, minute = 0, isAM = false),
+                end = TimeOfDay(hour = 7, minute = 0, isAM = false)
+            )
+        ),
+        pricePerGame = "$3.50",
+        shoeRental = "$2.50"
+    ),
+    BowlingInfo(
+        hours = listOf(
+            TimeInterval(
+                start = TimeOfDay(hour = 3, minute = 0, isAM = false),
+                end = TimeOfDay(hour = 7, minute = 0, isAM = false)
+            )
+        ),
+        pricePerGame = "$3.50",
+        shoeRental = "$2.50"
+    ),
+)
+
 val testMorrison = Gym(
     name = "Toni Morrison Gym",
     hours = listOf(
@@ -173,7 +250,7 @@ val testMorrison = Gym(
         SwimmingInfo(swimmingTimes = exampleSwimmingList2),
         SwimmingInfo(swimmingTimes = exampleSwimmingList1),
     ),
-    bowlingInfo = listOf(),
+    bowlingInfo = exampleBowlingList,
     miscellaneous = listOf("Game area", "Outdoor basketball court", "Bouldering wall"),
     classesToday = listOf(),
     imageUrl = "https://recreation.athletics.cornell.edu/sites/recreation.athletics.cornell.edu/files/photo-galleries/DB%20_%20Benches_TM.jpeg"
