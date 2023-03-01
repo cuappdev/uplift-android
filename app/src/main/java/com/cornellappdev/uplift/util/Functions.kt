@@ -2,6 +2,7 @@ package com.cornellappdev.uplift.util
 
 import com.cornellappdev.uplift.models.TimeInterval
 import com.cornellappdev.uplift.models.TimeOfDay
+import java.util.*
 
 /**
  * Returns a flavor message corresponding to the numeric wait time input.
@@ -37,4 +38,30 @@ fun getOverallTimeInterval(times: List<TimeInterval>): TimeInterval {
     }
 
     return TimeInterval(earliest, latest)
+}
+
+/**
+ * Takes in a calendar and returns a string representation of the calendar's month and day.
+ *
+ * Example: Valentine's Day as a calendar would be returned as: "Feb 14"
+ */
+fun calendarDayToString(calendar : Calendar) : String {
+    val month = when (calendar.get(Calendar.MONTH)) {
+        0 -> "Jan"
+        1 -> "Feb"
+        2 -> "Mar"
+        3 -> "Apr"
+        4 -> "May"
+        5 -> "Jun"
+        6 -> "Jul"
+        7 -> "Aug"
+        8 -> "Sep"
+        9 -> "Oct"
+        10 -> "Nov"
+        else -> "Dec"
+    }
+
+    val day = calendar.get(Calendar.DAY_OF_MONTH)
+
+    return "$month $day"
 }

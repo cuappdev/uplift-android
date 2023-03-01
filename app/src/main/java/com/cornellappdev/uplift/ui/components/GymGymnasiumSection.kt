@@ -54,6 +54,9 @@ fun GymGymnasiumSection(today: Int, gym: Gym) {
                     )
                 }
             }
+            if (gymnasiumInfo.courts.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(13.dp))
+            }
         } else {
             Text(
                 text = "Closed",

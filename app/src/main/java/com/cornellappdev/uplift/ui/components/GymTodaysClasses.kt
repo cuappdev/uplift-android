@@ -1,8 +1,6 @@
 package com.cornellappdev.uplift.ui.components
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -31,5 +29,10 @@ fun GymTodaysClasses(gym: Gym) {
             modifier = Modifier.padding(top = 24.dp, bottom = 24.dp),
             textAlign = TextAlign.Center
         )
+        for (aClass in gym.classesToday) {
+            ClassInfoCard(thisClass = aClass)
+            Spacer(modifier = Modifier.height(12.dp))
+        }
+        Spacer(modifier = Modifier.height(36.dp))
     }
 }

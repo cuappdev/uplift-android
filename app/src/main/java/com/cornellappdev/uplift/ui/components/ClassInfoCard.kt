@@ -13,18 +13,17 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cornellappdev.uplift.R
-import com.cornellappdev.uplift.util.GRAY01
-import com.cornellappdev.uplift.util.GRAY03
-import com.cornellappdev.uplift.util.PRIMARY_BLACK
-import com.cornellappdev.uplift.util.montserratFamily
+import com.cornellappdev.uplift.models.UpliftClass
+import com.cornellappdev.uplift.util.*
+import java.util.*
 
-@Preview
 @Composable
-fun ClassInfoCard() {
+fun ClassInfoCard(thisClass: UpliftClass) {
+    val today = Calendar.getInstance()
+
     Surface(
         shape = RoundedCornerShape(5.dp),
         modifier = Modifier
@@ -45,7 +44,9 @@ fun ClassInfoCard() {
                 Row {
                     Column {
                         Text(
-                            text = "Today",
+                            text = if (today.get(Calendar.MONTH) == thisClass.date.get(Calendar.MONTH) &&
+                                today.get(Calendar.DAY_OF_MONTH) == thisClass.date.get(Calendar.DAY_OF_MONTH)
+                            ) "Today" else calendarDayToString(thisClass.date),
                             fontFamily = montserratFamily,
                             fontSize = 14.sp,
                             fontWeight = FontWeight(500),
@@ -53,7 +54,7 @@ fun ClassInfoCard() {
                             textAlign = TextAlign.Center
                         )
                         Text(
-                            text = "10:30 AM",
+                            text = thisClass.time.start.toString(),
                             fontFamily = montserratFamily,
                             fontSize = 12.sp,
                             fontWeight = FontWeight(400),
@@ -66,7 +67,7 @@ fun ClassInfoCard() {
 
                     Column() {
                         Text(
-                            text = "Muscle Pump",
+                            text = thisClass.name,
                             fontFamily = montserratFamily,
                             fontSize = 16.sp,
                             fontWeight = FontWeight(500),
@@ -74,7 +75,7 @@ fun ClassInfoCard() {
                             textAlign = TextAlign.Center
                         )
                         Text(
-                            text = "Teagle Multipurpose Room",
+                            text = thisClass.location,
                             fontFamily = montserratFamily,
                             fontSize = 12.sp,
                             fontWeight = FontWeight(400),
@@ -85,7 +86,7 @@ fun ClassInfoCard() {
                         Spacer(modifier = Modifier.height(17.dp))
 
                         Text(
-                            text = "Claire M.",
+                            text = thisClass.instructorName,
                             fontFamily = montserratFamily,
                             fontSize = 12.sp,
                             fontWeight = FontWeight(400),

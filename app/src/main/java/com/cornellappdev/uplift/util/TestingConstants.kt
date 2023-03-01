@@ -1,6 +1,22 @@
 package com.cornellappdev.uplift.util
 
 import com.cornellappdev.uplift.models.*
+import java.util.*
+
+val exCalendarMarch25: Calendar = GregorianCalendar(2023,2,25)
+
+val exampleClassMusclePump = UpliftClass(
+    name = "Muscle Pump",
+    location = "Teagle Multipurpose Room",
+    instructorName = "Claire M.",
+    minutes = 60,
+    date = exCalendarMarch25,
+    time = TimeInterval(TimeOfDay(10, 30, isAM = true), TimeOfDay(11, 30, isAM = true)),
+    functions = listOf("Idk breh muscles"),
+    preparation = "? Get ready to pump",
+    description = "Yeah get ready to pump...",
+    nextSessions = listOf(),
+)
 
 val exampleSwimmingList2 = listOf(
     SwimmingTime(
@@ -270,6 +286,9 @@ val testMorrison = Gym(
     ),
     bowlingInfo = exampleBowlingList,
     miscellaneous = listOf("Game area", "Outdoor basketball court", "Bouldering wall"),
-    classesToday = listOf(),
+    classesToday = listOf(
+        exampleClassMusclePump,
+        exampleClassMusclePump
+    ),
     imageUrl = "https://recreation.athletics.cornell.edu/sites/recreation.athletics.cornell.edu/files/photo-galleries/DB%20_%20Benches_TM.jpeg"
 )
