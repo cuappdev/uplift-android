@@ -8,6 +8,20 @@ data class TimeInterval(
     override fun toString(): String {
         return "$start - $end"
     }
+
+    override fun equals(other : Any?) : Boolean {
+        if (other !is TimeInterval) {
+            return false
+        }
+
+        return start == other.start && end == other.end
+    }
+
+    override fun hashCode(): Int {
+        var result = start.hashCode()
+        result = 31 * result + end.hashCode()
+        return result
+    }
 }
 
 /**
@@ -33,6 +47,32 @@ data class TimeOfDay(
 
     override fun toString(): String {
         return "$hour:${if (minute.toString().length == 1) "0$minute" else "$minute"}${if (isAM) "AM" else "PM"}"
+    }
+
+    override fun equals(other : Any?) : Boolean {
+        if (other !is TimeOfDay) {
+            return false
+        }
+
+        return other.hour == hour && other.minute == minute && other.isAM == isAM
+    }
+
+    override fun hashCode(): Int {
+        var result = hour
+        result = 31 * result + minute
+        result = 31 * result + isAM.hashCode()
+        return result
+    }
+
+    fun compareTo(other : TimeOfDay) : Int {
+        if (other.isAM && !isAM) return 1
+        if (!other.isAM && isAM) return -1
+
+        if (other.hour != hour) {
+            return hour - other.hour
+        }
+
+        return minute - other.minute
     }
 }
 

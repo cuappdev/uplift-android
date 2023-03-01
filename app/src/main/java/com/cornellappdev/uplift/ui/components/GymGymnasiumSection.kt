@@ -1,17 +1,21 @@
 package com.cornellappdev.uplift.ui.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.cornellappdev.uplift.R
 import com.cornellappdev.uplift.models.Gym
-import com.cornellappdev.uplift.util.ACCENT_CLOSED
-import com.cornellappdev.uplift.util.montserratFamily
+import com.cornellappdev.uplift.models.TimeInterval
+import com.cornellappdev.uplift.util.*
 
 @Composable
 fun GymGymnasiumSection(today: Int, gym: Gym) {
@@ -38,7 +42,18 @@ fun GymGymnasiumSection(today: Int, gym: Gym) {
                     modifier = Modifier.padding(bottom = 5.dp)
                 )
             }
-            Spacer(Modifier.padding(bottom = 6.dp))
+            Spacer(Modifier.padding(bottom = 16.dp))
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                for (i in gymnasiumInfo.courts.indices) {
+                    val courtInfo = gymnasiumInfo.courts[i]
+                    CourtComponent(
+                        times = courtInfo.hours,
+                        overallTimeInterval = getOverallTimeInterval(gymnasiumInfo.hours),
+                        title = if (gymnasiumInfo.courts.size > 1) "Court #${i + 1}" else "Court",
+                        courtName = courtInfo.name.uppercase()
+                    )
+                }
+            }
         } else {
             Text(
                 text = "Closed",
@@ -48,8 +63,106 @@ fun GymGymnasiumSection(today: Int, gym: Gym) {
                 lineHeight = 26.sp,
                 textAlign = TextAlign.Center,
                 color = ACCENT_CLOSED,
-                modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 12.dp)
             )
+        }
+    }
+}
+
+
+@Composable
+fun CourtComponent(
+    times: List<TimeInterval>,
+    overallTimeInterval: TimeInterval,
+    title: String,
+    courtName: String
+) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(
+            text = title,
+            fontFamily = montserratFamily,
+            fontSize = 14.sp,
+            fontWeight = FontWeight(600),
+            lineHeight = 17.07.sp,
+            textAlign = TextAlign.Center,
+            modifier = Modifier
+                .padding(bottom = 9.dp)
+        )
+        Box {
+            Icon(
+                painter = painterResource(id = R.drawable.court_lines),
+                contentDescription = null,
+                modifier = Modifier
+                    .background(PRIMARY_YELLOW_BACKGROUND)
+                    .size(width = 124.dp, height = 164.dp),
+                tint = PRIMARY_YELLOW
+            )
+            Column(
+                modifier = Modifier.align(Alignment.Center),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = courtName,
+                    fontFamily = montserratFamily,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight(700),
+                    lineHeight = 17.07.sp,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .padding(bottom = 4.dp)
+                )
+
+                // BEFORE ...
+                if (getOverallTimeInterval(times).start == overallTimeInterval.start &&
+                    getOverallTimeInterval(times).end != overallTimeInterval.end
+                ) {
+                    Text(
+                        text = "BEFORE ${getOverallTimeInterval(times).end}",
+                        fontFamily = montserratFamily,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight(500),
+                        lineHeight = 14.63.sp,
+                        textAlign = TextAlign.Center
+                    )
+                } else if (getOverallTimeInterval(times).start != overallTimeInterval.start &&
+                    getOverallTimeInterval(times).end == overallTimeInterval.end
+                ) {
+                    Text(
+                        text = "AFTER ${getOverallTimeInterval(times).start}",
+                        fontFamily = montserratFamily,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight(500),
+                        lineHeight = 14.63.sp,
+                        textAlign = TextAlign.Center
+                    )
+                } else if (getOverallTimeInterval(times).start == overallTimeInterval.start &&
+                    getOverallTimeInterval(times).end == overallTimeInterval.end
+                ) {
+                    Text(
+                        text = "ALL DAY",
+                        fontFamily = montserratFamily,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight(500),
+                        lineHeight = 14.63.sp,
+                        textAlign = TextAlign.Center
+                    )
+                } else
+                    for (i in times.indices) {
+                        Text(
+                            text = times[i].toString(),
+                            fontFamily = montserratFamily,
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight(500),
+                            lineHeight = 14.63.sp,
+                            textAlign = TextAlign.Center
+                        )
+                        if (i != times.size - 1) {
+                            Spacer(modifier = Modifier.height(2.dp))
+                        }
+                    }
+            }
         }
     }
 }
