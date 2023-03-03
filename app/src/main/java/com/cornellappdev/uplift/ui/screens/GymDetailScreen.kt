@@ -1,9 +1,8 @@
 package com.cornellappdev.uplift.ui.screens
 
-import androidx.compose.foundation.background
+import androidx.compose.foundation.*
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -62,13 +61,15 @@ fun GymDetailScreen(
                     .padding(top = 47.dp, start = 22.dp),
                 tint = Color.White
             )
-            Icon(
-                painter = painterResource(id = R.drawable.ic_star),
+            Image(
+                painter = painterResource(id = if (gym != null && gym!!.isFavorite()) R.drawable.ic_star_filled else R.drawable.ic_star),
                 contentDescription = null,
                 modifier = Modifier
                     .align(Alignment.TopEnd)
-                    .padding(top = 47.dp, end = 21.dp),
-                tint = Color.White
+                    .padding(top = 47.dp, end = 21.dp)
+                    .clickable(interactionSource = MutableInteractionSource(), indication = null) {
+                        gym?.toggleFavorite()
+                    }
             )
             Text(
                 modifier = Modifier.align(Alignment.Center),

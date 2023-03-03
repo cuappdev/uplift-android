@@ -1,6 +1,7 @@
 package com.cornellappdev.uplift.ui.components
 
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
@@ -10,6 +11,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
@@ -27,6 +29,8 @@ import com.cornellappdev.uplift.util.montserratFamily
 @Composable
 fun GymFacilitySection(gym: Gym, today: Int) {
     var openedFacility by remember { mutableStateOf(-1) }
+
+    // TODO: Add Closed / Open logic for both facilities and the gym itself using local time.
 
     Column(modifier = Modifier.fillMaxWidth()) {
         Spacer(modifier = Modifier.height(24.dp))
@@ -156,6 +160,8 @@ fun FacilityTab(
     open : OpenType,
     content: @Composable () -> Unit
 ) {
+    val rotationAnimation by animateFloatAsState(targetValue = if (collapsed) 0f else 90f)
+
     Column(modifier = Modifier.animateContentSize()) {
         Row(
             modifier = Modifier
@@ -198,7 +204,7 @@ fun FacilityTab(
             Icon(
                 painter = painterResource(id = R.drawable.ic_caret_right),
                 contentDescription = null,
-                modifier = Modifier.padding(end = 24.dp)
+                modifier = Modifier.padding(end = 24.dp).rotate(rotationAnimation)
             )
         }
 

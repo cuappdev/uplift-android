@@ -1,6 +1,5 @@
 package com.cornellappdev.uplift.ui.components
 
-import android.util.Log
 import androidx.compose.animation.core.CubicBezierEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -52,12 +51,16 @@ fun PopularTimesSection(popularTimes: PopularTimes) {
     val animatedLeftRatio =
         if (selectedPopularTime >= 0) animatedLeftRatioState.value else lastLeftRatio
 
+    fun deselect() {
+        selectedPopularTime = -1
+        lastLeftRatio = animatedLeftRatio
+    }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .clickable(interactionSource = MutableInteractionSource(), indication = null) {
-                selectedPopularTime = -1
-                lastLeftRatio = animatedLeftRatio
+                deselect()
             }) {
         // Title
         Text(
@@ -141,9 +144,11 @@ fun PopularTimesSection(popularTimes: PopularTimes) {
                             interactionSource = MutableInteractionSource(),
                             indication = null
                         ) {
-                            Log.d("Press", "$i")
-                            selectedPopularTime = i
-                            lastSelectedPopularTime = i
+                            if (selectedPopularTime == i) deselect()
+                            else {
+                                selectedPopularTime = i
+                                lastSelectedPopularTime = i
+                            }
                         }
                 ) {
                     // The yellow bar.
