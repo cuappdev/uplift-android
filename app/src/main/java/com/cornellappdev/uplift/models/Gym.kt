@@ -27,22 +27,28 @@ data class Gym(
      * A list of exactly 7 [GymnasiumInfo] objects. Each object corresponds to a particular
      * day (index 0=Monday, ..., 6=Sunday). A null object indicates that the gymnasium is closed
      * that day.
+     *
+     * If the list itself is null, that indicates gymnasiums are not offered by this gym.
      */
-    val gymnasiumInfo: List<GymnasiumInfo?>,
+    val gymnasiumInfo: List<GymnasiumInfo?>?,
 
     /**
      * A list of exactly 7 [SwimmingInfo] objects. Each object corresponds to a particular
      * day (index 0=Monday, ..., 6=Sunday). A null object indicates that the pool is closed
      * that day.
+     *
+     * If the list itself is null, that indicates swimming is not offered by this gym.
      */
-    val swimmingInfo: List<SwimmingInfo?>,
+    val swimmingInfo: List<SwimmingInfo?>?,
 
     /**
      * A list of exactly 7 [SwimmingInfo] objects. Each object corresponds to a particular
      * day (index 0=Monday, ..., 6=Sunday). A null object indicates that the pool is closed
      * that day.
+     *
+     * If the list itself is null, that indicates bowling is not offered by this gym.
      */
-    val bowlingInfo: List<BowlingInfo?>,
+    val bowlingInfo: List<BowlingInfo?>?,
     val miscellaneous: List<String>,
     val classesToday: List<UpliftClass>,
     val imageUrl: String,

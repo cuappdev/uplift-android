@@ -19,7 +19,8 @@ import com.cornellappdev.uplift.util.montserratFamily
 @Composable
 fun GymBowlingSection(today: Int, gym: Gym) {
     var selectedDay by remember { mutableStateOf(today) }
-    val bowlingInfo = gym.bowlingInfo[selectedDay]
+    val bowlingInfo = gym.bowlingInfo?.get(selectedDay)
+
     Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
         Spacer(modifier = Modifier.height(5.dp))
         DayOfWeekSelector(today = today) { day ->

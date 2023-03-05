@@ -65,3 +65,23 @@ fun calendarDayToString(calendar : Calendar) : String {
 
     return "$month $day"
 }
+
+/**
+ * Returns the current system time as a [TimeOfDay] object.
+ */
+fun getSystemTime() : TimeOfDay {
+    val c : Calendar = Calendar.getInstance()
+    val hour = if (c.get(Calendar.HOUR) == 0) 12 else c.get(Calendar.HOUR)
+    val minute = c.get(Calendar.MINUTE)
+    val isAM = c.get(Calendar.AM_PM) == Calendar.AM
+    return TimeOfDay(hour, minute, isAM)
+}
+
+/**
+ * Returns a boolean corresponding to if the facility whose hours are denoted by [times] are open
+ * at [timeOfDay]. If [timeOfDay] is not passed a value, it defaults to the system time
+ * retrieved by [getSystemTime].
+ */
+fun isCurrentlyOpen(times : List<TimeInterval>, timeOfDay : TimeOfDay = getSystemTime()) : Boolean {
+    return times.find { interval -> interval.within(timeOfDay) } != null
+}

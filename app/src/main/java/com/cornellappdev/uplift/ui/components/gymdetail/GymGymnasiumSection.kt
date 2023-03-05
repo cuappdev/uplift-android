@@ -22,7 +22,7 @@ fun GymGymnasiumSection(today: Int, gym: Gym) {
     var selectedDay by remember {
         mutableStateOf(today)
     }
-    val gymnasiumInfo = gym.gymnasiumInfo[selectedDay]
+    val gymnasiumInfo = gym.gymnasiumInfo?.get(selectedDay)
 
     Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
         Spacer(modifier = Modifier.height(5.dp))

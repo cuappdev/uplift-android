@@ -29,6 +29,7 @@ fun PopularTimesSection(popularTimes: PopularTimes) {
         if (startAnimation) 1.0f else 0f,
         animationSpec = tween(durationMillis = 1000)
     )
+
     LaunchedEffect(true) {
         startAnimation = true
     }

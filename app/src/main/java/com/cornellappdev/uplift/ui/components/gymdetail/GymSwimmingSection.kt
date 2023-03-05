@@ -19,6 +19,8 @@ import com.cornellappdev.uplift.util.montserratFamily
 @Composable
 fun GymSwimmingSection(today: Int, gym: Gym) {
     var selectedDay by remember { mutableStateOf(today) }
+    val swimmingInfo = gym.swimmingInfo?.get(selectedDay)
+
     DayOfWeekSelector(today = today) { day ->
         selectedDay = day
     }
@@ -26,7 +28,6 @@ fun GymSwimmingSection(today: Int, gym: Gym) {
     Row(modifier = Modifier.fillMaxWidth()) {
         Spacer(modifier = Modifier.weight(1f))
         Column(horizontalAlignment = Alignment.Start) {
-            val swimmingInfo = gym.swimmingInfo[selectedDay]
             if (swimmingInfo != null) {
                 for (swimmingTime in swimmingInfo.swimmingTimes) {
                     Row(

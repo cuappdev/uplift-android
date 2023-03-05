@@ -21,9 +21,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cornellappdev.uplift.R
 import com.cornellappdev.uplift.models.Gym
+import com.cornellappdev.uplift.models.OpenType
 import com.cornellappdev.uplift.ui.screens.LineSpacer
 import com.cornellappdev.uplift.util.ACCENT_CLOSED
 import com.cornellappdev.uplift.util.ACCENT_OPEN
+import com.cornellappdev.uplift.util.isCurrentlyOpen
 import com.cornellappdev.uplift.util.montserratFamily
 
 @Composable
@@ -73,82 +75,99 @@ fun GymFacilitySection(gym: Gym, today: Int) {
 
         LineSpacer(paddingStart = 24.dp, paddingEnd = 24.dp)
 
-        FacilityTab(
-            painterResource(id = R.drawable.ic_basketball_hoop),
-            "GYMNASIUM",
-            openedFacility != 2,
-            onClick = {
-                openedFacility = if (openedFacility == 2) -1 else 2
-            },
-            open = OpenType.OPEN
-        ) {
-            GymGymnasiumSection(today = today, gym = gym)
+        if (gym.gymnasiumInfo != null) {
+
+            FacilityTab(
+                painterResource(id = R.drawable.ic_basketball_hoop),
+                "GYMNASIUM",
+                openedFacility != 2,
+                onClick = {
+                    openedFacility = if (openedFacility == 2) -1 else 2
+                },
+                open = when (gym.gymnasiumInfo[today] != null
+                        && isCurrentlyOpen(gym.gymnasiumInfo[today]!!.hours)) {
+                    true -> OpenType.OPEN
+                    else -> OpenType.CLOSED
+                }
+            ) {
+                GymGymnasiumSection(today = today, gym = gym)
+            }
+
+            LineSpacer(paddingStart = 24.dp, paddingEnd = 24.dp)
         }
 
-        LineSpacer(paddingStart = 24.dp, paddingEnd = 24.dp)
+        if (gym.swimmingInfo != null) {
+            FacilityTab(
+                painterResource(id = R.drawable.ic_swimming_pool),
+                "SWIMMING POOL",
+                openedFacility != 3,
+                onClick = {
+                    openedFacility = if (openedFacility == 3) -1 else 3
+                },
+                open = when (gym.swimmingInfo[today] != null
+                        && isCurrentlyOpen(gym.swimmingInfo[today]!!.hours())) {
+                    true -> OpenType.OPEN
+                    else -> OpenType.CLOSED
+                }
+            ) {
+                Spacer(Modifier.height(5.dp))
+                GymSwimmingSection(today = today, gym = gym)
+            }
 
-        FacilityTab(
-            painterResource(id = R.drawable.ic_swimming_pool),
-            "SWIMMING POOL",
-            openedFacility != 3,
-            onClick = {
-                openedFacility = if (openedFacility == 3) -1 else 3
-            },
-            open = OpenType.OPEN
-        ) {
-            Spacer(Modifier.height(5.dp))
-            GymSwimmingSection(today = today, gym = gym)
+            LineSpacer(paddingStart = 24.dp, paddingEnd = 24.dp)
         }
 
-        LineSpacer(paddingStart = 24.dp, paddingEnd = 24.dp)
+        if (gym.bowlingInfo != null) {
+            FacilityTab(
+                painterResource(id = R.drawable.ic_bowling_pins),
+                "BOWLING LANES",
+                openedFacility != 4,
+                onClick = {
+                    openedFacility = if (openedFacility == 4) -1 else 4
+                },
+                open = when (gym.bowlingInfo[today] != null
+                        && isCurrentlyOpen(gym.bowlingInfo[today]!!.hours)) {
+                    true -> OpenType.OPEN
+                    else -> OpenType.CLOSED
+                }
+            ) {
+                GymBowlingSection(today = today, gym = gym)
+            }
 
-        FacilityTab(
-            painterResource(id = R.drawable.ic_bowling_pins),
-            "BOWLING LANES",
-            openedFacility != 4,
-            onClick = {
-                openedFacility = if (openedFacility == 4) -1 else 4
-            },
-            open = OpenType.CLOSED
-        ) {
-            GymBowlingSection(today = today, gym = gym)
+            LineSpacer(paddingStart = 24.dp, paddingEnd = 24.dp)
         }
 
-        LineSpacer(paddingStart = 24.dp, paddingEnd = 24.dp)
-
-        FacilityTab(
-            painterResource(id = R.drawable.ic_miscellaneous_dots),
-            "MISCELLANEOUS",
-            openedFacility != 5,
-            onClick = {
-                openedFacility = if (openedFacility == 5) -1 else 5
-            },
-            open = OpenType.NOT_APPLICABLE
-        ) {
-            Column(modifier = Modifier.padding(start = 46.dp, bottom = 12.dp)) {
-                Spacer(Modifier.height(2.dp))
-                for (misc in gym.miscellaneous) {
-                    Text(
-                        text = misc,
-                        fontFamily = montserratFamily,
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight(400),
-                        lineHeight = 20.sp,
-                        textAlign = TextAlign.Left,
-                        modifier = Modifier.padding(start = 8.dp)
-                    )
+        if (gym.miscellaneous.isNotEmpty()) {
+            FacilityTab(
+                painterResource(id = R.drawable.ic_miscellaneous_dots),
+                "MISCELLANEOUS",
+                openedFacility != 5,
+                onClick = {
+                    openedFacility = if (openedFacility == 5) -1 else 5
+                },
+                open = OpenType.NOT_APPLICABLE
+            ) {
+                Column(modifier = Modifier.padding(start = 46.dp, bottom = 12.dp)) {
+                    Spacer(Modifier.height(2.dp))
+                    for (misc in gym.miscellaneous) {
+                        Text(
+                            text = misc,
+                            fontFamily = montserratFamily,
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight(400),
+                            lineHeight = 20.sp,
+                            textAlign = TextAlign.Left,
+                            modifier = Modifier.padding(start = 8.dp)
+                        )
+                    }
                 }
             }
-        }
 
-        LineSpacer(paddingStart = 24.dp, paddingEnd = 24.dp)
+            LineSpacer(paddingStart = 24.dp, paddingEnd = 24.dp)
+        }
 
 
     }
-}
-
-enum class OpenType {
-    NOT_APPLICABLE, OPEN, CLOSED
 }
 
 @Composable
@@ -157,7 +176,7 @@ fun FacilityTab(
     title: String,
     collapsed: Boolean,
     onClick: () -> Unit,
-    open : OpenType,
+    open: OpenType,
     content: @Composable () -> Unit
 ) {
     val rotationAnimation by animateFloatAsState(targetValue = if (collapsed) 0f else 90f)
@@ -204,7 +223,9 @@ fun FacilityTab(
             Icon(
                 painter = painterResource(id = R.drawable.ic_caret_right),
                 contentDescription = null,
-                modifier = Modifier.padding(end = 24.dp).rotate(rotationAnimation)
+                modifier = Modifier
+                    .padding(end = 24.dp)
+                    .rotate(rotationAnimation)
             )
         }
 

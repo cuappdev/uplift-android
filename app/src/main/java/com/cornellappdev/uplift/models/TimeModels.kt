@@ -22,6 +22,13 @@ data class TimeInterval(
         result = 31 * result + end.hashCode()
         return result
     }
+
+    /**
+     * Returns true if [time] is contained within this interval. False otherwise.
+     */
+    fun within(time : TimeOfDay) : Boolean {
+        return time.compareTo(start) >= 0 && time.compareTo(end) <= 0
+    }
 }
 
 /**
@@ -89,3 +96,10 @@ data class PopularTimes(
      */
     val busyList: List<Int>
 )
+
+/**
+ * Representation type of a facility's open or closed status.
+ */
+enum class OpenType {
+    NOT_APPLICABLE, OPEN, CLOSED
+}

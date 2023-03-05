@@ -15,7 +15,14 @@ data class CourtInfo(
 /** Swimming information for one day. */
 data class SwimmingInfo(
     val swimmingTimes: List<SwimmingTime>
-)
+) {
+    /**
+     * Returns [swimmingTimes] as a list of [TimeInterval]s.
+     */
+    fun hours(): List<TimeInterval> {
+        return swimmingTimes.map { swimTime -> swimTime.time }
+    }
+}
 
 /** One time interval of swimming time which can be designated as women only. */
 data class SwimmingTime(
