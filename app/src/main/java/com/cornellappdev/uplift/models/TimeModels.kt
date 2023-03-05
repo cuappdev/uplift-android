@@ -9,7 +9,7 @@ data class TimeInterval(
         return "$start - $end"
     }
 
-    override fun equals(other : Any?) : Boolean {
+    override fun equals(other: Any?): Boolean {
         if (other !is TimeInterval) {
             return false
         }
@@ -26,7 +26,7 @@ data class TimeInterval(
     /**
      * Returns true if [time] is contained within this interval. False otherwise.
      */
-    fun within(time : TimeOfDay) : Boolean {
+    fun within(time: TimeOfDay): Boolean {
         return time.compareTo(start) >= 0 && time.compareTo(end) <= 0
     }
 }
@@ -36,10 +36,15 @@ data class TimeInterval(
  * AM or PM.
  * */
 data class TimeOfDay(
+    /** An hour between 1 and 12, inclusive. */
     val hour: Int,
+    /** A minute between 0 and 59, inclusive. */
     val minute: Int = 0,
     val isAM: Boolean = true
 ) {
+    /**
+     * Returns a new [TimeOfDay] created by advancing the current time of day by [deltaHours] and [deltaMinutes].
+     */
     fun getTimeLater(deltaMinutes: Int, deltaHours: Int): TimeOfDay {
         var newHour = (hour + deltaHours + (minute + deltaMinutes) / 60) % 12
         val overlaps = (hour + deltaHours + (minute + deltaMinutes) / 60) / 12
@@ -56,7 +61,7 @@ data class TimeOfDay(
         return "$hour:${if (minute.toString().length == 1) "0$minute" else "$minute"}${if (isAM) "AM" else "PM"}"
     }
 
-    override fun equals(other : Any?) : Boolean {
+    override fun equals(other: Any?): Boolean {
         if (other !is TimeOfDay) {
             return false
         }
@@ -71,12 +76,16 @@ data class TimeOfDay(
         return result
     }
 
-    fun compareTo(other : TimeOfDay) : Int {
+    /**
+     * Returns a negative integer if this time comes before [other], 0 if they are the same time,
+     * and a positive integer if this time comes after [other].
+     */
+    fun compareTo(other: TimeOfDay): Int {
         if (other.isAM && !isAM) return 1
         if (!other.isAM && isAM) return -1
 
         if (other.hour != hour) {
-            return hour - other.hour
+            return (hour % 12) - (other.hour % 12)
         }
 
         return minute - other.minute

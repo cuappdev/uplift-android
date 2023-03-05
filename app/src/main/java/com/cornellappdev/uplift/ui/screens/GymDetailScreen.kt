@@ -26,6 +26,8 @@ import com.cornellappdev.uplift.ui.components.GymTodaysClasses
 import com.cornellappdev.uplift.ui.components.PopularTimesSection
 import com.cornellappdev.uplift.ui.viewmodels.GymDetailViewModel
 import com.cornellappdev.uplift.util.GRAY01
+import com.cornellappdev.uplift.util.PRIMARY_BLACK
+import com.cornellappdev.uplift.util.isCurrentlyOpen
 import com.cornellappdev.uplift.util.montserratFamily
 import java.util.*
 
@@ -82,6 +84,29 @@ fun GymDetailScreen(
                 color = Color.White,
                 fontFamily = montserratFamily
             )
+
+            // CLOSED
+            if (gym != null && (gym!!.hours[day] == null || !isCurrentlyOpen(gym!!.hours[day]!!))) {
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .background(PRIMARY_BLACK)
+                        .fillMaxWidth()
+                        .height(60.dp)
+                ) {
+                    Text(
+                        text = "CLOSED",
+                        fontWeight = FontWeight(500),
+                        fontSize = 16.sp,
+                        lineHeight = 19.5.sp,
+                        textAlign = TextAlign.Center,
+                        letterSpacing = 3.sp,
+                        color = Color.White,
+                        fontFamily = montserratFamily,
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                }
+            }
         }
         Column(modifier = Modifier.fillMaxWidth()) {
             if (gym != null) {
