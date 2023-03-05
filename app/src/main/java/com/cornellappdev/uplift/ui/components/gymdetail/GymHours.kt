@@ -24,6 +24,11 @@ import com.cornellappdev.uplift.R
 import com.cornellappdev.uplift.models.TimeInterval
 import com.cornellappdev.uplift.util.montserratFamily
 
+/**
+ * An expandable component that displays the hours for the given gym throughout the week.
+ * Displays only today's hours by default, but can be tapped to display the hours for the upcoming
+ * week.
+ */
 @Composable
 fun GymHours(hours: List<List<TimeInterval>?>, today: Int) {
     var collapsed by remember { mutableStateOf(true) }
@@ -136,6 +141,12 @@ fun GymHours(hours: List<List<TimeInterval>?>, today: Int) {
     }
 }
 
+/**
+ * Displays the hours for a particular day of the week.
+ *
+ * @param day a String representation of the day of the week (e.g. "M", "Tu")
+ * @param hours a list of [TimeInterval]s that denote the hours for the day.
+ */
 @Composable
 fun HoursOfWeek(day: String, hours: List<TimeInterval>?) {
     Row(

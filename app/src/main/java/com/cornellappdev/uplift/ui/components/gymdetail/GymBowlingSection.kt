@@ -16,6 +16,10 @@ import com.cornellappdev.uplift.util.ACCENT_CLOSED
 import com.cornellappdev.uplift.util.GRAY01
 import com.cornellappdev.uplift.util.montserratFamily
 
+/**
+ * Displays bowling information for the given gym throughout the week, defaulting to the day
+ * given by parameter [today].
+ */
 @Composable
 fun GymBowlingSection(today: Int, gym: Gym) {
     var selectedDay by remember { mutableStateOf(today) }

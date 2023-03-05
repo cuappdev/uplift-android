@@ -12,6 +12,10 @@ import androidx.compose.ui.unit.sp
 import com.cornellappdev.uplift.models.Gym
 import com.cornellappdev.uplift.util.montserratFamily
 
+/**
+ * A vertical list of classes that a gym offers today. Refers to [ClassInfoCard] to create the class
+ * cards.
+ */
 @Composable
 fun GymTodaysClasses(gym: Gym) {
     Column(

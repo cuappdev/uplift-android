@@ -31,6 +31,9 @@ import com.cornellappdev.uplift.util.isCurrentlyOpen
 import com.cornellappdev.uplift.util.montserratFamily
 import java.util.*
 
+/**
+ * A screen displaying all the information about a selected gym.
+ */
 @Composable
 fun GymDetailScreen(
     gymDetailViewModel: GymDetailViewModel

@@ -17,6 +17,10 @@ import com.cornellappdev.uplift.models.Gym
 import com.cornellappdev.uplift.models.TimeInterval
 import com.cornellappdev.uplift.util.*
 
+/**
+ * Displays gymnasium information for the given gym throughout the week,, defaulting to the day
+ * given by parameter [today].
+ */
 @Composable
 fun GymGymnasiumSection(today: Int, gym: Gym) {
     var selectedDay by remember {

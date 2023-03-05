@@ -58,7 +58,7 @@ data class TimeOfDay(
     }
 
     override fun toString(): String {
-        return "$hour:${if (minute.toString().length == 1) "0$minute" else "$minute"}${if (isAM) "AM" else "PM"}"
+        return "$hour:${if (minute.toString().length == 1) "0$minute" else "$minute"} ${if (isAM) "AM" else "PM"}"
     }
 
     override fun equals(other: Any?): Boolean {

@@ -20,6 +20,9 @@ import com.cornellappdev.uplift.models.UpliftClass
 import com.cornellappdev.uplift.util.*
 import java.util.*
 
+/**
+ * A card component displaying information about [thisClass].
+ */
 @Composable
 fun ClassInfoCard(thisClass: UpliftClass) {
     val today = Calendar.getInstance()

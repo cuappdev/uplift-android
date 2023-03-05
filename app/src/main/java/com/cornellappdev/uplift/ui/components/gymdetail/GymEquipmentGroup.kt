@@ -15,8 +15,11 @@ import com.cornellappdev.uplift.models.EquipmentGrouping
 import com.cornellappdev.uplift.util.PRIMARY_BLACK
 import com.cornellappdev.uplift.util.montserratFamily
 
+/**
+ * A bubble displaying information about an [EquipmentGrouping].
+ */
 @Composable
-fun EquipmentGroup(group: EquipmentGrouping) {
+fun GymEquipmentGroup(group: EquipmentGrouping) {
     Surface(
         modifier = Modifier
             .fillMaxHeight()

@@ -22,6 +22,10 @@ import androidx.compose.ui.unit.sp
 import com.cornellappdev.uplift.models.PopularTimes
 import com.cornellappdev.uplift.util.*
 
+/**
+ * Displays the popular times designated by [popularTimes]. Each column can be tapped on to display
+ * a time and description of busyness.
+ */
 @Composable
 fun PopularTimesSection(popularTimes: PopularTimes) {
     var startAnimation by remember { mutableStateOf(false) }

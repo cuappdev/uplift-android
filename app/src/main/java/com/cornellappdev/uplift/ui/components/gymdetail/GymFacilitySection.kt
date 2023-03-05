@@ -28,11 +28,13 @@ import com.cornellappdev.uplift.util.ACCENT_OPEN
 import com.cornellappdev.uplift.util.isCurrentlyOpen
 import com.cornellappdev.uplift.util.montserratFamily
 
+/**
+ * Displays the "FACILITIES" for a gym. Includes information on Equipment, Gymnasiums, Swimming,
+ * Bowling, and Miscellaneous info pertaining to a gym.
+ */
 @Composable
 fun GymFacilitySection(gym: Gym, today: Int) {
     var openedFacility by remember { mutableStateOf(-1) }
-
-    // TODO: Add Closed / Open logic for both facilities and the gym itself using local time.
 
     Column(modifier = Modifier.fillMaxWidth()) {
         Spacer(modifier = Modifier.height(24.dp))
@@ -66,7 +68,7 @@ fun GymFacilitySection(gym: Gym, today: Int) {
             ) {
                 Spacer(modifier = Modifier.width(24.dp))
                 for (group in gym.equipmentGroupings) {
-                    EquipmentGroup(group = group)
+                    GymEquipmentGroup(group = group)
                     Spacer(modifier = Modifier.width(10.dp))
                 }
                 Spacer(modifier = Modifier.width(14.dp))
@@ -170,6 +172,11 @@ fun GymFacilitySection(gym: Gym, today: Int) {
     }
 }
 
+/**
+ * One facility tab which can contain some Composable content that may be expanded upon a tap.
+ *
+ * @param painter The icon which this facility tab should display.
+ */
 @Composable
 fun FacilityTab(
     painter: Painter,

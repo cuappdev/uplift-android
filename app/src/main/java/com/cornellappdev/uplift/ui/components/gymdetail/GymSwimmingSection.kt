@@ -16,6 +16,10 @@ import com.cornellappdev.uplift.util.LIGHT_YELLOW
 import com.cornellappdev.uplift.util.PRIMARY_YELLOW
 import com.cornellappdev.uplift.util.montserratFamily
 
+/**
+ * Displays swimming information for the given gym throughout the week, defaulting to the day
+ * given by parameter [today].
+ */
 @Composable
 fun GymSwimmingSection(today: Int, gym: Gym) {
     var selectedDay by remember { mutableStateOf(today) }
