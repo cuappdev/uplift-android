@@ -8,6 +8,27 @@ data class TimeInterval(
     override fun toString(): String {
         return "$start - $end"
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (other !is TimeInterval) {
+            return false
+        }
+
+        return start == other.start && end == other.end
+    }
+
+    override fun hashCode(): Int {
+        var result = start.hashCode()
+        result = 31 * result + end.hashCode()
+        return result
+    }
+
+    /**
+     * Returns true if [time] is contained within this interval. False otherwise.
+     */
+    fun within(time: TimeOfDay): Boolean {
+        return time.compareTo(start) >= 0 && time.compareTo(end) <= 0
+    }
 }
 
 /**
@@ -15,12 +36,59 @@ data class TimeInterval(
  * AM or PM.
  * */
 data class TimeOfDay(
+    /** An hour between 1 and 12, inclusive. */
     val hour: Int,
-    val minute: Int,
-    val isAM: Boolean
+    /** A minute between 0 and 59, inclusive. */
+    val minute: Int = 0,
+    val isAM: Boolean = true
 ) {
+    /**
+     * Returns a new [TimeOfDay] created by advancing the current time of day by [deltaHours] and [deltaMinutes].
+     */
+    fun getTimeLater(deltaMinutes: Int, deltaHours: Int): TimeOfDay {
+        var newHour = (hour + deltaHours + (minute + deltaMinutes) / 60) % 12
+        val overlaps = (hour + deltaHours + (minute + deltaMinutes) / 60) / 12
+        if (newHour == 0) newHour = 12
+
+        return TimeOfDay(
+            newHour,
+            (minute + deltaMinutes) % 60,
+            if ((overlaps % 2 == 0)) isAM else !isAM
+        )
+    }
+
     override fun toString(): String {
-        return "$hour:${if (minute.toString().length == 1) "0$minute" else "$minute"}${if (isAM) "AM" else "PM"}"
+        return "$hour:${if (minute.toString().length == 1) "0$minute" else "$minute"} ${if (isAM) "AM" else "PM"}"
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (other !is TimeOfDay) {
+            return false
+        }
+
+        return other.hour == hour && other.minute == minute && other.isAM == isAM
+    }
+
+    override fun hashCode(): Int {
+        var result = hour
+        result = 31 * result + minute
+        result = 31 * result + isAM.hashCode()
+        return result
+    }
+
+    /**
+     * Returns a negative integer if this time comes before [other], 0 if they are the same time,
+     * and a positive integer if this time comes after [other].
+     */
+    fun compareTo(other: TimeOfDay): Int {
+        if (other.isAM && !isAM) return 1
+        if (!other.isAM && isAM) return -1
+
+        if (other.hour != hour) {
+            return (hour % 12) - (other.hour % 12)
+        }
+
+        return minute - other.minute
     }
 }
 
@@ -31,9 +99,16 @@ data class TimeOfDay(
 data class PopularTimes(
     val startTime: TimeOfDay,
     /**
-     * A list of floats in [0..100] that indicates how busy a gym is at a particular hour.
-     * The first float in [busyList] represents the time designated by [startTime]. All other floats
-     * represent one hour after the previous float in the list.
+     * A list of ints in [0..100] that indicates how busy a gym is at a particular hour.
+     * The first int in [busyList] represents the time designated by [startTime]. All other floats
+     * represent one hour after the previous int in the list.
      */
-    val busyList : List<Float>
+    val busyList: List<Int>
 )
+
+/**
+ * Representation type of a facility's open or closed status.
+ */
+enum class OpenType {
+    NOT_APPLICABLE, OPEN, CLOSED
+}

@@ -1,5 +1,6 @@
 package com.cornellappdev.uplift.models
 
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 
@@ -20,30 +21,51 @@ data class Gym(
      * If an index of this list is null, that indicates the gym is closed on that day.
      */
     val hours: List<List<TimeInterval>?>,
-    val popularTimes : PopularTimes,
-    val equipmentGroupings : List<EquipmentGrouping>,
+    val popularTimes: PopularTimes,
+    val equipmentGroupings: List<EquipmentGrouping>,
     /**
      * A list of exactly 7 [GymnasiumInfo] objects. Each object corresponds to a particular
      * day (index 0=Monday, ..., 6=Sunday). A null object indicates that the gymnasium is closed
      * that day.
+     *
+     * If the list itself is null, that indicates gymnasiums are not offered by this gym.
      */
-    val gymnasiumInfo : List<GymnasiumInfo?>,
+    val gymnasiumInfo: List<GymnasiumInfo?>?,
 
     /**
      * A list of exactly 7 [SwimmingInfo] objects. Each object corresponds to a particular
      * day (index 0=Monday, ..., 6=Sunday). A null object indicates that the pool is closed
      * that day.
+     *
+     * If the list itself is null, that indicates swimming is not offered by this gym.
      */
-    val swimmingInfo : List<SwimmingInfo?>,
+    val swimmingInfo: List<SwimmingInfo?>?,
 
     /**
      * A list of exactly 7 [SwimmingInfo] objects. Each object corresponds to a particular
      * day (index 0=Monday, ..., 6=Sunday). A null object indicates that the pool is closed
      * that day.
+     *
+     * If the list itself is null, that indicates bowling is not offered by this gym.
      */
-    val bowlingInfo : List<BowlingInfo?>,
-    val miscellaneous : List<String>,
-    val classesToday : List<UpliftClass>,
-    val favoriteState : State<Boolean> = mutableStateOf(false)
-)
+    val bowlingInfo: List<BowlingInfo?>?,
+    val miscellaneous: List<String>,
+    val classesToday: List<UpliftClass>,
+    val imageUrl: String,
+    val favoriteState: State<Boolean> = mutableStateOf(false)
+) {
+    /**
+     * Returns a boolean indicating whether this gym is favorited or not. Safe for recomposition.
+     */
+    fun isFavorite() : Boolean {
+        return favoriteState.value
+    }
+
+    /**
+     * Toggles the favorite status of this gym.
+     */
+    fun toggleFavorite() {
+        (favoriteState as MutableState<Boolean>).value = !favoriteState.value
+    }
+}
 
