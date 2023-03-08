@@ -5,17 +5,32 @@ import java.util.*
 
 val exCalendarMarch25: Calendar = GregorianCalendar(2023,2,25)
 
-val exampleClassMusclePump = UpliftClass(
+val exampleClassMusclePump2 = UpliftClass(
     name = "Muscle Pump",
     location = "Teagle Multipurpose Room",
     instructorName = "Claire M.",
-    minutes = 60,
+    minutes = 45,
     date = exCalendarMarch25,
-    time = TimeInterval(TimeOfDay(10, 30, isAM = true), TimeOfDay(11, 30, isAM = true)),
-    functions = listOf("Idk breh muscles"),
-    preparation = "? Get ready to pump",
-    description = "Yeah get ready to pump...",
+    time = TimeInterval(TimeOfDay(10, 30, isAM = true), TimeOfDay(11, 15, isAM = true)),
+    functions = listOf("Core", "Overall Fitness", "Stability"),
+    preparation = "Footwear appropriate for movement",
+    description = "Put a little muscle into your workout and join us for a class designed to build muscle endurance with low to medium weights and high repetitions. A variety of equipment and strength training techniques will be used in this class. There is no cardio portion in these sessions. Footwear that is appropriate for movement is required for this class. ",
     nextSessions = listOf(),
+    imageUrl = "https://post.healthline.com/wp-content/uploads/2020/01/Young-Women-Having-Sports-Rowing-Training-Drill-in-Gym-732x549-thumbnail.jpg"
+)
+
+val exampleClassMusclePump1 = UpliftClass(
+    name = "Muscle Pump",
+    location = "Helen Newman Hall",
+    instructorName = "Claire M.",
+    minutes = 45,
+    date = GregorianCalendar(2023,2,24),
+    time = TimeInterval(TimeOfDay(10, 30, isAM = true), TimeOfDay(11, 15, isAM = true)),
+    functions = listOf("Core", "Overall Fitness", "Stability"),
+    preparation = "Footwear appropriate for movement",
+    description = "Put a little muscle into your workout and join us for a class designed to build muscle endurance with low to medium weights and high repetitions. A variety of equipment and strength training techniques will be used in this class. There is no cardio portion in these sessions. Footwear that is appropriate for movement is required for this class. ",
+    nextSessions = listOf(exampleClassMusclePump2),
+    imageUrl = "https://post.healthline.com/wp-content/uploads/2020/01/Young-Women-Having-Sports-Rowing-Training-Drill-in-Gym-732x549-thumbnail.jpg"
 )
 
 val exampleSwimmingList2 = listOf(
@@ -287,8 +302,8 @@ val testMorrison = Gym(
     bowlingInfo = exampleBowlingList,
     miscellaneous = listOf("Game area", "Outdoor basketball court", "Bouldering wall"),
     classesToday = listOf(
-        exampleClassMusclePump,
-        exampleClassMusclePump
+        exampleClassMusclePump1,
+        exampleClassMusclePump2
     ),
     imageUrl = "https://recreation.athletics.cornell.edu/sites/recreation.athletics.cornell.edu/files/photo-galleries/DB%20_%20Benches_TM.jpeg"
 )

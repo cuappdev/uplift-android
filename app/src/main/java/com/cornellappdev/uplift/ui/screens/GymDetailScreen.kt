@@ -18,6 +18,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.cornellappdev.uplift.R
 import com.cornellappdev.uplift.ui.components.GymFacilitySection
@@ -36,7 +37,7 @@ import java.util.*
  */
 @Composable
 fun GymDetailScreen(
-    gymDetailViewModel: GymDetailViewModel
+    gymDetailViewModel: GymDetailViewModel = viewModel()
 ) {
     val gym by gymDetailViewModel.gymFlow.collectAsState()
     val day = ((Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 2) + 7) % 7
@@ -54,7 +55,7 @@ fun GymDetailScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(1f),
-                contentScale = ContentScale.FillBounds
+                contentScale = ContentScale.Crop
             )
             Icon(
                 painter = painterResource(id = R.drawable.ic_back_arrow),
