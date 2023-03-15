@@ -1,5 +1,7 @@
 package com.cornellappdev.uplift.models
 
+import java.util.*
+
 /** A [TimeInterval] is one interval of time with a start and end [TimeOfDay]. */
 data class TimeInterval(
     val start: TimeOfDay,
@@ -89,6 +91,20 @@ data class TimeOfDay(
         }
 
         return minute - other.minute
+    }
+
+    /**
+     * Returns the time of this [TimeOfDay] as the number of milliseconds from 12AM.
+     *
+     * @param c A Calendar which specifies the year, month, and day of this time.
+     */
+    fun timeInMillis(c : Calendar) : Long {
+        val newC = c.clone() as Calendar
+        newC.set(Calendar.AM_PM, if (isAM) Calendar.AM else Calendar.PM)
+        newC.set(Calendar.HOUR, hour % 12)
+        newC.set(Calendar.MINUTE, minute)
+
+        return newC.timeInMillis
     }
 }
 

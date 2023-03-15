@@ -11,6 +11,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -42,13 +43,20 @@ fun GymDetailScreen(
     val gym by gymDetailViewModel.gymFlow.collectAsState()
     val day = ((Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 2) + 7) % 7
 
+    val scrollState = rememberScrollState()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .verticalScroll(rememberScrollState())
+            .verticalScroll(scrollState)
     ) {
         // Top Part
-        Box(modifier = Modifier.fillMaxWidth()) {
+        Box(modifier = Modifier
+            .fillMaxWidth()
+            .graphicsLayer {
+                alpha = 1 - (scrollState.value.toFloat() / 2000)
+                translationY = 0.5f * scrollState.value
+            }) {
             AsyncImage(
                 model = gym?.imageUrl,
                 contentDescription = null,
@@ -112,7 +120,7 @@ fun GymDetailScreen(
                 }
             }
         }
-        Column(modifier = Modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.fillMaxWidth().background(Color.White)) {
             if (gym != null) {
                 GymHours(hours = gym!!.hours, day)
                 LineSpacer()

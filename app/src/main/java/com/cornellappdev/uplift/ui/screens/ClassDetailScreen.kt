@@ -1,13 +1,12 @@
 package com.cornellappdev.uplift.ui.screens
 
+import android.content.Intent
+import android.provider.CalendarContract
 import android.util.Log
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
@@ -17,41 +16,61 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.cornellappdev.uplift.R
+import com.cornellappdev.uplift.models.UpliftClass
+import com.cornellappdev.uplift.ui.components.ClassInfoCard
 import com.cornellappdev.uplift.ui.viewmodels.ClassDetailViewModel
 import com.cornellappdev.uplift.util.PRIMARY_BLACK
+import com.cornellappdev.uplift.util.bebasNeueFamily
 import com.cornellappdev.uplift.util.montserratFamily
 
-@Preview
+
+/**
+ * A screen that displays details for a given [UpliftClass].
+ */
 @Composable
 fun ClassDetailScreen(
     classDetailViewModel: ClassDetailViewModel = viewModel()
 ) {
     val upliftClass by classDetailViewModel.classFlow.collectAsState()
+    val context = LocalContext.current
+
+    val scrollState = rememberScrollState()
+
     Log.d("url", upliftClass?.imageUrl.toString())
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .verticalScroll(rememberScrollState())
+            .verticalScroll(scrollState)
     ) {
         // Top Part
-        Box(modifier = Modifier.fillMaxWidth()) {
+        Box(modifier = Modifier
+            .fillMaxWidth()
+            .graphicsLayer {
+                translationY = 0.5f * scrollState.value
+            }
+        ) {
             AsyncImage(
                 model = upliftClass?.imageUrl,
                 contentDescription = null,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .aspectRatio(1f),
+                    .aspectRatio(1f)
+                    .graphicsLayer {
+                        alpha = 1 - (scrollState.value.toFloat() / 2000)
+                    },
                 contentScale = ContentScale.Crop
             )
             Icon(
@@ -87,9 +106,8 @@ fun ClassDetailScreen(
                     fontSize = 48.sp,
                     lineHeight = 48.sp,
                     textAlign = TextAlign.Center,
-                    letterSpacing = 1.13.sp,
                     color = Color.White,
-                    fontFamily = montserratFamily
+                    fontFamily = bebasNeueFamily
                 )
                 Text(
                     text = upliftClass?.location ?: "",
@@ -118,7 +136,10 @@ fun ClassDetailScreen(
                 modifier = Modifier
                     .size(84.dp)
                     .offset(y = 42.dp)
-                    .align(Alignment.BottomCenter)
+                    .align(Alignment.BottomCenter).graphicsLayer {
+                        alpha = 2f
+                        translationY = -0.5f * scrollState.value.toFloat()
+                    }
             ) {
                 Box(modifier = Modifier.fillMaxSize()) {
                     Text(
@@ -135,6 +156,170 @@ fun ClassDetailScreen(
                     )
                 }
             }
+        }
+
+        // Date & Time Information
+        Column(
+            modifier = Modifier.fillMaxWidth().background(Color.White),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Spacer(Modifier.height(24.dp))
+            Text(
+                text = upliftClass?.dateAsString() ?: "",
+                fontWeight = FontWeight(300),
+                fontSize = 16.sp,
+                lineHeight = 19.5.sp,
+                textAlign = TextAlign.Center,
+                color = PRIMARY_BLACK,
+                fontFamily = montserratFamily
+            )
+            Spacer(Modifier.height(8.dp))
+            Text(
+                text = upliftClass?.time.toString(),
+                fontWeight = FontWeight(500),
+                fontSize = 16.sp,
+                lineHeight = 19.5.sp,
+                textAlign = TextAlign.Center,
+                color = PRIMARY_BLACK,
+                fontFamily = montserratFamily
+            )
+            Spacer(Modifier.height(24.dp))
+            Icon(
+                painter = painterResource(id = R.drawable.ic_calendar),
+                contentDescription = "Add to calendar",
+                tint = PRIMARY_BLACK,
+                modifier = Modifier.clickable {
+                    upliftClass?.let {
+                        val intent = Intent(Intent.ACTION_EDIT)
+                        intent.type = "vnd.android.cursor.item/event"
+                        intent.putExtra("beginTime", it.time.start.timeInMillis(it.date))
+                        intent.putExtra("allDay", false)
+                        intent.putExtra("endTime", it.time.end.timeInMillis(it.date))
+                        intent.putExtra(CalendarContract.Events.EVENT_LOCATION, it.location)
+                        intent.putExtra("title", it.name)
+                        startActivity(context, intent, null)
+                    }
+                }
+            )
+            Spacer(Modifier.height(4.dp))
+            Text(
+                text = "ADD TO CALENDAR",
+                fontWeight = FontWeight(700),
+                fontSize = 12.sp,
+                lineHeight = 14.63.sp,
+                textAlign = TextAlign.Center,
+                color = PRIMARY_BLACK,
+                fontFamily = montserratFamily
+            )
+            Spacer(Modifier.height(24.dp))
+        }
+
+        LineSpacer()
+
+        // Function
+        Column(
+            modifier = Modifier.fillMaxWidth().background(Color.White),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Spacer(Modifier.height(24.dp))
+            Text(
+                text = "FUNCTION",
+                fontWeight = FontWeight(700),
+                fontSize = 16.sp,
+                lineHeight = 19.5.sp,
+                textAlign = TextAlign.Center,
+                color = PRIMARY_BLACK,
+                fontFamily = montserratFamily
+            )
+            Spacer(Modifier.height(12.dp))
+            Text(
+                text = upliftClass?.functionsAsString() ?: "",
+                fontWeight = FontWeight(300),
+                fontSize = 14.sp,
+                lineHeight = 17.07.sp,
+                textAlign = TextAlign.Center,
+                color = PRIMARY_BLACK,
+                fontFamily = montserratFamily,
+                modifier = Modifier.padding(horizontal = 48.dp)
+            )
+            Spacer(Modifier.height(24.dp))
+        }
+
+        LineSpacer()
+
+        // Preparation
+        Column(
+            modifier = Modifier.fillMaxWidth().background(Color.White),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Spacer(Modifier.height(24.dp))
+            Text(
+                text = "PREPARATION",
+                fontWeight = FontWeight(700),
+                fontSize = 16.sp,
+                lineHeight = 19.5.sp,
+                textAlign = TextAlign.Center,
+                color = PRIMARY_BLACK,
+                fontFamily = montserratFamily
+            )
+            Spacer(Modifier.height(12.dp))
+            Text(
+                text = upliftClass?.preparation ?: "",
+                fontWeight = FontWeight(300),
+                fontSize = 14.sp,
+                lineHeight = 17.07.sp,
+                textAlign = TextAlign.Center,
+                color = PRIMARY_BLACK,
+                fontFamily = montserratFamily,
+                modifier = Modifier.padding(horizontal = 48.dp)
+            )
+            Spacer(Modifier.height(24.dp))
+        }
+
+        LineSpacer()
+
+        // Description
+        Column(
+            modifier = Modifier.fillMaxWidth().background(Color.White),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Spacer(Modifier.height(24.dp))
+            Text(
+                text = upliftClass?.description ?: "",
+                fontWeight = FontWeight(300),
+                fontSize = 14.sp,
+                lineHeight = 17.07.sp,
+                textAlign = TextAlign.Center,
+                color = PRIMARY_BLACK,
+                fontFamily = montserratFamily,
+                modifier = Modifier.padding(horizontal = 48.dp)
+            )
+            Spacer(Modifier.height(24.dp))
+        }
+
+        LineSpacer()
+
+        // Next Sessions
+        Column(
+            modifier = Modifier.fillMaxWidth().background(Color.White),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Spacer(Modifier.height(24.dp))
+            Text(
+                text = "NEXT SESSIONS",
+                fontWeight = FontWeight(700),
+                fontSize = 16.sp,
+                lineHeight = 19.5.sp,
+                textAlign = TextAlign.Center,
+                color = PRIMARY_BLACK,
+                fontFamily = montserratFamily
+            )
+            Spacer(Modifier.height(24.dp))
+            for (nextClass: UpliftClass in upliftClass?.nextSessions ?: listOf()) {
+                ClassInfoCard(thisClass = nextClass)
+                Spacer(modifier = Modifier.height(12.dp))
+            }
+            Spacer(Modifier.height(36.dp))
         }
     }
 }

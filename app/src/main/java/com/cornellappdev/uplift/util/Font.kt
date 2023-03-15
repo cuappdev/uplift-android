@@ -33,3 +33,7 @@ val montserratFamily = FontFamily(
     Font(R.font.montserrat_thin, Thin),
     Font(R.font.montserrat_thin_italic, Thin, Italic),
 )
+
+val bebasNeueFamily = FontFamily(
+    Font(R.font.bebas_neue_regular)
+)

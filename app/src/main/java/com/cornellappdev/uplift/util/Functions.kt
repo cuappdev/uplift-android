@@ -67,6 +67,26 @@ fun calendarDayToString(calendar : Calendar) : String {
 }
 
 /**
+ * Takes in a calendar and returns a string representation of its day of week.
+ *
+ * Example: 3/15/2023 as a calendar would return: "Wednesday"
+ */
+fun calendarDayOfWeekToString(calendar : Calendar) : String {
+    val dayString = when (calendar.get(Calendar.DAY_OF_WEEK)) {
+        Calendar.MONDAY -> "Monday"
+        Calendar.TUESDAY -> "Tuesday"
+        Calendar.WEDNESDAY -> "Wednesday"
+        Calendar.THURSDAY -> "Thursday"
+        Calendar.FRIDAY -> "Friday"
+        Calendar.SATURDAY -> "Saturday"
+        Calendar.SUNDAY -> "Sunday"
+        else -> "Monday"
+    }
+
+    return dayString
+}
+
+/**
  * Returns the current system time as a [TimeOfDay] object.
  */
 fun getSystemTime() : TimeOfDay {
