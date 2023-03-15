@@ -120,7 +120,9 @@ fun GymDetailScreen(
                 }
             }
         }
-        Column(modifier = Modifier.fillMaxWidth().background(Color.White)) {
+        Column(modifier = Modifier
+            .fillMaxWidth()
+            .background(Color.White)) {
             if (gym != null) {
                 GymHours(hours = gym!!.hours, day)
                 LineSpacer()

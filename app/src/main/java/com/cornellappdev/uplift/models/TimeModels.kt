@@ -98,7 +98,7 @@ data class TimeOfDay(
      *
      * @param c A Calendar which specifies the year, month, and day of this time.
      */
-    fun timeInMillis(c : Calendar) : Long {
+    fun timeInMillis(c: Calendar): Long {
         val newC = c.clone() as Calendar
         newC.set(Calendar.AM_PM, if (isAM) Calendar.AM else Calendar.PM)
         newC.set(Calendar.HOUR, hour % 12)

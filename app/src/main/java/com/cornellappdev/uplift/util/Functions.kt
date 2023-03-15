@@ -45,7 +45,7 @@ fun getOverallTimeInterval(times: List<TimeInterval>): TimeInterval {
  *
  * Example: Valentine's Day as a calendar would be returned as: "Feb 14"
  */
-fun calendarDayToString(calendar : Calendar) : String {
+fun calendarDayToString(calendar: Calendar): String {
     val month = when (calendar.get(Calendar.MONTH)) {
         0 -> "Jan"
         1 -> "Feb"
@@ -71,7 +71,7 @@ fun calendarDayToString(calendar : Calendar) : String {
  *
  * Example: 3/15/2023 as a calendar would return: "Wednesday"
  */
-fun calendarDayOfWeekToString(calendar : Calendar) : String {
+fun calendarDayOfWeekToString(calendar: Calendar): String {
     val dayString = when (calendar.get(Calendar.DAY_OF_WEEK)) {
         Calendar.MONDAY -> "Monday"
         Calendar.TUESDAY -> "Tuesday"
@@ -89,8 +89,8 @@ fun calendarDayOfWeekToString(calendar : Calendar) : String {
 /**
  * Returns the current system time as a [TimeOfDay] object.
  */
-fun getSystemTime() : TimeOfDay {
-    val c : Calendar = Calendar.getInstance()
+fun getSystemTime(): TimeOfDay {
+    val c: Calendar = Calendar.getInstance()
     val hour = if (c.get(Calendar.HOUR) == 0) 12 else c.get(Calendar.HOUR)
     val minute = c.get(Calendar.MINUTE)
     val isAM = c.get(Calendar.AM_PM) == Calendar.AM
@@ -102,6 +102,6 @@ fun getSystemTime() : TimeOfDay {
  * at [timeOfDay]. If [timeOfDay] is not passed a value, it defaults to the system time
  * retrieved by [getSystemTime].
  */
-fun isCurrentlyOpen(times : List<TimeInterval>, timeOfDay : TimeOfDay = getSystemTime()) : Boolean {
+fun isCurrentlyOpen(times: List<TimeInterval>, timeOfDay: TimeOfDay = getSystemTime()): Boolean {
     return times.find { interval -> interval.within(timeOfDay) } != null
 }

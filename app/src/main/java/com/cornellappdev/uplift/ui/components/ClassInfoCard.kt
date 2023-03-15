@@ -68,7 +68,7 @@ fun ClassInfoCard(thisClass: UpliftClass) {
 
                     Spacer(modifier = Modifier.width(32.dp))
 
-                    Column() {
+                    Column {
                         Text(
                             text = thisClass.name,
                             fontFamily = montserratFamily,

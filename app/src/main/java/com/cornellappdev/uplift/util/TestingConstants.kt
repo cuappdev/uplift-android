@@ -3,7 +3,7 @@ package com.cornellappdev.uplift.util
 import com.cornellappdev.uplift.models.*
 import java.util.*
 
-val exCalendarMarch25: Calendar = GregorianCalendar(2023,2,25)
+val exCalendarMarch25: Calendar = GregorianCalendar(2023, 2, 25)
 
 val exampleClassMusclePump2 = UpliftClass(
     name = "Muscle Pump",
@@ -24,7 +24,7 @@ val exampleClassMusclePump1 = UpliftClass(
     location = "Helen Newman Hall",
     instructorName = "Claire M.",
     minutes = 45,
-    date = GregorianCalendar(2023,2,24),
+    date = GregorianCalendar(2023, 2, 24),
     time = TimeInterval(TimeOfDay(12, 30, isAM = true), TimeOfDay(12, 15, isAM = false)),
     functions = listOf("Core", "Overall Fitness", "Stability"),
     preparation = "Footwear appropriate for movement",

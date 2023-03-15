@@ -18,7 +18,7 @@ data class UpliftClass(
     val functions: List<String>,
     val preparation: String,
     val description: String,
-    val imageUrl : String,
+    val imageUrl: String,
     val nextSessions: List<UpliftClass>,
 
     val favoriteState: State<Boolean> = mutableStateOf(false)
@@ -42,7 +42,7 @@ data class UpliftClass(
      *
      * Example: "Tuesday, Oct 8"
      */
-    fun dateAsString() : String {
+    fun dateAsString(): String {
         return "${calendarDayOfWeekToString(date)}, ${calendarDayToString(date)}"
     }
 
@@ -51,7 +51,7 @@ data class UpliftClass(
      *
      * Example: "Core  ·  Overall Fitness  ·  Stability"
      */
-    fun functionsAsString() : String {
+    fun functionsAsString(): String {
         var result = ""
         functions.forEachIndexed { i, function ->
             if (i != 0) result += "  "

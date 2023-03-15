@@ -136,7 +136,8 @@ fun ClassDetailScreen(
                 modifier = Modifier
                     .size(84.dp)
                     .offset(y = 42.dp)
-                    .align(Alignment.BottomCenter).graphicsLayer {
+                    .align(Alignment.BottomCenter)
+                    .graphicsLayer {
                         alpha = 2f
                         translationY = -0.5f * scrollState.value.toFloat()
                     }
@@ -160,7 +161,9 @@ fun ClassDetailScreen(
 
         // Date & Time Information
         Column(
-            modifier = Modifier.fillMaxWidth().background(Color.White),
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color.White),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Spacer(Modifier.height(24.dp))
@@ -218,7 +221,9 @@ fun ClassDetailScreen(
 
         // Function
         Column(
-            modifier = Modifier.fillMaxWidth().background(Color.White),
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color.White),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Spacer(Modifier.height(24.dp))
@@ -249,7 +254,9 @@ fun ClassDetailScreen(
 
         // Preparation
         Column(
-            modifier = Modifier.fillMaxWidth().background(Color.White),
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color.White),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Spacer(Modifier.height(24.dp))
@@ -280,7 +287,9 @@ fun ClassDetailScreen(
 
         // Description
         Column(
-            modifier = Modifier.fillMaxWidth().background(Color.White),
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color.White),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Spacer(Modifier.height(24.dp))
@@ -301,7 +310,9 @@ fun ClassDetailScreen(
 
         // Next Sessions
         Column(
-            modifier = Modifier.fillMaxWidth().background(Color.White),
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color.White),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Spacer(Modifier.height(24.dp))
