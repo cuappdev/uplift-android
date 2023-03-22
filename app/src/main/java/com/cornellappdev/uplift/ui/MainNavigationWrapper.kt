@@ -35,7 +35,7 @@ fun MainNavigationWrapper(
 
     systemUiController.setStatusBarColor(PRIMARY_YELLOW)
 
-    NavHost(navController = navController, startDestination = "classDetail") {
+    NavHost(navController = navController, startDestination = "home") {
         composable(route = "home") {
             HomeScreen(homeViewModel = homeViewModel)
         }
