@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -45,6 +46,9 @@ fun GymDetailScreen(
 
     val scrollState = rememberScrollState()
 
+    val screenDensity = LocalConfiguration.current.densityDpi / 160f
+    val screenHeightPx = LocalConfiguration.current.screenHeightDp.toFloat() * screenDensity
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -54,7 +58,7 @@ fun GymDetailScreen(
         Box(modifier = Modifier
             .fillMaxWidth()
             .graphicsLayer {
-                alpha = 1 - (scrollState.value.toFloat() / 2000)
+                alpha = 1 - (scrollState.value.toFloat() / screenHeightPx)
                 translationY = 0.5f * scrollState.value
             }) {
             AsyncImage(
@@ -120,9 +124,11 @@ fun GymDetailScreen(
                 }
             }
         }
-        Column(modifier = Modifier
-            .fillMaxWidth()
-            .background(Color.White)) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color.White)
+        ) {
             if (gym != null) {
                 GymHours(hours = gym!!.hours, day)
                 LineSpacer()

@@ -2,7 +2,6 @@ package com.cornellappdev.uplift.ui.screens
 
 import android.content.Intent
 import android.provider.CalendarContract
-import android.util.Log
 import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
@@ -18,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -48,7 +48,8 @@ fun ClassDetailScreen(
 
     val scrollState = rememberScrollState()
 
-    Log.d("url", upliftClass?.imageUrl.toString())
+    val screenDensity = LocalConfiguration.current.densityDpi / 160f
+    val screenHeightPx = LocalConfiguration.current.screenHeightDp.toFloat() * screenDensity
 
     Column(
         modifier = Modifier
@@ -69,7 +70,7 @@ fun ClassDetailScreen(
                     .fillMaxWidth()
                     .aspectRatio(1f)
                     .graphicsLayer {
-                        alpha = 1 - (scrollState.value.toFloat() / 2000)
+                        alpha = 1 - (scrollState.value.toFloat() / screenHeightPx)
                     },
                 contentScale = ContentScale.Crop
             )
