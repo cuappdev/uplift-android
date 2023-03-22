@@ -7,8 +7,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.cornellappdev.uplift.ui.screens.ClassDetailScreen
 import com.cornellappdev.uplift.ui.screens.GymDetailScreen
+import com.cornellappdev.uplift.ui.screens.HomeScreen
 import com.cornellappdev.uplift.ui.viewmodels.ClassDetailViewModel
 import com.cornellappdev.uplift.ui.viewmodels.GymDetailViewModel
+import com.cornellappdev.uplift.ui.viewmodels.HomeViewModel
 import com.cornellappdev.uplift.util.PRIMARY_YELLOW
 import com.cornellappdev.uplift.util.exampleClassMusclePump1
 import com.cornellappdev.uplift.util.testMorrison
@@ -21,7 +23,8 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 @Composable
 fun MainNavigationWrapper(
     gymDetailViewModel: GymDetailViewModel = viewModel(),
-    classDetailViewModel: ClassDetailViewModel = viewModel()
+    classDetailViewModel: ClassDetailViewModel = viewModel(),
+    homeViewModel: HomeViewModel = viewModel()
 ) {
     val navController = rememberNavController()
     val systemUiController: SystemUiController = rememberSystemUiController()
@@ -33,6 +36,9 @@ fun MainNavigationWrapper(
     systemUiController.setStatusBarColor(PRIMARY_YELLOW)
 
     NavHost(navController = navController, startDestination = "classDetail") {
+        composable(route = "home") {
+            HomeScreen(homeViewModel = homeViewModel)
+        }
         composable(route = "gymDetail") {
             GymDetailScreen(gymDetailViewModel = gymDetailViewModel)
         }
