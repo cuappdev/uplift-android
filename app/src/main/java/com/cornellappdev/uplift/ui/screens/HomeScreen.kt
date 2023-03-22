@@ -17,6 +17,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.cornellappdev.uplift.ui.components.general.UpliftTopBar
 import com.cornellappdev.uplift.ui.components.home.BriefClassInfoCard
+import com.cornellappdev.uplift.ui.viewmodels.ClassDetailViewModel
 import com.cornellappdev.uplift.ui.viewmodels.HomeViewModel
 import com.cornellappdev.uplift.util.GRAY04
 import com.cornellappdev.uplift.util.montserratFamily
@@ -25,7 +26,11 @@ import com.cornellappdev.uplift.util.montserratFamily
  * The home page of Uplift.
  */
 @Composable
-fun HomeScreen(homeViewModel: HomeViewModel = viewModel(), navController: NavHostController) {
+fun HomeScreen(
+    homeViewModel: HomeViewModel = viewModel(),
+    navController: NavHostController,
+    classDetailViewModel: ClassDetailViewModel = viewModel()
+) {
     val titleText = homeViewModel.titleFlow.collectAsState().value
     val upliftClasses = homeViewModel.classesFlow.collectAsState().value
 
@@ -57,7 +62,11 @@ fun HomeScreen(homeViewModel: HomeViewModel = viewModel(), navController: NavHos
                 modifier = Modifier.padding(top = 12.dp, bottom = 24.dp)
             ) {
                 items(items = upliftClasses) { upliftClass ->
-                    BriefClassInfoCard(thisClass = upliftClass, navController = navController)
+                    BriefClassInfoCard(
+                        thisClass = upliftClass,
+                        navController = navController,
+                        classDetailViewModel = classDetailViewModel
+                    )
                     Spacer(Modifier.width(16.dp))
                 }
             }

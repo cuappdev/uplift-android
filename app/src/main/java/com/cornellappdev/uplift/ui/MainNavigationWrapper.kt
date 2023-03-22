@@ -12,7 +12,6 @@ import com.cornellappdev.uplift.ui.viewmodels.ClassDetailViewModel
 import com.cornellappdev.uplift.ui.viewmodels.GymDetailViewModel
 import com.cornellappdev.uplift.ui.viewmodels.HomeViewModel
 import com.cornellappdev.uplift.util.PRIMARY_YELLOW
-import com.cornellappdev.uplift.util.exampleClassMusclePump1
 import com.cornellappdev.uplift.util.testMorrison
 import com.google.accompanist.systemuicontroller.SystemUiController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
@@ -31,13 +30,16 @@ fun MainNavigationWrapper(
 
     // Just for testing...
     gymDetailViewModel.selectGym(testMorrison)
-    classDetailViewModel.selectClass(exampleClassMusclePump1)
 
     systemUiController.setStatusBarColor(PRIMARY_YELLOW)
 
     NavHost(navController = navController, startDestination = "home") {
         composable(route = "home") {
-            HomeScreen(homeViewModel = homeViewModel, navController = navController)
+            HomeScreen(
+                homeViewModel = homeViewModel,
+                navController = navController,
+                classDetailViewModel = classDetailViewModel
+            )
         }
         composable(route = "gymDetail") {
             GymDetailScreen(gymDetailViewModel = gymDetailViewModel, navController = navController)
