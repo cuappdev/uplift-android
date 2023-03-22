@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.cornellappdev.uplift.R
 import com.cornellappdev.uplift.ui.components.GymFacilitySection
@@ -28,6 +29,7 @@ import com.cornellappdev.uplift.ui.components.GymHours
 import com.cornellappdev.uplift.ui.components.GymTodaysClasses
 import com.cornellappdev.uplift.ui.components.PopularTimesSection
 import com.cornellappdev.uplift.ui.viewmodels.GymDetailViewModel
+import com.cornellappdev.uplift.ui.viewmodels.HomeViewModel
 import com.cornellappdev.uplift.util.GRAY01
 import com.cornellappdev.uplift.util.PRIMARY_BLACK
 import com.cornellappdev.uplift.util.isCurrentlyOpen
@@ -39,7 +41,9 @@ import java.util.*
  */
 @Composable
 fun GymDetailScreen(
-    gymDetailViewModel: GymDetailViewModel = viewModel()
+    gymDetailViewModel: GymDetailViewModel = viewModel(),
+    navController: NavHostController,
+    homeViewModel: HomeViewModel = viewModel()
 ) {
     val gym by gymDetailViewModel.gymFlow.collectAsState()
     val day = ((Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 2) + 7) % 7
@@ -76,7 +80,11 @@ fun GymDetailScreen(
                     .align(
                         Alignment.TopStart
                     )
-                    .padding(top = 47.dp, start = 22.dp),
+                    .padding(top = 47.dp, start = 22.dp)
+                    .clickable {
+                        homeViewModel.openHome()
+                        navController.navigate("home")
+                    },
                 tint = Color.White
             )
             Image(

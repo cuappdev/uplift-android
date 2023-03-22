@@ -37,13 +37,16 @@ fun MainNavigationWrapper(
 
     NavHost(navController = navController, startDestination = "home") {
         composable(route = "home") {
-            HomeScreen(homeViewModel = homeViewModel)
+            HomeScreen(homeViewModel = homeViewModel, navController = navController)
         }
         composable(route = "gymDetail") {
-            GymDetailScreen(gymDetailViewModel = gymDetailViewModel)
+            GymDetailScreen(gymDetailViewModel = gymDetailViewModel, navController = navController)
         }
         composable(route = "classDetail") {
-            ClassDetailScreen(classDetailViewModel = classDetailViewModel)
+            ClassDetailScreen(
+                classDetailViewModel = classDetailViewModel,
+                navController = navController
+            )
         }
     }
 }

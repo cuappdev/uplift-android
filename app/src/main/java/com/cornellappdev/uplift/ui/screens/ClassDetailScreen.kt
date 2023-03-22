@@ -26,11 +26,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.cornellappdev.uplift.R
 import com.cornellappdev.uplift.models.UpliftClass
 import com.cornellappdev.uplift.ui.components.ClassInfoCard
 import com.cornellappdev.uplift.ui.viewmodels.ClassDetailViewModel
+import com.cornellappdev.uplift.ui.viewmodels.HomeViewModel
 import com.cornellappdev.uplift.util.PRIMARY_BLACK
 import com.cornellappdev.uplift.util.bebasNeueFamily
 import com.cornellappdev.uplift.util.montserratFamily
@@ -41,7 +43,9 @@ import com.cornellappdev.uplift.util.montserratFamily
  */
 @Composable
 fun ClassDetailScreen(
-    classDetailViewModel: ClassDetailViewModel = viewModel()
+    classDetailViewModel: ClassDetailViewModel = viewModel(),
+    homeViewModel: HomeViewModel = viewModel(),
+    navController : NavHostController
 ) {
     val upliftClass by classDetailViewModel.classFlow.collectAsState()
     val context = LocalContext.current
@@ -81,7 +85,10 @@ fun ClassDetailScreen(
                     .align(
                         Alignment.TopStart
                     )
-                    .padding(top = 47.dp, start = 22.dp),
+                    .padding(top = 47.dp, start = 22.dp).clickable {
+                        homeViewModel.openHome()
+                        navController.navigate("home")
+                    },
                 tint = Color.White
             )
             Image(
