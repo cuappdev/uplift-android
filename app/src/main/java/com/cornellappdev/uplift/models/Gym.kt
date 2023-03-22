@@ -57,7 +57,7 @@ data class Gym(
     /**
      * Returns a boolean indicating whether this gym is favorited or not. Safe for recomposition.
      */
-    fun isFavorite() : Boolean {
+    fun isFavorite(): Boolean {
         return favoriteState.value
     }
 

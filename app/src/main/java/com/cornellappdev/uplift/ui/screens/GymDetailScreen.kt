@@ -11,13 +11,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.cornellappdev.uplift.R
 import com.cornellappdev.uplift.ui.components.GymFacilitySection
@@ -36,25 +39,35 @@ import java.util.*
  */
 @Composable
 fun GymDetailScreen(
-    gymDetailViewModel: GymDetailViewModel
+    gymDetailViewModel: GymDetailViewModel = viewModel()
 ) {
     val gym by gymDetailViewModel.gymFlow.collectAsState()
     val day = ((Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 2) + 7) % 7
 
+    val scrollState = rememberScrollState()
+
+    val screenDensity = LocalConfiguration.current.densityDpi / 160f
+    val screenHeightPx = LocalConfiguration.current.screenHeightDp.toFloat() * screenDensity
+
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .verticalScroll(rememberScrollState())
+            .verticalScroll(scrollState)
     ) {
         // Top Part
-        Box(modifier = Modifier.fillMaxWidth()) {
+        Box(modifier = Modifier
+            .fillMaxWidth()
+            .graphicsLayer {
+                alpha = 1 - (scrollState.value.toFloat() / screenHeightPx)
+                translationY = 0.5f * scrollState.value
+            }) {
             AsyncImage(
                 model = gym?.imageUrl,
                 contentDescription = null,
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(1f),
-                contentScale = ContentScale.FillBounds
+                contentScale = ContentScale.Crop
             )
             Icon(
                 painter = painterResource(id = R.drawable.ic_back_arrow),
@@ -111,7 +124,11 @@ fun GymDetailScreen(
                 }
             }
         }
-        Column(modifier = Modifier.fillMaxWidth()) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color.White)
+        ) {
             if (gym != null) {
                 GymHours(hours = gym!!.hours, day)
                 LineSpacer()

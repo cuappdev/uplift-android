@@ -1,12 +1,13 @@
 package com.cornellappdev.uplift.ui.viewmodels
 
+import androidx.lifecycle.ViewModel
 import com.cornellappdev.uplift.models.Gym
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 /** A [GymDetailViewModel] is a view model for GymDetailScreen. */
-class GymDetailViewModel {
+class GymDetailViewModel : ViewModel() {
 
     private val _gymFlow: MutableStateFlow<Gym?> = MutableStateFlow(null)
 
