@@ -188,33 +188,38 @@ fun ClassDetailScreen(
                 fontFamily = montserratFamily
             )
             Spacer(Modifier.height(24.dp))
-            Icon(
-                painter = painterResource(id = R.drawable.ic_calendar),
-                contentDescription = "Add to calendar",
-                tint = PRIMARY_BLACK,
-                modifier = Modifier.clickable {
-                    upliftClass?.let {
-                        val intent = Intent(Intent.ACTION_EDIT)
-                        intent.type = "vnd.android.cursor.item/event"
-                        intent.putExtra("beginTime", it.time.start.timeInMillis(it.date))
-                        intent.putExtra("allDay", false)
-                        intent.putExtra("endTime", it.time.end.timeInMillis(it.date))
-                        intent.putExtra(CalendarContract.Events.EVENT_LOCATION, it.location)
-                        intent.putExtra("title", it.name)
-                        startActivity(context, intent, null)
-                    }
-                }
-            )
-            Spacer(Modifier.height(4.dp))
-            Text(
-                text = "ADD TO CALENDAR",
-                fontWeight = FontWeight(700),
-                fontSize = 12.sp,
-                lineHeight = 14.63.sp,
-                textAlign = TextAlign.Center,
-                color = PRIMARY_BLACK,
-                fontFamily = montserratFamily
-            )
+            Column(
+                modifier = Modifier
+                    .clickable {
+                        upliftClass?.let {
+                            val intent = Intent(Intent.ACTION_EDIT)
+                            intent.type = "vnd.android.cursor.item/event"
+                            intent.putExtra("beginTime", it.time.start.timeInMillis(it.date))
+                            intent.putExtra("allDay", false)
+                            intent.putExtra("endTime", it.time.end.timeInMillis(it.date))
+                            intent.putExtra(CalendarContract.Events.EVENT_LOCATION, it.location)
+                            intent.putExtra("title", it.name)
+                            startActivity(context, intent, null)
+                        }
+                    },
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_calendar),
+                    contentDescription = "Add to calendar",
+                    tint = PRIMARY_BLACK
+                )
+                Spacer(Modifier.height(4.dp))
+                Text(
+                    text = "ADD TO CALENDAR",
+                    fontWeight = FontWeight(700),
+                    fontSize = 12.sp,
+                    lineHeight = 14.63.sp,
+                    textAlign = TextAlign.Center,
+                    color = PRIMARY_BLACK,
+                    fontFamily = montserratFamily
+                )
+            }
             Spacer(Modifier.height(24.dp))
         }
 
