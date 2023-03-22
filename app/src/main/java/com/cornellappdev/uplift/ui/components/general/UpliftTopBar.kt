@@ -1,7 +1,6 @@
 package com.cornellappdev.uplift.ui.components.general
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
@@ -29,7 +28,7 @@ fun UpliftTopBar(
     TopAppBar(
         contentPadding = PaddingValues(16.dp),
         backgroundColor = Color.White,
-        elevation = 20.dp
+        elevation = 4.dp
     ) {
         Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             if (showIcon) {
