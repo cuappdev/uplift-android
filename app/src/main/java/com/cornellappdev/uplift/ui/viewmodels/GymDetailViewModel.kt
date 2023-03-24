@@ -17,6 +17,9 @@ class GymDetailViewModel : ViewModel() {
      */
     val gymFlow: StateFlow<Gym?> = _gymFlow.asStateFlow()
 
+    /**
+     * Specifies which gym this view model should display.
+     */
     fun selectGym(gym: Gym) {
         _gymFlow.value = gym
     }

@@ -23,6 +23,9 @@ import com.cornellappdev.uplift.models.UpliftClass
 import com.cornellappdev.uplift.ui.viewmodels.ClassDetailViewModel
 import com.cornellappdev.uplift.util.*
 
+/**
+ * A component displaying brief information as to a [UpliftClass]. Used on the home screen.
+ */
 @Composable
 fun BriefClassInfoCard(
     thisClass: UpliftClass,
