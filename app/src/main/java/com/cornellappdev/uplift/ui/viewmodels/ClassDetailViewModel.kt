@@ -16,6 +16,9 @@ class ClassDetailViewModel : ViewModel() {
      */
     val classFlow: StateFlow<UpliftClass?> = _classFlow.asStateFlow()
 
+    /**
+     * Specifies which class this view model should display.
+     */
     fun selectClass(upliftClass: UpliftClass) {
         _classFlow.value = upliftClass
     }
