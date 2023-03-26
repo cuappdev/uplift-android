@@ -1,12 +1,13 @@
 package com.cornellappdev.uplift.ui.viewmodels
 
+import androidx.lifecycle.ViewModel
 import com.cornellappdev.uplift.models.UpliftClass
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-/** A [ClassViewModel] is a view model for ClassDetailScreen.*/
-class ClassViewModel {
+/** A [ClassDetailViewModel] is a view model for ClassDetailScreen.*/
+class ClassDetailViewModel : ViewModel() {
     private val _classFlow: MutableStateFlow<UpliftClass?> = MutableStateFlow(null)
 
     /**
@@ -15,6 +16,9 @@ class ClassViewModel {
      */
     val classFlow: StateFlow<UpliftClass?> = _classFlow.asStateFlow()
 
+    /**
+     * Specifies which class this view model should display.
+     */
     fun selectClass(upliftClass: UpliftClass) {
         _classFlow.value = upliftClass
     }
