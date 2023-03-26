@@ -127,6 +127,8 @@ fun HomeCard(gymexample: Gym) {
                             fontSize = 12.sp,
                             fontFamily = montserratFamily,
                             fontWeight = FontWeight(500),
+                            color = GRAY03
+
                         )
 
                     }
@@ -155,7 +157,9 @@ fun HomeCard(gymexample: Gym) {
                             fontSize = 12.sp,
                             fontFamily = montserratFamily,
                             fontWeight = FontWeight(500),
-                            modifier = Modifier.padding(top = 2.dp)
+                            modifier = Modifier.padding(top = 2.dp),
+                            color = GRAY03
+
                         )
                         Spacer(modifier = Modifier.width(12.dp))
                     }
