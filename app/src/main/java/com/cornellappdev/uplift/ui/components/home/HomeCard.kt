@@ -1,6 +1,7 @@
 package com.cornellappdev.uplift.ui.components.home
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
@@ -15,6 +16,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.Alignment.Companion.TopEnd
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.colorResource
 import coil.compose.AsyncImage
 import androidx.compose.ui.text.font.FontWeight
@@ -23,6 +25,7 @@ import com.cornellappdev.uplift.R
 import com.cornellappdev.uplift.models.*
 import com.cornellappdev.uplift.util.*
 import java.util.*
+
 
 /**
  * Parameters: Gym Class
@@ -33,7 +36,7 @@ import java.util.*
 @Composable
 fun HomeCard(gymexample: Gym) {
 
-    val day = ((Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 2) + 7) % 7
+    val day: Int = ((Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 2) + 7) % 7
     val lastTime =
         gymexample.hours.get(day)!!.get((gymexample.hours.get(day)!!.size - 1)).end.toString()
     Box(
@@ -44,21 +47,21 @@ fun HomeCard(gymexample: Gym) {
     )
     {
         Card(
-            shape = RoundedCornerShape(12.dp)
+            shape = RoundedCornerShape(12.dp),
+            backgroundColor = Color.White
         ) {
-            Column() {
+            Column {
                 Box(modifier = Modifier.weight(3F)) {
                     AsyncImage(
                         model = gymexample.imageUrl,
                         modifier = Modifier.fillMaxWidth(),
                         contentDescription = "",
-                        contentScale = ContentScale.FillBounds
+                        contentScale = ContentScale.Crop
                     )
                     Image(
                         painterResource(id = if (gymexample.isFavorite()) R.drawable.ic_star_filled else R.drawable.ic_star),
                         contentDescription = "Star Icon",
                         modifier = Modifier
-                            // .size(24.dp)
                             .align(TopEnd)
                             .padding(top = 12.dp, end = 12.dp)
                             .align(TopEnd)
@@ -72,8 +75,7 @@ fun HomeCard(gymexample: Gym) {
                     )
                 }
                 Column(modifier = Modifier.weight(2F)) {
-                    Row()
-                    {
+                    Row(modifier = Modifier.padding(top = 8.dp)) {
                         Spacer(Modifier.width(12.dp))
                         Text(
                             text = gymexample.name,
@@ -88,20 +90,22 @@ fun HomeCard(gymexample: Gym) {
                         Image(
                             painter = painterResource(id = R.drawable.ic_dumbbell),
                             contentDescription = "Dumbell",
+                            colorFilter = ColorFilter.tint(color = GRAY04)
                         )
                         Image(
                             painter = painterResource(id = R.drawable.ic_bowling_pins),
                             contentDescription = "Bowling Pins",
+                            colorFilter = ColorFilter.tint(color = GRAY04)
                         )
                         Spacer(modifier = Modifier.width(12.dp))
                         Spacer(Modifier.height(4.dp))
                     }
-                    Row() {
+                    Row {
                         Spacer(Modifier.width(12.dp))
-                        if (determineOpen(gymexample.hours)) Text(
+                        if (isCurrentlyOpen(gymexample.hours.get(day)!!)) Text(
                             text = "Open",
                             fontSize = 12.sp,
-                            color = Color.Green,
+                            color = ACCENT_OPEN,
 
                             fontFamily = montserratFamily,
                             fontWeight = FontWeight(500),
@@ -126,7 +130,7 @@ fun HomeCard(gymexample: Gym) {
                         )
 
                     }
-                    Row() {
+                    Row {
                         Spacer(Modifier.width(12.dp))
                         Text(
                             text = "Cramped",
@@ -142,7 +146,8 @@ fun HomeCard(gymexample: Gym) {
                             fontSize = 12.sp,
                             fontFamily = montserratFamily,
                             fontWeight = FontWeight(500),
-                            modifier = Modifier.padding(top = 2.dp)
+                            modifier = Modifier.padding(top = 2.dp),
+                            color = GRAY03
                         )
                         Spacer(modifier = Modifier.weight(1F))
                         Text(
@@ -160,12 +165,5 @@ fun HomeCard(gymexample: Gym) {
 
     }
 }
-fun determineOpen(listTime: List<List<TimeInterval>?>): Boolean {
-    for (i in 0..listTime.size - 1) {
-        if (isCurrentlyOpen(listTime.get(i)!!)) {
-            return true;
-        }
-    }
-    return false;
-}
+
 
