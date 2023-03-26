@@ -17,7 +17,7 @@ class MainActivity : ComponentActivity() {
         gymDetailViewModel.selectGym(testMorrison)
         setContent {
             UpliftTheme {
-               MainNavigationWrapper(gymDetailViewModel = gymDetailViewModel)
+                MainNavigationWrapper(gymDetailViewModel = gymDetailViewModel)
             }
         }
     }
