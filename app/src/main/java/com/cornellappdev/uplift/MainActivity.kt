@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import com.cornellappdev.uplift.ui.MainNavigationWrapper
+import com.cornellappdev.uplift.ui.components.home.HomeCard
 import com.cornellappdev.uplift.ui.theme.UpliftTheme
 
 class MainActivity : ComponentActivity() {
