@@ -23,9 +23,7 @@ import com.cornellappdev.uplift.ui.components.home.SportButton
 import com.cornellappdev.uplift.ui.viewmodels.ClassDetailViewModel
 import com.cornellappdev.uplift.ui.viewmodels.HomeViewModel
 import com.cornellappdev.uplift.util.GRAY04
-import com.cornellappdev.uplift.R
 import com.cornellappdev.uplift.util.montserratFamily
-import com.cornellappdev.uplift.util.sports
 
 /**
  * The home page of Uplift.
@@ -38,6 +36,7 @@ fun HomeScreen(
 ) {
     val titleText = homeViewModel.titleFlow.collectAsState().value
     val upliftClasses = homeViewModel.classesFlow.collectAsState().value
+    val sportsList = homeViewModel.sportsFlow.collectAsState().value
 
     val mainScrollState = rememberLazyListState()
     val classRowState = rememberLazyListState()
@@ -86,7 +85,7 @@ fun HomeScreen(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "Favorite Sports",
+                    text = "Your Sports",
                     fontFamily = montserratFamily,
                     fontSize = 14.sp,
                     fontWeight = FontWeight(700),
@@ -115,7 +114,7 @@ fun HomeScreen(
                 ),
                 modifier = Modifier.padding(top = 12.dp, bottom = 24.dp)
             ) {
-                items(items = sports) { sport ->
+                items(items = sportsList) { sport ->
                     SportButton(text = sport.name, painterResource(id = sport.painterId)) {
 
                     }

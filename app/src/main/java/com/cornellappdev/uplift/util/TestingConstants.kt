@@ -1,5 +1,6 @@
 package com.cornellappdev.uplift.util
 
+import com.cornellappdev.uplift.R
 import com.cornellappdev.uplift.models.*
 import java.util.*
 
@@ -307,3 +308,10 @@ val testMorrison = Gym(
     ),
     imageUrl = "https://recreation.athletics.cornell.edu/sites/recreation.athletics.cornell.edu/files/photo-galleries/DB%20_%20Benches_TM.jpeg"
 )
+
+val sports: List<Sport> = listOf(
+    Sport(painterId = R.drawable.ic_bowling_pins, name = "Bowling"),
+    Sport(painterId = R.drawable.ic_dumbbell, name = "Lifting"),
+    Sport(painterId = R.drawable.ic_basketball_hoop, name = "Basketball"),
+    Sport(painterId = R.drawable.ic_swimming_pool, name = "Swimming"),
+).sorted()
