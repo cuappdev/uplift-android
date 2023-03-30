@@ -1,7 +1,6 @@
 package com.cornellappdev.uplift.ui.components.home
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
@@ -9,43 +8,39 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment.Companion.TopEnd
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.Alignment.Companion.TopEnd
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.res.colorResource
 import coil.compose.AsyncImage
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import com.cornellappdev.uplift.R
-import com.cornellappdev.uplift.models.*
+import com.cornellappdev.uplift.models.Gym
 import com.cornellappdev.uplift.util.*
 import java.util.*
 
 
 /**
  * Parameters: Gym Class
- * Builds Homecard for gym class with picture, timings, current availability.
+ * Builds Home card for gym class with picture, timings, current availability.
  * Each gym has the ability to be starred and added to users liked gyms.
  */
-
 @Composable
-fun HomeCard(gymexample: Gym) {
-
+fun HomeCard(gym: Gym) {
     val day: Int = ((Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 2) + 7) % 7
     val lastTime =
-        gymexample.hours.get(day)!!.get((gymexample.hours.get(day)!!.size - 1)).end.toString()
+        gym.hours[day]!![(gym.hours[day]!!.size - 1)].end.toString()
     Box(
         modifier = Modifier
             .padding(horizontal = 16.dp, vertical = 12.dp)
             .fillMaxWidth()
             .aspectRatio(2F / 1F)
-    )
-    {
+    ) {
         Card(
             shape = RoundedCornerShape(12.dp),
             backgroundColor = Color.White
@@ -53,13 +48,13 @@ fun HomeCard(gymexample: Gym) {
             Column {
                 Box(modifier = Modifier.weight(3F)) {
                     AsyncImage(
-                        model = gymexample.imageUrl,
+                        model = gym.imageUrl,
                         modifier = Modifier.fillMaxWidth(),
                         contentDescription = "",
                         contentScale = ContentScale.Crop
                     )
                     Image(
-                        painterResource(id = if (gymexample.isFavorite()) R.drawable.ic_star_filled else R.drawable.ic_star),
+                        painterResource(id = if (gym.isFavorite()) R.drawable.ic_star_filled else R.drawable.ic_star),
                         contentDescription = "Star Icon",
                         modifier = Modifier
                             .align(TopEnd)
@@ -69,7 +64,7 @@ fun HomeCard(gymexample: Gym) {
                                 interactionSource = MutableInteractionSource(),
                                 indication = null
                             ) {
-                                gymexample.toggleFavorite()
+                                gym.toggleFavorite()
                             }
 
                     )
@@ -78,7 +73,7 @@ fun HomeCard(gymexample: Gym) {
                     Row(modifier = Modifier.padding(top = 8.dp)) {
                         Spacer(Modifier.width(12.dp))
                         Text(
-                            text = gymexample.name,
+                            text = gym.name,
                             fontSize = 16.sp,
                             fontFamily = montserratFamily,
                             fontWeight = FontWeight(500)
@@ -102,7 +97,7 @@ fun HomeCard(gymexample: Gym) {
                     }
                     Row {
                         Spacer(Modifier.width(12.dp))
-                        if (isCurrentlyOpen(gymexample.hours.get(day)!!)) Text(
+                        if (isCurrentlyOpen(gym.hours[day]!!)) Text(
                             text = "Open",
                             fontSize = 12.sp,
                             color = ACCENT_OPEN,
@@ -123,7 +118,7 @@ fun HomeCard(gymexample: Gym) {
                         @Todo Make this dynamic with networking instead of hardcoding info.
                          */
                         Text(
-                            text = "Closes at " + lastTime,
+                            text = "Closes at $lastTime",
                             fontSize = 12.sp,
                             fontFamily = montserratFamily,
                             fontWeight = FontWeight(500),
