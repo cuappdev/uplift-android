@@ -33,6 +33,14 @@ fun MainNavigationWrapper(
 
     systemUiController.setStatusBarColor(PRIMARY_YELLOW)
 
+    navController.addOnDestinationChangedListener { controller, destination, arguments ->
+        if (destination.route == "home") {
+            homeViewModel.openHome()
+        } else if (destination.route == "classDetail") {
+            classDetailViewModel.popBackStack()
+        }
+    }
+
     NavHost(navController = navController, startDestination = "home") {
         composable(route = "home") {
             HomeScreen(
@@ -43,13 +51,21 @@ fun MainNavigationWrapper(
             )
         }
         composable(route = "gymDetail") {
-            GymDetailScreen(gymDetailViewModel = gymDetailViewModel, navController = navController)
+            GymDetailScreen(
+                gymDetailViewModel = gymDetailViewModel,
+                navController = navController,
+                classDetailViewModel = classDetailViewModel
+            ) {
+                navController.popBackStack()
+            }
         }
         composable(route = "classDetail") {
             ClassDetailScreen(
                 classDetailViewModel = classDetailViewModel,
                 navController = navController
-            )
+            ) {
+                navController.popBackStack()
+            }
         }
     }
 }

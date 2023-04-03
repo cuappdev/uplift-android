@@ -9,7 +9,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.cornellappdev.uplift.models.Gym
+import com.cornellappdev.uplift.ui.viewmodels.ClassDetailViewModel
 import com.cornellappdev.uplift.util.montserratFamily
 
 /**
@@ -17,7 +19,11 @@ import com.cornellappdev.uplift.util.montserratFamily
  * cards.
  */
 @Composable
-fun GymTodaysClasses(gym: Gym) {
+fun GymTodaysClasses(
+    gym: Gym,
+    classDetailViewModel: ClassDetailViewModel,
+    navController: NavHostController
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -34,7 +40,11 @@ fun GymTodaysClasses(gym: Gym) {
             textAlign = TextAlign.Center
         )
         for (aClass in gym.classesToday) {
-            ClassInfoCard(thisClass = aClass)
+            ClassInfoCard(
+                thisClass = aClass,
+                classDetailViewModel = classDetailViewModel,
+                navController = navController
+            )
             Spacer(modifier = Modifier.height(12.dp))
         }
         Spacer(modifier = Modifier.height(36.dp))

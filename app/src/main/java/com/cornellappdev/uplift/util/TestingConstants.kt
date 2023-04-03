@@ -17,7 +17,7 @@ val exampleClassMusclePump2 = UpliftClass(
     preparation = "Footwear appropriate for movement",
     description = "Put a little muscle into your workout and join us for a class designed to build muscle endurance with low to medium weights and high repetitions. A variety of equipment and strength training techniques will be used in this class. There is no cardio portion in these sessions. Footwear that is appropriate for movement is required for this class. ",
     nextSessions = listOf(),
-    imageUrl = "https://post.healthline.com/wp-content/uploads/2020/01/Young-Women-Having-Sports-Rowing-Training-Drill-in-Gym-732x549-thumbnail.jpg"
+    imageUrl = "https://content.active.com/Assets/Active.com+Content+Site+Digital+Assets/Fitness/Best+Rowing+Apps/rowing-apps_header.jpg"
 )
 
 val exampleClassMusclePump1 = UpliftClass(

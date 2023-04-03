@@ -28,6 +28,7 @@ import com.cornellappdev.uplift.ui.components.GymFacilitySection
 import com.cornellappdev.uplift.ui.components.GymHours
 import com.cornellappdev.uplift.ui.components.GymTodaysClasses
 import com.cornellappdev.uplift.ui.components.PopularTimesSection
+import com.cornellappdev.uplift.ui.viewmodels.ClassDetailViewModel
 import com.cornellappdev.uplift.ui.viewmodels.GymDetailViewModel
 import com.cornellappdev.uplift.ui.viewmodels.HomeViewModel
 import com.cornellappdev.uplift.util.GRAY01
@@ -42,8 +43,10 @@ import java.util.*
 @Composable
 fun GymDetailScreen(
     gymDetailViewModel: GymDetailViewModel = viewModel(),
+    classDetailViewModel: ClassDetailViewModel,
     navController: NavHostController,
-    homeViewModel: HomeViewModel = viewModel()
+    homeViewModel: HomeViewModel = viewModel(),
+    onBack: () -> Unit
 ) {
     val gym by gymDetailViewModel.gymFlow.collectAsState()
     val day = ((Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 2) + 7) % 7
@@ -81,10 +84,7 @@ fun GymDetailScreen(
                         Alignment.TopStart
                     )
                     .padding(top = 47.dp, start = 22.dp)
-                    .clickable {
-                        homeViewModel.openHome()
-                        navController.navigate("home")
-                    },
+                    .clickable(onClick = onBack),
                 tint = Color.White
             )
             Image(
@@ -143,7 +143,11 @@ fun GymDetailScreen(
                 PopularTimesSection(gym!!.popularTimes)
                 LineSpacer()
                 GymFacilitySection(gym!!, day)
-                GymTodaysClasses(gym!!)
+                GymTodaysClasses(
+                    gym = gym!!,
+                    classDetailViewModel = classDetailViewModel,
+                    navController = navController
+                )
             }
         }
     }

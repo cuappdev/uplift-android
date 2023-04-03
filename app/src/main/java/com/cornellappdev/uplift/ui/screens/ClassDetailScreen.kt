@@ -45,7 +45,8 @@ import com.cornellappdev.uplift.util.montserratFamily
 fun ClassDetailScreen(
     classDetailViewModel: ClassDetailViewModel = viewModel(),
     homeViewModel: HomeViewModel = viewModel(),
-    navController: NavHostController
+    navController: NavHostController,
+    onBack: () -> Unit
 ) {
     val upliftClass by classDetailViewModel.classFlow.collectAsState()
     val context = LocalContext.current
@@ -86,10 +87,7 @@ fun ClassDetailScreen(
                         Alignment.TopStart
                     )
                     .padding(top = 47.dp, start = 22.dp)
-                    .clickable {
-                        homeViewModel.openHome()
-                        navController.navigate("home")
-                    },
+                    .clickable(onClick = onBack),
                 tint = Color.White
             )
             Image(
@@ -341,7 +339,11 @@ fun ClassDetailScreen(
             )
             Spacer(Modifier.height(24.dp))
             for (nextClass: UpliftClass in upliftClass?.nextSessions ?: listOf()) {
-                ClassInfoCard(thisClass = nextClass)
+                ClassInfoCard(
+                    thisClass = nextClass,
+                    navController = navController,
+                    classDetailViewModel = classDetailViewModel
+                )
                 Spacer(modifier = Modifier.height(12.dp))
             }
             Spacer(Modifier.height(36.dp))

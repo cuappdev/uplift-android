@@ -31,9 +31,11 @@ class HomeViewModel : ViewModel() {
     /** Emits lists of sports that should be shown in the 'Your Sports' section. */
     val sportsFlow = _sportsFlow.asStateFlow()
 
-    private val _gymFlow : MutableStateFlow<List<Gym>> = MutableStateFlow(listOf(
-        testMorrison, testMorrison
-    ))
+    private val _gymFlow: MutableStateFlow<List<Gym>> = MutableStateFlow(
+        listOf(
+            testMorrison, testMorrison
+        )
+    )
 
     /** Emits lists of gyms that should be shown in the 'Gyms' section. */
     val gymFlow = _gymFlow.asStateFlow()
