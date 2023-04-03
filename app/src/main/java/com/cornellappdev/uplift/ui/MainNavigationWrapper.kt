@@ -1,17 +1,30 @@
 package com.cornellappdev.uplift.ui
 
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.cornellappdev.uplift.nav.BottomNavScreen
 import com.cornellappdev.uplift.ui.screens.ClassDetailScreen
 import com.cornellappdev.uplift.ui.screens.GymDetailScreen
 import com.cornellappdev.uplift.ui.screens.HomeScreen
 import com.cornellappdev.uplift.ui.viewmodels.ClassDetailViewModel
 import com.cornellappdev.uplift.ui.viewmodels.GymDetailViewModel
 import com.cornellappdev.uplift.ui.viewmodels.HomeViewModel
+import com.cornellappdev.uplift.util.PRIMARY_BLACK
 import com.cornellappdev.uplift.util.PRIMARY_YELLOW
+import com.cornellappdev.uplift.util.montserratFamily
 import com.google.accompanist.systemuicontroller.SystemUiController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
@@ -26,6 +39,13 @@ fun MainNavigationWrapper(
 ) {
     val navController = rememberNavController()
     val systemUiController: SystemUiController = rememberSystemUiController()
+
+    val items = listOf(
+        BottomNavScreen.Home,
+        BottomNavScreen.Classes,
+        BottomNavScreen.Sports,
+        BottomNavScreen.Favorites
+    )
 
     systemUiController.setStatusBarColor(PRIMARY_YELLOW)
 
@@ -43,30 +63,81 @@ fun MainNavigationWrapper(
         }
     }
 
-    NavHost(navController = navController, startDestination = "home") {
-        composable(route = "home") {
-            HomeScreen(
-                homeViewModel = homeViewModel,
-                navController = navController,
-                classDetailViewModel = classDetailViewModel,
-                gymDetailViewModel = gymDetailViewModel
-            )
-        }
-        composable(route = "gymDetail") {
-            GymDetailScreen(
-                gymDetailViewModel = gymDetailViewModel,
-                navController = navController,
-                classDetailViewModel = classDetailViewModel
+    Scaffold(
+        bottomBar = {
+            BottomNavigation(
+                backgroundColor = PRIMARY_YELLOW,
+                contentColor = PRIMARY_BLACK,
+                elevation = 1.dp
             ) {
-                navController.popBackStack()
+                val navBackStackEntry by navController.currentBackStackEntryAsState()
+                val currentDestination = navBackStackEntry?.destination
+                items.forEach { screen ->
+                    val selected =
+                        currentDestination?.hierarchy?.any { it.route == screen.route } == true
+                    BottomNavigationItem(
+                        icon = {
+                            Icon(
+                                painter = painterResource(id = if (selected) screen.painterIds.second else screen.painterIds.first),
+                                contentDescription = null
+                            )
+                        },
+                        label = {
+                            Text(
+                                text = screen.titleText,
+                                fontFamily = montserratFamily,
+                                fontSize = 14.sp,
+                                fontWeight = if (selected) FontWeight(700) else FontWeight(500),
+                                lineHeight = 17.07.sp,
+                                textAlign = TextAlign.Center
+                            )
+                        },
+                        selected = selected,
+                        onClick = {
+                            navController.navigate(screen.route) {
+                                // Pop up to the start destination of the graph to
+                                // avoid building up a large stack of destinations
+                                // on the back stack as users select items
+                                popUpTo(navController.graph.findStartDestination().id) {
+                                    saveState = true
+                                }
+                                // Avoid multiple copies of the same destination when
+                                // reselecting the same item
+                                launchSingleTop = true
+                                // Restore state when reselecting a previously selected item
+                                restoreState = true
+                            }
+                        }
+                    )
+                }
             }
         }
-        composable(route = "classDetail") {
-            ClassDetailScreen(
-                classDetailViewModel = classDetailViewModel,
-                navController = navController
-            ) {
-                navController.popBackStack()
+    ) { innerPadding ->
+        NavHost(navController = navController, startDestination = "home") {
+            composable(route = "home") {
+                HomeScreen(
+                    homeViewModel = homeViewModel,
+                    navController = navController,
+                    classDetailViewModel = classDetailViewModel,
+                    gymDetailViewModel = gymDetailViewModel
+                )
+            }
+            composable(route = "gymDetail") {
+                GymDetailScreen(
+                    gymDetailViewModel = gymDetailViewModel,
+                    navController = navController,
+                    classDetailViewModel = classDetailViewModel
+                ) {
+                    navController.popBackStack()
+                }
+            }
+            composable(route = "classDetail") {
+                ClassDetailScreen(
+                    classDetailViewModel = classDetailViewModel,
+                    navController = navController
+                ) {
+                    navController.popBackStack()
+                }
             }
         }
     }
