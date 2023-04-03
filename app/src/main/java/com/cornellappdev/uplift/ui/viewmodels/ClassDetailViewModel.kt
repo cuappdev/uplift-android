@@ -10,7 +10,7 @@ import java.util.*
 /** A [ClassDetailViewModel] is a view model for ClassDetailScreen.*/
 class ClassDetailViewModel : ViewModel() {
     /**
-     * A Stack containing all the previous classes seen, not including the current class.
+     * A Stack containing all the previous classes seen, including the current class.
      */
     private val stack: Stack<UpliftClass> = Stack()
 
@@ -23,17 +23,20 @@ class ClassDetailViewModel : ViewModel() {
     val classFlow: StateFlow<UpliftClass?> = _classFlow.asStateFlow()
 
     /**
-     * Queues a new class to be opened when the class screen is next navigated to.
+     * Sets the current class being displayed to [upliftClass].
      */
-    fun selectClass(upliftClass: UpliftClass) {
+    fun openClass(upliftClass: UpliftClass) {
         stack.add(upliftClass)
+        _classFlow.value = upliftClass
     }
 
     /**
-     * Switches this ViewModel to display the most recently queued class.
+     * Switches this ViewModel to display the previously queued class.
      */
     fun popBackStack() {
         // TODO: This causes a glitch-y appearance when popping from a class to another class. Research a fix.
-        _classFlow.value = stack.pop()
+        stack.pop()
+        if (stack.isNotEmpty())
+            _classFlow.value = stack.peek()
     }
 }

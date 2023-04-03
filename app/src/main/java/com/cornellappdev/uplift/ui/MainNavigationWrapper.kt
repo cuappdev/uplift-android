@@ -11,11 +11,10 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
+import androidx.navigation.compose.*
 import com.cornellappdev.uplift.nav.BottomNavScreen
+import com.cornellappdev.uplift.nav.popBackClass
+import com.cornellappdev.uplift.nav.popBackGym
 import com.cornellappdev.uplift.ui.screens.ClassDetailScreen
 import com.cornellappdev.uplift.ui.screens.GymDetailScreen
 import com.cornellappdev.uplift.ui.screens.HomeScreen
@@ -51,14 +50,8 @@ fun MainNavigationWrapper(
 
     navController.addOnDestinationChangedListener { controller, destination, arguments ->
         when (destination.route) {
-            "home" -> {
+            "homeMain" -> {
                 homeViewModel.openHome()
-            }
-            "classDetail" -> {
-                classDetailViewModel.popBackStack()
-            }
-            "gymDetail" -> {
-                gymDetailViewModel.popBackStack()
             }
         }
     }
@@ -112,32 +105,43 @@ fun MainNavigationWrapper(
                 }
             }
         }
-    ) { innerPadding ->
+    ) {
         NavHost(navController = navController, startDestination = "home") {
-            composable(route = "home") {
-                HomeScreen(
-                    homeViewModel = homeViewModel,
-                    navController = navController,
-                    classDetailViewModel = classDetailViewModel,
-                    gymDetailViewModel = gymDetailViewModel
-                )
-            }
-            composable(route = "gymDetail") {
-                GymDetailScreen(
-                    gymDetailViewModel = gymDetailViewModel,
-                    navController = navController,
-                    classDetailViewModel = classDetailViewModel
-                ) {
-                    navController.popBackStack()
+            navigation(startDestination = "homeMain", route = "home") {
+                composable(route = "homeMain") {
+                    HomeScreen(
+                        homeViewModel = homeViewModel,
+                        navController = navController,
+                        classDetailViewModel = classDetailViewModel,
+                        gymDetailViewModel = gymDetailViewModel
+                    )
+                }
+                composable(route = "gymDetail") {
+                    GymDetailScreen(
+                        gymDetailViewModel = gymDetailViewModel,
+                        navController = navController,
+                        classDetailViewModel = classDetailViewModel
+                    ) {
+                        navController.popBackGym(gymDetailViewModel)
+                    }
+                }
+                composable(route = "classDetail") {
+                    ClassDetailScreen(
+                        classDetailViewModel = classDetailViewModel,
+                        navController = navController
+                    ) {
+                        navController.popBackClass(classDetailViewModel)
+                    }
                 }
             }
-            composable(route = "classDetail") {
-                ClassDetailScreen(
-                    classDetailViewModel = classDetailViewModel,
-                    navController = navController
-                ) {
-                    navController.popBackStack()
-                }
+            navigation(startDestination = "classesMain", route = "classes") {
+                composable(route = "classesMain") {}
+            }
+            navigation(startDestination = "sportsMain", route = "sports") {
+                composable(route = "sportsMain") {}
+            }
+            navigation(startDestination = "favoritesMain", route = "favorites") {
+                composable(route = "favoritesMain") {}
             }
         }
     }

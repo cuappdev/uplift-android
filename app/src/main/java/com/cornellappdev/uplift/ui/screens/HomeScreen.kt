@@ -1,5 +1,6 @@
 package com.cornellappdev.uplift.ui.screens
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -31,6 +32,7 @@ import com.cornellappdev.uplift.util.montserratFamily
 /**
  * The home page of Uplift.
  */
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HomeScreen(
     homeViewModel: HomeViewModel = viewModel(),
@@ -46,12 +48,14 @@ fun HomeScreen(
     val mainScrollState = rememberLazyListState()
     val classRowState = rememberLazyListState()
 
-    UpliftTopBar(showIcon = true, title = titleText)
-
     LazyColumn(state = mainScrollState, modifier = Modifier.fillMaxSize()) {
+        stickyHeader {
+            UpliftTopBar(showIcon = true, title = titleText)
+        }
+
         // TODAY'S CLASSES
         item {
-            Spacer(Modifier.height(120.dp))
+            Spacer(Modifier.height(24.dp))
             Text(
                 text = "TODAY'S CLASSES",
                 fontFamily = montserratFamily,
@@ -164,6 +168,10 @@ fun HomeScreen(
             HomeCard(gym) {
                 navController.navigateToGym(gymDetailViewModel = gymDetailViewModel, gym = gym)
             }
+        }
+
+        item {
+            Spacer(Modifier.height(84.dp))
         }
     }
 }
