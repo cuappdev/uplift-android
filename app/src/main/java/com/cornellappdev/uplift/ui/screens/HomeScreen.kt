@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.cornellappdev.uplift.nav.navigateToGym
 import com.cornellappdev.uplift.ui.components.general.UpliftTopBar
 import com.cornellappdev.uplift.ui.components.home.BriefClassInfoCard
 import com.cornellappdev.uplift.ui.components.home.HomeCard
@@ -161,8 +162,7 @@ fun HomeScreen(
 
         items(items = gymsList) { gym ->
             HomeCard(gym) {
-                gymDetailViewModel.selectGym(gym)
-                navController.navigate("gymDetail")
+                navController.navigateToGym(gymDetailViewModel = gymDetailViewModel, gym = gym)
             }
         }
     }

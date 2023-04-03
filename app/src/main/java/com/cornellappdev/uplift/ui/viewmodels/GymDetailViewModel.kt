@@ -1,13 +1,19 @@
 package com.cornellappdev.uplift.ui.viewmodels
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.cornellappdev.uplift.models.Gym
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import java.util.*
 
 /** A [GymDetailViewModel] is a view model for GymDetailScreen. */
 class GymDetailViewModel : ViewModel() {
+    /**
+     * A Stack containing all the previous gyms seen, not including the current gym.
+     */
+    private val stack: Stack<Gym> = Stack()
 
     private val _gymFlow: MutableStateFlow<Gym?> = MutableStateFlow(null)
 
@@ -18,9 +24,17 @@ class GymDetailViewModel : ViewModel() {
     val gymFlow: StateFlow<Gym?> = _gymFlow.asStateFlow()
 
     /**
-     * Specifies which gym this view model should display.
+     * Queues a new gym to be opened when the gym screen is next navigated to.
      */
     fun selectGym(gym: Gym) {
-        _gymFlow.value = gym
+        stack.add(gym)
+    }
+
+    /**
+     * Switches this ViewModel to display the most recently queued gym.
+     */
+    fun popBackStack() {
+        _gymFlow.value = stack.pop()
+        Log.d("navtest", stack.size.toString())
     }
 }

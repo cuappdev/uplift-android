@@ -12,7 +12,6 @@ import com.cornellappdev.uplift.ui.viewmodels.ClassDetailViewModel
 import com.cornellappdev.uplift.ui.viewmodels.GymDetailViewModel
 import com.cornellappdev.uplift.ui.viewmodels.HomeViewModel
 import com.cornellappdev.uplift.util.PRIMARY_YELLOW
-import com.cornellappdev.uplift.util.testMorrison
 import com.google.accompanist.systemuicontroller.SystemUiController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
@@ -28,16 +27,19 @@ fun MainNavigationWrapper(
     val navController = rememberNavController()
     val systemUiController: SystemUiController = rememberSystemUiController()
 
-    // Just for testing...
-    gymDetailViewModel.selectGym(testMorrison)
-
     systemUiController.setStatusBarColor(PRIMARY_YELLOW)
 
     navController.addOnDestinationChangedListener { controller, destination, arguments ->
-        if (destination.route == "home") {
-            homeViewModel.openHome()
-        } else if (destination.route == "classDetail") {
-            classDetailViewModel.popBackStack()
+        when (destination.route) {
+            "home" -> {
+                homeViewModel.openHome()
+            }
+            "classDetail" -> {
+                classDetailViewModel.popBackStack()
+            }
+            "gymDetail" -> {
+                gymDetailViewModel.popBackStack()
+            }
         }
     }
 

@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.cornellappdev.uplift.R
 import com.cornellappdev.uplift.models.UpliftClass
-import com.cornellappdev.uplift.nav.navigateClasses
+import com.cornellappdev.uplift.nav.navigateToClass
 import com.cornellappdev.uplift.ui.viewmodels.ClassDetailViewModel
 import com.cornellappdev.uplift.util.*
 
@@ -39,7 +39,7 @@ fun BriefClassInfoCard(
         modifier = Modifier
             .widthIn(min = 228.dp)
             .clickable {
-                navController.navigateClasses(
+                navController.navigateToClass(
                     classDetailViewModel = classDetailViewModel,
                     thisClass = thisClass
                 )

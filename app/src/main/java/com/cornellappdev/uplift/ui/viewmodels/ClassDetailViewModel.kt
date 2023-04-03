@@ -30,7 +30,7 @@ class ClassDetailViewModel : ViewModel() {
     }
 
     /**
-     * Switches this ViewModel to display the most recently queued gym.
+     * Switches this ViewModel to display the most recently queued class.
      */
     fun popBackStack() {
         // TODO: This causes a glitch-y appearance when popping from a class to another class. Research a fix.
