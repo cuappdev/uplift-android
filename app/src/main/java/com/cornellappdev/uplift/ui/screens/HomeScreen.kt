@@ -7,10 +7,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -111,9 +113,11 @@ fun HomeScreen(
                     lineHeight = 17.07.sp,
                     textAlign = TextAlign.Center,
                     color = GRAY04,
-                    modifier = Modifier.clickable {
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(4.dp))
+                        .clickable {
 
-                    }
+                        }
                 )
             }
 
@@ -158,9 +162,11 @@ fun HomeScreen(
                     lineHeight = 17.07.sp,
                     textAlign = TextAlign.Center,
                     color = GRAY04,
-                    modifier = Modifier.clickable {
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(4.dp))
+                        .clickable {
 
-                    }
+                        }
                 )
             }
         }

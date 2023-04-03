@@ -3,6 +3,7 @@ package com.cornellappdev.uplift.ui.screens
 import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -10,6 +11,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
@@ -30,7 +32,6 @@ import com.cornellappdev.uplift.ui.components.GymTodaysClasses
 import com.cornellappdev.uplift.ui.components.PopularTimesSection
 import com.cornellappdev.uplift.ui.viewmodels.ClassDetailViewModel
 import com.cornellappdev.uplift.ui.viewmodels.GymDetailViewModel
-import com.cornellappdev.uplift.ui.viewmodels.HomeViewModel
 import com.cornellappdev.uplift.util.GRAY01
 import com.cornellappdev.uplift.util.PRIMARY_BLACK
 import com.cornellappdev.uplift.util.isCurrentlyOpen
@@ -45,7 +46,6 @@ fun GymDetailScreen(
     gymDetailViewModel: GymDetailViewModel = viewModel(),
     classDetailViewModel: ClassDetailViewModel,
     navController: NavHostController,
-    homeViewModel: HomeViewModel = viewModel(),
     onBack: () -> Unit
 ) {
     val gym by gymDetailViewModel.gymFlow.collectAsState()
@@ -84,7 +84,12 @@ fun GymDetailScreen(
                         Alignment.TopStart
                     )
                     .padding(top = 47.dp, start = 22.dp)
-                    .clickable(onClick = onBack),
+                    .clip(RoundedCornerShape(4.dp))
+                    .clickable(
+                        interactionSource = MutableInteractionSource(),
+                        indication = null,
+                        onClick = onBack
+                    ),
                 tint = Color.White
             )
             Image(

@@ -31,7 +31,6 @@ import com.cornellappdev.uplift.R
 import com.cornellappdev.uplift.models.UpliftClass
 import com.cornellappdev.uplift.ui.components.classdetail.*
 import com.cornellappdev.uplift.ui.viewmodels.ClassDetailViewModel
-import com.cornellappdev.uplift.ui.viewmodels.HomeViewModel
 import com.cornellappdev.uplift.util.PRIMARY_BLACK
 import com.cornellappdev.uplift.util.bebasNeueFamily
 import com.cornellappdev.uplift.util.montserratFamily
@@ -43,7 +42,6 @@ import com.cornellappdev.uplift.util.montserratFamily
 @Composable
 fun ClassDetailScreen(
     classDetailViewModel: ClassDetailViewModel = viewModel(),
-    homeViewModel: HomeViewModel = viewModel(),
     navController: NavHostController,
     onBack: () -> Unit
 ) {
@@ -85,7 +83,11 @@ fun ClassDetailScreen(
                         Alignment.TopStart
                     )
                     .padding(top = 47.dp, start = 22.dp)
-                    .clickable(onClick = onBack),
+                    .clickable(
+                        interactionSource = MutableInteractionSource(),
+                        indication = null,
+                        onClick = onBack
+                    ),
                 tint = Color.White
             )
             Image(

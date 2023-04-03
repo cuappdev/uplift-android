@@ -37,7 +37,9 @@ import com.cornellappdev.uplift.util.montserratFamily
 fun GymFacilitySection(gym: Gym, today: Int) {
     var openedFacility by remember { mutableStateOf(-1) }
 
-    Column(modifier = Modifier.fillMaxWidth().background(Color.White)) {
+    Column(modifier = Modifier
+        .fillMaxWidth()
+        .background(Color.White)) {
         Spacer(modifier = Modifier.height(24.dp))
         Text(
             text = "FACILITIES",

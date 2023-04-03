@@ -19,7 +19,7 @@ import com.cornellappdev.uplift.util.montserratFamily
  * Displays the "FUNCTION" section for an [UpliftClass].
  */
 @Composable
-fun ClassFunction(upliftClass : UpliftClass?) {
+fun ClassFunction(upliftClass: UpliftClass?) {
     Column(
         modifier = Modifier
             .fillMaxWidth()

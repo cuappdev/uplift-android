@@ -92,13 +92,13 @@ fun HomeCard(gym: Gym, onClick: () -> Unit) {
                             contentDescription = "Dumbell",
                             colorFilter = ColorFilter.tint(color = GRAY04)
                         )
+                        Spacer(Modifier.width(4.dp))
                         Image(
                             painter = painterResource(id = R.drawable.ic_bowling_pins),
                             contentDescription = "Bowling Pins",
                             colorFilter = ColorFilter.tint(color = GRAY04)
                         )
                         Spacer(modifier = Modifier.width(12.dp))
-                        Spacer(Modifier.height(4.dp))
                     }
                     Row {
                         Spacer(Modifier.width(12.dp))

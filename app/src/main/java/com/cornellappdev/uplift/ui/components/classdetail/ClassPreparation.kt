@@ -19,7 +19,7 @@ import com.cornellappdev.uplift.util.montserratFamily
  * Displays the "PREPARATION" section for an [UpliftClass].
  */
 @Composable
-fun ClassPreparation(upliftClass : UpliftClass?) {
+fun ClassPreparation(upliftClass: UpliftClass?) {
     Column(
         modifier = Modifier
             .fillMaxWidth()

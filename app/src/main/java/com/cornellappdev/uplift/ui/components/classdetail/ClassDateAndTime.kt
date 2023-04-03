@@ -27,7 +27,7 @@ import com.cornellappdev.uplift.util.PRIMARY_BLACK
 import com.cornellappdev.uplift.util.montserratFamily
 
 @Composable
-fun ClassDateAndTime(upliftClass : UpliftClass?) {
+fun ClassDateAndTime(upliftClass: UpliftClass?) {
     val context = LocalContext.current
 
     Column(

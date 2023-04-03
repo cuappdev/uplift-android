@@ -19,7 +19,7 @@ import com.cornellappdev.uplift.util.montserratFamily
  * Displays the "DESCRIPTION" section for an [UpliftClass].
  */
 @Composable
-fun ClassDescription(upliftClass : UpliftClass?) {
+fun ClassDescription(upliftClass: UpliftClass?) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
