@@ -19,8 +19,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.cornellappdev.uplift.ui.components.general.UpliftTopBar
 import com.cornellappdev.uplift.ui.components.home.BriefClassInfoCard
+import com.cornellappdev.uplift.ui.components.home.HomeCard
 import com.cornellappdev.uplift.ui.components.home.SportButton
 import com.cornellappdev.uplift.ui.viewmodels.ClassDetailViewModel
+import com.cornellappdev.uplift.ui.viewmodels.GymDetailViewModel
 import com.cornellappdev.uplift.ui.viewmodels.HomeViewModel
 import com.cornellappdev.uplift.util.GRAY04
 import com.cornellappdev.uplift.util.montserratFamily
@@ -32,11 +34,13 @@ import com.cornellappdev.uplift.util.montserratFamily
 fun HomeScreen(
     homeViewModel: HomeViewModel = viewModel(),
     navController: NavHostController,
-    classDetailViewModel: ClassDetailViewModel = viewModel()
+    classDetailViewModel: ClassDetailViewModel = viewModel(),
+    gymDetailViewModel: GymDetailViewModel
 ) {
     val titleText = homeViewModel.titleFlow.collectAsState().value
     val upliftClasses = homeViewModel.classesFlow.collectAsState().value
     val sportsList = homeViewModel.sportsFlow.collectAsState().value
+    val gymsList = homeViewModel.gymFlow.collectAsState().value
 
     val mainScrollState = rememberLazyListState()
     val classRowState = rememberLazyListState()
@@ -120,6 +124,45 @@ fun HomeScreen(
                     }
                     Spacer(Modifier.width(24.dp))
                 }
+            }
+        }
+
+        // Gyms
+        item {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = "Gyms",
+                    fontFamily = montserratFamily,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight(700),
+                    lineHeight = 17.07.sp,
+                    textAlign = TextAlign.Center,
+                    color = GRAY04
+                )
+                Text(
+                    text = "Edit",
+                    fontFamily = montserratFamily,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight(700),
+                    lineHeight = 17.07.sp,
+                    textAlign = TextAlign.Center,
+                    color = GRAY04,
+                    modifier = Modifier.clickable {
+
+                    }
+                )
+            }
+        }
+
+        items(items = gymsList) { gym ->
+            HomeCard(gym) {
+                gymDetailViewModel.selectGym(gym)
+                navController.navigate("gymDetail")
             }
         }
     }

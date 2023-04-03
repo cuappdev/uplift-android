@@ -35,7 +35,7 @@ fun GymHours(hours: List<List<TimeInterval>?>, today: Int) {
     val rotationAnimation by animateFloatAsState(targetValue = if (collapsed) 0f else 90f)
     val collapseAnimation by animateFloatAsState(
         targetValue = if (collapsed) 0f else 7f,
-        animationSpec = tween(durationMillis = 300, easing = LinearEasing)
+        animationSpec = tween(durationMillis = 400, easing = LinearEasing)
     )
 
     val interactionSource = remember { MutableInteractionSource() }

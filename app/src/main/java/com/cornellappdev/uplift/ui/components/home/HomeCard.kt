@@ -6,6 +6,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment.Companion.TopEnd
@@ -30,20 +31,24 @@ import java.util.*
  * Builds Home card for gym class with picture, timings, current availability.
  * Each gym has the ability to be starred and added to users liked gyms.
  */
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun HomeCard(gym: Gym) {
+fun HomeCard(gym: Gym, onClick: () -> Unit) {
     val day: Int = ((Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 2) + 7) % 7
     val lastTime =
         gym.hours[day]!![(gym.hours[day]!!.size - 1)].end.toString()
+
     Box(
         modifier = Modifier
-            .padding(horizontal = 16.dp, vertical = 12.dp)
+            .padding(horizontal = 16.dp)
+            .padding(top = 12.dp)
             .fillMaxWidth()
             .aspectRatio(2F / 1F)
     ) {
         Card(
             shape = RoundedCornerShape(12.dp),
-            backgroundColor = Color.White
+            backgroundColor = Color.White,
+            onClick = onClick
         ) {
             Column {
                 Box(modifier = Modifier.weight(3F)) {
