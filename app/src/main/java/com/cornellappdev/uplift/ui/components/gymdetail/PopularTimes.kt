@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -66,7 +67,9 @@ fun PopularTimesSection(popularTimes: PopularTimes) {
             .fillMaxWidth()
             .clickable(interactionSource = MutableInteractionSource(), indication = null) {
                 deselect()
-            }) {
+            }
+            .background(Color.White)
+    ) {
         // Title
         Text(
             text = "POPULAR TIMES",
@@ -128,12 +131,12 @@ fun PopularTimesSection(popularTimes: PopularTimes) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
+            .background(Color.White)
             .padding(horizontal = 18.dp)
     ) {
         Row(
             verticalAlignment = Alignment.Bottom,
             modifier = Modifier
-                .padding(top = 0.dp)
                 .height(100.dp)
 
         ) {
@@ -195,7 +198,7 @@ fun PopularTimesSection(popularTimes: PopularTimes) {
                 .height(1.dp)
                 .background(GRAY01)
         )
+        Spacer(modifier = Modifier.height(26.dp))
     }
-    Spacer(modifier = Modifier.height(26.dp))
 }
 

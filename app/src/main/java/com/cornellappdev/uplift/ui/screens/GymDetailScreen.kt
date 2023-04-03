@@ -132,24 +132,21 @@ fun GymDetailScreen(
                 }
             }
         }
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Color.White)
-        ) {
-            if (gym != null) {
-                GymHours(hours = gym!!.hours, day)
-                LineSpacer()
-                PopularTimesSection(gym!!.popularTimes)
-                LineSpacer()
-                GymFacilitySection(gym!!, day)
-                GymTodaysClasses(
-                    gym = gym!!,
-                    classDetailViewModel = classDetailViewModel,
-                    navController = navController
-                )
-            }
+
+        if (gym != null) {
+            GymHours(hours = gym!!.hours, day)
+            LineSpacer()
+            PopularTimesSection(gym!!.popularTimes)
+            LineSpacer()
+            GymFacilitySection(gym!!, day)
+            GymTodaysClasses(
+                gym = gym!!,
+                classDetailViewModel = classDetailViewModel,
+                navController = navController
+            )
         }
+
+        Spacer(Modifier.height(50.dp))
     }
 }
 

@@ -190,5 +190,7 @@ fun ClassDetailScreen(
             classDetailViewModel = classDetailViewModel,
             navController = navController
         )
+
+        Spacer(Modifier.height(50.dp))
     }
 }

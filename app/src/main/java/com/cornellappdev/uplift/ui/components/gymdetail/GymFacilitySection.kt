@@ -2,6 +2,7 @@ package com.cornellappdev.uplift.ui.components
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
@@ -36,7 +37,7 @@ import com.cornellappdev.uplift.util.montserratFamily
 fun GymFacilitySection(gym: Gym, today: Int) {
     var openedFacility by remember { mutableStateOf(-1) }
 
-    Column(modifier = Modifier.fillMaxWidth()) {
+    Column(modifier = Modifier.fillMaxWidth().background(Color.White)) {
         Spacer(modifier = Modifier.height(24.dp))
         Text(
             text = "FACILITIES",

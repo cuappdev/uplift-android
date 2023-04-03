@@ -19,7 +19,7 @@ class HomeViewModel : ViewModel() {
 
     private val _classesFlow: MutableStateFlow<List<UpliftClass>> = MutableStateFlow(
         listOf(
-            exampleClassMusclePump1, exampleClassMusclePump2
+            exampleClassMusclePump1, exampleClassMusclePump2, exampleClassMusclePump2, exampleClassMusclePump2
         )
     )
 

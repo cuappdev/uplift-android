@@ -47,6 +47,7 @@ fun HomeScreen(
 
     val mainScrollState = rememberLazyListState()
     val classRowState = rememberLazyListState()
+    val sportsRowState = rememberLazyListState()
 
     LazyColumn(state = mainScrollState, modifier = Modifier.fillMaxSize()) {
         stickyHeader {
@@ -117,7 +118,7 @@ fun HomeScreen(
             }
 
             LazyRow(
-                state = classRowState,
+                state = sportsRowState,
                 contentPadding = PaddingValues(
                     horizontal = 16.dp
                 ),
