@@ -1,9 +1,7 @@
 package com.cornellappdev.uplift.networking
 
-import com.example.rocketreserver.GymListQuery
-
-sealed class ApiResponse {
-    object Loading : ApiResponse()
-    object Error : ApiResponse()
-    class Success(val launchList: List<GymListQuery.Gym>) : ApiResponse()
+sealed class ApiResponse<out T : Any> {
+    object Loading : ApiResponse<Nothing>()
+    object Error : ApiResponse<Nothing>()
+    class Success<out T: Any>(val data: T) : ApiResponse<T>()
 }
