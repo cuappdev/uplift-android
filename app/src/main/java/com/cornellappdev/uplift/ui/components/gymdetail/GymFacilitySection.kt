@@ -21,8 +21,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cornellappdev.uplift.R
-import com.cornellappdev.uplift.models.UpliftGym
 import com.cornellappdev.uplift.models.OpenType
+import com.cornellappdev.uplift.models.UpliftGym
 import com.cornellappdev.uplift.ui.screens.LineSpacer
 import com.cornellappdev.uplift.util.ACCENT_CLOSED
 import com.cornellappdev.uplift.util.ACCENT_OPEN
@@ -37,9 +37,11 @@ import com.cornellappdev.uplift.util.montserratFamily
 fun GymFacilitySection(gym: UpliftGym, today: Int) {
     var openedFacility by remember { mutableStateOf(-1) }
 
-    Column(modifier = Modifier
-        .fillMaxWidth()
-        .background(Color.White)) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color.White)
+    ) {
         Spacer(modifier = Modifier.height(24.dp))
         Text(
             text = "FACILITIES",

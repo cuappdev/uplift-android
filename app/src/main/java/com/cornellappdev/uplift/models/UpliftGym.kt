@@ -2,7 +2,9 @@ package com.cornellappdev.uplift.models
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.snapshots.SnapshotStateList
 
 /**
  * A [UpliftGym] object represents all the information needed about one particular gym.
@@ -56,9 +58,9 @@ data class UpliftGym(
      */
     val bowlingInfo: List<BowlingInfo?>?,
     val miscellaneous: List<String>,
-    val classesToday: List<UpliftClass>,
     val imageUrl: String,
-    val favoriteState: State<Boolean> = mutableStateOf(false)
+    val favoriteState: State<Boolean> = mutableStateOf(false),
+    var classesToday: SnapshotStateList<UpliftClass> = mutableStateListOf(),
 ) {
     /**
      * Returns a boolean indicating whether this gym is favorited or not. Safe for recomposition.

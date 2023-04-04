@@ -1,10 +1,10 @@
 package com.cornellappdev.uplift.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
-import com.cornellappdev.uplift.models.UpliftGym
 import com.cornellappdev.uplift.models.Sport
 import com.cornellappdev.uplift.models.TimeOfDay
 import com.cornellappdev.uplift.models.UpliftClass
+import com.cornellappdev.uplift.models.UpliftGym
 import com.cornellappdev.uplift.util.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -46,6 +46,13 @@ class HomeViewModel : ViewModel() {
     /** Call before opening home to set all the proper display information for the home page. */
     fun openHome() {
         _titleFlow.value = getHomeTitleText()
+    }
+
+    /**
+     * Sets the [UpliftGym]s that this ViewModel should display.
+     */
+    fun emitGyms(gyms: List<UpliftGym>) {
+        _gymFlow.value = gyms
     }
 
     /** Returns the title text the top bar should display for the home page. */

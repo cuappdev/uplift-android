@@ -2,7 +2,7 @@ package com.cornellappdev.uplift.models
 
 import java.util.*
 
-/** A [TimeInterval] is one interval of time with a start and end [TimeOfDay]. */
+/** A [TimeInterval] is one contiguous interval of time with a start and end [TimeOfDay]. */
 data class TimeInterval(
     val start: TimeOfDay,
     val end: TimeOfDay
@@ -39,11 +39,23 @@ data class TimeInterval(
  * */
 data class TimeOfDay(
     /** An hour between 1 and 12, inclusive. */
-    val hour: Int,
+    var hour: Int,
     /** A minute between 0 and 59, inclusive. */
-    val minute: Int = 0,
-    val isAM: Boolean = true
+    var minute: Int = 0,
+    var isAM: Boolean = true
 ) {
+    init {
+        // Coerces [hour] and [minute] to fit according to above invariants.
+        var newHour = (hour + (minute) / 60) % 12
+        if (newHour == 0) newHour = 12
+
+        this.hour = newHour
+        this.minute = (minute) % 60
+
+        val overlaps = (hour + (minute) / 60) / 12
+        this.isAM = if ((overlaps % 2 == 0)) isAM else !isAM
+    }
+
     /**
      * Returns a new [TimeOfDay] created by advancing the current time of day by [deltaHours] and [deltaMinutes].
      */

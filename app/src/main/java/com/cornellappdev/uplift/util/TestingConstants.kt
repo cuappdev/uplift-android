@@ -1,5 +1,6 @@
 package com.cornellappdev.uplift.util
 
+import androidx.compose.runtime.mutableStateListOf
 import com.cornellappdev.uplift.R
 import com.cornellappdev.uplift.models.*
 import java.util.*
@@ -304,7 +305,7 @@ val testMorrison = UpliftGym(
     ),
     bowlingInfo = exampleBowlingList,
     miscellaneous = listOf("Game area", "Outdoor basketball court", "Bouldering wall"),
-    classesToday = listOf(
+    classesToday = mutableStateListOf(
         exampleClassMusclePump1,
         exampleClassMusclePump2
     ),

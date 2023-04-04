@@ -87,6 +87,22 @@ fun calendarDayOfWeekToString(calendar: Calendar): String {
 }
 
 /**
+ * Returns [string] as a [TimeOfDay]. If [string] is malformed, returns 12:00AM.
+ *
+ * Requires: [string] is formatted as: "hh:mm:ss"
+ */
+fun parseTimeOfDay(string: String): TimeOfDay {
+    val split = string.split(":")
+    if (split.size != 3) return TimeOfDay(12)
+
+    return try {
+        TimeOfDay(split[0].toInt(), split[1].toInt())
+    } catch (n: java.lang.NumberFormatException) {
+        TimeOfDay(12)
+    }
+}
+
+/**
  * Returns the current system time as a [TimeOfDay] object.
  */
 fun getSystemTime(): TimeOfDay {

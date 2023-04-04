@@ -1,9 +1,14 @@
 package com.cornellappdev.uplift.networking
 
+import com.apollographql.apollo3.ApolloClient
 import com.example.rocketreserver.ClassListQuery
 import com.example.rocketreserver.GymListQuery
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
+
+val apolloClient = ApolloClient.Builder()
+    .serverUrl("https://uplift-backend.cornellappdev.com")
+    .build()
 
 object UpliftApiRepository {
     val gymApiFlow =
@@ -22,7 +27,7 @@ object UpliftApiRepository {
 
     val classesApiFlow =
         apolloClient.query(ClassListQuery()).toFlow()
-            .map{
+            .map {
                 val classList = it.data?.classes?.filterNotNull()
                 if (classList == null) {
                     ApiResponse.Error
