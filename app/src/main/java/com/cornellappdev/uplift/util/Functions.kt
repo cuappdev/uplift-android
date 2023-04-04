@@ -118,6 +118,8 @@ fun getSystemTime(): TimeOfDay {
  * at [timeOfDay]. If [timeOfDay] is not passed a value, it defaults to the system time
  * retrieved by [getSystemTime].
  */
-fun isCurrentlyOpen(times: List<TimeInterval>, timeOfDay: TimeOfDay = getSystemTime()): Boolean {
+fun isCurrentlyOpen(times: List<TimeInterval>?, timeOfDay: TimeOfDay = getSystemTime()): Boolean {
+    if (times == null) return false
+
     return times.find { interval -> interval.within(timeOfDay) } != null
 }

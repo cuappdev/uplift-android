@@ -47,12 +47,11 @@ data class TimeOfDay(
     init {
         // Coerces [hour] and [minute] to fit according to above invariants.
         var newHour = (hour + (minute) / 60) % 12
+        val overlaps = (hour + (minute) / 60) / 12
         if (newHour == 0) newHour = 12
 
         this.hour = newHour
         this.minute = (minute) % 60
-
-        val overlaps = (hour + (minute) / 60) / 12
         this.isAM = if ((overlaps % 2 == 0)) isAM else !isAM
     }
 

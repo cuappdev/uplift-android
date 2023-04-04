@@ -50,14 +50,14 @@ fun parseHours(times: List<GymListQuery.Time1?>): List<List<TimeInterval>?> {
 
     val timeIntervalList = timesMondayZero.map { time ->
         time?.let { timeNonNull ->
-            // It seems the backend request structure is only made for one contiguous time
-            // interval... so I guess for now just make a list of one time interval, only, ever...?
-            listOf(
-                TimeInterval(
-                    parseTimeOfDay(timeNonNull.startTime.toString()),
-                    parseTimeOfDay(timeNonNull.endTime.toString())
-                )
-            )
+            val start = parseTimeOfDay(timeNonNull.startTime.toString())
+            val end = parseTimeOfDay(timeNonNull.endTime.toString())
+
+            if (start == end) null
+            else
+                // It seems the backend request structure is only made for one contiguous time
+                // interval... so I guess for now just make a list of one time interval, only, ever...?
+                listOf(TimeInterval(start, end))
         }
     }
 

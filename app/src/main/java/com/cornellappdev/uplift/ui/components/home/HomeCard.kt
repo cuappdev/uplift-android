@@ -36,7 +36,12 @@ import java.util.*
 fun HomeCard(gym: UpliftGym, onClick: () -> Unit) {
     val day: Int = ((Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 2) + 7) % 7
     val lastTime =
-        gym.hours[day]!![(gym.hours[day]!!.size - 1)].end.toString()
+        if (gym.hours[day] != null) {
+            gym.hours[day]!![(gym.hours[day]!!.size - 1)].end.toString()
+        }
+        else {
+            null
+        }
 
     Box(
         modifier = Modifier
@@ -102,7 +107,7 @@ fun HomeCard(gym: UpliftGym, onClick: () -> Unit) {
                     }
                     Row {
                         Spacer(Modifier.width(12.dp))
-                        if (isCurrentlyOpen(gym.hours[day]!!)) Text(
+                        if (isCurrentlyOpen(gym.hours[day])) Text(
                             text = "Open",
                             fontSize = 12.sp,
                             color = ACCENT_OPEN,
@@ -119,18 +124,17 @@ fun HomeCard(gym: UpliftGym, onClick: () -> Unit) {
                             fontWeight = FontWeight(500),
                         )
                         Spacer(modifier = Modifier.width(8.dp))
+
                         /*
                         @Todo Make this dynamic with networking instead of hardcoding info.
                          */
                         Text(
-                            text = "Closes at $lastTime",
+                            text = if (lastTime != null) "Closes at $lastTime" else "Closed today",
                             fontSize = 12.sp,
                             fontFamily = montserratFamily,
                             fontWeight = FontWeight(500),
                             color = GRAY03
-
                         )
-
                     }
                     Row {
                         Spacer(Modifier.width(12.dp))
