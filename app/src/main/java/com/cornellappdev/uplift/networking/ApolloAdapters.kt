@@ -55,8 +55,8 @@ fun parseHours(times: List<GymListQuery.Time1?>): List<List<TimeInterval>?> {
 
             if (start == end) null
             else
-                // It seems the backend request structure is only made for one contiguous time
-                // interval... so I guess for now just make a list of one time interval, only, ever...?
+            // It seems the backend request structure is only made for one contiguous time
+            // interval... so I guess for now just make a list of one time interval, only, ever...?
                 listOf(TimeInterval(start, end))
         }
     }

@@ -145,7 +145,6 @@ fun ClassDetailScreen(
                     .offset(y = 42.dp)
                     .align(Alignment.BottomCenter)
                     .graphicsLayer {
-                        alpha = 2f
                         translationY = -0.5f * scrollState.value.toFloat()
                     }
             ) {

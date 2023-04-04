@@ -65,15 +65,18 @@ fun GymDetailScreen(
         Box(modifier = Modifier
             .fillMaxWidth()
             .graphicsLayer {
-                alpha = 1 - (scrollState.value.toFloat() / screenHeightPx)
                 translationY = 0.5f * scrollState.value
-            }) {
+            })
+        {
             AsyncImage(
                 model = gym?.imageUrl,
                 contentDescription = null,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .aspectRatio(1f),
+                    .aspectRatio(1f)
+                    .graphicsLayer {
+                        alpha = 1 - (scrollState.value.toFloat() / screenHeightPx)
+                    },
                 contentScale = ContentScale.Crop
             )
             Icon(
@@ -119,6 +122,9 @@ fun GymDetailScreen(
                 Box(
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
+                        .graphicsLayer {
+                            translationY = -0.5f * scrollState.value
+                        }
                         .background(PRIMARY_BLACK)
                         .fillMaxWidth()
                         .height(60.dp)

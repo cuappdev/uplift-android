@@ -38,8 +38,7 @@ fun HomeCard(gym: UpliftGym, onClick: () -> Unit) {
     val lastTime =
         if (gym.hours[day] != null) {
             gym.hours[day]!![(gym.hours[day]!!.size - 1)].end.toString()
-        }
-        else {
+        } else {
             null
         }
 

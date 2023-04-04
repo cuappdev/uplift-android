@@ -8,7 +8,7 @@ import com.cornellappdev.uplift.ui.viewmodels.HomeViewModel
  * Watches for gyms to be read from backend, updating the UI accordingly.
  */
 @Composable
-fun GymWatcher(homeViewModel : HomeViewModel) {
+fun GymWatcher(homeViewModel: HomeViewModel) {
     val gymFlowState =
         UpliftApiRepository.gymApiFlow.collectAsState(initial = ApiResponse.Loading)
 
