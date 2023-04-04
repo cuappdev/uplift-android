@@ -21,7 +21,13 @@ data class UpliftGym(
      * If an index of this list is null, that indicates the gym is closed on that day.
      */
     val hours: List<List<TimeInterval>?>,
-    val popularTimes: PopularTimes,
+
+    /**
+     * A list of exactly 7 [PopularTimes] objects. Each object corresponds to a particular
+     * day (index 0=Monday, ..., 6=Sunday).
+     */
+    val popularTimes: List<PopularTimes>,
+
     val equipmentGroupings: List<EquipmentGrouping>,
     /**
      * A list of exactly 7 [GymnasiumInfo] objects. Each object corresponds to a particular

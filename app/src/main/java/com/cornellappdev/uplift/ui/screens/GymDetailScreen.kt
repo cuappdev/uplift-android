@@ -141,7 +141,7 @@ fun GymDetailScreen(
         if (gym != null) {
             GymHours(hours = gym!!.hours, day)
             LineSpacer()
-            PopularTimesSection(gym!!.popularTimes)
+            PopularTimesSection(gym!!.popularTimes[day])
             LineSpacer()
             GymFacilitySection(gym!!, day)
             GymTodaysClasses(

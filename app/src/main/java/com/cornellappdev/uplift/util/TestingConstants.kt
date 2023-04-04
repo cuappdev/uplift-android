@@ -232,10 +232,12 @@ val testMorrison = UpliftGym(
             )
         ),
     ),
-    popularTimes = PopularTimes(
-        startTime = TimeOfDay(8, 0, true),
-        busyList = listOf(50, 30, 3, 60, 90, 0, 20, 11, 6, 93, 76, 0, 8, 9, 100)
-    ),
+    popularTimes = List(7) {
+        PopularTimes(
+            startTime = TimeOfDay(8, 0, true),
+            busyList = listOf(50, 30, 3, 60, 90, 0, 20, 11, 6, 93, 76, 0, 8, 9, 100)
+        )
+    },
     equipmentGroupings = listOf(
         EquipmentGrouping(
             "Cardio Machines",
