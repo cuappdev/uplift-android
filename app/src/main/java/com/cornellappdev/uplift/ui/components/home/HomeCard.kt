@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.cornellappdev.uplift.R
-import com.cornellappdev.uplift.models.Gym
+import com.cornellappdev.uplift.models.UpliftGym
 import com.cornellappdev.uplift.util.*
 import java.util.*
 
@@ -33,7 +33,7 @@ import java.util.*
  */
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun HomeCard(gym: Gym, onClick: () -> Unit) {
+fun HomeCard(gym: UpliftGym, onClick: () -> Unit) {
     val day: Int = ((Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 2) + 7) % 7
     val lastTime =
         gym.hours[day]!![(gym.hours[day]!!.size - 1)].end.toString()

@@ -5,9 +5,9 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 
 /**
- * A [Gym] object represents all the information needed about one particular gym.
+ * A [UpliftGym] object represents all the information needed about one particular gym.
  */
-data class Gym(
+data class UpliftGym(
     val name: String,
     /**
      * A list of exactly 7 lists of time intervals. Each list of time intervals corresponds to a particular

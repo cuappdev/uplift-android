@@ -310,11 +310,11 @@ type __Directive {
 
   args: [__InputValue!]!
 
-  onOperation: Boolean! @deprecated(reason: "Use `locations`.")
+  onOperation: Boolean!
 
-  onFragment: Boolean! @deprecated(reason: "Use `locations`.")
+  onFragment: Boolean!
 
-  onField: Boolean! @deprecated(reason: "Use `locations`.")
+  onField: Boolean!
 }
 
 """
@@ -411,16 +411,6 @@ enum __DirectiveLocation {
   """
   INPUT_FIELD_DEFINITION
 }
-
-"""
-Directs the executor to include this field or fragment only when the `if` argument is true.
-"""
-directive @include ("Included when true." if: Boolean!) on FIELD|FRAGMENT_SPREAD|INLINE_FRAGMENT
-
-"""
-Directs the executor to skip this field or fragment when the `if` argument is true.
-"""
-directive @skip ("Skipped when true." if: Boolean!) on FIELD|FRAGMENT_SPREAD|INLINE_FRAGMENT
 
 schema {
   query: Query

@@ -12,7 +12,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.cornellappdev.uplift.models.Gym
+import com.cornellappdev.uplift.models.UpliftGym
 import com.cornellappdev.uplift.ui.viewmodels.ClassDetailViewModel
 import com.cornellappdev.uplift.util.montserratFamily
 
@@ -22,7 +22,7 @@ import com.cornellappdev.uplift.util.montserratFamily
  */
 @Composable
 fun GymTodaysClasses(
-    gym: Gym,
+    gym: UpliftGym,
     classDetailViewModel: ClassDetailViewModel,
     navController: NavHostController
 ) {

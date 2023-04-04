@@ -178,7 +178,7 @@ val exampleBowlingList = listOf(
     ),
 )
 
-val testMorrison = Gym(
+val testMorrison = UpliftGym(
     name = "Toni Morrison Gym",
     hours = listOf(
         listOf(

@@ -38,7 +38,7 @@ data class BowlingInfo(
 )
 
 /** An [EquipmentGrouping] is a grouping of one or more pieces of gym equipment under a particular
- * category. [Gym] objects may have multiple [EquipmentGrouping]s to specify all the equipment
+ * category. [UpliftGym] objects may have multiple [EquipmentGrouping]s to specify all the equipment
  * they carry. */
 data class EquipmentGrouping(
     /** The title of this equipment grouping. (e.g. "Cardio Machines") */

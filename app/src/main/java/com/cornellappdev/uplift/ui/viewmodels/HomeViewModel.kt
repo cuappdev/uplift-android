@@ -1,7 +1,7 @@
 package com.cornellappdev.uplift.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
-import com.cornellappdev.uplift.models.Gym
+import com.cornellappdev.uplift.models.UpliftGym
 import com.cornellappdev.uplift.models.Sport
 import com.cornellappdev.uplift.models.TimeOfDay
 import com.cornellappdev.uplift.models.UpliftClass
@@ -34,7 +34,7 @@ class HomeViewModel : ViewModel() {
     /** Emits lists of sports that should be shown in the 'Your Sports' section. */
     val sportsFlow = _sportsFlow.asStateFlow()
 
-    private val _gymFlow: MutableStateFlow<List<Gym>> = MutableStateFlow(
+    private val _gymFlow: MutableStateFlow<List<UpliftGym>> = MutableStateFlow(
         listOf(
             testMorrison, testMorrison
         )
