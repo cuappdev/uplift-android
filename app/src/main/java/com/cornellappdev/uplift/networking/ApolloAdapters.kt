@@ -2,7 +2,9 @@ package com.cornellappdev.uplift.networking
 
 import com.cornellappdev.uplift.models.*
 import com.cornellappdev.uplift.util.defaultGymUrl
+import com.cornellappdev.uplift.util.parseDate
 import com.cornellappdev.uplift.util.parseTimeOfDay
+import com.example.rocketreserver.ClassListQuery
 import com.example.rocketreserver.GymListQuery
 
 fun parsePopularTimes(times: List<List<Int?>?>?): List<PopularTimes> {
@@ -245,14 +247,20 @@ fun GymListQuery.Gym.toUpliftGym(): UpliftGym {
     )
 }
 
-//fun ClassListQuery.Class.toUpliftClass(): UpliftClass {
-//    return UpliftClass(
-//        name = details.name,
-//        location = location,
-//        instructorName = instructor,
-//
-//    )
-//}
+fun ClassListQuery.Class.toUpliftClass(): UpliftClass {
+    return UpliftClass(
+        name = details.name,
+        location = location,
+        instructorName = instructor,
+        date = parseDate(date.toString()),
+        time = TimeInterval(parseTimeOfDay(startTime.toString()), parseTimeOfDay(endTime.toString())),
+        functions = details.tags.filterNotNull().map {tag -> tag.label},
+        // Preparation is not supplied by backend yet...
+        preparation = "",
+        description = details.description,
+        imageUrl = imageUrl
+    )
+}
 
 
 

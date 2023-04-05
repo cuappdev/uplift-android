@@ -2,7 +2,9 @@ package com.cornellappdev.uplift.models
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.cornellappdev.uplift.util.calendarDayOfWeekToString
 import com.cornellappdev.uplift.util.calendarDayToString
 import java.util.*
@@ -18,8 +20,8 @@ data class UpliftClass(
     val preparation: String,
     val description: String,
     val imageUrl: String,
-    val nextSessions: List<UpliftClass>,
 
+    var nextSessions: SnapshotStateList<UpliftClass> = mutableStateListOf(),
     val favoriteState: State<Boolean> = mutableStateOf(false)
 ) {
     /**

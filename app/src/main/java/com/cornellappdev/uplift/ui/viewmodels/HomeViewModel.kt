@@ -8,6 +8,7 @@ import com.cornellappdev.uplift.models.UpliftGym
 import com.cornellappdev.uplift.util.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import java.util.*
 
 /** A [HomeViewModel] is a view model for HomeScreen. */
 class HomeViewModel : ViewModel() {
@@ -55,6 +56,22 @@ class HomeViewModel : ViewModel() {
      */
     fun emitGyms(gyms: List<UpliftGym>) {
         _gymFlow.value = gyms
+    }
+
+    /**
+     * Sets the [UpliftClass]es that this ViewModel should display. Takes in a list of all the
+     * classes.
+     */
+    fun emitClasses(classes: List<UpliftClass>) {
+        val today = GregorianCalendar()
+
+        _classesFlow.value = classes.filter { upliftClass ->
+            upliftClass.date.get(Calendar.YEAR) == today.get(Calendar.YEAR)
+                    && upliftClass.date.get(Calendar.MONTH) == today.get(Calendar.MONTH)
+                    && upliftClass.date.get(Calendar.DAY_OF_MONTH) == today.get(Calendar.DAY_OF_MONTH)
+        }.filter {upliftClass ->
+            upliftClass.time.end.compareTo(getSystemTime()) > 0
+        }
     }
 
     /** Returns the title text the top bar should display for the home page. */

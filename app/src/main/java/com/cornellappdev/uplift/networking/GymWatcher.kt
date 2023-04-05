@@ -20,5 +20,4 @@ fun GymWatcher(homeViewModel: HomeViewModel) {
         }
         else -> {}
     }
-
 }

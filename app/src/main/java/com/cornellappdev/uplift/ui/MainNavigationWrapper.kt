@@ -15,6 +15,7 @@ import androidx.navigation.compose.*
 import com.cornellappdev.uplift.nav.BottomNavScreen
 import com.cornellappdev.uplift.nav.popBackClass
 import com.cornellappdev.uplift.nav.popBackGym
+import com.cornellappdev.uplift.networking.ClassWatcher
 import com.cornellappdev.uplift.networking.GymWatcher
 import com.cornellappdev.uplift.ui.screens.ClassDetailScreen
 import com.cornellappdev.uplift.ui.screens.GymDetailScreen
@@ -41,6 +42,7 @@ fun MainNavigationWrapper(
     val systemUiController: SystemUiController = rememberSystemUiController()
 
     GymWatcher(homeViewModel)
+    ClassWatcher(homeViewModel)
 
     val items = listOf(
         BottomNavScreen.Home,

@@ -176,9 +176,10 @@ fun ClassDetailScreen(
         LineSpacer()
 
         // Preparation
-        ClassPreparation(upliftClass = upliftClass)
-
-        LineSpacer()
+        if (!upliftClass?.preparation.isNullOrEmpty()) {
+            ClassPreparation(upliftClass = upliftClass)
+            LineSpacer()
+        }
 
         // Description
         ClassDescription(upliftClass = upliftClass)

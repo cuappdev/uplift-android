@@ -93,12 +93,29 @@ fun calendarDayOfWeekToString(calendar: Calendar): String {
  */
 fun parseTimeOfDay(string: String): TimeOfDay {
     val split = string.split(":")
-    if (split.size != 3) return TimeOfDay(12)
+    if (split.size != 3) return TimeOfDay(0)
 
     return try {
         TimeOfDay(split[0].toInt(), split[1].toInt())
     } catch (n: java.lang.NumberFormatException) {
-        TimeOfDay(12)
+        TimeOfDay(0)
+    }
+}
+
+/**
+ * Returns [string] as a [Calendar] date. If [string] is malformed, returns the 0 date.
+ *
+ * Requires: [string] is formatted as: "YYYY-MM-DD"
+ */
+fun parseDate(string : String) : Calendar {
+    val split = string.split("-")
+    if (split.size != 3) return GregorianCalendar(0, 0, 0)
+
+    return try {
+        GregorianCalendar(split[0].toInt(), split[1].toInt() - 1, split[2].toInt())
+    }
+    catch (n: java.lang.NumberFormatException) {
+        GregorianCalendar(0, 0, 0)
     }
 }
 
