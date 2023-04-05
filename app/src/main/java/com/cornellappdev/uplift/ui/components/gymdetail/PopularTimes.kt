@@ -101,7 +101,7 @@ fun PopularTimesSection(popularTimes: PopularTimes) {
 
             Spacer(modifier = Modifier.weight(animatedLeftRatio))
             Text(
-                text = "${time.hour} ${if (time.isAM) "AM" else "PM"} ",
+                text = "${if (time.hour == 0) 12 else time.hour} ${if (time.isAM) "AM" else "PM"} ",
                 fontFamily = montserratFamily,
                 fontSize = 12.sp,
                 fontWeight = FontWeight(700),

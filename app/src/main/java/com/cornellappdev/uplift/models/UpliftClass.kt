@@ -12,7 +12,6 @@ data class UpliftClass(
     val name: String,
     val location: String,
     val instructorName: String,
-    val minutes: Int,
     val date: Calendar,
     val time: TimeInterval,
     val functions: List<String>,

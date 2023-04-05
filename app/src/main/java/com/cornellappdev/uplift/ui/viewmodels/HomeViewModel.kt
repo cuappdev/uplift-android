@@ -21,8 +21,10 @@ class HomeViewModel : ViewModel() {
         listOf(
             exampleClassMusclePump1,
             exampleClassMusclePump2,
-            exampleClassMusclePump2,
-            exampleClassMusclePump2
+            exampleClassMusclePump3,
+            exampleClassMusclePump4,
+            exampleClassMusclePump5,
+            exampleClassMusclePump6
         )
     )
 

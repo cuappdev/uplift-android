@@ -150,7 +150,7 @@ fun ClassDetailScreen(
             ) {
                 Box(modifier = Modifier.fillMaxSize()) {
                     Text(
-                        text = "${upliftClass?.minutes} MIN",
+                        text = "${upliftClass?.time?.durationMinutes()} MIN",
                         fontWeight = FontWeight(700),
                         fontSize = 14.sp,
                         lineHeight = 17.07.sp,

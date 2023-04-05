@@ -23,7 +23,7 @@ fun parsePopularTimes(times: List<List<Int?>?>?): List<PopularTimes> {
             val lastNonZero = timesThroughDay.indexOfLast { num -> num != 0 }
 
             val popularTimes = PopularTimes(
-                startTime = TimeOfDay(12).getTimeLater(deltaMinutes = 0, deltaHours = firstNonZero),
+                startTime = TimeOfDay(firstNonZero),
                 busyList = timesThroughDay.subList(firstNonZero, lastNonZero + 1)
                     .map { numNullable -> numNullable ?: 0 }
             )
@@ -244,6 +244,15 @@ fun GymListQuery.Gym.toUpliftGym(): UpliftGym {
         gymnasiumInfo = pullGymnasiumInfos(this)
     )
 }
+
+//fun ClassListQuery.Class.toUpliftClass(): UpliftClass {
+//    return UpliftClass(
+//        name = details.name,
+//        location = location,
+//        instructorName = instructor,
+//
+//    )
+//}
 
 
 
