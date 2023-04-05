@@ -11,6 +11,7 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
  */
 data class UpliftGym(
     val name: String,
+    val id: String,
     /**
      * A list of exactly 7 lists of time intervals. Each list of time intervals corresponds to a particular
      * day (index 0=Monday, ..., 6=Sunday), and the times in said list indicates the hours of

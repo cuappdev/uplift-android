@@ -140,3 +140,11 @@ fun isCurrentlyOpen(times: List<TimeInterval>?, timeOfDay: TimeOfDay = getSystem
 
     return times.find { interval -> interval.within(timeOfDay) } != null
 }
+
+/**
+ * Returns a boolean corresponding to if this [Calendar] is on the same day as [other].
+ */
+fun Calendar.sameDayAs(other : Calendar) : Boolean =
+    get(Calendar.YEAR) == other.get(Calendar.YEAR)
+            && get(Calendar.MONTH) == other.get(Calendar.MONTH)
+            && get(Calendar.DAY_OF_MONTH) == other.get(Calendar.DAY_OF_MONTH)

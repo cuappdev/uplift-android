@@ -14,9 +14,11 @@ fun GymWatcher(homeViewModel: HomeViewModel) {
 
     when (gymFlowState.value) {
         is ApiResponse.Success -> {
-            homeViewModel.emitGyms((gymFlowState.value as ApiResponse.Success).data.map {
+            val asUpliftGyms = (gymFlowState.value as ApiResponse.Success).data.map {
                 it.toUpliftGym()
-            })
+            }
+            homeViewModel.emitGyms(asUpliftGyms)
+            UpliftApiRepository.loadUpliftGyms(asUpliftGyms)
         }
         else -> {}
     }

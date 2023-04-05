@@ -8,7 +8,7 @@ import java.util.*
 val exCalendarMarch25: Calendar = GregorianCalendar(2023, 2, 25)
 
 val exampleClassMusclePump6 = UpliftClass(
-    name = "Muscle Pump",
+    name = "Muscle Pump", gymId = "",
     location = "Helen Newman Hall",
     instructorName = "Claire M.",
     date = GregorianCalendar(2023, 2, 24),
@@ -20,7 +20,7 @@ val exampleClassMusclePump6 = UpliftClass(
 )
 
 val exampleClassMusclePump5 = UpliftClass(
-    name = "Muscle Pump",
+    name = "Muscle Pump", gymId = "",
     location = "Helen Newman Hall",
     instructorName = "Claire M.",
     date = GregorianCalendar(2023, 2, 24),
@@ -32,7 +32,7 @@ val exampleClassMusclePump5 = UpliftClass(
 )
 
 val exampleClassMusclePump4 = UpliftClass(
-    name = "Muscle Pump",
+    name = "Muscle Pump", gymId = "",
     location = "Helen Newman Hall",
     instructorName = "Claire M.",
     date = GregorianCalendar(2023, 2, 24),
@@ -44,7 +44,7 @@ val exampleClassMusclePump4 = UpliftClass(
 )
 
 val exampleClassMusclePump3 = UpliftClass(
-    name = "Muscle Pump",
+    name = "Muscle Pump", gymId = "",
     location = "Helen Newman Hall",
     instructorName = "Claire M.",
     date = GregorianCalendar(2023, 2, 24),
@@ -57,6 +57,7 @@ val exampleClassMusclePump3 = UpliftClass(
 
 val exampleClassMusclePump2 = UpliftClass(
     name = "Muscle Pump",
+    gymId = "",
     location = "Teagle Multipurpose Room",
     instructorName = "Claire M.",
     date = exCalendarMarch25,
@@ -68,7 +69,7 @@ val exampleClassMusclePump2 = UpliftClass(
 )
 
 val exampleClassMusclePump1 = UpliftClass(
-    name = "Muscle Pump",
+    name = "Muscle Pump", gymId = "",
     location = "Helen Newman Hall",
     instructorName = "Claire M.",
     date = GregorianCalendar(2023, 2, 24),
@@ -226,6 +227,7 @@ val exampleBowlingList = listOf(
 
 val testMorrison = UpliftGym(
     name = "Toni Morrison Gym",
+    id = "Super id-y id",
     hours = listOf(
         listOf(
             TimeInterval(

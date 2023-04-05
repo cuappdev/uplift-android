@@ -12,6 +12,7 @@ import java.util.*
 /** An [UpliftClass] object represents all the data needed about a particular fitness class. */
 data class UpliftClass(
     val name: String,
+    val gymId: String,
     val location: String,
     val instructorName: String,
     val date: Calendar,

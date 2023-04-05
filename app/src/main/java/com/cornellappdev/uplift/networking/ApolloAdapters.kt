@@ -235,6 +235,7 @@ fun pullGymnasiumInfos(gym: GymListQuery.Gym): List<GymnasiumInfo?>? {
 fun GymListQuery.Gym.toUpliftGym(): UpliftGym {
     return UpliftGym(
         name = name,
+        id = id,
         popularTimes = parsePopularTimes(popular),
         imageUrl = imageUrl ?: defaultGymUrl,
         hours = parseHours(times),
@@ -250,6 +251,7 @@ fun GymListQuery.Gym.toUpliftGym(): UpliftGym {
 fun ClassListQuery.Class.toUpliftClass(): UpliftClass {
     return UpliftClass(
         name = details.name,
+        gymId = gymId ?: "NO_GYM",
         location = location,
         instructorName = instructor,
         date = parseDate(date.toString()),

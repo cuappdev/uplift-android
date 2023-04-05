@@ -66,9 +66,7 @@ class HomeViewModel : ViewModel() {
         val today = GregorianCalendar()
 
         _classesFlow.value = classes.filter { upliftClass ->
-            upliftClass.date.get(Calendar.YEAR) == today.get(Calendar.YEAR)
-                    && upliftClass.date.get(Calendar.MONTH) == today.get(Calendar.MONTH)
-                    && upliftClass.date.get(Calendar.DAY_OF_MONTH) == today.get(Calendar.DAY_OF_MONTH)
+            upliftClass.date.sameDayAs(today)
         }.filter {upliftClass ->
             upliftClass.time.end.compareTo(getSystemTime()) > 0
         }
