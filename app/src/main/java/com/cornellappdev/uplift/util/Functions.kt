@@ -107,14 +107,13 @@ fun parseTimeOfDay(string: String): TimeOfDay {
  *
  * Requires: [string] is formatted as: "YYYY-MM-DD"
  */
-fun parseDate(string : String) : Calendar {
+fun parseDate(string: String): Calendar {
     val split = string.split("-")
     if (split.size != 3) return GregorianCalendar(0, 0, 0)
 
     return try {
         GregorianCalendar(split[0].toInt(), split[1].toInt() - 1, split[2].toInt())
-    }
-    catch (n: java.lang.NumberFormatException) {
+    } catch (n: java.lang.NumberFormatException) {
         GregorianCalendar(0, 0, 0)
     }
 }
@@ -144,7 +143,7 @@ fun isCurrentlyOpen(times: List<TimeInterval>?, timeOfDay: TimeOfDay = getSystem
 /**
  * Returns a boolean corresponding to if this [Calendar] is on the same day as [other].
  */
-fun Calendar.sameDayAs(other : Calendar) : Boolean =
+fun Calendar.sameDayAs(other: Calendar): Boolean =
     get(Calendar.YEAR) == other.get(Calendar.YEAR)
             && get(Calendar.MONTH) == other.get(Calendar.MONTH)
             && get(Calendar.DAY_OF_MONTH) == other.get(Calendar.DAY_OF_MONTH)

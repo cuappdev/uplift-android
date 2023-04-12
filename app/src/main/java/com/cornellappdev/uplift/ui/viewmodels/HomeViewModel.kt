@@ -8,7 +8,9 @@ import com.cornellappdev.uplift.networking.ApiResponse
 import com.cornellappdev.uplift.networking.UpliftApiRepository
 import com.cornellappdev.uplift.networking.toUpliftClass
 import com.cornellappdev.uplift.networking.toUpliftGym
-import com.cornellappdev.uplift.util.*
+import com.cornellappdev.uplift.util.getSystemTime
+import com.cornellappdev.uplift.util.sameDayAs
+import com.cornellappdev.uplift.util.sports
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map

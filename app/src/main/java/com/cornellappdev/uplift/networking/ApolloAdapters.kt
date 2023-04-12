@@ -255,8 +255,11 @@ fun ClassListQuery.Class.toUpliftClass(): UpliftClass {
         location = location,
         instructorName = instructor,
         date = parseDate(date.toString()),
-        time = TimeInterval(parseTimeOfDay(startTime.toString()), parseTimeOfDay(endTime.toString())),
-        functions = details.tags.filterNotNull().map {tag -> tag.label},
+        time = TimeInterval(
+            parseTimeOfDay(startTime.toString()),
+            parseTimeOfDay(endTime.toString())
+        ),
+        functions = details.tags.filterNotNull().map { tag -> tag.label },
         // Preparation is not supplied by backend yet...
         preparation = "",
         description = details.description,

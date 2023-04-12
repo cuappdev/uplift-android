@@ -17,31 +17,21 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.cornellappdev.uplift.models.UpliftClass
-import com.cornellappdev.uplift.networking.ApiResponse
-import com.cornellappdev.uplift.networking.UpliftApiRepository
 import com.cornellappdev.uplift.ui.components.ClassInfoCard
 import com.cornellappdev.uplift.ui.viewmodels.ClassDetailViewModel
 import com.cornellappdev.uplift.util.PRIMARY_BLACK
 import com.cornellappdev.uplift.util.montserratFamily
-import java.util.*
 
 /**
  * A component that displays an [UpliftClass]'s next sessions.
  */
 @Composable
 fun NextUpliftClassSessions(
-    upliftClass: UpliftClass?,
     navController: NavHostController,
     classDetailViewModel: ClassDetailViewModel
 ) {
-    val classesState = UpliftApiRepository.upliftClassesFlow.collectAsState()
-    val classes = (when (classesState.value) {
-        is ApiResponse.Success ->
-            (classesState.value as ApiResponse.Success<List<UpliftClass>>).data.filter {
-                it.name == upliftClass?.name && it.date > GregorianCalendar()
-            }
-        else -> listOf()
-    })
+    val nextSessions =
+        classDetailViewModel.nextSessionsFlow.collectAsState(initial = listOf())
 
     // Next Sessions
     Column(
@@ -61,7 +51,7 @@ fun NextUpliftClassSessions(
             fontFamily = montserratFamily
         )
         Spacer(Modifier.height(24.dp))
-        for (nextClass: UpliftClass in classes) {
+        for (nextClass: UpliftClass in nextSessions.value) {
             ClassInfoCard(
                 thisClass = nextClass,
                 navController = navController,

@@ -28,8 +28,8 @@ import coil.compose.AsyncImage
 import com.cornellappdev.uplift.R
 import com.cornellappdev.uplift.ui.components.GymFacilitySection
 import com.cornellappdev.uplift.ui.components.GymHours
-import com.cornellappdev.uplift.ui.components.gymdetail.GymTodaysClasses
 import com.cornellappdev.uplift.ui.components.PopularTimesSection
+import com.cornellappdev.uplift.ui.components.gymdetail.GymTodaysClasses
 import com.cornellappdev.uplift.ui.viewmodels.ClassDetailViewModel
 import com.cornellappdev.uplift.ui.viewmodels.GymDetailViewModel
 import com.cornellappdev.uplift.util.GRAY01
@@ -151,7 +151,7 @@ fun GymDetailScreen(
             LineSpacer()
             GymFacilitySection(gym!!, day)
             GymTodaysClasses(
-                gym = gym!!,
+                gymDetailViewModel = gymDetailViewModel,
                 classDetailViewModel = classDetailViewModel,
                 navController = navController
             )

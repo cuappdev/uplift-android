@@ -2,9 +2,17 @@ package com.cornellappdev.uplift.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
 import com.cornellappdev.uplift.models.UpliftGym
+import com.cornellappdev.uplift.models.UpliftClass
+import com.cornellappdev.uplift.networking.ApiResponse
+import com.cornellappdev.uplift.networking.UpliftApiRepository
+import com.cornellappdev.uplift.networking.toUpliftClass
+import com.cornellappdev.uplift.util.getSystemTime
+import com.cornellappdev.uplift.util.sameDayAs
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import java.util.*
 
 /** A [GymDetailViewModel] is a view model for GymDetailScreen. */
@@ -21,6 +29,24 @@ class GymDetailViewModel : ViewModel() {
      * there is no gym selected (which shouldn't reasonably happen in any use case...)
      */
     val gymFlow: StateFlow<UpliftGym?> = _gymFlow.asStateFlow()
+
+    /**
+     * A [Flow] detailing the [UpliftClass]es that should be displayed in the "Today's Classes" section.
+     */
+    val todaysClassesFlow =
+        UpliftApiRepository.classesApiFlow.combine(gymFlow) { apiResponse, gym ->
+            when (apiResponse) {
+                ApiResponse.Loading -> listOf()
+                ApiResponse.Error -> listOf()
+                is ApiResponse.Success -> apiResponse.data.map { query ->
+                    query.toUpliftClass()
+                }.filter {
+                    it.gymId == gym?.id
+                            && it.date.sameDayAs(GregorianCalendar())
+                            && it.time.end.compareTo(getSystemTime()) >= 0
+                }
+            }
+        }
 
     /**
      * Sets the current gym being displayed to [gym].

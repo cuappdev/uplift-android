@@ -42,11 +42,11 @@ fun HomeScreen(
         )
     }
     // Some error
-    else if (gymsState == ApiResponse.Error || classesState == ApiResponse.Error){
-        // Error...
+    else if (gymsState == ApiResponse.Error || classesState == ApiResponse.Error) {
+        // TODO: Error...
     }
     // At least one is still loading.
     else {
-        // Loading...
+        // TODO: Loading...
     }
 }

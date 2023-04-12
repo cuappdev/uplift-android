@@ -13,16 +13,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.cornellappdev.uplift.models.UpliftClass
-import com.cornellappdev.uplift.models.UpliftGym
-import com.cornellappdev.uplift.networking.ApiResponse
-import com.cornellappdev.uplift.networking.UpliftApiRepository
 import com.cornellappdev.uplift.ui.components.ClassInfoCard
 import com.cornellappdev.uplift.ui.viewmodels.ClassDetailViewModel
-import com.cornellappdev.uplift.util.getSystemTime
+import com.cornellappdev.uplift.ui.viewmodels.GymDetailViewModel
 import com.cornellappdev.uplift.util.montserratFamily
-import com.cornellappdev.uplift.util.sameDayAs
-import java.util.*
 
 /**
  * A vertical list of classes that a gym offers today. Refers to [ClassInfoCard] to create the class
@@ -30,17 +24,12 @@ import java.util.*
  */
 @Composable
 fun GymTodaysClasses(
-    gym: UpliftGym, classDetailViewModel: ClassDetailViewModel, navController: NavHostController
+    gymDetailViewModel: GymDetailViewModel,
+    classDetailViewModel: ClassDetailViewModel,
+    navController: NavHostController
 ) {
     // Gets Today's Classes from [UpliftApiRepository].
-    val classesState = UpliftApiRepository.upliftClassesFlow.collectAsState()
-    val classes = (when (classesState.value) {
-        is ApiResponse.Success -> (classesState.value as ApiResponse.Success<List<UpliftClass>>).data
-        else -> listOf()
-    }).filter {
-        it.gymId == gym.id
-            && it.date.sameDayAs(GregorianCalendar()) && it.time.end.compareTo(getSystemTime()) >= 0
-    }
+    val todaysClasses = gymDetailViewModel.todaysClassesFlow.collectAsState(initial = listOf())
 
     Column(
         modifier = Modifier
@@ -58,7 +47,7 @@ fun GymTodaysClasses(
             modifier = Modifier.padding(top = 24.dp, bottom = 24.dp),
             textAlign = TextAlign.Center
         )
-        for (aClass in classes) {
+        for (aClass in todaysClasses.value) {
             ClassInfoCard(
                 thisClass = aClass,
                 classDetailViewModel = classDetailViewModel,
@@ -66,7 +55,7 @@ fun GymTodaysClasses(
             )
             Spacer(modifier = Modifier.height(12.dp))
         }
-        if (classes.isEmpty()) {
+        if (todaysClasses.value.isEmpty()) {
             Text(
                 text = "We are done for today.\nPlease check again tomorrow!",
                 fontFamily = montserratFamily,

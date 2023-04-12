@@ -188,7 +188,6 @@ fun ClassDetailScreen(
 
         // Next Sessions
         NextUpliftClassSessions(
-            upliftClass = upliftClass,
             classDetailViewModel = classDetailViewModel,
             navController = navController
         )
