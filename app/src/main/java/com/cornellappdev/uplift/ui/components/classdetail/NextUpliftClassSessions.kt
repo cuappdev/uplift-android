@@ -30,8 +30,7 @@ fun NextUpliftClassSessions(
     navController: NavHostController,
     classDetailViewModel: ClassDetailViewModel
 ) {
-    val nextSessions =
-        classDetailViewModel.nextSessionsFlow.collectAsState(initial = listOf())
+    val nextSessions = classDetailViewModel.nextSessionsFlow.collectAsState()
 
     // Next Sessions
     Column(

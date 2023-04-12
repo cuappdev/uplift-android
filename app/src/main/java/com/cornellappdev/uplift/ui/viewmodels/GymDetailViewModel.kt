@@ -8,11 +8,9 @@ import com.cornellappdev.uplift.networking.UpliftApiRepository
 import com.cornellappdev.uplift.networking.toUpliftClass
 import com.cornellappdev.uplift.util.getSystemTime
 import com.cornellappdev.uplift.util.sameDayAs
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.*
 import java.util.*
 
 /** A [GymDetailViewModel] is a view model for GymDetailScreen. */
@@ -46,7 +44,11 @@ class GymDetailViewModel : ViewModel() {
                             && it.time.end.compareTo(getSystemTime()) >= 0
                 }
             }
-        }
+        }.stateIn(
+            CoroutineScope(Dispatchers.Main),
+            SharingStarted.Eagerly,
+            listOf()
+        )
 
     /**
      * Sets the current gym being displayed to [gym].

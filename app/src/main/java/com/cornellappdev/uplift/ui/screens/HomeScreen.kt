@@ -1,6 +1,5 @@
 package com.cornellappdev.uplift.ui.screens
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -14,7 +13,6 @@ import com.cornellappdev.uplift.ui.viewmodels.HomeViewModel
 /**
  * The home page of Uplift.
  */
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HomeScreen(
     homeViewModel: HomeViewModel = viewModel(),
@@ -23,9 +21,9 @@ fun HomeScreen(
     gymDetailViewModel: GymDetailViewModel
 ) {
     val titleText = homeViewModel.titleFlow.collectAsState().value
-    val classesState = homeViewModel.classesFlow.collectAsState(ApiResponse.Loading).value
+    val classesState = homeViewModel.classesFlow.collectAsState().value
     val sportsList = homeViewModel.sportsFlow.collectAsState().value
-    val gymsState = homeViewModel.gymFlow.collectAsState(ApiResponse.Loading).value
+    val gymsState = homeViewModel.gymFlow.collectAsState().value
 
     // Loaded!
     if (gymsState is ApiResponse.Success && classesState is ApiResponse.Success) {

@@ -11,9 +11,9 @@ import com.cornellappdev.uplift.networking.toUpliftGym
 import com.cornellappdev.uplift.util.getSystemTime
 import com.cornellappdev.uplift.util.sameDayAs
 import com.cornellappdev.uplift.util.sports
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.*
 import java.util.*
 
 /** A [HomeViewModel] is a view model for HomeScreen. */
@@ -37,7 +37,11 @@ class HomeViewModel : ViewModel() {
                 upliftClass.time.end.compareTo(getSystemTime()) > 0
             })
         }
-    }
+    }.stateIn(
+        CoroutineScope(Dispatchers.Main),
+        SharingStarted.Eagerly,
+        ApiResponse.Loading
+    )
 
     private val _sportsFlow: MutableStateFlow<List<Sport>> = MutableStateFlow(sports)
 
@@ -53,7 +57,11 @@ class HomeViewModel : ViewModel() {
                 query.toUpliftGym()
             })
         }
-    }
+    }.stateIn(
+        CoroutineScope(Dispatchers.Main),
+        SharingStarted.Eagerly,
+        ApiResponse.Loading
+    )
 
     /** Call before opening home to set all the proper display information for the home page. */
     fun openHome() {

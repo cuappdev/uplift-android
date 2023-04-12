@@ -5,11 +5,9 @@ import com.cornellappdev.uplift.models.UpliftClass
 import com.cornellappdev.uplift.networking.ApiResponse
 import com.cornellappdev.uplift.networking.UpliftApiRepository
 import com.cornellappdev.uplift.networking.toUpliftClass
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.*
 import java.util.*
 
 /** A [ClassDetailViewModel] is a view model for ClassDetailScreen.*/
@@ -41,7 +39,11 @@ class ClassDetailViewModel : ViewModel() {
                     it.name == upliftClass?.name && it.date > GregorianCalendar()
                 }
             }
-        }
+        }.stateIn(
+            CoroutineScope(Dispatchers.Main),
+            SharingStarted.Eagerly,
+            listOf()
+        )
 
     /**
      * Sets the current class being displayed to [upliftClass].

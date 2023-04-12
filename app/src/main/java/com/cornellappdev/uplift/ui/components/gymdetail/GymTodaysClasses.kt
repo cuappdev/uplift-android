@@ -29,7 +29,7 @@ fun GymTodaysClasses(
     navController: NavHostController
 ) {
     // Gets Today's Classes from [UpliftApiRepository].
-    val todaysClasses = gymDetailViewModel.todaysClassesFlow.collectAsState(initial = listOf())
+    val todaysClasses = gymDetailViewModel.todaysClassesFlow.collectAsState()
 
     Column(
         modifier = Modifier
