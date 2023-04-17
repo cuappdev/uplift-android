@@ -60,6 +60,7 @@ fun GymDetailScreen(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(scrollState)
+            .background(Color.White)
     ) {
         // Top Part
         Box(modifier = Modifier
@@ -139,16 +140,20 @@ fun GymDetailScreen(
         }
 
         if (gym != null) {
-            GymHours(hours = gym!!.hours, day)
-            LineSpacer()
-            PopularTimesSection(gym!!.popularTimes)
-            LineSpacer()
-            GymFacilitySection(gym!!, day)
-            GymTodaysClasses(
-                gym = gym!!,
-                classDetailViewModel = classDetailViewModel,
-                navController = navController
-            )
+            Column(modifier = Modifier
+                .fillMaxWidth()
+                .background(Color.White)) {
+                GymHours(hours = gym!!.hours, day)
+                LineSpacer()
+                PopularTimesSection(gym!!.popularTimes)
+                LineSpacer()
+                GymFacilitySection(gym!!, day)
+                GymTodaysClasses(
+                    gym = gym!!,
+                    classDetailViewModel = classDetailViewModel,
+                    navController = navController
+                )
+            }
         }
 
         Spacer(Modifier.height(50.dp))
