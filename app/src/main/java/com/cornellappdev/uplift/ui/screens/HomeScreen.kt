@@ -53,9 +53,11 @@ fun HomeScreen(
     val classRowState = rememberLazyListState()
     val sportsRowState = rememberLazyListState()
 
-    LazyColumn(state = mainScrollState, modifier = Modifier
-        .fillMaxSize()
-        .background(Color.White)) {
+    LazyColumn(
+        state = mainScrollState, modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White)
+    ) {
         stickyHeader {
             UpliftTopBar(showIcon = true, title = titleText)
         }

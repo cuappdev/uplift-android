@@ -140,9 +140,11 @@ fun GymDetailScreen(
         }
 
         if (gym != null) {
-            Column(modifier = Modifier
-                .fillMaxWidth()
-                .background(Color.White)) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color.White)
+            ) {
                 GymHours(hours = gym!!.hours, day)
                 LineSpacer()
                 PopularTimesSection(gym!!.popularTimes)

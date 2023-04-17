@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.cornellappdev.uplift.models.Gym
 import com.cornellappdev.uplift.ui.viewmodels.ClassDetailViewModel
+import com.cornellappdev.uplift.util.PRIMARY_BLACK
 import com.cornellappdev.uplift.util.montserratFamily
 
 /**
@@ -40,7 +41,8 @@ fun GymTodaysClasses(
             fontWeight = FontWeight(700),
             lineHeight = 19.5.sp,
             modifier = Modifier.padding(top = 24.dp, bottom = 24.dp),
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
+            color = PRIMARY_BLACK
         )
         for (aClass in gym.classesToday) {
             ClassInfoCard(

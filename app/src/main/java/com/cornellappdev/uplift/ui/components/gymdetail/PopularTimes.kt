@@ -80,7 +80,8 @@ fun PopularTimesSection(popularTimes: PopularTimes) {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 32.dp),
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
+            color = PRIMARY_BLACK
         )
 
 
