@@ -6,6 +6,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -82,7 +83,9 @@ fun MainNavigationWrapper(
                                 fontSize = 14.sp,
                                 fontWeight = if (selected) FontWeight(700) else FontWeight(500),
                                 lineHeight = 17.07.sp,
-                                textAlign = TextAlign.Center
+                                textAlign = TextAlign.Center,
+                                overflow = TextOverflow.Visible,
+                                softWrap = false
                             )
                         },
                         selected = selected,
