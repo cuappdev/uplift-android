@@ -1,6 +1,7 @@
 package com.cornellappdev.uplift.ui.components.home
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
@@ -9,6 +10,7 @@ import androidx.compose.material.Card
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment.Companion.BottomCenter
 import androidx.compose.ui.Alignment.Companion.TopEnd
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -54,8 +56,8 @@ fun HomeCard(gym: UpliftGym, onClick: () -> Unit) {
             backgroundColor = Color.White,
             onClick = onClick
         ) {
-            Column {
-                Box(modifier = Modifier.weight(3F)) {
+            Column(modifier = Modifier.fillMaxSize()) {
+                Box(modifier = Modifier.fillMaxSize()) {
                     AsyncImage(
                         model = gym.imageUrl,
                         modifier = Modifier.fillMaxWidth(),
@@ -68,103 +70,98 @@ fun HomeCard(gym: UpliftGym, onClick: () -> Unit) {
                         modifier = Modifier
                             .align(TopEnd)
                             .padding(top = 12.dp, end = 12.dp)
-                            .align(TopEnd)
                             .clickable(
                                 interactionSource = MutableInteractionSource(),
                                 indication = null
                             ) {
                                 gym.toggleFavorite()
                             }
-
                     )
-                }
-                Column(modifier = Modifier.weight(2F)) {
-                    Row(modifier = Modifier.padding(top = 8.dp)) {
-                        Spacer(Modifier.width(12.dp))
-                        Text(
-                            text = gym.name,
-                            fontSize = 16.sp,
-                            fontFamily = montserratFamily,
-                            fontWeight = FontWeight(500)
 
-                        )
-                        Spacer(
-                            modifier = Modifier.weight(1F),
-                        )
-                        Image(
-                            painter = painterResource(id = R.drawable.ic_dumbbell),
-                            contentDescription = "Dumbell",
-                            colorFilter = ColorFilter.tint(color = GRAY04)
-                        )
-                        Spacer(Modifier.width(4.dp))
-                        Image(
-                            painter = painterResource(id = R.drawable.ic_bowling_pins),
-                            contentDescription = "Bowling Pins",
-                            colorFilter = ColorFilter.tint(color = GRAY04)
-                        )
-                        Spacer(modifier = Modifier.width(12.dp))
-                    }
-                    Row {
-                        Spacer(Modifier.width(12.dp))
-                        if (isCurrentlyOpen(gym.hours[day])) Text(
-                            text = "Open",
-                            fontSize = 12.sp,
-                            color = ACCENT_OPEN,
+                    Column(
+                        modifier = Modifier
+                            .align(BottomCenter)
+                            .background(Color.White)
+                            .padding(top = 8.dp, start = 12.dp, end = 12.dp, bottom = 12.dp)
+                    ) {
+                        Row {
+                            Text(
+                                text = gym.name,
+                                fontSize = 16.sp,
+                                fontFamily = montserratFamily,
+                                fontWeight = FontWeight(500),
+                                lineHeight = 19.5.sp,
+                                color = PRIMARY_BLACK
+                            )
+                            Spacer(modifier = Modifier.weight(1F))
+                            Image(
+                                painter = painterResource(id = R.drawable.ic_dumbbell),
+                                contentDescription = "Dumbbell",
+                                colorFilter = ColorFilter.tint(color = GRAY04)
+                            )
+                            Spacer(Modifier.width(4.dp))
+                            Image(
+                                painter = painterResource(id = R.drawable.ic_bowling_pins),
+                                contentDescription = "Bowling Pins",
+                                colorFilter = ColorFilter.tint(color = GRAY04)
+                            )
+                        }
+                        Row {
+                            if (isCurrentlyOpen(gym.hours[day])) Text(
+                                text = "Open",
+                                fontSize = 12.sp,
+                                color = ACCENT_OPEN,
+                                lineHeight = 14.63.sp,
+                                fontFamily = montserratFamily,
+                                fontWeight = FontWeight(500),
+                            )
+                            else Text(
+                                text = "Closed",
+                                fontSize = 12.sp,
+                                color = Color.Red,
+                                lineHeight = 14.63.sp,
+                                fontFamily = montserratFamily,
+                                fontWeight = FontWeight(500),
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                text = if (lastTime != null) "Closes at $lastTime" else "Closed today",
+                                fontSize = 12.sp,
+                                fontFamily = montserratFamily,
+                                fontWeight = FontWeight(500),
+                                lineHeight = 14.63.sp,
+                                color = GRAY03
 
-                            fontFamily = montserratFamily,
-                            fontWeight = FontWeight(500),
-                        )
-                        else Text(
-                            text = "Closed",
-                            fontSize = 12.sp,
-                            color = Color.Red,
-
-                            fontFamily = montserratFamily,
-                            fontWeight = FontWeight(500),
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-
-                        /*
-                        @Todo Make this dynamic with networking instead of hardcoding info.
-                         */
-                        Text(
-                            text = if (lastTime != null) "Closes at $lastTime" else "Closed today",
-                            fontSize = 12.sp,
-                            fontFamily = montserratFamily,
-                            fontWeight = FontWeight(500),
-                            color = GRAY03
-                        )
-                    }
-                    Row {
-                        Spacer(Modifier.width(12.dp))
-                        Text(
-                            text = "Cramped",
-                            fontSize = 12.sp,
-                            fontFamily = montserratFamily,
-                            fontWeight = FontWeight(500),
-                            color = colorResource(id = R.color.orange),
-                            modifier = Modifier.padding(top = 2.dp),
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = " 120/140",
-                            fontSize = 12.sp,
-                            fontFamily = montserratFamily,
-                            fontWeight = FontWeight(500),
-                            modifier = Modifier.padding(top = 2.dp),
-                            color = GRAY03
-                        )
-                        Spacer(modifier = Modifier.weight(1F))
-                        Text(
-                            text = "1.2mi",
-                            fontSize = 12.sp,
-                            fontFamily = montserratFamily,
-                            fontWeight = FontWeight(500),
-                            modifier = Modifier.padding(top = 2.dp),
-                            color = GRAY03
-
-                        )
-                        Spacer(modifier = Modifier.width(12.dp))
+                            )
+                        }
+                        Row(modifier = Modifier.padding(top = 2.dp)) {
+                            Text(
+                                text = "Cramped",
+                                fontSize = 12.sp,
+                                fontFamily = montserratFamily,
+                                fontWeight = FontWeight(500),
+                                color = colorResource(id = R.color.orange),
+                                lineHeight = 14.63.sp,
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                text = " 120/140",
+                                fontSize = 12.sp,
+                                fontFamily = montserratFamily,
+                                fontWeight = FontWeight(500),
+                                lineHeight = 14.63.sp,
+                                color = GRAY03
+                            )
+                            Spacer(modifier = Modifier.weight(1F))
+                            Text(
+                                text = "1.2mi",
+                                fontSize = 12.sp,
+                                fontFamily = montserratFamily,
+                                fontWeight = FontWeight(500),
+                                lineHeight = 14.63.sp,
+                                color = GRAY03
+                            )
+                        }
                     }
                 }
             }

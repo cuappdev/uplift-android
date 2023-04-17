@@ -1,10 +1,12 @@
 package com.cornellappdev.uplift.ui.components
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Icon
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -71,7 +73,8 @@ fun ClassInfoCard(
                             fontSize = 14.sp,
                             fontWeight = FontWeight(500),
                             lineHeight = 17.07.sp,
-                            textAlign = TextAlign.Center
+                            textAlign = TextAlign.Center,
+                            color = PRIMARY_BLACK
                         )
                         Text(
                             text = thisClass.time.start.toString(),
@@ -79,7 +82,8 @@ fun ClassInfoCard(
                             fontSize = 12.sp,
                             fontWeight = FontWeight(400),
                             lineHeight = 14.63.sp,
-                            textAlign = TextAlign.Center
+                            textAlign = TextAlign.Center,
+                            color = PRIMARY_BLACK
                         )
                     }
 
@@ -92,7 +96,8 @@ fun ClassInfoCard(
                             fontSize = 16.sp,
                             fontWeight = FontWeight(500),
                             lineHeight = 17.07.sp,
-                            textAlign = TextAlign.Center
+                            textAlign = TextAlign.Center,
+                            color = PRIMARY_BLACK
                         )
                         Text(
                             text = thisClass.location,
@@ -100,7 +105,8 @@ fun ClassInfoCard(
                             fontSize = 12.sp,
                             fontWeight = FontWeight(400),
                             lineHeight = 14.63.sp,
-                            textAlign = TextAlign.Center
+                            textAlign = TextAlign.Center,
+                            color = PRIMARY_BLACK
                         )
 
                         Spacer(modifier = Modifier.height(17.dp))
@@ -117,11 +123,20 @@ fun ClassInfoCard(
                     }
                 }
 
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_star),
+                Image(
+                    painter = painterResource(
+                        id = if (thisClass.isFavorite()) R.drawable.ic_star_black_filled
+                        else R.drawable.ic_star_black
+                    ),
                     contentDescription = null,
-                    modifier = Modifier.size(24.dp),
-                    tint = PRIMARY_BLACK
+                    modifier = Modifier
+                        .size(24.dp)
+                        .clickable(
+                            interactionSource = MutableInteractionSource(),
+                            indication = null
+                        ) {
+                            thisClass.toggleFavorite()
+                        }
                 )
             }
         }

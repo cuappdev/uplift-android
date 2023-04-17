@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.sp
 import com.cornellappdev.uplift.models.UpliftGym
 import com.cornellappdev.uplift.util.ACCENT_CLOSED
 import com.cornellappdev.uplift.util.GRAY01
+import com.cornellappdev.uplift.util.PRIMARY_BLACK
 import com.cornellappdev.uplift.util.montserratFamily
 
 /**
@@ -40,7 +41,8 @@ fun GymBowlingSection(today: Int, gym: UpliftGym) {
                     fontWeight = FontWeight(300),
                     lineHeight = 26.sp,
                     textAlign = TextAlign.Left,
-                    modifier = Modifier.padding(bottom = 5.dp)
+                    modifier = Modifier.padding(bottom = 5.dp),
+                    color = PRIMARY_BLACK
                 )
                 Spacer(Modifier.padding(bottom = 6.dp))
             }
@@ -64,7 +66,8 @@ fun GymBowlingSection(today: Int, gym: UpliftGym) {
                                 fontWeight = FontWeight(400),
                                 lineHeight = 20.sp,
                                 textAlign = TextAlign.Left,
-                                modifier = Modifier.padding(bottom = 11.dp)
+                                modifier = Modifier.padding(bottom = 11.dp),
+                                color = PRIMARY_BLACK
                             )
                             Text(
                                 text = bowlingInfo.pricePerGame,
@@ -73,7 +76,8 @@ fun GymBowlingSection(today: Int, gym: UpliftGym) {
                                 fontWeight = FontWeight(600),
                                 lineHeight = 20.sp,
                                 textAlign = TextAlign.Left,
-                                modifier = Modifier.padding(bottom = 11.dp)
+                                modifier = Modifier.padding(bottom = 11.dp),
+                                color = PRIMARY_BLACK
                             )
                         }
                         Row(
@@ -86,7 +90,8 @@ fun GymBowlingSection(today: Int, gym: UpliftGym) {
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight(400),
                                 lineHeight = 20.sp,
-                                textAlign = TextAlign.Left
+                                textAlign = TextAlign.Left,
+                                color = PRIMARY_BLACK
                             )
                             Text(
                                 text = bowlingInfo.shoeRental,
@@ -94,7 +99,8 @@ fun GymBowlingSection(today: Int, gym: UpliftGym) {
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight(600),
                                 lineHeight = 20.sp,
-                                textAlign = TextAlign.Left
+                                textAlign = TextAlign.Left,
+                                color = PRIMARY_BLACK
                             )
                         }
                     }
