@@ -32,11 +32,7 @@ import com.cornellappdev.uplift.ui.components.PopularTimesSection
 import com.cornellappdev.uplift.ui.components.gymdetail.GymTodaysClasses
 import com.cornellappdev.uplift.ui.viewmodels.ClassDetailViewModel
 import com.cornellappdev.uplift.ui.viewmodels.GymDetailViewModel
-import com.cornellappdev.uplift.util.GRAY01
-import com.cornellappdev.uplift.util.PRIMARY_BLACK
-import com.cornellappdev.uplift.util.isCurrentlyOpen
-import com.cornellappdev.uplift.util.montserratFamily
-import java.util.*
+import com.cornellappdev.uplift.util.*
 
 /**
  * A screen displaying all the information about a selected gym.
@@ -49,7 +45,7 @@ fun GymDetailScreen(
     onBack: () -> Unit
 ) {
     val gym by gymDetailViewModel.gymFlow.collectAsState()
-    val day = ((Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 2) + 7) % 7
+    val day = todayIndex()
 
     val scrollState = rememberScrollState()
 

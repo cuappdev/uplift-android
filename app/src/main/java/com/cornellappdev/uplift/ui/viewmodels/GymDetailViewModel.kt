@@ -1,8 +1,8 @@
 package com.cornellappdev.uplift.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
-import com.cornellappdev.uplift.models.UpliftGym
 import com.cornellappdev.uplift.models.UpliftClass
+import com.cornellappdev.uplift.models.UpliftGym
 import com.cornellappdev.uplift.networking.ApiResponse
 import com.cornellappdev.uplift.networking.UpliftApiRepository
 import com.cornellappdev.uplift.networking.toUpliftClass

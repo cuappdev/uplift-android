@@ -147,3 +147,18 @@ fun Calendar.sameDayAs(other: Calendar): Boolean =
     get(Calendar.YEAR) == other.get(Calendar.YEAR)
             && get(Calendar.MONTH) == other.get(Calendar.MONTH)
             && get(Calendar.DAY_OF_MONTH) == other.get(Calendar.DAY_OF_MONTH)
+
+/**
+ * Returns an int corresponding to the day of the week that it is.
+ *
+ * Mon -> 0
+ *
+ * Tues -> 1
+ *
+ * ...
+ *
+ * Sun -> 6
+ */
+fun todayIndex(): Int {
+    return ((Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 2) + 7) % 7
+}

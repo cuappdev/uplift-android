@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment.Companion.BottomCenter
 import androidx.compose.ui.Alignment.Companion.TopEnd
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
@@ -25,7 +26,6 @@ import coil.compose.AsyncImage
 import com.cornellappdev.uplift.R
 import com.cornellappdev.uplift.models.UpliftGym
 import com.cornellappdev.uplift.util.*
-import java.util.*
 
 
 /**
@@ -36,7 +36,7 @@ import java.util.*
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun HomeCard(gym: UpliftGym, onClick: () -> Unit) {
-    val day: Int = ((Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 2) + 7) % 7
+    val day: Int = todayIndex()
     val lastTime =
         if (gym.hours[day] != null) {
             gym.hours[day]!![(gym.hours[day]!!.size - 1)].end.toString()
@@ -56,7 +56,11 @@ fun HomeCard(gym: UpliftGym, onClick: () -> Unit) {
             backgroundColor = Color.White,
             onClick = onClick
         ) {
-            Column(modifier = Modifier.fillMaxSize()) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .alpha(if (isCurrentlyOpen(gym.hours[day])) 1f else .6f)
+            ) {
                 Box(modifier = Modifier.fillMaxSize()) {
                     AsyncImage(
                         model = gym.imageUrl,

@@ -8,9 +8,7 @@ import com.cornellappdev.uplift.networking.ApiResponse
 import com.cornellappdev.uplift.networking.UpliftApiRepository
 import com.cornellappdev.uplift.networking.toUpliftClass
 import com.cornellappdev.uplift.networking.toUpliftGym
-import com.cornellappdev.uplift.util.getSystemTime
-import com.cornellappdev.uplift.util.sameDayAs
-import com.cornellappdev.uplift.util.sports
+import com.cornellappdev.uplift.util.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
@@ -55,7 +53,19 @@ class HomeViewModel : ViewModel() {
             ApiResponse.Error -> ApiResponse.Error
             is ApiResponse.Success -> ApiResponse.Success(apiResponse.data.map { query ->
                 query.toUpliftGym()
-            })
+            }.sortedWith { gym1, gym2 ->
+                if (isCurrentlyOpen(gym1.hours[todayIndex()]) && !isCurrentlyOpen(gym2.hours[todayIndex()])) {
+                    -1
+                } else if (!isCurrentlyOpen(gym1.hours[todayIndex()]) && isCurrentlyOpen(gym2.hours[todayIndex()])) {
+                    1
+                }
+                // Both are either open or both closed.
+                else {
+                    // TODO: Convert to compare based off distance.
+                    gym1.name.compareTo(gym2.name)
+                }
+            }
+            )
         }
     }.stateIn(
         CoroutineScope(Dispatchers.Main),
