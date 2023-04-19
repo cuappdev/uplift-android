@@ -4,6 +4,7 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
@@ -22,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cornellappdev.uplift.R
 import com.cornellappdev.uplift.models.TimeInterval
+import com.cornellappdev.uplift.util.PRIMARY_BLACK
 import com.cornellappdev.uplift.util.montserratFamily
 
 /**
@@ -35,7 +37,7 @@ fun GymHours(hours: List<List<TimeInterval>?>, today: Int) {
     val rotationAnimation by animateFloatAsState(targetValue = if (collapsed) 0f else 90f)
     val collapseAnimation by animateFloatAsState(
         targetValue = if (collapsed) 0f else 7f,
-        animationSpec = tween(durationMillis = 300, easing = LinearEasing)
+        animationSpec = tween(durationMillis = 400, easing = LinearEasing)
     )
 
     val interactionSource = remember { MutableInteractionSource() }
@@ -43,7 +45,8 @@ fun GymHours(hours: List<List<TimeInterval>?>, today: Int) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .animateContentSize(),
+            .animateContentSize()
+            .background(Color.White),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Spacer(modifier = Modifier.height(32.dp))
@@ -54,7 +57,8 @@ fun GymHours(hours: List<List<TimeInterval>?>, today: Int) {
             fontWeight = FontWeight(700),
             lineHeight = 19.5.sp,
             modifier = Modifier.fillMaxWidth(),
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
+            color = PRIMARY_BLACK
         )
         Spacer(modifier = Modifier.height(12.dp))
 
@@ -88,7 +92,8 @@ fun GymHours(hours: List<List<TimeInterval>?>, today: Int) {
                         fontSize = 16.sp,
                         fontWeight = FontWeight(500),
                         lineHeight = 19.5.sp,
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Center,
+                        color = PRIMARY_BLACK
                     )
                 } else
                     for (interval in hours[today]!!) {
@@ -98,7 +103,8 @@ fun GymHours(hours: List<List<TimeInterval>?>, today: Int) {
                             fontSize = 16.sp,
                             fontWeight = FontWeight(500),
                             lineHeight = 19.5.sp,
-                            textAlign = TextAlign.Center
+                            textAlign = TextAlign.Center,
+                            color = PRIMARY_BLACK
                         )
                     }
             }
@@ -160,7 +166,8 @@ fun HoursOfWeek(day: String, hours: List<TimeInterval>?) {
             fontSize = 16.sp,
             fontWeight = FontWeight(500),
             lineHeight = 19.5.sp,
-            textAlign = TextAlign.Right
+            textAlign = TextAlign.Right,
+            color = PRIMARY_BLACK
         )
         Spacer(modifier = Modifier.width(8.dp))
         Column(
@@ -174,7 +181,8 @@ fun HoursOfWeek(day: String, hours: List<TimeInterval>?) {
                     fontSize = 16.sp,
                     fontWeight = FontWeight(400),
                     lineHeight = 19.5.sp,
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
+                    color = PRIMARY_BLACK
                 )
             } else
                 for (interval in hours) {
@@ -184,7 +192,8 @@ fun HoursOfWeek(day: String, hours: List<TimeInterval>?) {
                         fontSize = 16.sp,
                         fontWeight = FontWeight(400),
                         lineHeight = 19.5.sp,
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Center,
+                        color = PRIMARY_BLACK
                     )
                 }
         }

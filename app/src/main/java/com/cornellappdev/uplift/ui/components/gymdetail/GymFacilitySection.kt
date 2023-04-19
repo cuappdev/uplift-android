@@ -2,6 +2,7 @@ package com.cornellappdev.uplift.ui.components
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
@@ -23,10 +24,7 @@ import com.cornellappdev.uplift.R
 import com.cornellappdev.uplift.models.Gym
 import com.cornellappdev.uplift.models.OpenType
 import com.cornellappdev.uplift.ui.screens.LineSpacer
-import com.cornellappdev.uplift.util.ACCENT_CLOSED
-import com.cornellappdev.uplift.util.ACCENT_OPEN
-import com.cornellappdev.uplift.util.isCurrentlyOpen
-import com.cornellappdev.uplift.util.montserratFamily
+import com.cornellappdev.uplift.util.*
 
 /**
  * Displays the "FACILITIES" for a gym. Includes information on Equipment, Gymnasiums, Swimming,
@@ -36,7 +34,11 @@ import com.cornellappdev.uplift.util.montserratFamily
 fun GymFacilitySection(gym: Gym, today: Int) {
     var openedFacility by remember { mutableStateOf(-1) }
 
-    Column(modifier = Modifier.fillMaxWidth()) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color.White)
+    ) {
         Spacer(modifier = Modifier.height(24.dp))
         Text(
             text = "FACILITIES",
@@ -45,7 +47,8 @@ fun GymFacilitySection(gym: Gym, today: Int) {
             fontWeight = FontWeight(700),
             lineHeight = 19.5.sp,
             modifier = Modifier.fillMaxWidth(),
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
+            color = PRIMARY_BLACK
         )
         Spacer(modifier = Modifier.height(24.dp))
         // Equipment Tab
@@ -78,7 +81,6 @@ fun GymFacilitySection(gym: Gym, today: Int) {
         LineSpacer(paddingStart = 24.dp, paddingEnd = 24.dp)
 
         if (gym.gymnasiumInfo != null) {
-
             FacilityTab(
                 painterResource(id = R.drawable.ic_basketball_hoop),
                 "GYMNASIUM",
@@ -159,7 +161,8 @@ fun GymFacilitySection(gym: Gym, today: Int) {
                             fontWeight = FontWeight(400),
                             lineHeight = 20.sp,
                             textAlign = TextAlign.Left,
-                            modifier = Modifier.padding(start = 8.dp)
+                            modifier = Modifier.padding(start = 8.dp),
+                            color = PRIMARY_BLACK
                         )
                     }
                 }
@@ -167,8 +170,6 @@ fun GymFacilitySection(gym: Gym, today: Int) {
 
             LineSpacer(paddingStart = 24.dp, paddingEnd = 24.dp)
         }
-
-
     }
 }
 
@@ -213,7 +214,8 @@ fun FacilityTab(
                 fontWeight = FontWeight(500),
                 lineHeight = 19.5.sp,
                 textAlign = TextAlign.Left,
-                modifier = Modifier.padding(start = 8.dp)
+                modifier = Modifier.padding(start = 8.dp),
+                color = PRIMARY_BLACK
             )
             Spacer(modifier = Modifier.weight(1f))
             if (open != OpenType.NOT_APPLICABLE)
@@ -232,7 +234,8 @@ fun FacilityTab(
                 contentDescription = null,
                 modifier = Modifier
                     .padding(end = 24.dp)
-                    .rotate(rotationAnimation)
+                    .rotate(rotationAnimation),
+                tint = PRIMARY_BLACK
             )
         }
 

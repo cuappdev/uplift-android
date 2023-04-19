@@ -43,7 +43,8 @@ fun GymGymnasiumSection(today: Int, gym: Gym) {
                     fontWeight = FontWeight(300),
                     lineHeight = 26.sp,
                     textAlign = TextAlign.Left,
-                    modifier = Modifier.padding(bottom = 5.dp)
+                    modifier = Modifier.padding(bottom = 5.dp),
+                    color = PRIMARY_BLACK
                 )
             }
             Spacer(Modifier.padding(bottom = 16.dp))
@@ -95,7 +96,8 @@ fun CourtComponent(
             lineHeight = 17.07.sp,
             textAlign = TextAlign.Center,
             modifier = Modifier
-                .padding(bottom = 9.dp)
+                .padding(bottom = 9.dp),
+            color = PRIMARY_BLACK
         )
         Box {
             Icon(
@@ -118,7 +120,8 @@ fun CourtComponent(
                     lineHeight = 17.07.sp,
                     textAlign = TextAlign.Center,
                     modifier = Modifier
-                        .padding(bottom = 4.dp)
+                        .padding(bottom = 4.dp),
+                    color = PRIMARY_BLACK
                 )
 
                 // BEFORE ...
@@ -131,7 +134,8 @@ fun CourtComponent(
                         fontSize = 12.sp,
                         fontWeight = FontWeight(500),
                         lineHeight = 14.63.sp,
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Center,
+                        color = PRIMARY_BLACK
                     )
                 } else if (getOverallTimeInterval(times).start != overallTimeInterval.start &&
                     getOverallTimeInterval(times).end == overallTimeInterval.end
@@ -142,7 +146,8 @@ fun CourtComponent(
                         fontSize = 12.sp,
                         fontWeight = FontWeight(500),
                         lineHeight = 14.63.sp,
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Center,
+                        color = PRIMARY_BLACK
                     )
                 } else if (getOverallTimeInterval(times).start == overallTimeInterval.start &&
                     getOverallTimeInterval(times).end == overallTimeInterval.end
@@ -153,7 +158,8 @@ fun CourtComponent(
                         fontSize = 12.sp,
                         fontWeight = FontWeight(500),
                         lineHeight = 14.63.sp,
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Center,
+                        color = PRIMARY_BLACK
                     )
                 } else
                     for (i in times.indices) {
@@ -163,7 +169,8 @@ fun CourtComponent(
                             fontSize = 12.sp,
                             fontWeight = FontWeight(500),
                             lineHeight = 14.63.sp,
-                            textAlign = TextAlign.Center
+                            textAlign = TextAlign.Center,
+                            color = PRIMARY_BLACK
                         )
                         if (i != times.size - 1) {
                             Spacer(modifier = Modifier.height(2.dp))

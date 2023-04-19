@@ -1,11 +1,11 @@
 package com.cornellappdev.uplift.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
+import com.cornellappdev.uplift.models.Gym
+import com.cornellappdev.uplift.models.Sport
 import com.cornellappdev.uplift.models.TimeOfDay
 import com.cornellappdev.uplift.models.UpliftClass
-import com.cornellappdev.uplift.util.exampleClassMusclePump1
-import com.cornellappdev.uplift.util.exampleClassMusclePump2
-import com.cornellappdev.uplift.util.getSystemTime
+import com.cornellappdev.uplift.util.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
@@ -19,12 +19,29 @@ class HomeViewModel : ViewModel() {
 
     private val _classesFlow: MutableStateFlow<List<UpliftClass>> = MutableStateFlow(
         listOf(
-            exampleClassMusclePump1, exampleClassMusclePump2
+            exampleClassMusclePump1,
+            exampleClassMusclePump2,
+            exampleClassMusclePump2,
+            exampleClassMusclePump2
         )
     )
 
     /** Emits lists of all the [UpliftClass]es that should be shown in the today's classes section. */
     val classesFlow = _classesFlow.asStateFlow()
+
+    private val _sportsFlow: MutableStateFlow<List<Sport>> = MutableStateFlow(sports)
+
+    /** Emits lists of sports that should be shown in the 'Your Sports' section. */
+    val sportsFlow = _sportsFlow.asStateFlow()
+
+    private val _gymFlow: MutableStateFlow<List<Gym>> = MutableStateFlow(
+        listOf(
+            testMorrison, testMorrison
+        )
+    )
+
+    /** Emits lists of gyms that should be shown in the 'Gyms' section. */
+    val gymFlow = _gymFlow.asStateFlow()
 
     /** Call before opening home to set all the proper display information for the home page. */
     fun openHome() {

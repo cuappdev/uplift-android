@@ -11,10 +11,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cornellappdev.uplift.models.Gym
-import com.cornellappdev.uplift.util.ACCENT_CLOSED
-import com.cornellappdev.uplift.util.LIGHT_YELLOW
-import com.cornellappdev.uplift.util.PRIMARY_YELLOW
-import com.cornellappdev.uplift.util.montserratFamily
+import com.cornellappdev.uplift.util.*
 
 /**
  * Displays swimming information for the given gym throughout the week, defaulting to the day
@@ -45,7 +42,8 @@ fun GymSwimmingSection(today: Int, gym: Gym) {
                             fontWeight = FontWeight(300),
                             lineHeight = 26.sp,
                             textAlign = TextAlign.Left,
-                            modifier = Modifier.padding(start = 8.dp)
+                            modifier = Modifier.padding(start = 8.dp),
+                            color = PRIMARY_BLACK
                         )
                         if (swimmingTime.womenOnly) {
                             Box(
@@ -72,7 +70,8 @@ fun GymSwimmingSection(today: Int, gym: Gym) {
                                     textAlign = TextAlign.Left,
                                     modifier = Modifier
                                         .align(Alignment.Center)
-                                        .padding(start = 3.5.dp, end = 2.5.dp)
+                                        .padding(start = 3.5.dp, end = 2.5.dp),
+                                    color = PRIMARY_BLACK
                                 )
                             }
                         }

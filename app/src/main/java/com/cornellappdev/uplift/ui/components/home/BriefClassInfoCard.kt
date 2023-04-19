@@ -17,9 +17,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.cornellappdev.uplift.R
 import com.cornellappdev.uplift.models.UpliftClass
+import com.cornellappdev.uplift.nav.navigateToClass
 import com.cornellappdev.uplift.ui.viewmodels.ClassDetailViewModel
 import com.cornellappdev.uplift.util.*
 
@@ -29,7 +30,7 @@ import com.cornellappdev.uplift.util.*
 @Composable
 fun BriefClassInfoCard(
     thisClass: UpliftClass,
-    navController: NavController,
+    navController: NavHostController,
     classDetailViewModel: ClassDetailViewModel
 ) {
     Surface(
@@ -38,8 +39,10 @@ fun BriefClassInfoCard(
         modifier = Modifier
             .widthIn(min = 228.dp)
             .clickable {
-                classDetailViewModel.selectClass(thisClass)
-                navController.navigate("classDetail")
+                navController.navigateToClass(
+                    classDetailViewModel = classDetailViewModel,
+                    thisClass = thisClass
+                )
             },
         elevation = 4.dp
     ) {

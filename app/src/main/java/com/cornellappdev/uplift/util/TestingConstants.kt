@@ -1,5 +1,6 @@
 package com.cornellappdev.uplift.util
 
+import com.cornellappdev.uplift.R
 import com.cornellappdev.uplift.models.*
 import java.util.*
 
@@ -16,7 +17,7 @@ val exampleClassMusclePump2 = UpliftClass(
     preparation = "Footwear appropriate for movement",
     description = "Put a little muscle into your workout and join us for a class designed to build muscle endurance with low to medium weights and high repetitions. A variety of equipment and strength training techniques will be used in this class. There is no cardio portion in these sessions. Footwear that is appropriate for movement is required for this class. ",
     nextSessions = listOf(),
-    imageUrl = "https://post.healthline.com/wp-content/uploads/2020/01/Young-Women-Having-Sports-Rowing-Training-Drill-in-Gym-732x549-thumbnail.jpg"
+    imageUrl = "https://content.active.com/Assets/Active.com+Content+Site+Digital+Assets/Fitness/Best+Rowing+Apps/rowing-apps_header.jpg"
 )
 
 val exampleClassMusclePump1 = UpliftClass(
@@ -307,3 +308,10 @@ val testMorrison = Gym(
     ),
     imageUrl = "https://recreation.athletics.cornell.edu/sites/recreation.athletics.cornell.edu/files/photo-galleries/DB%20_%20Benches_TM.jpeg"
 )
+
+val sports: List<Sport> = listOf(
+    Sport(painterId = R.drawable.ic_bowling_pins, name = "Bowling"),
+    Sport(painterId = R.drawable.ic_dumbbell, name = "Lifting"),
+    Sport(painterId = R.drawable.ic_basketball_hoop, name = "Basketball"),
+    Sport(painterId = R.drawable.ic_swimming_pool, name = "Swimming"),
+).sorted()
