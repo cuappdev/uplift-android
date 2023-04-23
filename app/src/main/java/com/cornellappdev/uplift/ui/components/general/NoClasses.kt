@@ -29,7 +29,7 @@ fun NoClasses() {
             contentDescription = null,
             modifier = Modifier.size(width = 84.39.dp, height = 71.dp)
         )
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(12.dp))
         Text(
             text = "No classes today",
             fontWeight = FontWeight(700),

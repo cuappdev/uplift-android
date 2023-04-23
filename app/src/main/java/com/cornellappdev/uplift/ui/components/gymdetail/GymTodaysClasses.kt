@@ -64,7 +64,8 @@ fun GymTodaysClasses(
                 fontSize = 14.sp,
                 fontWeight = FontWeight(300),
                 lineHeight = 19.5.sp,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                color = PRIMARY_BLACK
             )
         }
         Spacer(modifier = Modifier.height(36.dp))
