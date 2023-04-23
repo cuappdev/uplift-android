@@ -99,12 +99,30 @@ fun HomeCard(gym: UpliftGym, onClick: () -> Unit) {
                                 contentDescription = "Dumbbell",
                                 colorFilter = ColorFilter.tint(color = GRAY04)
                             )
-                            Spacer(Modifier.width(4.dp))
-                            Image(
-                                painter = painterResource(id = R.drawable.ic_bowling_pins),
-                                contentDescription = "Bowling Pins",
-                                colorFilter = ColorFilter.tint(color = GRAY04)
-                            )
+                            if (gym.bowlingInfo != null) {
+                                Spacer(Modifier.width(4.dp))
+                                Image(
+                                    painter = painterResource(id = R.drawable.ic_bowling_pins),
+                                    contentDescription = "Bowling Pins",
+                                    colorFilter = ColorFilter.tint(color = GRAY04)
+                                )
+                            }
+                            if (gym.swimmingInfo != null) {
+                                Spacer(Modifier.width(4.dp))
+                                Image(
+                                    painter = painterResource(id = R.drawable.ic_swimming_pool),
+                                    contentDescription = "Bowling Pins",
+                                    colorFilter = ColorFilter.tint(color = GRAY04)
+                                )
+                            }
+                            if (gym.gymnasiumInfo != null) {
+                                Spacer(Modifier.width(4.dp))
+                                Image(
+                                    painter = painterResource(id = R.drawable.ic_basketball_hoop),
+                                    contentDescription = "Bowling Pins",
+                                    colorFilter = ColorFilter.tint(color = GRAY04)
+                                )
+                            }
                         }
                         Row {
                             if (isCurrentlyOpen(gym.hours[day])) Text(
