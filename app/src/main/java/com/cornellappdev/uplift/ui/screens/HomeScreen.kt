@@ -1,7 +1,12 @@
 package com.cornellappdev.uplift.ui.screens
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.cornellappdev.uplift.networking.ApiResponse
@@ -42,9 +47,11 @@ fun HomeScreen(
     // Some error
     else if (gymsState == ApiResponse.Error || classesState == ApiResponse.Error) {
         // TODO: Error...
+        Column(modifier = Modifier.fillMaxSize().background(color = Color.White)) {}
     }
     // At least one is still loading.
     else {
         // TODO: Loading...
+        Column(modifier = Modifier.fillMaxSize().background(color = Color.White)) {}
     }
 }
