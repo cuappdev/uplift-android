@@ -1,9 +1,13 @@
 package com.cornellappdev.uplift.ui.screens
 
-import androidx.compose.foundation.*
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -29,6 +33,7 @@ import com.cornellappdev.uplift.R
 import com.cornellappdev.uplift.ui.components.GymFacilitySection
 import com.cornellappdev.uplift.ui.components.GymHours
 import com.cornellappdev.uplift.ui.components.PopularTimesSection
+import com.cornellappdev.uplift.ui.components.general.FavoriteButton
 import com.cornellappdev.uplift.ui.components.gymdetail.GymTodaysClasses
 import com.cornellappdev.uplift.ui.viewmodels.ClassDetailViewModel
 import com.cornellappdev.uplift.ui.viewmodels.GymDetailViewModel
@@ -37,6 +42,7 @@ import com.cornellappdev.uplift.util.*
 /**
  * A screen displaying all the information about a selected gym.
  */
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun GymDetailScreen(
     gymDetailViewModel: GymDetailViewModel = viewModel(),
@@ -92,16 +98,17 @@ fun GymDetailScreen(
                     ),
                 tint = Color.White
             )
-            Image(
-                painter = painterResource(id = if (gym != null && gym!!.isFavorite()) R.drawable.ic_star_filled else R.drawable.ic_star),
-                contentDescription = null,
+
+            Box(
                 modifier = Modifier
                     .align(Alignment.TopEnd)
                     .padding(top = 47.dp, end = 21.dp)
-                    .clickable(interactionSource = MutableInteractionSource(), indication = null) {
-                        gym?.toggleFavorite()
-                    }
-            )
+            ) {
+                FavoriteButton(
+                    filled = (gym != null && gym!!.isFavorite())
+                ) { gym?.toggleFavorite() }
+            }
+
             Text(
                 modifier = Modifier.align(Alignment.Center),
                 text = gym?.name?.uppercase() ?: "",

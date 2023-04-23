@@ -1,6 +1,5 @@
 package com.cornellappdev.uplift.ui.screens
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
@@ -30,6 +29,7 @@ import coil.compose.AsyncImage
 import com.cornellappdev.uplift.R
 import com.cornellappdev.uplift.models.UpliftClass
 import com.cornellappdev.uplift.ui.components.classdetail.*
+import com.cornellappdev.uplift.ui.components.general.FavoriteButton
 import com.cornellappdev.uplift.ui.viewmodels.ClassDetailViewModel
 import com.cornellappdev.uplift.util.PRIMARY_BLACK
 import com.cornellappdev.uplift.util.bebasNeueFamily
@@ -90,16 +90,17 @@ fun ClassDetailScreen(
                     ),
                 tint = Color.White
             )
-            Image(
-                painter = painterResource(id = if (upliftClass != null && upliftClass!!.isFavorite()) R.drawable.ic_star_filled else R.drawable.ic_star),
-                contentDescription = null,
+
+            Box(
                 modifier = Modifier
                     .align(Alignment.TopEnd)
                     .padding(top = 47.dp, end = 21.dp)
-                    .clickable(interactionSource = MutableInteractionSource(), indication = null) {
-                        upliftClass?.toggleFavorite()
-                    }
-            )
+            ) {
+                FavoriteButton(
+                    filled = (upliftClass != null && upliftClass!!.isFavorite())
+                ) { upliftClass?.toggleFavorite() }
+            }
+
             // All text header information...
             Column(
                 modifier = Modifier

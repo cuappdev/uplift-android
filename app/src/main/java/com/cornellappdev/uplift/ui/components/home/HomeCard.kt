@@ -2,8 +2,6 @@ package com.cornellappdev.uplift.ui.components.home
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
@@ -25,6 +23,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.cornellappdev.uplift.R
 import com.cornellappdev.uplift.models.UpliftGym
+import com.cornellappdev.uplift.ui.components.general.FavoriteButton
 import com.cornellappdev.uplift.util.*
 
 
@@ -68,19 +67,16 @@ fun HomeCard(gym: UpliftGym, onClick: () -> Unit) {
                         contentDescription = "",
                         contentScale = ContentScale.Crop
                     )
-                    Image(
-                        painterResource(id = if (gym.isFavorite()) R.drawable.ic_star_filled else R.drawable.ic_star),
-                        contentDescription = "Star Icon",
+
+                    Box(
                         modifier = Modifier
                             .align(TopEnd)
                             .padding(top = 12.dp, end = 12.dp)
-                            .clickable(
-                                interactionSource = MutableInteractionSource(),
-                                indication = null
-                            ) {
-                                gym.toggleFavorite()
-                            }
-                    )
+                    ) {
+                        FavoriteButton(filled = gym.isFavorite()) {
+                            gym.toggleFavorite()
+                        }
+                    }
 
                     Column(
                         modifier = Modifier
