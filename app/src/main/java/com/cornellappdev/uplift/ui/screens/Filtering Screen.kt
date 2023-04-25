@@ -44,7 +44,7 @@ fun filteringScreen(){
                 Text(
                     text = "Reset",
                     modifier = Modifier
-                        .clickable { }
+                        .clickable {}
                         .padding(start = 16.dp),
                     fontSize = 14.sp,
                     fontFamily = montserratFamily,
@@ -93,13 +93,11 @@ fun filteringScreen(){
                 modifier = Modifier
                     .padding(start = 16.dp, end = 16.dp)
                     .clickable {
-                        if (noyes) {
-
-                        }
+                        noyes = !noyes
                     },
                 fontSize = 14.sp,
                 fontFamily = montserratFamily,
-                fontWeight = FontWeight(300),
+                fontWeight = if(noyes) FontWeight.Bold else FontWeight(300),
                 color = PRIMARY_BLACK
             )
             VerticalDivider(color = GRAY01, thickness = 1.dp)
@@ -111,7 +109,7 @@ fun filteringScreen(){
                     },
                 fontSize = 14.sp,
                 fontFamily = montserratFamily,
-                fontWeight = FontWeight(300),
+                fontWeight =if(newman) FontWeight.Bold else FontWeight(300),
                 color = PRIMARY_BLACK
             )
             VerticalDivider(color = GRAY01, thickness = 1.dp)
@@ -123,7 +121,7 @@ fun filteringScreen(){
                     },
                 fontSize = 14.sp,
                 fontFamily = montserratFamily,
-                fontWeight = FontWeight(300),
+                fontWeight = if(teagle) FontWeight.Bold else FontWeight(300),
                 color = PRIMARY_BLACK
             )
             VerticalDivider(color = GRAY01, thickness = 1.dp)
@@ -135,7 +133,7 @@ fun filteringScreen(){
                     },
                 fontSize = 14.sp,
                 fontFamily = montserratFamily,
-                fontWeight = FontWeight(300),
+                fontWeight = if(appel) FontWeight.Bold else FontWeight(300),
                 color = PRIMARY_BLACK
             )
         }
@@ -166,7 +164,11 @@ fun filteringScreen(){
             )
         }
         var sliderPos by remember { mutableStateOf(0f..16F) }
-        RangeSlider(values = sliderPos, onValueChange = {sliderPos=it},valueRange= 0f..16F, steps=16, modifier= Modifier.padding(16.dp))
+        RangeSlider(values = sliderPos, onValueChange = {sliderPos=it},valueRange= 0f..16F, steps=16, modifier= Modifier.padding(16.dp),colors = SliderDefaults.colors(
+            thumbColor = Color.White,
+            activeTrackColor = PRIMARY_YELLOW
+        )
+        )
         TabRowDefaults.Divider(modifier= Modifier.fillMaxWidth(), color= GRAY01, thickness=1.dp)
         Column(modifier=Modifier.padding(top=24.dp, bottom=24.dp)) {
             Row {
@@ -280,7 +282,7 @@ fun expandbleViewClasses() {
                     checked = spinchecked,
                     onCheckedChange = { spinchecked = !spinchecked },
                     modifier = Modifier.padding(end = 23.dp),
-                    colors = CheckboxDefaults.colors(PRIMARY_YELLOW_BACKGROUND)
+                    colors = CheckboxDefaults.colors(PRIMARY_YELLOW)
                 )
             }
         }
@@ -298,7 +300,7 @@ fun expandbleViewClasses() {
                         checked = barrchecked,
                         onCheckedChange = { barrchecked = !barrchecked },
                         modifier = Modifier.padding(end = 23.dp),
-                        colors = CheckboxDefaults.colors(PRIMARY_YELLOW_BACKGROUND)
+                        colors = CheckboxDefaults.colors(PRIMARY_YELLOW)
                     )
                 }
             }
@@ -316,7 +318,7 @@ fun expandbleViewClasses() {
                             checked = hiitchecked,
                             onCheckedChange = { hiitchecked = !hiitchecked },
                             modifier = Modifier.padding(end = 23.dp),
-                            colors = CheckboxDefaults.colors(PRIMARY_YELLOW_BACKGROUND)
+                            colors = CheckboxDefaults.colors(PRIMARY_YELLOW)
                         )
                     }
                 }

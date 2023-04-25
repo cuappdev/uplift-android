@@ -80,19 +80,22 @@ fun ClassScreen(
         Column {
             UpliftTopBar(showIcon = true, title = "Classes")
             Text(
-                textAlign = TextAlign.Center,
                 text = "TODAY",
                 fontFamily = montserratFamily,
                 fontSize = 20.sp,
                 fontWeight = FontWeight(700),
-                color = GRAY04,
-                modifier = Modifier.padding(vertical = 14.dp)
-            )
+                color = PRIMARY_BLACK,
+                modifier = Modifier
+                    .padding(vertical = 14.dp)
+                    .fillMaxWidth(),
+                textAlign = TextAlign.Center,
+
+                )
             LazyColumn(
                 state = classesScrollState,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 8.dp, horizontal = 8.dp)
+                    .padding(top=8.dp,bottom=20.dp)
             ) {
                 items(items = clasesList) { clasesList ->
                     ClassInfoCard(
@@ -103,11 +106,24 @@ fun ClassScreen(
         }
         Button(onClick = { /*TODO*/ },
             modifier= Modifier
-                .align(BottomCenter)
-                .size(64.dp),
-            shape=RoundedCornerShape(12.dp)
+                .width(164.dp)
+                .height(73.dp)
+                .padding(bottom=20.dp)
+                .align(BottomCenter),
+            shape=RoundedCornerShape(12.dp),
+            colors=ButtonDefaults.buttonColors(Color.White)
         ) {
-            Text(text="Apply Filter")
+            Text(
+                text = "APPLY FILTER",
+                fontFamily = montserratFamily,
+                fontSize = 14.sp,
+                fontWeight = FontWeight(700),
+                color = PRIMARY_BLACK,
+                modifier = Modifier
+                    .fillMaxWidth(),
+                textAlign = TextAlign.Center,
+
+                )
         }
     }
 }
