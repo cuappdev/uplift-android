@@ -1,31 +1,36 @@
 package com.cornellappdev.uplift.ui.screens
 
 import android.icu.util.Calendar
+import android.transition.Visibility
 import android.widget.Button
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
+import androidx.compose.material.*
 import androidx.compose.material.TabRowDefaults.Divider
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.BottomCenter
 import androidx.compose.ui.Alignment.Companion.TopEnd
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.SemanticsActions.OnClick
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.cornellappdev.uplift.R
 import com.cornellappdev.uplift.ui.components.ClassInfoCard
 import com.cornellappdev.uplift.ui.components.general.UpliftTopBar
 import com.cornellappdev.uplift.ui.components.home.BriefClassInfoCard
@@ -106,114 +111,4 @@ fun ClassScreen(
         }
     }
 }
-@Composable
-fun filteringScreen(){
-    Column() {
-        var newman by remember { mutableStateOf(false) }
-        var noyes = remember { mutableStateOf(false) }
-        var teagle by remember { mutableStateOf(false) }
-        var appel by remember { mutableStateOf(false) }
-        TopAppBar(
-            backgroundColor = GRAY01
-        )
-        {
 
-            Row(
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(
-                    text = "Reset",
-                    modifier = Modifier.weight(1F)
-                        .clickable { }
-                        .padding(start = 16.dp),
-                    fontSize = 14.sp,
-                    fontFamily = montserratFamily,
-                    fontWeight = FontWeight(500),
-                    color = PRIMARY_BLACK
-                )
-                Text(
-                    text = "Reset",
-                    modifier = Modifier.weight(1F),
-                    fontSize = 14.sp,
-                    fontFamily = montserratFamily,
-                    fontWeight = FontWeight(700),
-                    color = PRIMARY_BLACK,
-
-                    )
-                Text(
-                    text = "Done",
-                    modifier = Modifier.weight(1F)
-                        .clickable { }
-                        .padding(end = 16.dp),
-                    fontSize = 14.sp,
-                    fontFamily = montserratFamily,
-                    fontWeight = FontWeight(500),
-                    color = PRIMARY_BLACK
-                )
-            }
-        }
-
-
-        Text(
-            text = "Fitness Centers",
-            modifier = Modifier
-                .padding(start = 16.dp),
-            fontSize = 12.sp,
-            fontFamily = montserratFamily,
-            fontWeight = FontWeight(700),
-            color = GRAY04
-        )
-        Row() {
-            Text(
-                text = "Noyes",
-                modifier = Modifier
-                    .padding(start = 16.dp)
-                    .clickable {
-                    if(noyes.value){
-
-                    }
-                    },
-                fontSize = 14.sp,
-                fontFamily = montserratFamily,
-                fontWeight = FontWeight(300),
-                color = PRIMARY_BLACK
-            )
-            Divider(color = GRAY01, thickness = 1.dp)
-            Text(
-                text = "Helen Newman",
-                modifier = Modifier
-                    .padding(start = 16.dp)
-                    .clickable {
-                    },
-                fontSize = 14.sp,
-                fontFamily = montserratFamily,
-                fontWeight = FontWeight(300),
-                color = PRIMARY_BLACK
-            )
-            Divider(color = GRAY01, thickness = 1.dp)
-            Text(
-                text = "Teagle",
-                modifier = Modifier
-                    .padding(start = 16.dp)
-                    .clickable {
-                    },
-                fontSize = 14.sp,
-                fontFamily = montserratFamily,
-                fontWeight = FontWeight(300),
-                color = PRIMARY_BLACK
-            )
-            Divider(color = GRAY01, thickness = 1.dp)
-            Text(
-                text = "Appel",
-                modifier = Modifier
-                    .padding(start = 16.dp)
-                    .clickable {
-                    },
-                fontSize = 14.sp,
-                fontFamily = montserratFamily,
-                fontWeight = FontWeight(300),
-                color = PRIMARY_BLACK
-            )
-        }
-    }
-}
