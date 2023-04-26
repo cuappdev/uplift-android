@@ -172,9 +172,10 @@ fun ClassDetailScreen(
         LineSpacer()
 
         // Function
-        ClassFunction(upliftClass = upliftClass)
-
-        LineSpacer()
+        if (!upliftClass?.functions.isNullOrEmpty()) {
+            ClassFunction(upliftClass = upliftClass)
+            LineSpacer()
+        }
 
         // Preparation
         if (!upliftClass?.preparation.isNullOrEmpty()) {
