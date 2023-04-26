@@ -1,6 +1,8 @@
 package com.cornellappdev.uplift.models
 
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.cornellappdev.uplift.datastoreRepository
 
@@ -63,7 +65,7 @@ data class UpliftGym(
      * A pair containing, first, the number of people in the gym, and secondly, the maximum
      * capacity at said gym.
      */
-    val capacity : Pair<Int, Int> = Pair((Math.random() * 20 + 100).toInt(), 140)
+    val capacity: Pair<Int, Int> = Pair((Math.random() * 20 + 100).toInt(), 140)
     // TODO: Change to show actual data pulled from backend.
 ) {
     /**
@@ -71,14 +73,17 @@ data class UpliftGym(
      */
     @Composable
     fun isFavorite(): Boolean {
-        return datastoreRepository.favoritedGymsFlow.collectAsState().value.contains(id)
+        return datastoreRepository.favoriteGymsFlow.collectAsState().value.contains(id)
     }
 
     /**
      * Toggles the favorite status of this gym.
      */
     fun toggleFavorite() {
-        datastoreRepository.saveFavoriteGym(id, !datastoreRepository.favoritedGymsFlow.value.contains(id))
+        datastoreRepository.saveFavoriteGym(
+            id,
+            !datastoreRepository.favoriteGymsFlow.value.contains(id)
+        )
     }
 }
 

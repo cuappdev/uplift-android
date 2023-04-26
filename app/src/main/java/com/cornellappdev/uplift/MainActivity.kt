@@ -11,7 +11,7 @@ import com.cornellappdev.uplift.ui.theme.UpliftTheme
 import com.cornellappdev.uplift.util.PREFERENCES_NAME
 
 // Singleton
-lateinit var datastoreRepository : DatastoreRepository
+lateinit var datastoreRepository: DatastoreRepository
 
 class MainActivity : ComponentActivity() {
     val Context.dataStore by preferencesDataStore(

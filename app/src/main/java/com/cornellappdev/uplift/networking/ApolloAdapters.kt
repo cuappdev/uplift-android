@@ -251,6 +251,7 @@ fun GymListQuery.Gym.toUpliftGym(): UpliftGym {
 fun ClassListQuery.Class.toUpliftClass(): UpliftClass {
     return UpliftClass(
         name = details.name,
+        id = id,
         gymId = gymId ?: "NO_GYM",
         location = location,
         instructorName = instructor,

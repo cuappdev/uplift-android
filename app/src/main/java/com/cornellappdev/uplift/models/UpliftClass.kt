@@ -1,10 +1,8 @@
 package com.cornellappdev.uplift.models
 
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import com.cornellappdev.uplift.datastoreRepository
 import com.cornellappdev.uplift.util.calendarDayOfWeekToString
 import com.cornellappdev.uplift.util.calendarDayToString
 import java.util.*
@@ -12,6 +10,7 @@ import java.util.*
 /** An [UpliftClass] object represents all the data needed about a particular fitness class. */
 data class UpliftClass(
     val name: String,
+    val id: String,
     val gymId: String,
     val location: String,
     val instructorName: String,
@@ -28,15 +27,19 @@ data class UpliftClass(
     /**
      * Returns a boolean indicating whether this gym is favorited or not. Safe for recomposition.
      */
+    @Composable
     fun isFavorite(): Boolean {
-        return favoriteState.value
+        return datastoreRepository.favoriteClassesFlow.collectAsState().value.contains(id)
     }
 
     /**
      * Toggles the favorite status of this gym.
      */
     fun toggleFavorite() {
-        (favoriteState as MutableState<Boolean>).value = !favoriteState.value
+        datastoreRepository.saveFavoriteClass(
+            id,
+            !datastoreRepository.favoriteClassesFlow.value.contains(id)
+        )
     }
 
     /**

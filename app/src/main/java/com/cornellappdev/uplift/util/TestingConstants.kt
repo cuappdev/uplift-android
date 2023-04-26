@@ -8,6 +8,7 @@ import java.util.*
 val exCalendarMarch25: Calendar = GregorianCalendar(2023, 2, 25)
 
 val exampleClassMusclePump6 = UpliftClass(
+    id = "0",
     name = "Muscle Pump", gymId = "",
     location = "Helen Newman Hall",
     instructorName = "Claire M.",
@@ -20,6 +21,7 @@ val exampleClassMusclePump6 = UpliftClass(
 )
 
 val exampleClassMusclePump5 = UpliftClass(
+    id = "0",
     name = "Muscle Pump", gymId = "",
     location = "Helen Newman Hall",
     instructorName = "Claire M.",
@@ -32,6 +34,7 @@ val exampleClassMusclePump5 = UpliftClass(
 )
 
 val exampleClassMusclePump4 = UpliftClass(
+    id = "0",
     name = "Muscle Pump", gymId = "",
     location = "Helen Newman Hall",
     instructorName = "Claire M.",
@@ -44,6 +47,7 @@ val exampleClassMusclePump4 = UpliftClass(
 )
 
 val exampleClassMusclePump3 = UpliftClass(
+    id = "0",
     name = "Muscle Pump", gymId = "",
     location = "Helen Newman Hall",
     instructorName = "Claire M.",
@@ -56,6 +60,7 @@ val exampleClassMusclePump3 = UpliftClass(
 )
 
 val exampleClassMusclePump2 = UpliftClass(
+    id = "0",
     name = "Muscle Pump",
     gymId = "",
     location = "Teagle Multipurpose Room",
@@ -69,6 +74,7 @@ val exampleClassMusclePump2 = UpliftClass(
 )
 
 val exampleClassMusclePump1 = UpliftClass(
+    id = "0",
     name = "Muscle Pump", gymId = "",
     location = "Helen Newman Hall",
     instructorName = "Claire M.",

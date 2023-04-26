@@ -47,15 +47,19 @@ fun HomeScreen(
     // Some error
     else if (gymsState == ApiResponse.Error || classesState == ApiResponse.Error) {
         // TODO: Error...
-        Column(modifier = Modifier
-            .fillMaxSize()
-            .background(color = Color.White)) {}
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(color = Color.White)
+        ) {}
     }
     // At least one is still loading.
     else {
         // TODO: Loading...
-        Column(modifier = Modifier
-            .fillMaxSize()
-            .background(color = Color.White)) {}
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(color = Color.White)
+        ) {}
     }
 }
