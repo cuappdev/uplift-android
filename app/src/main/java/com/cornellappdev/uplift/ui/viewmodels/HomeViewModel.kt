@@ -59,13 +59,12 @@ class HomeViewModel : ViewModel() {
                 } else if (!isCurrentlyOpen(gym1.hours[todayIndex()]) && isCurrentlyOpen(gym2.hours[todayIndex()])) {
                     1
                 }
-                // Both are either open or both closed.
+                // Both are either favorited and unfavorited, too.
                 else {
                     // TODO: Convert to compare based off distance.
                     gym1.name.compareTo(gym2.name)
                 }
-            }
-            )
+            })
         }
     }.stateIn(
         CoroutineScope(Dispatchers.Main),

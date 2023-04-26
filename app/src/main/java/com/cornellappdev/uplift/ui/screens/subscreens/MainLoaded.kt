@@ -46,6 +46,12 @@ fun MainLoaded(
     navController: NavHostController,
     titleText: String
 ) {
+    val gymsFavorited = gymsList.filter { gym -> gym.isFavorite() }
+    val gymsUnfavorited = gymsList.filter { gym -> !gym.isFavorite() }
+
+    val gyms = gymsFavorited.toMutableList()
+    gyms.addAll(gymsUnfavorited)
+
     LazyColumn(
         state = rememberLazyListState(),
         modifier = Modifier
@@ -181,9 +187,11 @@ fun MainLoaded(
             }
         }
 
-        items(items = gymsList) { gym ->
-            HomeCard(gym) {
-                navController.navigateToGym(gymDetailViewModel = gymDetailViewModel, gym = gym)
+        items(items = gyms, key = { gym -> gym.hashCode() }) { gym ->
+            Box(modifier = Modifier.animateItemPlacement()) {
+                HomeCard(gym) {
+                    navController.navigateToGym(gymDetailViewModel = gymDetailViewModel, gym = gym)
+                }
             }
         }
 

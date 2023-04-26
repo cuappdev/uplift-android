@@ -34,7 +34,7 @@ fun UpliftTopBar(
             if (showIcon) {
                 // TODO: Change to display actual user's icon.
                 AsyncImage(
-                    model = "https://avatars.cloudflare.steamstatic.com/10f7b0cd135382cb3f9c9eba9b689e5514795f91_full.jpg",
+                    model = "https://avatars.githubusercontent.com/u/47724806?v=4",
                     contentDescription = null,
                     modifier = Modifier
                         .size(36.dp)
