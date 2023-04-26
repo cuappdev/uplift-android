@@ -111,7 +111,7 @@ fun HomeCard(gym: UpliftGym, onClick: () -> Unit) {
                                 Spacer(Modifier.width(4.dp))
                                 Image(
                                     painter = painterResource(id = R.drawable.ic_swimming_pool),
-                                    contentDescription = "Bowling Pins",
+                                    contentDescription = "Swimming Pool",
                                     colorFilter = ColorFilter.tint(color = GRAY04)
                                 )
                             }
@@ -119,7 +119,7 @@ fun HomeCard(gym: UpliftGym, onClick: () -> Unit) {
                                 Spacer(Modifier.width(4.dp))
                                 Image(
                                     painter = painterResource(id = R.drawable.ic_basketball_hoop),
-                                    contentDescription = "Bowling Pins",
+                                    contentDescription = "Gymnasium Basketball Hoop",
                                     colorFilter = ColorFilter.tint(color = GRAY04)
                                 )
                             }
