@@ -31,8 +31,8 @@ fun filteringScreen(){
     var isExpanded by remember{ mutableStateOf(false) }
     var isExpandedInstructors by remember{ mutableStateOf(false) }
 
-
-    Column() {
+    Column(
+    ) {
         var newman by remember { mutableStateOf(false) }
         var noyes by remember { mutableStateOf(false) }
         var teagle by remember { mutableStateOf(false) }
@@ -49,7 +49,9 @@ fun filteringScreen(){
                     text = "Reset",
                     modifier = Modifier
                         .clickable {}
-                        .padding(start = 16.dp, top=25.dp),
+                        .padding(start = 16.dp, top=18.dp)
+                        .weight(1.5F)
+                        ,
                     fontSize = 14.sp,
                     fontFamily = montserratFamily,
                     fontWeight = FontWeight(500),
@@ -57,7 +59,8 @@ fun filteringScreen(){
                 )
                 Text(
                     text = "Refine Search",
-                    modifier = Modifier.padding(start=80.dp, end=80.dp,top=25.dp),
+                    modifier = Modifier.padding(top=18.dp)
+                        .weight(2F),
                     fontSize = 14.sp,
                     fontFamily = montserratFamily,
                     fontWeight = FontWeight(700),
@@ -68,7 +71,8 @@ fun filteringScreen(){
                     text = "Done",
                     modifier = Modifier
                         .clickable { }
-                        .padding(end = 16.dp, top=25.dp),
+                        .padding(end = 16.dp, top=18.dp)
+                        ,
                     fontSize = 14.sp,
                     fontFamily = montserratFamily,
                     fontWeight = FontWeight(500),
@@ -94,7 +98,7 @@ fun filteringScreen(){
             Text(
                 text = "Noyes",
                 modifier = Modifier
-                    .padding(start = 16.dp, end = 16.dp)
+                    .padding(start = 12.dp, end = 12.dp)
                     .clickable {
                         noyes = !noyes
                     },
@@ -107,7 +111,7 @@ fun filteringScreen(){
             Text(
                 text = "Helen Newman",
                 modifier = Modifier
-                    .padding(start = 16.dp, end = 16.dp)
+                    .padding(start = 12.dp, end = 12.dp)
                     .clickable { newman=!newman
                     },
                 fontSize = 14.sp,
@@ -119,7 +123,7 @@ fun filteringScreen(){
             Text(
                 text = "Teagle",
                 modifier = Modifier
-                    .padding(start = 16.dp, end = 16.dp)
+                    .padding(start = 12.dp, end = 12.dp)
                     .clickable {
                                teagle=!teagle
                     },
@@ -132,7 +136,7 @@ fun filteringScreen(){
             Text(
                 text = "Appel",
                 modifier = Modifier
-                    .padding(start = 16.dp)
+                    .padding(start = 12.dp)
                     .clickable {
                                appel=!appel
                     },
@@ -297,7 +301,8 @@ fun expandbleViewClasses() {
                     checked = spinchecked,
                     onCheckedChange = { spinchecked = !spinchecked },
                     modifier = Modifier.padding(end = 23.dp),
-                    colors = CheckboxDefaults.colors(PRIMARY_YELLOW)
+                    colors = CheckboxDefaults.colors(checkedColor = PRIMARY_YELLOW,
+                    uncheckedColor = Color.Black)
                 )
             }
         }
@@ -315,7 +320,8 @@ fun expandbleViewClasses() {
                         checked = barrchecked,
                         onCheckedChange = { barrchecked = !barrchecked },
                         modifier = Modifier.padding(end = 23.dp),
-                        colors = CheckboxDefaults.colors(PRIMARY_YELLOW)
+                        colors = CheckboxDefaults.colors(checkedColor = PRIMARY_YELLOW,
+                            uncheckedColor = Color.Black)
                     )
                 }
             }
@@ -333,8 +339,8 @@ fun expandbleViewClasses() {
                             checked = hiitchecked,
                             onCheckedChange = { hiitchecked = !hiitchecked },
                             modifier = Modifier.padding(end = 23.dp),
-                            colors = CheckboxDefaults.colors(PRIMARY_YELLOW)
-                        )
+                            colors = CheckboxDefaults.colors(checkedColor = PRIMARY_YELLOW,
+                                uncheckedColor = Color.Black)                        )
                     }
                 }
                 Text(
@@ -374,8 +380,8 @@ fun expandbleViewInstructors() {
                     checked = onechecked,
                     onCheckedChange = { onechecked = !onechecked },
                     modifier = Modifier.padding(end = 23.dp),
-                    colors = CheckboxDefaults.colors(PRIMARY_YELLOW)
-                )
+                    colors = CheckboxDefaults.colors(checkedColor = PRIMARY_YELLOW,
+                        uncheckedColor = Color.Black)                )
             }
         }
         Row(modifier=Modifier.padding(top=8.dp)) {
@@ -392,8 +398,8 @@ fun expandbleViewInstructors() {
                     checked = twochecked,
                     onCheckedChange = { twochecked = !twochecked },
                     modifier = Modifier.padding(end = 23.dp),
-                    colors = CheckboxDefaults.colors(PRIMARY_YELLOW)
-                )
+                    colors = CheckboxDefaults.colors(checkedColor = PRIMARY_YELLOW,
+                        uncheckedColor = Color.Black)                )
             }
         }
         Row(modifier = Modifier.padding(top=8.dp,bottom = 8.dp)) {
@@ -410,8 +416,8 @@ fun expandbleViewInstructors() {
                     checked = threechecked,
                     onCheckedChange = { threechecked= !threechecked },
                     modifier = Modifier.padding(end = 23.dp),
-                    colors = CheckboxDefaults.colors(PRIMARY_YELLOW)
-                )
+                    colors = CheckboxDefaults.colors(checkedColor = PRIMARY_YELLOW,
+                        uncheckedColor = Color.Black)                )
             }
         }
         Text(
