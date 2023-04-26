@@ -41,6 +41,11 @@ import com.himanshoe.kalendar.model.KalendarType
 
 class dateInstance(var date: Int, var day1:String) {
 }
+
+/**
+ * Parameters: Calendar
+ * Initial function to start to building logic for the weekly calendar at top of screen.
+ */
 fun calendarDayOfWeekToString1(calendar: Calendar): String {
     val dayString = when (calendar.get(java.util.Calendar.DAY_OF_WEEK)) {
         java.util.Calendar.MONDAY -> "M"
@@ -55,6 +60,11 @@ fun calendarDayOfWeekToString1(calendar: Calendar): String {
 
     return dayString
 }
+
+/**
+ * Parameters: Calendar
+ * Initial logic for building Calendar with text logic.
+ */
 @Composable
 fun Calendar(calendar:Calendar){
     val c: Calendar = Calendar.getInstance()
@@ -62,6 +72,11 @@ fun Calendar(calendar:Calendar){
     val day= calendarDayOfWeekToString1(c)
     val dayList= listOf("M","T","W","Th","F","Sa","Su")
 }
+
+/**
+ * Parameters: classDetailViewModel
+ * Builds ClassScreen with list of available classes and button to filtering screen.
+ */
 @Composable
 fun ClassScreen(
                 classDetailViewModel: ClassDetailViewModel = viewModel()

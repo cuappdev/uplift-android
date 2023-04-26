@@ -21,6 +21,10 @@ import androidx.compose.ui.unit.sp
 import com.cornellappdev.uplift.R
 import com.cornellappdev.uplift.util.*
 
+/**
+ * Builds Filtering Screen for Class Screen with insturctors, classes to be added dynamically in the future.
+ * Data from Filtering Screen will be sent to Classes Screen to filter out classes that are needed.
+ */
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun filteringScreen(){
@@ -45,7 +49,7 @@ fun filteringScreen(){
                     text = "Reset",
                     modifier = Modifier
                         .clickable {}
-                        .padding(start = 16.dp),
+                        .padding(start = 16.dp, top=25.dp),
                     fontSize = 14.sp,
                     fontFamily = montserratFamily,
                     fontWeight = FontWeight(500),
@@ -53,7 +57,7 @@ fun filteringScreen(){
                 )
                 Text(
                     text = "Refine Search",
-                    modifier = Modifier.padding(start=80.dp, end=80.dp),
+                    modifier = Modifier.padding(start=80.dp, end=80.dp,top=25.dp),
                     fontSize = 14.sp,
                     fontFamily = montserratFamily,
                     fontWeight = FontWeight(700),
@@ -64,7 +68,7 @@ fun filteringScreen(){
                     text = "Done",
                     modifier = Modifier
                         .clickable { }
-                        .padding(end = 16.dp),
+                        .padding(end = 16.dp, top=25.dp),
                     fontSize = 14.sp,
                     fontFamily = montserratFamily,
                     fontWeight = FontWeight(500),
@@ -72,7 +76,6 @@ fun filteringScreen(){
                 )
             }
         }
-
 
         Text(
             text = "Fitness Centers",
@@ -84,8 +87,8 @@ fun filteringScreen(){
             color = GRAY04
         )
         Row(modifier= Modifier
-            .fillMaxWidth()
             .padding(top = 16.dp, bottom = 24.dp)
+            .fillMaxWidth()
             .height(28.dp))
         {
             Text(
@@ -105,7 +108,7 @@ fun filteringScreen(){
                 text = "Helen Newman",
                 modifier = Modifier
                     .padding(start = 16.dp, end = 16.dp)
-                    .clickable {
+                    .clickable { newman=!newman
                     },
                 fontSize = 14.sp,
                 fontFamily = montserratFamily,
@@ -118,6 +121,7 @@ fun filteringScreen(){
                 modifier = Modifier
                     .padding(start = 16.dp, end = 16.dp)
                     .clickable {
+                               teagle=!teagle
                     },
                 fontSize = 14.sp,
                 fontFamily = montserratFamily,
@@ -128,8 +132,9 @@ fun filteringScreen(){
             Text(
                 text = "Appel",
                 modifier = Modifier
-                    .padding(start = 16.dp, end = 16.dp)
+                    .padding(start = 16.dp)
                     .clickable {
+                               appel=!appel
                     },
                 fontSize = 14.sp,
                 fontFamily = montserratFamily,
@@ -235,6 +240,11 @@ fun filteringScreen(){
         }
     }
 }
+
+/**
+ * Parameters: boolean ot show wheter its been expanded
+ * Builds unexpanded view for classes filtering.
+ */
 @Composable
 fun headerView(isExpanded1: MutableState<Boolean>){
     Row {
@@ -261,6 +271,11 @@ fun headerView(isExpanded1: MutableState<Boolean>){
         )
     }
 }
+
+/**
+ *
+ * Builds Expanded View for classes with list of class types to filter
+ */
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun expandbleViewClasses() {
@@ -334,6 +349,10 @@ fun expandbleViewClasses() {
                 )
             }
 }
+
+/**
+ * Builds expandend View for instructors filtering class with list of instructors
+ */
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun expandbleViewInstructors() {
@@ -355,7 +374,7 @@ fun expandbleViewInstructors() {
                     checked = onechecked,
                     onCheckedChange = { onechecked = !onechecked },
                     modifier = Modifier.padding(end = 23.dp),
-                    colors = CheckboxDefaults.colors(PRIMARY_YELLOW_BACKGROUND)
+                    colors = CheckboxDefaults.colors(PRIMARY_YELLOW)
                 )
             }
         }
@@ -373,7 +392,7 @@ fun expandbleViewInstructors() {
                     checked = twochecked,
                     onCheckedChange = { twochecked = !twochecked },
                     modifier = Modifier.padding(end = 23.dp),
-                    colors = CheckboxDefaults.colors(PRIMARY_YELLOW_BACKGROUND)
+                    colors = CheckboxDefaults.colors(PRIMARY_YELLOW)
                 )
             }
         }
@@ -391,7 +410,7 @@ fun expandbleViewInstructors() {
                     checked = threechecked,
                     onCheckedChange = { threechecked= !threechecked },
                     modifier = Modifier.padding(end = 23.dp),
-                    colors = CheckboxDefaults.colors(PRIMARY_YELLOW_BACKGROUND)
+                    colors = CheckboxDefaults.colors(PRIMARY_YELLOW)
                 )
             }
         }
@@ -407,6 +426,10 @@ fun expandbleViewInstructors() {
         )
     }
 }
+
+/**
+ * Vertical Line to seperate text entries in a row.
+ */
 @Composable
 fun VerticalDivider(
     modifier: Modifier = Modifier,
