@@ -1,10 +1,8 @@
 package com.cornellappdev.uplift.models
 
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import com.cornellappdev.uplift.datastoreRepository
 
 /**
  * A [UpliftGym] object represents all the information needed about one particular gym.
@@ -60,21 +58,27 @@ data class UpliftGym(
     val bowlingInfo: List<BowlingInfo?>?,
     val miscellaneous: List<String>,
     val imageUrl: String,
-    val favoriteState: State<Boolean> = mutableStateOf(false),
     var classesToday: SnapshotStateList<UpliftClass> = mutableStateListOf(),
+    /**
+     * A pair containing, first, the number of people in the gym, and secondly, the maximum
+     * capacity at said gym.
+     */
+    val capacity : Pair<Int, Int> = Pair((Math.random() * 20 + 100).toInt(), 140)
+    // TODO: Change to show actual data pulled from backend.
 ) {
     /**
      * Returns a boolean indicating whether this gym is favorited or not. Safe for recomposition.
      */
+    @Composable
     fun isFavorite(): Boolean {
-        return favoriteState.value
+        return datastoreRepository.favoritedGymsFlow.collectAsState().value.contains(id)
     }
 
     /**
      * Toggles the favorite status of this gym.
      */
     fun toggleFavorite() {
-        (favoriteState as MutableState<Boolean>).value = !favoriteState.value
+        datastoreRepository.saveFavoriteGym(id, !datastoreRepository.favoritedGymsFlow.value.contains(id))
     }
 }
 

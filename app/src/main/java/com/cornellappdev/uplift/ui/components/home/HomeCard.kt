@@ -163,7 +163,7 @@ fun HomeCard(gym: UpliftGym, onClick: () -> Unit) {
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = " 120/140",
+                                text = "${gym.capacity.first}/${gym.capacity.second}",
                                 fontSize = 12.sp,
                                 fontFamily = montserratFamily,
                                 fontWeight = FontWeight(500),
