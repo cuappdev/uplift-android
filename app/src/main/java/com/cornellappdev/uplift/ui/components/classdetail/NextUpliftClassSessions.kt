@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -26,10 +27,11 @@ import com.cornellappdev.uplift.util.montserratFamily
  */
 @Composable
 fun NextUpliftClassSessions(
-    upliftClass: UpliftClass?,
     navController: NavHostController,
     classDetailViewModel: ClassDetailViewModel
 ) {
+    val nextSessions = classDetailViewModel.nextSessionsFlow.collectAsState()
+
     // Next Sessions
     Column(
         modifier = Modifier
@@ -48,7 +50,7 @@ fun NextUpliftClassSessions(
             fontFamily = montserratFamily
         )
         Spacer(Modifier.height(24.dp))
-        for (nextClass: UpliftClass in upliftClass?.nextSessions ?: listOf()) {
+        for (nextClass: UpliftClass in nextSessions.value) {
             ClassInfoCard(
                 thisClass = nextClass,
                 navController = navController,

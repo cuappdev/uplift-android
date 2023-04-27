@@ -10,7 +10,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.cornellappdev.uplift.models.Gym
+import com.cornellappdev.uplift.models.UpliftGym
 import com.cornellappdev.uplift.util.*
 
 /**
@@ -18,7 +18,7 @@ import com.cornellappdev.uplift.util.*
  * given by parameter [today].
  */
 @Composable
-fun GymSwimmingSection(today: Int, gym: Gym) {
+fun GymSwimmingSection(today: Int, gym: UpliftGym) {
     var selectedDay by remember { mutableStateOf(today) }
     val swimmingInfo = gym.swimmingInfo?.get(selectedDay)
 

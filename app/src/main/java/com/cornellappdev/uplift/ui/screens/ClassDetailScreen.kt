@@ -1,6 +1,5 @@
 package com.cornellappdev.uplift.ui.screens
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
@@ -30,6 +29,7 @@ import coil.compose.AsyncImage
 import com.cornellappdev.uplift.R
 import com.cornellappdev.uplift.models.UpliftClass
 import com.cornellappdev.uplift.ui.components.classdetail.*
+import com.cornellappdev.uplift.ui.components.general.FavoriteButton
 import com.cornellappdev.uplift.ui.viewmodels.ClassDetailViewModel
 import com.cornellappdev.uplift.util.PRIMARY_BLACK
 import com.cornellappdev.uplift.util.bebasNeueFamily
@@ -90,16 +90,17 @@ fun ClassDetailScreen(
                     ),
                 tint = Color.White
             )
-            Image(
-                painter = painterResource(id = if (upliftClass != null && upliftClass!!.isFavorite()) R.drawable.ic_star_filled else R.drawable.ic_star),
-                contentDescription = null,
+
+            Box(
                 modifier = Modifier
                     .align(Alignment.TopEnd)
                     .padding(top = 47.dp, end = 21.dp)
-                    .clickable(interactionSource = MutableInteractionSource(), indication = null) {
-                        upliftClass?.toggleFavorite()
-                    }
-            )
+            ) {
+                FavoriteButton(
+                    filled = (upliftClass != null && upliftClass!!.isFavorite())
+                ) { upliftClass?.toggleFavorite() }
+            }
+
             // All text header information...
             Column(
                 modifier = Modifier
@@ -145,13 +146,12 @@ fun ClassDetailScreen(
                     .offset(y = 42.dp)
                     .align(Alignment.BottomCenter)
                     .graphicsLayer {
-                        alpha = 2f
                         translationY = -0.5f * scrollState.value.toFloat()
                     }
             ) {
                 Box(modifier = Modifier.fillMaxSize()) {
                     Text(
-                        text = "${upliftClass?.minutes} MIN",
+                        text = "${upliftClass?.time?.durationMinutes()} MIN",
                         fontWeight = FontWeight(700),
                         fontSize = 14.sp,
                         lineHeight = 17.07.sp,
@@ -172,14 +172,16 @@ fun ClassDetailScreen(
         LineSpacer()
 
         // Function
-        ClassFunction(upliftClass = upliftClass)
-
-        LineSpacer()
+        if (!upliftClass?.functions.isNullOrEmpty()) {
+            ClassFunction(upliftClass = upliftClass)
+            LineSpacer()
+        }
 
         // Preparation
-        ClassPreparation(upliftClass = upliftClass)
-
-        LineSpacer()
+        if (!upliftClass?.preparation.isNullOrEmpty()) {
+            ClassPreparation(upliftClass = upliftClass)
+            LineSpacer()
+        }
 
         // Description
         ClassDescription(upliftClass = upliftClass)
@@ -188,7 +190,6 @@ fun ClassDetailScreen(
 
         // Next Sessions
         NextUpliftClassSessions(
-            upliftClass = upliftClass,
             classDetailViewModel = classDetailViewModel,
             navController = navController
         )

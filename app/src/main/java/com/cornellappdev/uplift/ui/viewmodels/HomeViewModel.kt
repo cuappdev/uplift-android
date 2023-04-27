@@ -1,13 +1,18 @@
 package com.cornellappdev.uplift.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
-import com.cornellappdev.uplift.models.Gym
 import com.cornellappdev.uplift.models.Sport
 import com.cornellappdev.uplift.models.TimeOfDay
 import com.cornellappdev.uplift.models.UpliftClass
+import com.cornellappdev.uplift.networking.ApiResponse
+import com.cornellappdev.uplift.networking.UpliftApiRepository
+import com.cornellappdev.uplift.networking.toUpliftClass
+import com.cornellappdev.uplift.networking.toUpliftGym
 import com.cornellappdev.uplift.util.*
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.*
+import java.util.*
 
 /** A [HomeViewModel] is a view model for HomeScreen. */
 class HomeViewModel : ViewModel() {
@@ -17,31 +22,55 @@ class HomeViewModel : ViewModel() {
     /** Emits values containing the title text the home page should display. */
     val titleFlow = _titleFlow.asStateFlow()
 
-    private val _classesFlow: MutableStateFlow<List<UpliftClass>> = MutableStateFlow(
-        listOf(
-            exampleClassMusclePump1,
-            exampleClassMusclePump2,
-            exampleClassMusclePump2,
-            exampleClassMusclePump2
-        )
-    )
-
     /** Emits lists of all the [UpliftClass]es that should be shown in the today's classes section. */
-    val classesFlow = _classesFlow.asStateFlow()
+    val classesFlow = UpliftApiRepository.classesApiFlow.map { apiResponse ->
+        when (apiResponse) {
+            ApiResponse.Loading -> ApiResponse.Loading
+            ApiResponse.Error -> ApiResponse.Error
+            is ApiResponse.Success -> ApiResponse.Success(apiResponse.data.map { query ->
+                query.toUpliftClass()
+            }.filter { upliftClass ->
+                upliftClass.date.sameDayAs(GregorianCalendar())
+            }.filter { upliftClass ->
+                upliftClass.time.end.compareTo(getSystemTime()) > 0
+            })
+        }
+    }.stateIn(
+        CoroutineScope(Dispatchers.Main),
+        SharingStarted.Eagerly,
+        ApiResponse.Loading
+    )
 
     private val _sportsFlow: MutableStateFlow<List<Sport>> = MutableStateFlow(sports)
 
     /** Emits lists of sports that should be shown in the 'Your Sports' section. */
     val sportsFlow = _sportsFlow.asStateFlow()
 
-    private val _gymFlow: MutableStateFlow<List<Gym>> = MutableStateFlow(
-        listOf(
-            testMorrison, testMorrison
-        )
-    )
-
     /** Emits lists of gyms that should be shown in the 'Gyms' section. */
-    val gymFlow = _gymFlow.asStateFlow()
+    val gymFlow = UpliftApiRepository.gymApiFlow.map { apiResponse ->
+        when (apiResponse) {
+            ApiResponse.Loading -> ApiResponse.Loading
+            ApiResponse.Error -> ApiResponse.Error
+            is ApiResponse.Success -> ApiResponse.Success(apiResponse.data.map { query ->
+                query.toUpliftGym()
+            }.sortedWith { gym1, gym2 ->
+                if (isCurrentlyOpen(gym1.hours[todayIndex()]) && !isCurrentlyOpen(gym2.hours[todayIndex()])) {
+                    -1
+                } else if (!isCurrentlyOpen(gym1.hours[todayIndex()]) && isCurrentlyOpen(gym2.hours[todayIndex()])) {
+                    1
+                }
+                // Both are either favorited and unfavorited, too.
+                else {
+                    // TODO: Convert to compare based off distance.
+                    gym1.name.compareTo(gym2.name)
+                }
+            })
+        }
+    }.stateIn(
+        CoroutineScope(Dispatchers.Main),
+        SharingStarted.Eagerly,
+        ApiResponse.Loading
+    )
 
     /** Call before opening home to set all the proper display information for the home page. */
     fun openHome() {

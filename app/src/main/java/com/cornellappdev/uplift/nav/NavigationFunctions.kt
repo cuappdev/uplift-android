@@ -1,8 +1,8 @@
 package com.cornellappdev.uplift.nav
 
 import androidx.navigation.NavHostController
-import com.cornellappdev.uplift.models.Gym
 import com.cornellappdev.uplift.models.UpliftClass
+import com.cornellappdev.uplift.models.UpliftGym
 import com.cornellappdev.uplift.ui.viewmodels.ClassDetailViewModel
 import com.cornellappdev.uplift.ui.viewmodels.GymDetailViewModel
 
@@ -17,7 +17,7 @@ fun NavHostController.navigateToClass(
 
 fun NavHostController.navigateToGym(
     gymDetailViewModel: GymDetailViewModel,
-    gym: Gym
+    gym: UpliftGym
 ) {
     // Opens the new gym.
     gymDetailViewModel.openGym(gym)

@@ -65,7 +65,12 @@ fun ClassDateAndTime(upliftClass: UpliftClass?) {
                         intent.type = "vnd.android.cursor.item/event"
                         intent.putExtra("beginTime", it.time.start.timeInMillis(it.date))
                         intent.putExtra("allDay", false)
-                        intent.putExtra("endTime", it.time.end.timeInMillis(it.date))
+                        intent.putExtra(
+                            "endTime",
+                            if (it.time.end.compareTo(it.time.start) >= 0) it.time.end.timeInMillis(
+                                it.date
+                            ) else it.time.end.timeInMillis(it.date) + 86400000L
+                        )
                         intent.putExtra(CalendarContract.Events.EVENT_LOCATION, it.location)
                         intent.putExtra("title", it.name)
                         ContextCompat.startActivity(context, intent, null)

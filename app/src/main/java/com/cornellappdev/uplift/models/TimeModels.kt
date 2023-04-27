@@ -2,7 +2,7 @@ package com.cornellappdev.uplift.models
 
 import java.util.*
 
-/** A [TimeInterval] is one interval of time with a start and end [TimeOfDay]. */
+/** A [TimeInterval] is one contiguous interval of time with a start and end [TimeOfDay]. */
 data class TimeInterval(
     val start: TimeOfDay,
     val end: TimeOfDay
@@ -31,6 +31,15 @@ data class TimeInterval(
     fun within(time: TimeOfDay): Boolean {
         return time.compareTo(start) >= 0 && time.compareTo(end) <= 0
     }
+
+    /**
+     * Returns the number of minutes that this interval lasts for, assuming that [end]
+     * comes strictly after [start].
+     */
+    fun durationMinutes(): Int {
+        return ((end.hour + (if (end.isAM) 0 else 12) + (if (end.compareTo(start) < 0) 24 else 0)) * 60 + end.minute) -
+                ((start.hour + if (start.isAM) 0 else 12) * 60 + start.minute)
+    }
 }
 
 /**
@@ -38,29 +47,35 @@ data class TimeInterval(
  * AM or PM.
  * */
 data class TimeOfDay(
-    /** An hour between 1 and 12, inclusive. */
-    val hour: Int,
+    /** An hour between 0 and 11, inclusive. An hour of 0 corresponds to 12 in actual time. */
+    var hour: Int,
     /** A minute between 0 and 59, inclusive. */
-    val minute: Int = 0,
-    val isAM: Boolean = true
+    var minute: Int = 0,
+    var isAM: Boolean = true
 ) {
+    init {
+        // Coerces [hour] and [minute] to fit according to above invariants.
+        val newHour = (hour + (minute) / 60) % 12
+        val overlaps = (hour + (minute) / 60) / 12
+
+        this.hour = newHour
+        this.minute = (minute) % 60
+        this.isAM = if ((overlaps % 2 == 0)) isAM else !isAM
+    }
+
     /**
      * Returns a new [TimeOfDay] created by advancing the current time of day by [deltaHours] and [deltaMinutes].
      */
     fun getTimeLater(deltaMinutes: Int, deltaHours: Int): TimeOfDay {
-        var newHour = (hour + deltaHours + (minute + deltaMinutes) / 60) % 12
-        val overlaps = (hour + deltaHours + (minute + deltaMinutes) / 60) / 12
-        if (newHour == 0) newHour = 12
-
         return TimeOfDay(
-            newHour,
-            (minute + deltaMinutes) % 60,
-            if ((overlaps % 2 == 0)) isAM else !isAM
+            hour + deltaHours,
+            minute + deltaMinutes,
+            isAM
         )
     }
 
     override fun toString(): String {
-        return "$hour:${if (minute.toString().length == 1) "0$minute" else "$minute"} ${if (isAM) "AM" else "PM"}"
+        return "${if (hour == 0) 12 else hour}:${if (minute.toString().length == 1) "0$minute" else "$minute"} ${if (isAM) "AM" else "PM"}"
     }
 
     override fun equals(other: Any?): Boolean {
@@ -87,7 +102,7 @@ data class TimeOfDay(
         if (!other.isAM && isAM) return -1
 
         if (other.hour != hour) {
-            return (hour % 12) - (other.hour % 12)
+            return (hour) - (other.hour)
         }
 
         return minute - other.minute
@@ -101,7 +116,7 @@ data class TimeOfDay(
     fun timeInMillis(c: Calendar): Long {
         val newC = c.clone() as Calendar
         newC.set(Calendar.AM_PM, if (isAM) Calendar.AM else Calendar.PM)
-        newC.set(Calendar.HOUR, hour % 12)
+        newC.set(Calendar.HOUR, hour)
         newC.set(Calendar.MINUTE, minute)
 
         return newC.timeInMillis

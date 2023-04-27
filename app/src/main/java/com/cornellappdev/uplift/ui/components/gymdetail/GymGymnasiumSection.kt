@@ -13,8 +13,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cornellappdev.uplift.R
-import com.cornellappdev.uplift.models.Gym
 import com.cornellappdev.uplift.models.TimeInterval
+import com.cornellappdev.uplift.models.UpliftGym
 import com.cornellappdev.uplift.util.*
 
 /**
@@ -22,7 +22,7 @@ import com.cornellappdev.uplift.util.*
  * given by parameter [today].
  */
 @Composable
-fun GymGymnasiumSection(today: Int, gym: Gym) {
+fun GymGymnasiumSection(today: Int, gym: UpliftGym) {
     var selectedDay by remember {
         mutableStateOf(today)
     }

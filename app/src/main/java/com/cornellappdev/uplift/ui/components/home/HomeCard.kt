@@ -2,8 +2,6 @@ package com.cornellappdev.uplift.ui.components.home
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
@@ -13,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment.Companion.BottomCenter
 import androidx.compose.ui.Alignment.Companion.TopEnd
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
@@ -23,9 +22,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.cornellappdev.uplift.R
-import com.cornellappdev.uplift.models.Gym
+import com.cornellappdev.uplift.models.UpliftGym
+import com.cornellappdev.uplift.ui.components.general.FavoriteButton
 import com.cornellappdev.uplift.util.*
-import java.util.*
 
 
 /**
@@ -35,10 +34,14 @@ import java.util.*
  */
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun HomeCard(gym: Gym, onClick: () -> Unit) {
-    val day: Int = ((Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 2) + 7) % 7
+fun HomeCard(gym: UpliftGym, onClick: () -> Unit) {
+    val day: Int = todayIndex()
     val lastTime =
-        gym.hours[day]!![(gym.hours[day]!!.size - 1)].end.toString()
+        if (gym.hours[day] != null) {
+            gym.hours[day]!![(gym.hours[day]!!.size - 1)].end.toString()
+        } else {
+            null
+        }
 
     Box(
         modifier = Modifier
@@ -52,7 +55,11 @@ fun HomeCard(gym: Gym, onClick: () -> Unit) {
             backgroundColor = Color.White,
             onClick = onClick
         ) {
-            Column(modifier = Modifier.fillMaxSize()) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .alpha(if (isCurrentlyOpen(gym.hours[day])) 1f else .6f)
+            ) {
                 Box(modifier = Modifier.fillMaxSize()) {
                     AsyncImage(
                         model = gym.imageUrl,
@@ -60,19 +67,16 @@ fun HomeCard(gym: Gym, onClick: () -> Unit) {
                         contentDescription = "",
                         contentScale = ContentScale.Crop
                     )
-                    Image(
-                        painterResource(id = if (gym.isFavorite()) R.drawable.ic_star_filled else R.drawable.ic_star),
-                        contentDescription = "Star Icon",
+
+                    Box(
                         modifier = Modifier
                             .align(TopEnd)
                             .padding(top = 12.dp, end = 12.dp)
-                            .clickable(
-                                interactionSource = MutableInteractionSource(),
-                                indication = null
-                            ) {
-                                gym.toggleFavorite()
-                            }
-                    )
+                    ) {
+                        FavoriteButton(filled = gym.isFavorite()) {
+                            gym.toggleFavorite()
+                        }
+                    }
 
                     Column(
                         modifier = Modifier
@@ -95,15 +99,33 @@ fun HomeCard(gym: Gym, onClick: () -> Unit) {
                                 contentDescription = "Dumbbell",
                                 colorFilter = ColorFilter.tint(color = GRAY04)
                             )
-                            Spacer(Modifier.width(4.dp))
-                            Image(
-                                painter = painterResource(id = R.drawable.ic_bowling_pins),
-                                contentDescription = "Bowling Pins",
-                                colorFilter = ColorFilter.tint(color = GRAY04)
-                            )
+                            if (gym.bowlingInfo != null) {
+                                Spacer(Modifier.width(4.dp))
+                                Image(
+                                    painter = painterResource(id = R.drawable.ic_bowling_pins),
+                                    contentDescription = "Bowling Pins",
+                                    colorFilter = ColorFilter.tint(color = GRAY04)
+                                )
+                            }
+                            if (gym.swimmingInfo != null) {
+                                Spacer(Modifier.width(4.dp))
+                                Image(
+                                    painter = painterResource(id = R.drawable.ic_swimming_pool),
+                                    contentDescription = "Swimming Pool",
+                                    colorFilter = ColorFilter.tint(color = GRAY04)
+                                )
+                            }
+                            if (gym.gymnasiumInfo != null) {
+                                Spacer(Modifier.width(4.dp))
+                                Image(
+                                    painter = painterResource(id = R.drawable.ic_basketball_hoop),
+                                    contentDescription = "Gymnasium Basketball Hoop",
+                                    colorFilter = ColorFilter.tint(color = GRAY04)
+                                )
+                            }
                         }
                         Row {
-                            if (isCurrentlyOpen(gym.hours[day]!!)) Text(
+                            if (isCurrentlyOpen(gym.hours[day])) Text(
                                 text = "Open",
                                 fontSize = 12.sp,
                                 color = ACCENT_OPEN,
@@ -121,7 +143,7 @@ fun HomeCard(gym: Gym, onClick: () -> Unit) {
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = "Closes at $lastTime",
+                                text = if (lastTime != null) "Closes at $lastTime" else "Closed today",
                                 fontSize = 12.sp,
                                 fontFamily = montserratFamily,
                                 fontWeight = FontWeight(500),
@@ -141,7 +163,7 @@ fun HomeCard(gym: Gym, onClick: () -> Unit) {
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = " 120/140",
+                                text = "${gym.capacity.first}/${gym.capacity.second}",
                                 fontSize = 12.sp,
                                 fontFamily = montserratFamily,
                                 fontWeight = FontWeight(500),

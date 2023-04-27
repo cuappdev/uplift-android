@@ -1,36 +1,89 @@
 package com.cornellappdev.uplift.util
 
+import androidx.compose.runtime.mutableStateListOf
 import com.cornellappdev.uplift.R
 import com.cornellappdev.uplift.models.*
 import java.util.*
 
 val exCalendarMarch25: Calendar = GregorianCalendar(2023, 2, 25)
 
+val exampleClassMusclePump6 = UpliftClass(
+    id = "0",
+    name = "Muscle Pump", gymId = "",
+    location = "Helen Newman Hall",
+    instructorName = "Claire M.",
+    date = GregorianCalendar(2023, 2, 24),
+    time = TimeInterval(TimeOfDay(11, 15, isAM = true), TimeOfDay(0, 45, isAM = false)),
+    functions = listOf("Core", "Overall Fitness", "Stability"),
+    preparation = "Footwear appropriate for movement",
+    description = "Put a little muscle into your workout and join us for a class designed to build muscle endurance with low to medium weights and high repetitions. A variety of equipment and strength training techniques will be used in this class. There is no cardio portion in these sessions. Footwear that is appropriate for movement is required for this class. ",
+    imageUrl = "https://post.healthline.com/wp-content/uploads/2020/01/Young-Women-Having-Sports-Rowing-Training-Drill-in-Gym-732x549-thumbnail.jpg"
+)
+
+val exampleClassMusclePump5 = UpliftClass(
+    id = "0",
+    name = "Muscle Pump", gymId = "",
+    location = "Helen Newman Hall",
+    instructorName = "Claire M.",
+    date = GregorianCalendar(2023, 2, 24),
+    time = TimeInterval(TimeOfDay(0, 30, isAM = false), TimeOfDay(11, 15, isAM = false)),
+    functions = listOf("Core", "Overall Fitness", "Stability"),
+    preparation = "Footwear appropriate for movement",
+    description = "Put a little muscle into your workout and join us for a class designed to build muscle endurance with low to medium weights and high repetitions. A variety of equipment and strength training techniques will be used in this class. There is no cardio portion in these sessions. Footwear that is appropriate for movement is required for this class. ",
+    imageUrl = "https://post.healthline.com/wp-content/uploads/2020/01/Young-Women-Having-Sports-Rowing-Training-Drill-in-Gym-732x549-thumbnail.jpg"
+)
+
+val exampleClassMusclePump4 = UpliftClass(
+    id = "0",
+    name = "Muscle Pump", gymId = "",
+    location = "Helen Newman Hall",
+    instructorName = "Claire M.",
+    date = GregorianCalendar(2023, 2, 24),
+    time = TimeInterval(TimeOfDay(0, 15, isAM = false), TimeOfDay(0, 30, isAM = true)),
+    functions = listOf("Core", "Overall Fitness", "Stability"),
+    preparation = "Footwear appropriate for movement",
+    description = "Put a little muscle into your workout and join us for a class designed to build muscle endurance with low to medium weights and high repetitions. A variety of equipment and strength training techniques will be used in this class. There is no cardio portion in these sessions. Footwear that is appropriate for movement is required for this class. ",
+    imageUrl = "https://post.healthline.com/wp-content/uploads/2020/01/Young-Women-Having-Sports-Rowing-Training-Drill-in-Gym-732x549-thumbnail.jpg"
+)
+
+val exampleClassMusclePump3 = UpliftClass(
+    id = "0",
+    name = "Muscle Pump", gymId = "",
+    location = "Helen Newman Hall",
+    instructorName = "Claire M.",
+    date = GregorianCalendar(2023, 2, 24),
+    time = TimeInterval(TimeOfDay(0, 30, isAM = false), TimeOfDay(0, 15, isAM = true)),
+    functions = listOf("Core", "Overall Fitness", "Stability"),
+    preparation = "Footwear appropriate for movement",
+    description = "Put a little muscle into your workout and join us for a class designed to build muscle endurance with low to medium weights and high repetitions. A variety of equipment and strength training techniques will be used in this class. There is no cardio portion in these sessions. Footwear that is appropriate for movement is required for this class. ",
+    imageUrl = "https://post.healthline.com/wp-content/uploads/2020/01/Young-Women-Having-Sports-Rowing-Training-Drill-in-Gym-732x549-thumbnail.jpg"
+)
+
 val exampleClassMusclePump2 = UpliftClass(
+    id = "0",
     name = "Muscle Pump",
+    gymId = "",
     location = "Teagle Multipurpose Room",
     instructorName = "Claire M.",
-    minutes = 45,
     date = exCalendarMarch25,
     time = TimeInterval(TimeOfDay(10, 30, isAM = true), TimeOfDay(11, 15, isAM = true)),
     functions = listOf("Core", "Overall Fitness", "Stability"),
     preparation = "Footwear appropriate for movement",
     description = "Put a little muscle into your workout and join us for a class designed to build muscle endurance with low to medium weights and high repetitions. A variety of equipment and strength training techniques will be used in this class. There is no cardio portion in these sessions. Footwear that is appropriate for movement is required for this class. ",
-    nextSessions = listOf(),
     imageUrl = "https://content.active.com/Assets/Active.com+Content+Site+Digital+Assets/Fitness/Best+Rowing+Apps/rowing-apps_header.jpg"
 )
 
 val exampleClassMusclePump1 = UpliftClass(
-    name = "Muscle Pump",
+    id = "0",
+    name = "Muscle Pump", gymId = "",
     location = "Helen Newman Hall",
     instructorName = "Claire M.",
-    minutes = 45,
     date = GregorianCalendar(2023, 2, 24),
-    time = TimeInterval(TimeOfDay(12, 30, isAM = true), TimeOfDay(12, 15, isAM = false)),
+    time = TimeInterval(TimeOfDay(0, 30, isAM = true), TimeOfDay(0, 15, isAM = false)),
     functions = listOf("Core", "Overall Fitness", "Stability"),
     preparation = "Footwear appropriate for movement",
     description = "Put a little muscle into your workout and join us for a class designed to build muscle endurance with low to medium weights and high repetitions. A variety of equipment and strength training techniques will be used in this class. There is no cardio portion in these sessions. Footwear that is appropriate for movement is required for this class. ",
-    nextSessions = listOf(exampleClassMusclePump2),
+    nextSessions = mutableStateListOf(exampleClassMusclePump2),
     imageUrl = "https://post.healthline.com/wp-content/uploads/2020/01/Young-Women-Having-Sports-Rowing-Training-Drill-in-Gym-732x549-thumbnail.jpg"
 )
 
@@ -178,8 +231,9 @@ val exampleBowlingList = listOf(
     ),
 )
 
-val testMorrison = Gym(
+val testMorrison = UpliftGym(
     name = "Toni Morrison Gym",
+    id = "Super id-y id",
     hours = listOf(
         listOf(
             TimeInterval(
@@ -232,10 +286,12 @@ val testMorrison = Gym(
             )
         ),
     ),
-    popularTimes = PopularTimes(
-        startTime = TimeOfDay(8, 0, true),
-        busyList = listOf(50, 30, 3, 60, 90, 0, 20, 11, 6, 93, 76, 0, 8, 9, 100)
-    ),
+    popularTimes = List(7) {
+        PopularTimes(
+            startTime = TimeOfDay(8, 0, true),
+            busyList = listOf(50, 30, 3, 60, 90, 0, 20, 11, 6, 93, 76, 0, 8, 9, 100)
+        )
+    },
     equipmentGroupings = listOf(
         EquipmentGrouping(
             "Cardio Machines",
@@ -302,7 +358,7 @@ val testMorrison = Gym(
     ),
     bowlingInfo = exampleBowlingList,
     miscellaneous = listOf("Game area", "Outdoor basketball court", "Bouldering wall"),
-    classesToday = listOf(
+    classesToday = mutableStateListOf(
         exampleClassMusclePump1,
         exampleClassMusclePump2
     ),

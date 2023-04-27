@@ -87,6 +87,38 @@ fun calendarDayOfWeekToString(calendar: Calendar): String {
 }
 
 /**
+ * Returns [string] as a [TimeOfDay]. If [string] is malformed, returns 12:00AM.
+ *
+ * Requires: [string] is formatted as: "hh:mm:ss"
+ */
+fun parseTimeOfDay(string: String): TimeOfDay {
+    val split = string.split(":")
+    if (split.size != 3) return TimeOfDay(0)
+
+    return try {
+        TimeOfDay(split[0].toInt(), split[1].toInt())
+    } catch (n: java.lang.NumberFormatException) {
+        TimeOfDay(0)
+    }
+}
+
+/**
+ * Returns [string] as a [Calendar] date. If [string] is malformed, returns the 0 date.
+ *
+ * Requires: [string] is formatted as: "YYYY-MM-DD"
+ */
+fun parseDate(string: String): Calendar {
+    val split = string.split("-")
+    if (split.size != 3) return GregorianCalendar(0, 0, 0)
+
+    return try {
+        GregorianCalendar(split[0].toInt(), split[1].toInt() - 1, split[2].toInt())
+    } catch (n: java.lang.NumberFormatException) {
+        GregorianCalendar(0, 0, 0)
+    }
+}
+
+/**
  * Returns the current system time as a [TimeOfDay] object.
  */
 fun getSystemTime(): TimeOfDay {
@@ -102,6 +134,31 @@ fun getSystemTime(): TimeOfDay {
  * at [timeOfDay]. If [timeOfDay] is not passed a value, it defaults to the system time
  * retrieved by [getSystemTime].
  */
-fun isCurrentlyOpen(times: List<TimeInterval>, timeOfDay: TimeOfDay = getSystemTime()): Boolean {
+fun isCurrentlyOpen(times: List<TimeInterval>?, timeOfDay: TimeOfDay = getSystemTime()): Boolean {
+    if (times == null) return false
+
     return times.find { interval -> interval.within(timeOfDay) } != null
+}
+
+/**
+ * Returns a boolean corresponding to if this [Calendar] is on the same day as [other].
+ */
+fun Calendar.sameDayAs(other: Calendar): Boolean =
+    get(Calendar.YEAR) == other.get(Calendar.YEAR)
+            && get(Calendar.MONTH) == other.get(Calendar.MONTH)
+            && get(Calendar.DAY_OF_MONTH) == other.get(Calendar.DAY_OF_MONTH)
+
+/**
+ * Returns an int corresponding to the day of the week that it is.
+ *
+ * Mon -> 0
+ *
+ * Tues -> 1
+ *
+ * ...
+ *
+ * Sun -> 6
+ */
+fun todayIndex(): Int {
+    return ((Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 2) + 7) % 7
 }
