@@ -19,6 +19,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.cornellappdev.uplift.ui.components.ClassInfoCard
@@ -50,43 +51,33 @@ fun ClassScreen(
     val classesScrollState = rememberLazyListState()
 
     Box(modifier = Modifier.fillMaxSize()) {
-        UpliftTopBar(showIcon = true, title = "Classes")
-
         Column {
-            Spacer(modifier = Modifier
-                .height(100.dp)
-                .background(Color.White))
-            Text(
-                text = "Example Header :-)",
-                fontFamily = montserratFamily,
-                fontSize = 20.sp,
-                fontWeight = FontWeight(700),
-                color = PRIMARY_BLACK,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 14.dp)
-                    .background(Color.White),
-                textAlign = TextAlign.Center,
-            )
+            UpliftTopBar(showIcon = true, title = "Classes")
+
             LazyColumn(
                 state = classesScrollState,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 8.dp, bottom = 20.dp)
+                    .zIndex(-1f)
             ) {
                 stickyHeader {
-                    Box(
+                    Text(
+                        text = "Example Header :-)",
+                        fontFamily = montserratFamily,
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight(700),
+                        color = PRIMARY_BLACK,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(28.dp)
                             .background(
                                 Brush.verticalGradient(
-                                    listOf(
-                                        Color.White, Color.Transparent
-                                    )
+                                    Pair(.9f, Color.White), Pair(1f, Color.Transparent)
                                 )
                             )
-                    ) {}
+                            .padding(top = 24.dp, bottom = 24.dp),
+                        textAlign = TextAlign.Center,
+                    )
                 }
                 item {
                     Text(
@@ -97,7 +88,7 @@ fun ClassScreen(
                         color = PRIMARY_BLACK,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(vertical = 14.dp),
+                            .padding(bottom = 14.dp),
                         textAlign = TextAlign.Center,
                     )
                 }
