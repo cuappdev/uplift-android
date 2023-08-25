@@ -17,6 +17,7 @@ import com.cornellappdev.uplift.nav.BottomNavScreen
 import com.cornellappdev.uplift.nav.popBackClass
 import com.cornellappdev.uplift.nav.popBackGym
 import com.cornellappdev.uplift.ui.screens.ClassDetailScreen
+import com.cornellappdev.uplift.ui.screens.ClassScreen
 import com.cornellappdev.uplift.ui.screens.GymDetailScreen
 import com.cornellappdev.uplift.ui.screens.HomeScreen
 import com.cornellappdev.uplift.ui.viewmodels.ClassDetailViewModel
@@ -138,7 +139,12 @@ fun MainNavigationWrapper(
                 }
             }
             navigation(startDestination = "classesMain", route = "classes") {
-                composable(route = "classesMain") {}
+                composable(route = "classesMain") {
+                    ClassScreen(
+                        classDetailViewModel = classDetailViewModel,
+                        navController = navController
+                    )
+                }
             }
             navigation(startDestination = "sportsMain", route = "sports") {
                 composable(route = "sportsMain") {}
