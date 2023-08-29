@@ -46,8 +46,9 @@ fun MainNavigationWrapper(
     val items = listOf(
         BottomNavScreen.Home,
         BottomNavScreen.Classes,
-        BottomNavScreen.Sports,
-        BottomNavScreen.Favorites
+        // TODO: Uncomment when sports and favorites are implemented.
+//        BottomNavScreen.Sports,
+//        BottomNavScreen.Favorites
     )
 
     systemUiController.setStatusBarColor(PRIMARY_YELLOW)
@@ -147,6 +148,14 @@ fun MainNavigationWrapper(
                         navController = navController,
                         classesViewModel = classesViewModel
                     )
+                }
+                composable(route = "classDetail") {
+                    ClassDetailScreen(
+                        classDetailViewModel = classDetailViewModel,
+                        navController = navController
+                    ) {
+                        navController.popBackClass(classDetailViewModel)
+                    }
                 }
             }
             navigation(startDestination = "sportsMain", route = "sports") {
