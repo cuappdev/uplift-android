@@ -11,6 +11,8 @@ import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment.Companion.BottomCenter
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -23,32 +25,43 @@ import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.cornellappdev.uplift.ui.components.ClassInfoCard
+import com.cornellappdev.uplift.ui.components.general.CalendarBar
 import com.cornellappdev.uplift.ui.components.general.UpliftTopBar
 import com.cornellappdev.uplift.ui.viewmodels.ClassDetailViewModel
+import com.cornellappdev.uplift.ui.viewmodels.ClassesViewModel
 import com.cornellappdev.uplift.util.PRIMARY_BLACK
-import com.cornellappdev.uplift.util.exampleClassMusclePump1
-import com.cornellappdev.uplift.util.exampleClassMusclePump2
 import com.cornellappdev.uplift.util.montserratFamily
+import kotlinx.coroutines.launch
+import kotlin.math.absoluteValue
 
 /**
- * Parameters: classDetailViewModel
- * Builds ClassScreen with list of available classes and button to filtering screen.
+ * TODO: Document
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ClassScreen(
     classDetailViewModel: ClassDetailViewModel = viewModel(),
+    classesViewModel: ClassesViewModel,
     navController: NavHostController
 ) {
-    val classesList = listOf(
-        exampleClassMusclePump1,
-        exampleClassMusclePump2,
-        exampleClassMusclePump1,
-        exampleClassMusclePump2,
-        exampleClassMusclePump1,
-        exampleClassMusclePump2
-    )
+    val classesList = classesViewModel.classesFlow.collectAsState()
     val classesScrollState = rememberLazyListState()
+    val selectedDayState = classesViewModel.selectedDay
+
+    val titleText = classesViewModel.selectedDay.collectAsState().value.let { day ->
+        if (day < -1) {
+            "${day.absoluteValue} days ago"
+        } else {
+            when (day) {
+                -1 -> "Yesterday"
+                0 -> "Today"
+                1 -> "Tomorrow"
+                else -> "In $day days"
+            }
+        }
+    }
+
+    val coroutineScope = rememberCoroutineScope()
 
     Box(modifier = Modifier.fillMaxSize()) {
         Column {
@@ -58,30 +71,31 @@ fun ClassScreen(
                 state = classesScrollState,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 8.dp, bottom = 20.dp)
+                    .padding(bottom = 20.dp)
                     .zIndex(-1f)
             ) {
                 stickyHeader {
-                    Text(
-                        text = "Example Header :-)",
-                        fontFamily = montserratFamily,
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight(700),
-                        color = PRIMARY_BLACK,
+                    Column(
                         modifier = Modifier
-                            .fillMaxWidth()
                             .background(
                                 Brush.verticalGradient(
                                     Pair(.9f, Color.White), Pair(1f, Color.Transparent)
                                 )
                             )
-                            .padding(top = 24.dp, bottom = 24.dp),
-                        textAlign = TextAlign.Center,
-                    )
+                            .padding(vertical = 14.5.dp)
+                    ) {
+                        CalendarBar(selectedDay = selectedDayState.value) { daySelected ->
+                            classesViewModel.selectDay(daySelected)
+                            // Scroll to the top when a new day is pressed.
+                            coroutineScope.launch {
+                                classesScrollState.animateScrollToItem(0)
+                            }
+                        }
+                    }
                 }
                 item {
                     Text(
-                        text = "TODAY",
+                        text = titleText.uppercase(),
                         fontFamily = montserratFamily,
                         fontSize = 20.sp,
                         fontWeight = FontWeight(700),
@@ -93,9 +107,9 @@ fun ClassScreen(
                     )
                 }
 
-                items(items = classesList) { classesList ->
+                items(items = classesList.value) { myClass ->
                     ClassInfoCard(
-                        thisClass = classesList,
+                        thisClass = myClass,
                         navController = navController,
                         classDetailViewModel = classDetailViewModel
                     )

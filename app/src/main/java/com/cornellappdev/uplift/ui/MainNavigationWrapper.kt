@@ -21,6 +21,7 @@ import com.cornellappdev.uplift.ui.screens.ClassScreen
 import com.cornellappdev.uplift.ui.screens.GymDetailScreen
 import com.cornellappdev.uplift.ui.screens.HomeScreen
 import com.cornellappdev.uplift.ui.viewmodels.ClassDetailViewModel
+import com.cornellappdev.uplift.ui.viewmodels.ClassesViewModel
 import com.cornellappdev.uplift.ui.viewmodels.GymDetailViewModel
 import com.cornellappdev.uplift.ui.viewmodels.HomeViewModel
 import com.cornellappdev.uplift.util.PRIMARY_BLACK
@@ -36,6 +37,7 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 fun MainNavigationWrapper(
     gymDetailViewModel: GymDetailViewModel = viewModel(),
     classDetailViewModel: ClassDetailViewModel = viewModel(),
+    classesViewModel: ClassesViewModel = viewModel(),
     homeViewModel: HomeViewModel = viewModel()
 ) {
     val navController = rememberNavController()
@@ -142,7 +144,8 @@ fun MainNavigationWrapper(
                 composable(route = "classesMain") {
                     ClassScreen(
                         classDetailViewModel = classDetailViewModel,
-                        navController = navController
+                        navController = navController,
+                        classesViewModel = classesViewModel
                     )
                 }
             }
