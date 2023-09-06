@@ -24,13 +24,15 @@ import kotlin.math.roundToInt
 
 /**
  * A scrollable row of calendar days starting from 3 days before the current day, going [daysAhead]
- * days into the future.
+ * days into the future. Calls [onDaySelected] with the day in the future selected.
+ *
+ * For example, if tomorrow is selected, 1 is passed to the function call. If yesterday, -1 is
+ * passed.
  */
 @Composable
 fun CalendarBar(selectedDay: Int, daysAhead: Int = 14, onDaySelected: (Int) -> Unit) {
     Row(
-        modifier = Modifier
-            .horizontalScroll(rememberScrollState())
+        modifier = Modifier.horizontalScroll(rememberScrollState())
     ) {
         for (i in -3 until daysAhead + 1) {
             val day = Calendar.getInstance()
@@ -42,12 +44,13 @@ fun CalendarBar(selectedDay: Int, daysAhead: Int = 14, onDaySelected: (Int) -> U
     }
 }
 
+/**
+ * A single selection of a calendar bar that shows the day of the week, day of the month,
+ * and a circle indicating if the day is selected or not.
+ */
 @Composable
 private fun CalendarBarSelection(
-    day: Calendar,
-    bubble: Boolean = false,
-    selected: Boolean = false,
-    onSelect: () -> Unit
+    day: Calendar, bubble: Boolean = false, selected: Boolean = false, onSelect: () -> Unit
 ) {
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
 
@@ -62,8 +65,7 @@ private fun CalendarBarSelection(
                 interactionSource = MutableInteractionSource(),
                 indication = null,
                 onClick = onSelect
-            ),
-        horizontalAlignment = Alignment.CenterHorizontally
+            ), horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Surface(
             shape = CircleShape,
@@ -85,9 +87,7 @@ private fun CalendarBarSelection(
         )
 
         Box(modifier = Modifier.size(24.dp)) {
-            if (day.get(Calendar.DAY_OF_YEAR) == Calendar.getInstance()
-                    .get(Calendar.DAY_OF_YEAR)
-            ) {
+            if (day.get(Calendar.DAY_OF_YEAR) == Calendar.getInstance().get(Calendar.DAY_OF_YEAR)) {
                 Surface(
                     shape = CircleShape,
                     color = GRAY01,

@@ -42,7 +42,7 @@ import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
 
 /**
- * TODO: Document
+ * The main screen for the "Classes" section of the app.
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -173,7 +173,7 @@ fun ClassScreen(
                 }
             }
         }
-        
+
         Button(
             onClick = { /*TODO*/ },
             modifier = Modifier
