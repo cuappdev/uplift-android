@@ -1,6 +1,7 @@
 package com.cornellappdev.uplift
 
 import android.content.Context
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -8,6 +9,7 @@ import androidx.datastore.preferences.preferencesDataStore
 import com.cornellappdev.uplift.models.DatastoreRepository
 import com.cornellappdev.uplift.ui.MainNavigationWrapper
 import com.cornellappdev.uplift.ui.theme.UpliftTheme
+import com.cornellappdev.uplift.util.LockScreenOrientation
 import com.cornellappdev.uplift.util.PREFERENCES_NAME
 
 // Singleton
@@ -24,6 +26,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             UpliftTheme {
+                LockScreenOrientation(orientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
                 MainNavigationWrapper()
             }
         }
