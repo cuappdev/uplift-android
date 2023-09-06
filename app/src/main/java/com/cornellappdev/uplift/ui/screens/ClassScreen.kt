@@ -129,7 +129,7 @@ fun ClassScreen(
                         Column(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(top = (screenHeightDp / 2 - 300).dp),
+                                .height((screenHeightDp - 400).dp),
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.Center
                         ) {
