@@ -1,132 +1,188 @@
 package com.cornellappdev.uplift.ui.screens
 
-import android.icu.util.Calendar
-import android.transition.Visibility
-import android.widget.Button
-import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
-import androidx.compose.material.TabRowDefaults.Divider
-import androidx.compose.runtime.*
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.BottomCenter
-import androidx.compose.ui.Alignment.Companion.TopEnd
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.semantics.SemanticsActions.OnClick
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.cornellappdev.uplift.R
+import com.cornellappdev.uplift.models.UpliftClass
+import com.cornellappdev.uplift.networking.ApiResponse
 import com.cornellappdev.uplift.ui.components.ClassInfoCard
+import com.cornellappdev.uplift.ui.components.general.CalendarBar
 import com.cornellappdev.uplift.ui.components.general.UpliftTopBar
-import com.cornellappdev.uplift.ui.components.home.BriefClassInfoCard
 import com.cornellappdev.uplift.ui.viewmodels.ClassDetailViewModel
-import com.cornellappdev.uplift.util.*
-import com.himanshoe.kalendar.Kalendar
-import com.himanshoe.kalendar.model.KalendarType
-
-class dateInstance(var date: Int, var day1:String) {
-}
-
-/**
- * Parameters: Calendar
- * Initial function to start to building logic for the weekly calendar at top of screen.
- */
-fun calendarDayOfWeekToString1(calendar: Calendar): String {
-    val dayString = when (calendar.get(java.util.Calendar.DAY_OF_WEEK)) {
-        java.util.Calendar.MONDAY -> "M"
-        java.util.Calendar.TUESDAY -> "T"
-        java.util.Calendar.WEDNESDAY -> "W"
-        java.util.Calendar.THURSDAY -> "Th"
-        java.util.Calendar.FRIDAY -> "F"
-        java.util.Calendar.SATURDAY -> "Sa"
-        java.util.Calendar.SUNDAY -> "Su"
-        else -> "M"
-    }
-
-    return dayString
-}
+import com.cornellappdev.uplift.ui.viewmodels.ClassesViewModel
+import com.cornellappdev.uplift.util.PRIMARY_BLACK
+import com.cornellappdev.uplift.util.montserratFamily
+import kotlinx.coroutines.launch
+import kotlin.math.absoluteValue
 
 /**
- * Parameters: Calendar
- * Initial logic for building Calendar with text logic.
+ * The main screen for the "Classes" section of the app.
  */
-@Composable
-fun Calendar(calendar:Calendar){
-    val c: Calendar = Calendar.getInstance()
-    val date = calendar.get(java.util.Calendar.DAY_OF_MONTH)
-    val day= calendarDayOfWeekToString1(c)
-    val dayList= listOf("M","T","W","Th","F","Sa","Su")
-}
-
-/**
- * Parameters: classDetailViewModel
- * Builds ClassScreen with list of available classes and button to filtering screen.
- */
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ClassScreen(
-                classDetailViewModel: ClassDetailViewModel = viewModel()
+    classDetailViewModel: ClassDetailViewModel = viewModel(),
+    classesViewModel: ClassesViewModel,
+    navController: NavHostController
 ) {
-    var navController = rememberNavController()
-    val clasesList = listOf(
-        exampleClassMusclePump1,
-        exampleClassMusclePump2,
-        exampleClassMusclePump1,
-        exampleClassMusclePump2,
-        exampleClassMusclePump1,
-        exampleClassMusclePump2
-    )
+    val classesResponse = classesViewModel.classesFlow.collectAsState()
+    val classesList = when (classesResponse.value) {
+        ApiResponse.Loading -> listOf()
+        ApiResponse.Error -> listOf()
+        is ApiResponse.Success ->
+            (classesResponse.value as ApiResponse.Success<List<UpliftClass>>).data
+    }
+
     val classesScrollState = rememberLazyListState()
-    Box {
+    val selectedDayState = classesViewModel.selectedDay.collectAsState()
+
+    // Needed in order to roughly center empty state in LazyColumn.
+    val screenHeightDp = LocalConfiguration.current.screenHeightDp
+
+    val titleText = classesViewModel.selectedDay.collectAsState().value.let { day ->
+        if (day < -1) {
+            "${day.absoluteValue} days ago"
+        } else {
+            when (day) {
+                -1 -> "Yesterday"
+                0 -> "Today"
+                1 -> "Tomorrow"
+                else -> "In $day days"
+            }
+        }
+    }
+
+    val coroutineScope = rememberCoroutineScope()
+
+    Box(modifier = Modifier.fillMaxSize()) {
         Column {
             UpliftTopBar(showIcon = true, title = "Classes")
-            Text(
-                text = "TODAY",
-                fontFamily = montserratFamily,
-                fontSize = 20.sp,
-                fontWeight = FontWeight(700),
-                color = PRIMARY_BLACK,
-                modifier = Modifier
-                    .padding(vertical = 14.dp)
-                    .fillMaxWidth(),
-                textAlign = TextAlign.Center,
 
-                )
             LazyColumn(
                 state = classesScrollState,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top=8.dp,bottom=20.dp)
+                    .padding(bottom = 20.dp)
+                    .zIndex(-1f)
             ) {
-                items(items = clasesList) { clasesList ->
-                    ClassInfoCard(
-                        thisClass = clasesList,
+                stickyHeader {
+                    Column(
+                        modifier = Modifier
+                            .background(
+                                Brush.verticalGradient(
+                                    Pair(.9f, Color.White), Pair(1f, Color.Transparent)
+                                )
+                            )
+                            .padding(vertical = 14.5.dp)
+                    ) {
+                        CalendarBar(selectedDay = selectedDayState.value) { daySelected ->
+                            classesViewModel.selectDay(daySelected)
+                            // Scroll to the top when a new day is pressed.
+                            coroutineScope.launch {
+                                classesScrollState.animateScrollToItem(0)
+                            }
+                        }
+                    }
+                }
+                item {
+                    Text(
+                        text = titleText.uppercase(),
+                        fontFamily = montserratFamily,
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight(700),
+                        color = PRIMARY_BLACK,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 14.dp),
+                        textAlign = TextAlign.Center,
                     )
+                }
+
+                item {
+                    if (classesList.isEmpty())
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height((screenHeightDp - 400).dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.img_green_tea),
+                                contentDescription = null,
+                                modifier = Modifier.size(width = 85.dp, height = 71.dp)
+                            )
+                            Spacer(modifier = Modifier.height(24.dp))
+                            Text(
+                                text = "No classes",
+                                fontFamily = montserratFamily,
+                                fontSize = 24.sp,
+                                fontWeight = FontWeight(700),
+                                color = PRIMARY_BLACK,
+                                modifier = Modifier.fillMaxWidth(),
+                                textAlign = TextAlign.Center,
+                            )
+                            Text(
+                                text = "Relax with some tea or play a sport!",
+                                fontFamily = montserratFamily,
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight(400),
+                                color = PRIMARY_BLACK,
+                                modifier = Modifier.fillMaxWidth(),
+                                textAlign = TextAlign.Center,
+                            )
+                        }
+                }
+
+                items(items = classesList) { myClass ->
+                    ClassInfoCard(
+                        thisClass = myClass,
+                        navController = navController,
+                        classDetailViewModel = classDetailViewModel
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                }
+                item {
+                    Spacer(modifier = Modifier.height(100.dp))
                 }
             }
         }
-        Button(onClick = { /*TODO*/ },
-            modifier= Modifier
+
+        Button(
+            onClick = { /*TODO*/ },
+            modifier = Modifier
+                .align(BottomCenter)
+                .padding(bottom = 75.dp)
                 .width(164.dp)
-                .height(73.dp)
-                .padding(bottom=20.dp)
-                .align(BottomCenter),
-            shape=RoundedCornerShape(12.dp),
-            colors=ButtonDefaults.buttonColors(Color.White)
+                .height(43.dp),
+            shape = RoundedCornerShape(43.dp),
+            colors = ButtonDefaults.buttonColors(Color.White)
         ) {
             Text(
                 text = "APPLY FILTER",
@@ -134,12 +190,9 @@ fun ClassScreen(
                 fontSize = 14.sp,
                 fontWeight = FontWeight(700),
                 color = PRIMARY_BLACK,
-                modifier = Modifier
-                    .fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center,
-
-                )
+            )
         }
     }
 }
-

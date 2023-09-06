@@ -65,12 +65,12 @@ val exampleClassMusclePump2 = UpliftClass(
     gymId = "",
     location = "Teagle Multipurpose Room",
     instructorName = "Claire M.",
-    date = exCalendarMarch25,
+    date = GregorianCalendar(2023, 8, 7),
     time = TimeInterval(TimeOfDay(10, 30, isAM = true), TimeOfDay(11, 15, isAM = true)),
     functions = listOf("Core", "Overall Fitness", "Stability"),
     preparation = "Footwear appropriate for movement",
     description = "Put a little muscle into your workout and join us for a class designed to build muscle endurance with low to medium weights and high repetitions. A variety of equipment and strength training techniques will be used in this class. There is no cardio portion in these sessions. Footwear that is appropriate for movement is required for this class. ",
-    imageUrl = "https://content.active.com/Assets/Active.com+Content+Site+Digital+Assets/Fitness/Best+Rowing+Apps/rowing-apps_header.jpg"
+    imageUrl = "https://www.mensjournal.com/.image/t_share/MTk2MTM3MzI0NDcwMzQ3MjY5/rowing-1.jpg"
 )
 
 val exampleClassMusclePump1 = UpliftClass(
@@ -78,7 +78,7 @@ val exampleClassMusclePump1 = UpliftClass(
     name = "Muscle Pump", gymId = "",
     location = "Helen Newman Hall",
     instructorName = "Claire M.",
-    date = GregorianCalendar(2023, 2, 24),
+    date = GregorianCalendar(2023, 8, 6),
     time = TimeInterval(TimeOfDay(0, 30, isAM = true), TimeOfDay(0, 15, isAM = false)),
     functions = listOf("Core", "Overall Fitness", "Stability"),
     preparation = "Footwear appropriate for movement",

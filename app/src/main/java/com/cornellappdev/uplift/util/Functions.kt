@@ -69,18 +69,18 @@ fun calendarDayToString(calendar: Calendar): String {
 /**
  * Takes in a calendar and returns a string representation of its day of week.
  *
+ * @param abbreviated If the full name of the day should be returned, or an abbreviation.
  * Example: 3/15/2023 as a calendar would return: "Wednesday"
  */
-fun calendarDayOfWeekToString(calendar: Calendar): String {
+fun calendarDayOfWeekToString(calendar: Calendar, abbreviated: Boolean = false): String {
     val dayString = when (calendar.get(Calendar.DAY_OF_WEEK)) {
-        Calendar.MONDAY -> "Monday"
-        Calendar.TUESDAY -> "Tuesday"
-        Calendar.WEDNESDAY -> "Wednesday"
-        Calendar.THURSDAY -> "Thursday"
-        Calendar.FRIDAY -> "Friday"
-        Calendar.SATURDAY -> "Saturday"
-        Calendar.SUNDAY -> "Sunday"
-        else -> "Monday"
+        Calendar.MONDAY -> if (!abbreviated) "Monday" else "M"
+        Calendar.TUESDAY -> if (!abbreviated) "Tuesday" else "T"
+        Calendar.WEDNESDAY -> if (!abbreviated) "Wednesday" else "W"
+        Calendar.THURSDAY -> if (!abbreviated) "Thursday" else "Th"
+        Calendar.FRIDAY -> if (!abbreviated) "Friday" else "F"
+        Calendar.SATURDAY -> if (!abbreviated) "Saturday" else "S"
+        else -> if (!abbreviated) "Sunday" else "Su"
     }
 
     return dayString

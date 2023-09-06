@@ -94,7 +94,7 @@ fun ClassDetailScreen(
             Box(
                 modifier = Modifier
                     .align(Alignment.TopEnd)
-                    .padding(top = 47.dp, end = 21.dp)
+                    .padding(top = 40.dp, end = 21.dp)
             ) {
                 FavoriteButton(
                     filled = (upliftClass != null && upliftClass!!.isFavorite())

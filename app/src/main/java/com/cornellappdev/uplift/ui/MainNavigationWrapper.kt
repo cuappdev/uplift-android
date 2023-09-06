@@ -17,9 +17,11 @@ import com.cornellappdev.uplift.nav.BottomNavScreen
 import com.cornellappdev.uplift.nav.popBackClass
 import com.cornellappdev.uplift.nav.popBackGym
 import com.cornellappdev.uplift.ui.screens.ClassDetailScreen
+import com.cornellappdev.uplift.ui.screens.ClassScreen
 import com.cornellappdev.uplift.ui.screens.GymDetailScreen
 import com.cornellappdev.uplift.ui.screens.HomeScreen
 import com.cornellappdev.uplift.ui.viewmodels.ClassDetailViewModel
+import com.cornellappdev.uplift.ui.viewmodels.ClassesViewModel
 import com.cornellappdev.uplift.ui.viewmodels.GymDetailViewModel
 import com.cornellappdev.uplift.ui.viewmodels.HomeViewModel
 import com.cornellappdev.uplift.util.PRIMARY_BLACK
@@ -35,6 +37,7 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 fun MainNavigationWrapper(
     gymDetailViewModel: GymDetailViewModel = viewModel(),
     classDetailViewModel: ClassDetailViewModel = viewModel(),
+    classesViewModel: ClassesViewModel = viewModel(),
     homeViewModel: HomeViewModel = viewModel()
 ) {
     val navController = rememberNavController()
@@ -43,8 +46,9 @@ fun MainNavigationWrapper(
     val items = listOf(
         BottomNavScreen.Home,
         BottomNavScreen.Classes,
-        BottomNavScreen.Sports,
-        BottomNavScreen.Favorites
+        // TODO: Uncomment when sports and favorites are implemented.
+//        BottomNavScreen.Sports,
+//        BottomNavScreen.Favorites
     )
 
     systemUiController.setStatusBarColor(PRIMARY_YELLOW)
@@ -138,7 +142,21 @@ fun MainNavigationWrapper(
                 }
             }
             navigation(startDestination = "classesMain", route = "classes") {
-                composable(route = "classesMain") {}
+                composable(route = "classesMain") {
+                    ClassScreen(
+                        classDetailViewModel = classDetailViewModel,
+                        navController = navController,
+                        classesViewModel = classesViewModel
+                    )
+                }
+                composable(route = "classDetail") {
+                    ClassDetailScreen(
+                        classDetailViewModel = classDetailViewModel,
+                        navController = navController
+                    ) {
+                        navController.popBackClass(classDetailViewModel)
+                    }
+                }
             }
             navigation(startDestination = "sportsMain", route = "sports") {
                 composable(route = "sportsMain") {}
