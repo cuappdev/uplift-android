@@ -1,6 +1,7 @@
 package com.cornellappdev.uplift.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
+import com.cornellappdev.uplift.models.UpliftClass
 import com.cornellappdev.uplift.networking.ApiResponse
 import com.cornellappdev.uplift.networking.UpliftApiRepository
 import com.cornellappdev.uplift.networking.toUpliftClass
@@ -16,38 +17,49 @@ class ClassesViewModel : ViewModel() {
     private val _selectedDay: MutableStateFlow<Int> = MutableStateFlow(0)
     val selectedDay = _selectedDay.asStateFlow()
 
+    // Testing for now to demonstrate filtering. Classes are hardcoded on Sept 6th and 7th.
+    private val example = listOf(
+        exampleClassMusclePump1,
+        exampleClassMusclePump2,
+        exampleClassMusclePump1,
+        exampleClassMusclePump2,
+        exampleClassMusclePump1,
+        exampleClassMusclePump2
+    )
+
     /**
      * A flow emitting lists of classes for the classes page to show. Filters based on
      * [selectedDay], which is mutable by [selectDay].
      */
-    val classesFlow = UpliftApiRepository.classesApiFlow.combine(selectedDay) { apiResponse, day ->
-        // Testing for now to demonstrate filtering. Classes are hardcoded on August 28th and 30th.
-        val example = listOf(
-            exampleClassMusclePump1,
-            exampleClassMusclePump2,
-            exampleClassMusclePump1,
-            exampleClassMusclePump2,
-            exampleClassMusclePump1,
-            exampleClassMusclePump2
+    val classesFlow: StateFlow<ApiResponse<List<UpliftClass>>> =
+        UpliftApiRepository.classesApiFlow.combine(selectedDay) { apiResponse, day ->
+            (when (apiResponse) {
+                // TODO: Replace w/ simply `ApiResponse.Loading` when backend up.
+                ApiResponse.Loading -> ApiResponse.Success(example.filter {
+                    val dateFromToday = Calendar.getInstance()
+                    dateFromToday.add(Calendar.DAY_OF_YEAR, day)
+                    it.date.get(Calendar.DAY_OF_YEAR) == dateFromToday.get(Calendar.DAY_OF_YEAR)
+                })
+                // TODO: Replace w/ simply `ApiResponse.Error` when backend up.
+                ApiResponse.Error -> ApiResponse.Success(example.filter {
+                    val dateFromToday = Calendar.getInstance()
+                    dateFromToday.add(Calendar.DAY_OF_YEAR, day)
+                    it.date.get(Calendar.DAY_OF_YEAR) == dateFromToday.get(Calendar.DAY_OF_YEAR)
+                })
+                // Pull actual API response data, then filter those out by day.
+                is ApiResponse.Success -> ApiResponse.Success(apiResponse.data.map { query ->
+                    query.toUpliftClass()
+                }.filter {
+                    val dateFromToday = Calendar.getInstance()
+                    dateFromToday.add(Calendar.DAY_OF_YEAR, day)
+                    it.date.get(Calendar.DAY_OF_YEAR) == dateFromToday.get(Calendar.DAY_OF_YEAR)
+                })
+            })
+        }.stateIn(
+            CoroutineScope(Dispatchers.Main),
+            SharingStarted.Eagerly,
+            ApiResponse.Loading
         )
-
-        (when (apiResponse) {
-            ApiResponse.Loading -> example
-            ApiResponse.Error -> example
-            // Pull actual API response data, then filter those out by day.
-            is ApiResponse.Success -> apiResponse.data.map { query ->
-                query.toUpliftClass()
-            }
-        }).filter {
-            val dateFromToday = Calendar.getInstance()
-            dateFromToday.add(Calendar.DAY_OF_YEAR, day)
-            it.date.get(Calendar.DAY_OF_YEAR) == dateFromToday.get(Calendar.DAY_OF_YEAR)
-        }
-    }.stateIn(
-        CoroutineScope(Dispatchers.Main),
-        SharingStarted.Eagerly,
-        listOf()
-    )
 
     /**
      * Selects a day in the future or past to display the classes of. A day of -x represents x days

@@ -1,6 +1,7 @@
 package com.cornellappdev.uplift.ui.screens
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -13,10 +14,13 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.BottomCenter
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -24,6 +28,9 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.cornellappdev.uplift.R
+import com.cornellappdev.uplift.models.UpliftClass
+import com.cornellappdev.uplift.networking.ApiResponse
 import com.cornellappdev.uplift.ui.components.ClassInfoCard
 import com.cornellappdev.uplift.ui.components.general.CalendarBar
 import com.cornellappdev.uplift.ui.components.general.UpliftTopBar
@@ -44,9 +51,19 @@ fun ClassScreen(
     classesViewModel: ClassesViewModel,
     navController: NavHostController
 ) {
-    val classesList = classesViewModel.classesFlow.collectAsState()
+    val classesResponse = classesViewModel.classesFlow.collectAsState()
+    val classesList = when (classesResponse.value) {
+        ApiResponse.Loading -> listOf()
+        ApiResponse.Error -> listOf()
+        is ApiResponse.Success ->
+            (classesResponse.value as ApiResponse.Success<List<UpliftClass>>).data
+    }
+
     val classesScrollState = rememberLazyListState()
-    val selectedDayState = classesViewModel.selectedDay
+    val selectedDayState = classesViewModel.selectedDay.collectAsState()
+
+    // Needed in order to roughly center empty state in LazyColumn.
+    val screenHeightDp = LocalConfiguration.current.screenHeightDp
 
     val titleText = classesViewModel.selectedDay.collectAsState().value.let { day ->
         if (day < -1) {
@@ -107,7 +124,43 @@ fun ClassScreen(
                     )
                 }
 
-                items(items = classesList.value) { myClass ->
+                item {
+                    if (classesList.isEmpty())
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = (screenHeightDp / 2 - 300).dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.img_green_tea),
+                                contentDescription = null,
+                                modifier = Modifier.size(width = 85.dp, height = 71.dp)
+                            )
+                            Spacer(modifier = Modifier.height(24.dp))
+                            Text(
+                                text = "No classes",
+                                fontFamily = montserratFamily,
+                                fontSize = 24.sp,
+                                fontWeight = FontWeight(700),
+                                color = PRIMARY_BLACK,
+                                modifier = Modifier.fillMaxWidth(),
+                                textAlign = TextAlign.Center,
+                            )
+                            Text(
+                                text = "Relax with some tea or play a sport!",
+                                fontFamily = montserratFamily,
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight(400),
+                                color = PRIMARY_BLACK,
+                                modifier = Modifier.fillMaxWidth(),
+                                textAlign = TextAlign.Center,
+                            )
+                        }
+                }
+
+                items(items = classesList) { myClass ->
                     ClassInfoCard(
                         thisClass = myClass,
                         navController = navController,
@@ -120,6 +173,7 @@ fun ClassScreen(
                 }
             }
         }
+        
         Button(
             onClick = { /*TODO*/ },
             modifier = Modifier
