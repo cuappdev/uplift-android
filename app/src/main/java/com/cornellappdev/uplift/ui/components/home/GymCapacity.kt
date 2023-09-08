@@ -1,6 +1,5 @@
 package com.cornellappdev.uplift.ui.components.home
 
-import android.animation.ArgbEvaluator
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
@@ -15,9 +14,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -28,6 +25,7 @@ import com.cornellappdev.uplift.util.ACCENT_OPEN
 import com.cornellappdev.uplift.util.ACCENT_ORANGE
 import com.cornellappdev.uplift.util.GRAY02
 import com.cornellappdev.uplift.util.PRIMARY_BLACK
+import com.cornellappdev.uplift.util.colorInterp
 import com.cornellappdev.uplift.util.montserratFamily
 
 /**
@@ -47,26 +45,25 @@ fun GymCapacity(capacity: Pair<Int, Int> = Pair(35, 70), label: String = "Helen 
     LaunchedEffect(animatedFraction) {
         animatedFraction.animateTo(
             fraction,
-            animationSpec = tween(durationMillis = 500)
+            animationSpec = tween(durationMillis = 750)
         )
     }
 
     // Choose a color. If between 0 & 0.5, tween between open and orange. If between 0.5 and 1,
     // tween between orange and closed.
-    val color = Color(
-        (if (fraction > .5)
-            ArgbEvaluator().evaluate(
+    val color =
+        if (fraction > .5)
+            colorInterp(
                 (fraction - .5f) * 2,
-                ACCENT_ORANGE.toArgb(),
-                ACCENT_CLOSED.toArgb()
+                ACCENT_ORANGE,
+                ACCENT_CLOSED
             )
         else
-            ArgbEvaluator().evaluate(
+            colorInterp(
                 fraction * 2,
-                ACCENT_OPEN.toArgb(),
-                ACCENT_ORANGE.toArgb()
-            )) as Int
-    )
+                ACCENT_OPEN,
+                ACCENT_ORANGE
+            )
 
 
     Column(horizontalAlignment = Alignment.CenterHorizontally) {

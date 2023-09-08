@@ -28,12 +28,15 @@ import com.cornellappdev.uplift.nav.navigateToGym
 import com.cornellappdev.uplift.ui.components.general.NoClasses
 import com.cornellappdev.uplift.ui.components.general.UpliftTopBar
 import com.cornellappdev.uplift.ui.components.home.BriefClassInfoCard
+import com.cornellappdev.uplift.ui.components.home.GymCapacity
 import com.cornellappdev.uplift.ui.components.home.HomeCard
 import com.cornellappdev.uplift.ui.components.home.SportButton
 import com.cornellappdev.uplift.ui.viewmodels.ClassDetailViewModel
 import com.cornellappdev.uplift.ui.viewmodels.GymDetailViewModel
 import com.cornellappdev.uplift.util.GRAY04
 import com.cornellappdev.uplift.util.montserratFamily
+import com.cornellappdev.uplift.util.testMorrison
+import kotlin.math.roundToInt
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -53,8 +56,7 @@ fun MainLoaded(
     gyms.addAll(gymsUnfavorited)
 
     LazyColumn(
-        state = rememberLazyListState(),
-        modifier = Modifier
+        state = rememberLazyListState(), modifier = Modifier
             .fillMaxSize()
             .background(Color.White)
     ) {
@@ -62,9 +64,82 @@ fun MainLoaded(
             UpliftTopBar(showIcon = true, title = titleText)
         }
 
-        // TODAY'S CLASSES
+        // Spacer from header.
         item {
             Spacer(Modifier.height(24.dp))
+        }
+
+        // Gym Capacities
+        item {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = "GYM CAPACITIES",
+                    fontFamily = montserratFamily,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight(700),
+                    lineHeight = 17.07.sp,
+                    textAlign = TextAlign.Center,
+                    color = GRAY04
+                )
+                Text(
+                    text = "Last Updated 00:00pm",
+                    fontFamily = montserratFamily,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight(300),
+                    textAlign = TextAlign.Center,
+                    color = GRAY04
+                )
+            }
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 12.dp, bottom = 24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                // TODO: Since backend is down, using 5 [testMorrison]s. When backend is up,
+                //  change to use [gyms] (or [gyms] filtered by which ones have capacity data).
+                listOf(
+                    testMorrison, testMorrison, testMorrison, testMorrison, testMorrison
+                ).let { gymsWithCapacities ->
+                    // Place two capacities per row, or one if it's the last row and only 1 is left.
+                    val bound = (gymsWithCapacities.size / 2f).roundToInt()
+                    for (i in 0 until bound) {
+                        Row(horizontalArrangement = Arrangement.Center) {
+                            // First index [i * 2] should always exist.
+                            Box(modifier = Modifier.padding(16.dp)) {
+                                GymCapacity(
+                                    capacity = gymsWithCapacities[i * 2].capacity,
+                                    label = gymsWithCapacities[i * 2].name
+                                )
+                            }
+
+                            // Second index [i * 2 + 1] may not exist.
+                            if (i * 2 + 1 < gymsWithCapacities.size) {
+                                Box(modifier = Modifier.padding(16.dp)) {
+                                    GymCapacity(
+                                        capacity = gymsWithCapacities[i * 2 + 1].capacity,
+                                        label = gymsWithCapacities[i * 2].name
+                                    )
+                                }
+                            }
+                        }
+
+                        if (i != bound - 1) {
+                            Spacer(modifier = Modifier.height(12.dp))
+                        }
+                    }
+                }
+            }
+        }
+
+        // TODAY'S CLASSES
+        item {
             Text(
                 text = "TODAY'S CLASSES",
                 fontFamily = montserratFamily,
@@ -85,23 +160,20 @@ fun MainLoaded(
                 ) {
                     NoClasses()
                 }
-            } else
-                LazyRow(
-                    state = rememberLazyListState(),
-                    contentPadding = PaddingValues(
-                        horizontal = 16.dp
-                    ),
-                    modifier = Modifier.padding(top = 12.dp, bottom = 24.dp)
-                ) {
-                    items(items = upliftClasses) { upliftClass ->
-                        BriefClassInfoCard(
-                            thisClass = upliftClass,
-                            navController = navController,
-                            classDetailViewModel = classDetailViewModel
-                        )
-                        Spacer(Modifier.width(16.dp))
-                    }
+            } else LazyRow(
+                state = rememberLazyListState(), contentPadding = PaddingValues(
+                    horizontal = 16.dp
+                ), modifier = Modifier.padding(top = 12.dp, bottom = 24.dp)
+            ) {
+                items(items = upliftClasses) { upliftClass ->
+                    BriefClassInfoCard(
+                        thisClass = upliftClass,
+                        navController = navController,
+                        classDetailViewModel = classDetailViewModel
+                    )
+                    Spacer(Modifier.width(16.dp))
                 }
+            }
         }
 
         // Favorite Sports
@@ -121,8 +193,7 @@ fun MainLoaded(
                     textAlign = TextAlign.Center,
                     color = GRAY04
                 )
-                Text(
-                    text = "Edit",
+                Text(text = "Edit",
                     fontFamily = montserratFamily,
                     fontSize = 14.sp,
                     fontWeight = FontWeight(700),
@@ -133,16 +204,13 @@ fun MainLoaded(
                         .clip(RoundedCornerShape(4.dp))
                         .clickable {
 
-                        }
-                )
+                        })
             }
 
             LazyRow(
-                state = rememberLazyListState(),
-                contentPadding = PaddingValues(
+                state = rememberLazyListState(), contentPadding = PaddingValues(
                     horizontal = 16.dp
-                ),
-                modifier = Modifier.padding(top = 12.dp, bottom = 24.dp)
+                ), modifier = Modifier.padding(top = 12.dp, bottom = 24.dp)
             ) {
                 items(items = sportsList) { sport ->
                     SportButton(text = sport.name, painterResource(id = sport.painterId)) {
@@ -170,8 +238,7 @@ fun MainLoaded(
                     textAlign = TextAlign.Center,
                     color = GRAY04
                 )
-                Text(
-                    text = "Edit",
+                Text(text = "Edit",
                     fontFamily = montserratFamily,
                     fontSize = 14.sp,
                     fontWeight = FontWeight(700),
@@ -182,8 +249,7 @@ fun MainLoaded(
                         .clip(RoundedCornerShape(4.dp))
                         .clickable {
 
-                        }
-                )
+                        })
             }
         }
 
