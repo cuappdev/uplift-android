@@ -1,20 +1,30 @@
 package com.cornellappdev.uplift.ui.components.home
 
 import android.animation.ArgbEvaluator
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.cornellappdev.uplift.util.*
+import com.cornellappdev.uplift.util.ACCENT_CLOSED
+import com.cornellappdev.uplift.util.ACCENT_OPEN
+import com.cornellappdev.uplift.util.ACCENT_ORANGE
+import com.cornellappdev.uplift.util.GRAY02
+import com.cornellappdev.uplift.util.PRIMARY_BLACK
+import com.cornellappdev.uplift.util.montserratFamily
 
 /**
  * A circular indicator for the capacity at a given gym.
@@ -50,15 +60,16 @@ fun GymCapacity(capacity: Pair<Int, Int> = Pair(35, 70), label: String = "Helen 
         Box {
             CircularProgressIndicator(
                 color = GRAY02,
-                strokeWidth = 7.dp,
+                strokeWidth = 8.dp,
                 modifier = Modifier.size(72.dp),
                 progress = 1f
             )
             CircularProgressIndicator(
                 color = color,
-                strokeWidth = 7.dp,
+                strokeWidth = 8.dp,
                 modifier = Modifier.size(72.dp),
-                progress = fraction
+                progress = fraction,
+                strokeCap = StrokeCap.Round
             )
             Text(
                 text = "${capacity.first}/${capacity.second}",
