@@ -1,6 +1,8 @@
 package com.cornellappdev.uplift.ui.components.home
 
 import android.animation.ArgbEvaluator
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -9,6 +11,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -37,6 +41,15 @@ import com.cornellappdev.uplift.util.montserratFamily
 @Preview
 fun GymCapacity(capacity: Pair<Int, Int> = Pair(35, 70), label: String = "Helen Newman") {
     val fraction = capacity.first.toFloat() / capacity.second.toFloat()
+    val animatedFraction = remember { Animatable(0f) }
+
+    // When the composable launches, animate the fraction to the capacity fraction.
+    LaunchedEffect(animatedFraction) {
+        animatedFraction.animateTo(
+            fraction,
+            animationSpec = tween(durationMillis = 500)
+        )
+    }
 
     // Choose a color. If between 0 & 0.5, tween between open and orange. If between 0.5 and 1,
     // tween between orange and closed.
@@ -68,7 +81,7 @@ fun GymCapacity(capacity: Pair<Int, Int> = Pair(35, 70), label: String = "Helen 
                 color = color,
                 strokeWidth = 8.dp,
                 modifier = Modifier.size(72.dp),
-                progress = fraction,
+                progress = animatedFraction.value,
                 strokeCap = StrokeCap.Round
             )
             Text(
