@@ -21,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -56,6 +57,7 @@ import com.cornellappdev.uplift.util.GRAY04
 import com.cornellappdev.uplift.util.colorInterp
 import com.cornellappdev.uplift.util.montserratFamily
 import com.cornellappdev.uplift.util.testMorrison
+import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -76,6 +78,7 @@ fun MainLoaded(
     gyms.addAll(gymsUnfavorited)
 
     val lazyListState = rememberLazyListState()
+    val coroutineScope = rememberCoroutineScope()
 
     var showCapacities by remember { mutableStateOf(false) }
 
@@ -92,6 +95,9 @@ fun MainLoaded(
                 Button(
                     onClick = {
                         showCapacities = !showCapacities
+                        coroutineScope.launch {
+                            lazyListState.animateScrollToItem(0)
+                        }
                     },
                     shape = RoundedCornerShape(12.dp),
                     modifier = Modifier
