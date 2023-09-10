@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.cornellappdev.uplift.R
+import com.cornellappdev.uplift.models.Capacity
 import com.cornellappdev.uplift.models.Sport
 import com.cornellappdev.uplift.models.UpliftClass
 import com.cornellappdev.uplift.models.UpliftGym
@@ -54,10 +55,13 @@ import com.cornellappdev.uplift.util.GRAY00
 import com.cornellappdev.uplift.util.GRAY01
 import com.cornellappdev.uplift.util.GRAY02
 import com.cornellappdev.uplift.util.GRAY04
+import com.cornellappdev.uplift.util.asTimeOfDay
 import com.cornellappdev.uplift.util.colorInterp
 import com.cornellappdev.uplift.util.montserratFamily
 import com.cornellappdev.uplift.util.testMorrison
 import kotlinx.coroutines.launch
+import java.util.Calendar
+import java.util.GregorianCalendar
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -73,6 +77,22 @@ fun MainLoaded(
 ) {
     val gymsFavorited = gymsList.filter { gym -> gym.isFavorite() }
     val gymsUnfavorited = gymsList.filter { gym -> !gym.isFavorite() }
+
+    val lastUpdatedCapacity = gymsList.map { gym -> gym.capacity }.fold<Capacity, Calendar>(
+        GregorianCalendar(1776, 6, 4)
+    ) { prev, newCapacity ->
+        // ^ I'm making the (bold) assumption here that all CFC updates occurred after
+        // Independence Day, July 4th, 1776. (I wouldn't put it against them, though...)
+
+        // Get the latest update.
+        newCapacity.updated.let { newUpdated ->
+            if (newUpdated > prev) {
+                newUpdated
+            } else {
+                prev
+            }
+        }
+    }.asTimeOfDay()
 
     val gyms = gymsFavorited.toMutableList()
     gyms.addAll(gymsUnfavorited)
@@ -174,7 +194,7 @@ fun MainLoaded(
                             color = GRAY04
                         )
                         Text(
-                            text = "Last Updated 00:00pm",
+                            text = "Last Updated $lastUpdatedCapacity",
                             fontFamily = montserratFamily,
                             fontSize = 14.sp,
                             fontWeight = FontWeight(300),
@@ -203,7 +223,7 @@ fun MainLoaded(
                                     // First index [i * 2] should always exist.
                                     Box(modifier = Modifier.padding(16.dp)) {
                                         GymCapacity(
-                                            capacity = gymsWithCapacities[i * 2].capacity,
+                                            capacity = gymsWithCapacities[i * 2].capacity.capacityPair,
                                             label = gymsWithCapacities[i * 2].name
                                         )
                                     }
@@ -212,7 +232,7 @@ fun MainLoaded(
                                     if (i * 2 + 1 < gymsWithCapacities.size) {
                                         Box(modifier = Modifier.padding(16.dp)) {
                                             GymCapacity(
-                                                capacity = gymsWithCapacities[i * 2 + 1].capacity,
+                                                capacity = gymsWithCapacities[i * 2 + 1].capacity.capacityPair,
                                                 label = gymsWithCapacities[i * 2].name
                                             )
                                         }

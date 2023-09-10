@@ -2,8 +2,21 @@ package com.cornellappdev.uplift.util
 
 import androidx.compose.runtime.mutableStateListOf
 import com.cornellappdev.uplift.R
-import com.cornellappdev.uplift.models.*
-import java.util.*
+import com.cornellappdev.uplift.models.BowlingInfo
+import com.cornellappdev.uplift.models.Capacity
+import com.cornellappdev.uplift.models.CourtInfo
+import com.cornellappdev.uplift.models.EquipmentGrouping
+import com.cornellappdev.uplift.models.GymnasiumInfo
+import com.cornellappdev.uplift.models.PopularTimes
+import com.cornellappdev.uplift.models.Sport
+import com.cornellappdev.uplift.models.SwimmingInfo
+import com.cornellappdev.uplift.models.SwimmingTime
+import com.cornellappdev.uplift.models.TimeInterval
+import com.cornellappdev.uplift.models.TimeOfDay
+import com.cornellappdev.uplift.models.UpliftClass
+import com.cornellappdev.uplift.models.UpliftGym
+import java.util.Calendar
+import java.util.GregorianCalendar
 
 val exCalendarMarch25: Calendar = GregorianCalendar(2023, 2, 25)
 
@@ -344,9 +357,8 @@ val testMorrison = UpliftGym(
         null,
         null,
         null,
-        null,
-
-        ),
+        null
+    ),
     swimmingInfo = listOf(
         SwimmingInfo(swimmingTimes = exampleSwimmingList1),
         null,
@@ -362,7 +374,8 @@ val testMorrison = UpliftGym(
         exampleClassMusclePump1,
         exampleClassMusclePump2
     ),
-    imageUrl = "https://recreation.athletics.cornell.edu/sites/recreation.athletics.cornell.edu/files/photo-galleries/DB%20_%20Benches_TM.jpeg"
+    imageUrl = "https://recreation.athletics.cornell.edu/sites/recreation.athletics.cornell.edu/files/photo-galleries/DB%20_%20Benches_TM.jpeg",
+    capacity = Capacity(Pair((Math.random() * 20 + 100).toInt(), 140), Calendar.getInstance())
 )
 
 val sports: List<Sport> = listOf(
