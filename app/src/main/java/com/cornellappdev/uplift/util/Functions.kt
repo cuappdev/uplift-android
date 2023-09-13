@@ -2,7 +2,8 @@ package com.cornellappdev.uplift.util
 
 import com.cornellappdev.uplift.models.TimeInterval
 import com.cornellappdev.uplift.models.TimeOfDay
-import java.util.*
+import java.util.Calendar
+import java.util.GregorianCalendar
 
 /**
  * Returns a flavor message corresponding to the numeric wait time input.
@@ -162,3 +163,13 @@ fun Calendar.sameDayAs(other: Calendar): Boolean =
 fun todayIndex(): Int {
     return ((Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 2) + 7) % 7
 }
+
+/**
+ * Returns this Calendar's hour and minute representation as a [TimeOfDay] object.
+ */
+fun Calendar.asTimeOfDay(): TimeOfDay =
+    TimeOfDay(
+        hour = get(Calendar.HOUR),
+        minute = get(Calendar.MINUTE),
+        isAM = get(Calendar.AM_PM) == Calendar.AM
+    )

@@ -5,6 +5,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.cornellappdev.uplift.datastoreRepository
+import java.util.Calendar
 
 /**
  * A [UpliftGym] object represents all the information needed about one particular gym.
@@ -61,11 +62,7 @@ data class UpliftGym(
     val miscellaneous: List<String>,
     val imageUrl: String,
     var classesToday: SnapshotStateList<UpliftClass> = mutableStateListOf(),
-    /**
-     * A pair containing, first, the number of people in the gym, and secondly, the maximum
-     * capacity at said gym.
-     */
-    val capacity: Pair<Int, Int> = Pair((Math.random() * 20 + 100).toInt(), 140)
+    val capacity: Capacity
     // TODO: Change to show actual data pulled from backend.
 ) {
     /**
@@ -87,3 +84,14 @@ data class UpliftGym(
     }
 }
 
+/**
+ * A gym's capacity.
+ */
+data class Capacity(
+    /**
+     * A pair containing, first, the number of people in the gym, and secondly, the maximum
+     * capacity at said gym.
+     */
+    val capacityPair: Pair<Int, Int>,
+    val updated: Calendar
+)

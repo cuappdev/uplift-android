@@ -1,11 +1,21 @@
 package com.cornellappdev.uplift.networking
 
-import com.cornellappdev.uplift.models.*
+import com.cornellappdev.uplift.models.BowlingInfo
+import com.cornellappdev.uplift.models.Capacity
+import com.cornellappdev.uplift.models.CourtInfo
+import com.cornellappdev.uplift.models.EquipmentGrouping
+import com.cornellappdev.uplift.models.GymnasiumInfo
+import com.cornellappdev.uplift.models.PopularTimes
+import com.cornellappdev.uplift.models.TimeInterval
+import com.cornellappdev.uplift.models.TimeOfDay
+import com.cornellappdev.uplift.models.UpliftClass
+import com.cornellappdev.uplift.models.UpliftGym
 import com.cornellappdev.uplift.util.defaultGymUrl
 import com.cornellappdev.uplift.util.parseDate
 import com.cornellappdev.uplift.util.parseTimeOfDay
 import com.example.rocketreserver.ClassListQuery
 import com.example.rocketreserver.GymListQuery
+import java.util.Calendar
 
 fun parsePopularTimes(times: List<List<Int?>?>?): List<PopularTimes> {
     if (times == null) return listOf()
@@ -244,7 +254,9 @@ fun GymListQuery.Gym.toUpliftGym(): UpliftGym {
         bowlingInfo = pullBowling(this),
         // No swimming info in backend yet...
         swimmingInfo = null,
-        gymnasiumInfo = pullGymnasiumInfos(this)
+        gymnasiumInfo = pullGymnasiumInfos(this),
+        // TODO: Reflect actual capacity pulled from backend.
+        capacity = Capacity(Pair((Math.random() * 20 + 100).toInt(), 140), Calendar.getInstance())
     )
 }
 
@@ -267,14 +279,3 @@ fun ClassListQuery.Class.toUpliftClass(): UpliftClass {
         imageUrl = imageUrl
     )
 }
-
-
-
-
-
-
-
-
-
-
-
