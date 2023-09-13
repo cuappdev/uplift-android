@@ -128,9 +128,7 @@ fun MainLoaded(
                     border = BorderStroke(1.dp, GRAY01),
                     colors = ButtonDefaults.buttonColors(
                         backgroundColor = colorInterp(
-                            capacityAnimation.value,
-                            Color.White,
-                            GRAY00
+                            capacityAnimation.value, Color.White, GRAY00
                         )
                     )
                 ) {
@@ -304,7 +302,8 @@ fun MainLoaded(
                     textAlign = TextAlign.Center,
                     color = GRAY04
                 )
-                Text(text = "Edit",
+                Text(
+                    text = "Edit",
                     fontFamily = montserratFamily,
                     fontSize = 14.sp,
                     fontWeight = FontWeight(700),
