@@ -22,7 +22,9 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        datastoreRepository = DatastoreRepository(dataStore)
+        // If statement needed to fix crash when datastore initializes twice.
+        if (!::datastoreRepository.isInitialized)
+            datastoreRepository = DatastoreRepository(dataStore)
 
         setContent {
             UpliftTheme {

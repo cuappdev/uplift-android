@@ -1,7 +1,14 @@
 package com.cornellappdev.uplift.ui.components.general
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
@@ -13,8 +20,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.cornellappdev.uplift.util.GRAY01
 import com.cornellappdev.uplift.util.PRIMARY_BLACK
 import com.cornellappdev.uplift.util.montserratFamily
+import com.valentinilk.shimmer.Shimmer
+import com.valentinilk.shimmer.shimmer
 
 /**
  * A general-purpose top bar for use in several screens across Uplift.
@@ -30,7 +40,12 @@ fun UpliftTopBar(
         backgroundColor = Color.White,
         elevation = 4.dp
     ) {
-        Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.Bottom),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             if (showIcon) {
                 // TODO: Change to display actual user's icon.
                 AsyncImage(
@@ -52,6 +67,33 @@ fun UpliftTopBar(
             )
             Spacer(Modifier.weight(1f))
             rightContent()
+        }
+    }
+}
+
+/**
+ * A variant of the top bar that displays no information and shimmers.
+ */
+@Composable
+fun LoadingTopBar(shimmerInstance: Shimmer) {
+    TopAppBar(
+        contentPadding = PaddingValues(24.dp),
+        backgroundColor = GRAY01,
+        elevation = 4.dp,
+        modifier = Modifier.shimmer(shimmerInstance)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.Bottom),
+            verticalAlignment = Alignment.Bottom
+        ) {
+            Surface(
+                shape = RoundedCornerShape(10.dp),
+                color = Color.White,
+                modifier = Modifier.size(width = 186.dp, height = 20.dp)
+            ) {}
+            Spacer(Modifier.weight(1f))
         }
     }
 }

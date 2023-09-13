@@ -11,8 +11,10 @@ val apolloClient = ApolloClient.Builder()
     .build()
 
 object UpliftApiRepository {
-    val gymApiFlow =
-        apolloClient.query(GymListQuery()).toFlow()
+    val gymQuery = apolloClient.query(GymListQuery())
+    val classQuery = apolloClient.query(ClassListQuery())
+    var gymApiFlow =
+        gymQuery.toFlow()
             .map {
                 val gymList = it.data?.gyms?.filterNotNull()
                 if (gymList == null) {
@@ -24,9 +26,10 @@ object UpliftApiRepository {
             .catch {
                 emit(ApiResponse.Error)
             }
+        private set
 
-    val classesApiFlow =
-        apolloClient.query(ClassListQuery()).toFlow()
+    var classesApiFlow =
+        classQuery.toFlow()
             .map {
                 val classList = it.data?.classes?.filterNotNull()
                 if (classList == null) {
@@ -38,4 +41,14 @@ object UpliftApiRepository {
             .catch {
                 emit(ApiResponse.Error)
             }
+        private set
+
+    /**
+     * Retries to load the backend data. Makes another query for all gym and class data.
+     */
+    fun retry() {
+        // TODO: Doesn't work :(
+        //  Might need to make classesApiFlow and gymApiFlow into states that can be reacted to...
+        //  Will have to refactor places that combine from the flow, though. Kinda annoying.
+    }
 }
