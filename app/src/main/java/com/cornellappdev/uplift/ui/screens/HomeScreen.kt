@@ -1,5 +1,6 @@
 package com.cornellappdev.uplift.ui.screens
 
+import androidx.compose.animation.Crossfade
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -29,28 +30,31 @@ fun HomeScreen(
     val sportsList = homeViewModel.sportsFlow.collectAsState().value
     val gymsState = homeViewModel.gymFlow.collectAsState().value
 
-    // Loaded!
-    if (gymsState is ApiResponse.Success && classesState is ApiResponse.Success) {
-        val gymsList = gymsState.data
-        val classesList = classesState.data
-        MainLoaded(
-            gymDetailViewModel = gymDetailViewModel,
-            classDetailViewModel = classDetailViewModel,
-            sportsList = sportsList,
-            upliftClasses = classesList,
-            gymsList = gymsList,
-            navController = navController,
-            titleText = titleText
-        )
-    }
-    // Some error
-    else if (gymsState == ApiResponse.Error || classesState == ApiResponse.Error) {
-        // TODO: Error...
-        MainError()
-    }
-    // At least one is still loading.
-    else {
-        // TODO: Loading...
-        MainLoading(loadingShimmer)
+    Crossfade(targetState = Pair(gymsState, classesState), label = "Main") { state ->
+        val gState = state.first
+        val cState = state.second
+
+        // Loaded!
+        if (gState is ApiResponse.Success && cState is ApiResponse.Success) {
+            val gymsList = gState.data
+            val classesList = cState.data
+            MainLoaded(
+                gymDetailViewModel = gymDetailViewModel,
+                classDetailViewModel = classDetailViewModel,
+                sportsList = sportsList,
+                upliftClasses = classesList,
+                gymsList = gymsList,
+                navController = navController,
+                titleText = titleText
+            )
+        }
+        // Some error
+        else if (gState == ApiResponse.Error || cState == ApiResponse.Error) {
+            MainError()
+        }
+        // At least one is still loading.
+        else {
+            MainLoading(loadingShimmer)
+        }
     }
 }

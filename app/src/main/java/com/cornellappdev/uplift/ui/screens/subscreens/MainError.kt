@@ -59,7 +59,7 @@ fun MainError() {
 
         Button(
             shape = RoundedCornerShape(24.dp),
-            onClick = { UpliftApiRepository.retry() },
+            onClick = { UpliftApiRepository.reload() },
             colors = ButtonDefaults.buttonColors(backgroundColor = PRIMARY_YELLOW),
             elevation = ButtonDefaults.elevation(0.dp)
         ) {

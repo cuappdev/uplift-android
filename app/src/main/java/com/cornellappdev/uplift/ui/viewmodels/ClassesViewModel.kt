@@ -4,13 +4,17 @@ import androidx.lifecycle.ViewModel
 import com.cornellappdev.uplift.models.UpliftClass
 import com.cornellappdev.uplift.networking.ApiResponse
 import com.cornellappdev.uplift.networking.UpliftApiRepository
-import com.cornellappdev.uplift.networking.toUpliftClass
 import com.cornellappdev.uplift.util.exampleClassMusclePump1
 import com.cornellappdev.uplift.util.exampleClassMusclePump2
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.*
-import java.util.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
+import java.util.Calendar
 
 class ClassesViewModel : ViewModel() {
 
@@ -47,9 +51,7 @@ class ClassesViewModel : ViewModel() {
                     it.date.get(Calendar.DAY_OF_YEAR) == dateFromToday.get(Calendar.DAY_OF_YEAR)
                 })
                 // Pull actual API response data, then filter those out by day.
-                is ApiResponse.Success -> ApiResponse.Success(apiResponse.data.map { query ->
-                    query.toUpliftClass()
-                }.filter {
+                is ApiResponse.Success -> ApiResponse.Success(apiResponse.data.filter {
                     val dateFromToday = Calendar.getInstance()
                     dateFromToday.add(Calendar.DAY_OF_YEAR, day)
                     it.date.get(Calendar.DAY_OF_YEAR) == dateFromToday.get(Calendar.DAY_OF_YEAR)
