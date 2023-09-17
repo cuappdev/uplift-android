@@ -6,8 +6,6 @@ import com.cornellappdev.uplift.models.TimeOfDay
 import com.cornellappdev.uplift.models.UpliftClass
 import com.cornellappdev.uplift.networking.ApiResponse
 import com.cornellappdev.uplift.networking.UpliftApiRepository
-import com.cornellappdev.uplift.networking.toUpliftClass
-import com.cornellappdev.uplift.networking.toUpliftGym
 import com.cornellappdev.uplift.util.getSystemTime
 import com.cornellappdev.uplift.util.isCurrentlyOpen
 import com.cornellappdev.uplift.util.sameDayAs
@@ -35,13 +33,12 @@ class HomeViewModel : ViewModel() {
         when (apiResponse) {
             ApiResponse.Loading -> ApiResponse.Loading
             ApiResponse.Error -> ApiResponse.Error
-            is ApiResponse.Success -> ApiResponse.Success(apiResponse.data.map { query ->
-                query.toUpliftClass()
-            }.filter { upliftClass ->
-                upliftClass.date.sameDayAs(GregorianCalendar())
-            }.filter { upliftClass ->
-                upliftClass.time.end.compareTo(getSystemTime()) > 0
-            })
+            is ApiResponse.Success -> ApiResponse.Success(apiResponse.data
+                .filter { upliftClass ->
+                    upliftClass.date.sameDayAs(GregorianCalendar())
+                }.filter { upliftClass ->
+                    upliftClass.time.end.compareTo(getSystemTime()) > 0
+                })
         }
     }.stateIn(
         CoroutineScope(Dispatchers.Main), SharingStarted.Eagerly, ApiResponse.Loading
@@ -57,20 +54,22 @@ class HomeViewModel : ViewModel() {
         when (apiResponse) {
             ApiResponse.Loading -> ApiResponse.Loading
             ApiResponse.Error -> ApiResponse.Error
-            is ApiResponse.Success -> ApiResponse.Success(apiResponse.data.map { query ->
-                query.toUpliftGym()
-            }.sortedWith { gym1, gym2 ->
-                if (isCurrentlyOpen(gym1.hours[todayIndex()]) && !isCurrentlyOpen(gym2.hours[todayIndex()])) {
-                    -1
-                } else if (!isCurrentlyOpen(gym1.hours[todayIndex()]) && isCurrentlyOpen(gym2.hours[todayIndex()])) {
-                    1
-                }
-                // Both are either favorited and unfavorited, too.
-                else {
-                    // TODO: Convert to compare based off distance.
-                    gym1.name.compareTo(gym2.name)
-                }
-            })
+            is ApiResponse.Success -> ApiResponse.Success(apiResponse.data
+                .sortedWith { gym1, gym2 ->
+                    if (isCurrentlyOpen(gym1.hours[todayIndex()]) && !isCurrentlyOpen(gym2.hours[todayIndex()])) {
+                        -1
+                    } else if (!isCurrentlyOpen(gym1.hours[todayIndex()]) && isCurrentlyOpen(
+                            gym2.hours[todayIndex()]
+                        )
+                    ) {
+                        1
+                    }
+                    // Both are either favorited and unfavorited, too.
+                    else {
+                        // TODO: Convert to compare based off distance.
+                        gym1.name.compareTo(gym2.name)
+                    }
+                })
         }
     }.stateIn(
         CoroutineScope(Dispatchers.Main), SharingStarted.Eagerly, ApiResponse.Loading

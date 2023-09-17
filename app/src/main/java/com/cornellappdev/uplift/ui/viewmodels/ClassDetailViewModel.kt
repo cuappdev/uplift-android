@@ -4,11 +4,17 @@ import androidx.lifecycle.ViewModel
 import com.cornellappdev.uplift.models.UpliftClass
 import com.cornellappdev.uplift.networking.ApiResponse
 import com.cornellappdev.uplift.networking.UpliftApiRepository
-import com.cornellappdev.uplift.networking.toUpliftClass
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.*
-import java.util.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
+import java.util.GregorianCalendar
+import java.util.Stack
 
 /** A [ClassDetailViewModel] is a view model for ClassDetailScreen.*/
 class ClassDetailViewModel : ViewModel() {
@@ -33,9 +39,7 @@ class ClassDetailViewModel : ViewModel() {
             when (apiResponse) {
                 ApiResponse.Loading -> listOf()
                 ApiResponse.Error -> listOf()
-                is ApiResponse.Success -> apiResponse.data.map { query ->
-                    query.toUpliftClass()
-                }.filter {
+                is ApiResponse.Success -> apiResponse.data.filter {
                     it.name == upliftClass?.name && it.date > GregorianCalendar()
                 }
             }
