@@ -20,9 +20,11 @@ import com.cornellappdev.uplift.util.montserratFamily
 
 /**
  * Shows a empty state for various components in Uplift having no classes available.
+ *
+ * @param comingSoon    Should read coming soon text instead of an empty state.
  */
 @Composable
-fun NoClasses() {
+fun NoClasses(comingSoon: Boolean = false) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Image(
             painter = painterResource(id = R.drawable.img_green_tea),
@@ -31,7 +33,7 @@ fun NoClasses() {
         )
         Spacer(modifier = Modifier.height(12.dp))
         Text(
-            text = "No classes today",
+            text = if (comingSoon) "Classes coming soon!" else "No classes today",
             fontWeight = FontWeight(700),
             fontSize = 24.sp,
             lineHeight = 29.26.sp,
@@ -39,14 +41,15 @@ fun NoClasses() {
             color = PRIMARY_BLACK,
             fontFamily = montserratFamily
         )
-        Text(
-            text = "Relax with some tea or play a sport",
-            fontWeight = FontWeight(400),
-            fontSize = 17.sp,
-            lineHeight = 17.07.sp,
-            textAlign = TextAlign.Center,
-            color = PRIMARY_BLACK,
-            fontFamily = montserratFamily
-        )
+        if (!comingSoon)
+            Text(
+                text = "Relax with some tea or play a sport",
+                fontWeight = FontWeight(400),
+                fontSize = 17.sp,
+                lineHeight = 17.07.sp,
+                textAlign = TextAlign.Center,
+                color = PRIMARY_BLACK,
+                fontFamily = montserratFamily
+            )
     }
 }

@@ -4,38 +4,35 @@ query GymList {
     name
     description
     facilities {
-      details {
-        detailsType
-        equipment {
-          equipmentType
-          name
-          quantity
-          workoutType
-        }
-        imageUrls
-        items
-        prices
-        subFacilityNames
-        times {
-          day
-          timeRanges {
-            endTime
-            restrictions
-            specialHours
-            startTime
-          }
-        }
-      }
+      id
+      gymId
       name
+      facilityType
+      openHours {
+        id
+        facilityId
+        day
+        startTime
+        endTime
+      }
+      capacities {
+        id
+        facilityId
+        count
+        percent
+        updated
+      }
+      capacity {
+        id
+        facilityId
+        count
+        percent
+        updated
+      }
     }
-    popular
-    times {
-      day
-      endTime
-      restrictions
-      specialHours
-      startTime
-    }
+    location
+    latitude
+    longitude
     imageUrl
   }
 }

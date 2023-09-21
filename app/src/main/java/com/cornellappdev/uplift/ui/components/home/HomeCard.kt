@@ -1,5 +1,10 @@
 package com.cornellappdev.uplift.ui.components.home
 
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -8,6 +13,11 @@ import androidx.compose.material.Card
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.BottomCenter
 import androidx.compose.ui.Alignment.Companion.TopEnd
 import androidx.compose.ui.Modifier
@@ -21,6 +31,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import coil.compose.AsyncImagePainter
 import com.cornellappdev.uplift.R
 import com.cornellappdev.uplift.models.UpliftGym
 import com.cornellappdev.uplift.ui.components.general.FavoriteButton
@@ -43,6 +54,18 @@ fun HomeCard(gym: UpliftGym, onClick: () -> Unit) {
             null
         }
 
+    var loading by remember { mutableStateOf(true) }
+    val infiniteTransition = rememberInfiniteTransition(label = "homeCardLoading")
+    val progress by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = .5f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1000),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "homeCardLoading"
+    )
+
     Box(
         modifier = Modifier
             .padding(horizontal = 16.dp)
@@ -63,9 +86,17 @@ fun HomeCard(gym: UpliftGym, onClick: () -> Unit) {
                 Box(modifier = Modifier.fillMaxSize()) {
                     AsyncImage(
                         model = gym.imageUrl,
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .then(
+                                if (loading) Modifier
+                                    .background(colorInterp(progress, GRAY01, GRAY03)) else Modifier
+                            ),
                         contentDescription = "",
-                        contentScale = ContentScale.Crop
+                        contentScale = ContentScale.Crop,
+                        onState = { state ->
+                            loading = state !is AsyncImagePainter.State.Success
+                        }
                     )
 
                     Box(
@@ -84,7 +115,7 @@ fun HomeCard(gym: UpliftGym, onClick: () -> Unit) {
                             .background(Color.White)
                             .padding(top = 8.dp, start = 12.dp, end = 12.dp, bottom = 12.dp)
                     ) {
-                        Row {
+                        Row(verticalAlignment = Alignment.Top) {
                             Text(
                                 text = gym.name,
                                 fontSize = 16.sp,
@@ -149,36 +180,47 @@ fun HomeCard(gym: UpliftGym, onClick: () -> Unit) {
                                 fontWeight = FontWeight(500),
                                 lineHeight = 14.63.sp,
                                 color = GRAY03
-
                             )
+                            Spacer(modifier = Modifier.weight(1f))
+                            if (gym.upliftCapacity == null)
+                                Text(
+                                    text = "1.2mi",
+                                    fontSize = 12.sp,
+                                    fontFamily = montserratFamily,
+                                    fontWeight = FontWeight(500),
+                                    lineHeight = 14.63.sp,
+                                    color = GRAY03
+                                )
                         }
                         Row(modifier = Modifier.padding(top = 2.dp)) {
-                            Text(
-                                text = "Cramped",
-                                fontSize = 12.sp,
-                                fontFamily = montserratFamily,
-                                fontWeight = FontWeight(500),
-                                color = colorResource(id = R.color.orange),
-                                lineHeight = 14.63.sp,
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text(
-                                text = "${gym.capacity.capacityPair.first}/${gym.capacity.capacityPair.second}",
-                                fontSize = 12.sp,
-                                fontFamily = montserratFamily,
-                                fontWeight = FontWeight(500),
-                                lineHeight = 14.63.sp,
-                                color = GRAY03
-                            )
-                            Spacer(modifier = Modifier.weight(1F))
-                            Text(
-                                text = "1.2mi",
-                                fontSize = 12.sp,
-                                fontFamily = montserratFamily,
-                                fontWeight = FontWeight(500),
-                                lineHeight = 14.63.sp,
-                                color = GRAY03
-                            )
+                            if (gym.upliftCapacity != null) {
+                                Text(
+                                    text = "Cramped",
+                                    fontSize = 12.sp,
+                                    fontFamily = montserratFamily,
+                                    fontWeight = FontWeight(500),
+                                    color = colorResource(id = R.color.orange),
+                                    lineHeight = 14.63.sp,
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    text = gym.upliftCapacity.percentString(),
+                                    fontSize = 12.sp,
+                                    fontFamily = montserratFamily,
+                                    fontWeight = FontWeight(500),
+                                    lineHeight = 14.63.sp,
+                                    color = GRAY03
+                                )
+                                Spacer(modifier = Modifier.weight(1F))
+                                Text(
+                                    text = "1.2mi",
+                                    fontSize = 12.sp,
+                                    fontFamily = montserratFamily,
+                                    fontWeight = FontWeight(500),
+                                    lineHeight = 14.63.sp,
+                                    color = GRAY03
+                                )
+                            }
                         }
                     }
                 }

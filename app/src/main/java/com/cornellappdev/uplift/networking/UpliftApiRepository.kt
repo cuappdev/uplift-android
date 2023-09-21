@@ -5,7 +5,6 @@ import com.cornellappdev.uplift.models.UpliftClass
 import com.cornellappdev.uplift.models.UpliftGym
 import com.cornellappdev.uplift.networking.UpliftApiRepository.classesApiFlow
 import com.cornellappdev.uplift.networking.UpliftApiRepository.gymApiFlow
-import com.example.rocketreserver.ClassListQuery
 import com.example.rocketreserver.GymListQuery
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -26,11 +25,11 @@ import kotlinx.coroutines.launch
  */
 object UpliftApiRepository {
     private val apolloClient = ApolloClient.Builder()
-        .serverUrl("https://uplift-backend.cornellappdev.com")
+        .serverUrl("http://uplift-backend.cornellappdev.com/graphql")
         .build()
 
     private val gymQuery = apolloClient.query(GymListQuery())
-    private val classQuery = apolloClient.query(ClassListQuery())
+    // private val classQuery = apolloClient.query(ClassListQuery())
 
     private val _gymApiFlow: MutableStateFlow<ApiResponse<List<UpliftGym>>> =
         MutableStateFlow(ApiResponse.Loading)
@@ -67,7 +66,7 @@ object UpliftApiRepository {
         //  and gymApiFlow. On retry, cancel the previous flows, then start new ones.
         activeGymJob = CoroutineScope(Dispatchers.IO).launch {
             gymQuery.toFlow().cancellable()
-                .map { it ->
+                .map {
                     val gymList = it.data?.gyms?.filterNotNull()
                     if (gymList == null) {
                         ApiResponse.Error
@@ -76,6 +75,7 @@ object UpliftApiRepository {
                     }
                 }
                 .catch {
+                    it.printStackTrace()
                     emit(ApiResponse.Error)
                 }.stateIn(
                     CoroutineScope(Dispatchers.Main),
@@ -86,7 +86,7 @@ object UpliftApiRepository {
                 }
         }
 
-        activeClassJob = CoroutineScope(Dispatchers.IO).launch {
+        /*(activeClassJob = CoroutineScope(Dispatchers.IO).launch {
             classQuery.toFlow().cancellable()
                 .map {
                     val classList = it.data?.classes?.filterNotNull()
@@ -105,7 +105,7 @@ object UpliftApiRepository {
                 ).collect {
                     _classesApiFlow.emit(it)
                 }
-        }
+        }*/
     }
 
     init {

@@ -17,9 +17,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.cornellappdev.uplift.models.UpliftCapacity
 import com.cornellappdev.uplift.util.ACCENT_CLOSED
 import com.cornellappdev.uplift.util.ACCENT_OPEN
 import com.cornellappdev.uplift.util.ACCENT_ORANGE
@@ -36,9 +36,8 @@ import com.cornellappdev.uplift.util.montserratFamily
  * @param label     The name of the gym placed under this indicator.
  */
 @Composable
-@Preview
-fun GymCapacity(capacity: Pair<Int, Int> = Pair(35, 70), label: String = "Helen Newman") {
-    val fraction = capacity.first.toFloat() / capacity.second.toFloat()
+fun GymCapacity(capacity: UpliftCapacity, label: String = "Helen Newman") {
+    val fraction = capacity.percent.toFloat()
     val animatedFraction = remember { Animatable(0f) }
 
     // When the composable launches, animate the fraction to the capacity fraction.
@@ -82,7 +81,7 @@ fun GymCapacity(capacity: Pair<Int, Int> = Pair(35, 70), label: String = "Helen 
                 strokeCap = StrokeCap.Round
             )
             Text(
-                text = "${capacity.first}/${capacity.second}",
+                text = capacity.percentString(),
                 fontFamily = montserratFamily,
                 fontSize = 12.sp,
                 fontWeight = FontWeight(700),

@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.cornellappdev.uplift.datastoreRepository
 import java.util.Calendar
+import kotlin.math.roundToInt
 
 /**
  * A [UpliftGym] object represents all the information needed about one particular gym.
@@ -62,8 +63,7 @@ data class UpliftGym(
     val miscellaneous: List<String>,
     val imageUrl: String,
     var classesToday: SnapshotStateList<UpliftClass> = mutableStateListOf(),
-    val capacity: Capacity
-    // TODO: Change to show actual data pulled from backend.
+    val upliftCapacity: UpliftCapacity?
 ) {
     /**
      * Returns a boolean indicating whether this gym is favorited or not. Safe for recomposition.
@@ -87,11 +87,15 @@ data class UpliftGym(
 /**
  * A gym's capacity.
  */
-data class Capacity(
-    /**
-     * A pair containing, first, the number of people in the gym, and secondly, the maximum
-     * capacity at said gym.
-     */
-    val capacityPair: Pair<Int, Int>,
+data class UpliftCapacity(
+    /** The direct percent read from CFC. */
+    val percent: Double,
     val updated: Calendar
-)
+) {
+    /**
+     * Returns a string representation of the percentage capacity.
+     */
+    fun percentString(): String {
+        return "${(percent * 100).roundToInt()}%"
+    }
+}

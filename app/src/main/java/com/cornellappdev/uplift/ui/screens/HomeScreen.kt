@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.cornellappdev.uplift.models.UpliftClass
 import com.cornellappdev.uplift.networking.ApiResponse
 import com.cornellappdev.uplift.ui.screens.subscreens.MainError
 import com.cornellappdev.uplift.ui.screens.subscreens.MainLoaded
@@ -27,7 +28,6 @@ fun HomeScreen(
 ) {
     val titleText = homeViewModel.titleFlow.collectAsState().value
     val classesState = homeViewModel.classesFlow.collectAsState().value
-    val sportsList = homeViewModel.sportsFlow.collectAsState().value
     val gymsState = homeViewModel.gymFlow.collectAsState().value
 
     Crossfade(targetState = Pair(gymsState, classesState), label = "Main") { state ->
@@ -35,13 +35,12 @@ fun HomeScreen(
         val cState = state.second
 
         // Loaded!
-        if (gState is ApiResponse.Success && cState is ApiResponse.Success) {
+        if (gState is ApiResponse.Success /* && cState is ApiResponse.Success */) {
             val gymsList = gState.data
-            val classesList = cState.data
+            val classesList = listOf<UpliftClass>() // cState.data
             MainLoaded(
                 gymDetailViewModel = gymDetailViewModel,
                 classDetailViewModel = classDetailViewModel,
-                sportsList = sportsList,
                 upliftClasses = classesList,
                 gymsList = gymsList,
                 navController = navController,

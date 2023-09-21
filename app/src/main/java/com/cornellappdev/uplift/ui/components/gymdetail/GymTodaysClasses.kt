@@ -1,7 +1,11 @@
 package com.cornellappdev.uplift.ui.components.gymdetail
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -59,7 +63,8 @@ fun GymTodaysClasses(
         }
         if (todaysClasses.value.isEmpty()) {
             Text(
-                text = "We are done for today.\nPlease check again tomorrow!",
+                text = "Classes are coming soon!\nStay tuned for an Uplift update.",
+                // TODO: Change to: text = "We are done for today.\nPlease check again tomorrow!",
                 fontFamily = montserratFamily,
                 fontSize = 14.sp,
                 fontWeight = FontWeight(300),
