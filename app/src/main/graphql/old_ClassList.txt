@@ -1,0 +1,27 @@
+query ClassList {
+  classes {
+    id
+    gymId
+    gym {
+      name
+    }
+    location
+    detailsId
+    details {
+      id
+      name
+      description
+      tags {
+        label
+        imageUrl
+      }
+      categories
+    }
+    date
+    startTime
+    endTime
+    instructor
+    isCancelled
+    imageUrl
+  }
+}
