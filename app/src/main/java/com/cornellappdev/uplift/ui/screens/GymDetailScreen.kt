@@ -1,5 +1,6 @@
 package com.cornellappdev.uplift.ui.screens
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
@@ -43,6 +44,7 @@ import com.cornellappdev.uplift.ui.components.GymFacilitySection
 import com.cornellappdev.uplift.ui.components.GymHours
 import com.cornellappdev.uplift.ui.components.PopularTimesSection
 import com.cornellappdev.uplift.ui.components.general.FavoriteButton
+import com.cornellappdev.uplift.ui.components.gymdetail.GymCapacitiesSection
 import com.cornellappdev.uplift.ui.components.gymdetail.GymTodaysClasses
 import com.cornellappdev.uplift.ui.viewmodels.ClassDetailViewModel
 import com.cornellappdev.uplift.ui.viewmodels.GymDetailViewModel
@@ -61,6 +63,10 @@ fun GymDetailScreen(
 ) {
     val gym by gymDetailViewModel.gymFlow.collectAsState()
     val day = todayIndex()
+
+    BackHandler {
+        onBack()
+    }
 
     val scrollState = rememberScrollState()
 
@@ -193,6 +199,10 @@ fun GymDetailScreen(
                     .background(Color.White)
             ) {
                 GymHours(hours = gym!!.hours, day)
+                if (gym!!.upliftCapacity != null) {
+                    LineSpacer()
+                    GymCapacitiesSection(gym!!.upliftCapacity!!)
+                }
                 if (gym!!.popularTimes.isNotEmpty()) {
                     LineSpacer()
                     PopularTimesSection(gym!!.popularTimes[day])

@@ -25,7 +25,6 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -195,11 +194,19 @@ fun HomeCard(gym: UpliftGym, onClick: () -> Unit) {
                         Row(modifier = Modifier.padding(top = 2.dp)) {
                             if (gym.upliftCapacity != null) {
                                 Text(
-                                    text = "Cramped",
+                                    text = gym.upliftCapacity.percent.let { perc ->
+                                        if (perc <= .5) "Light"
+                                        else if (perc <= .8) "Cramped"
+                                        else "Full"
+                                    },
                                     fontSize = 12.sp,
                                     fontFamily = montserratFamily,
                                     fontWeight = FontWeight(500),
-                                    color = colorResource(id = R.color.orange),
+                                    color = gym.upliftCapacity.percent.let { perc ->
+                                        if (perc <= .5) ACCENT_OPEN
+                                        else if (perc <= .8) ACCENT_ORANGE
+                                        else ACCENT_CLOSED
+                                    },
                                     lineHeight = 14.63.sp,
                                 )
                                 Spacer(modifier = Modifier.width(8.dp))

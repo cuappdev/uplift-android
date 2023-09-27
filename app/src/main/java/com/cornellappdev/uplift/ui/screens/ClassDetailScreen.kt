@@ -1,5 +1,6 @@
 package com.cornellappdev.uplift.ui.screens
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
@@ -74,6 +75,10 @@ fun ClassDetailScreen(
     val upliftClass by classDetailViewModel.classFlow.collectAsState()
 
     val scrollState = rememberScrollState()
+
+    BackHandler {
+        onBack()
+    }
 
     val screenDensity = LocalConfiguration.current.densityDpi / 160f
     val screenHeightPx = LocalConfiguration.current.screenHeightDp.toFloat() * screenDensity

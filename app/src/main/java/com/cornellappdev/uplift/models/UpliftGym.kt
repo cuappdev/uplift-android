@@ -98,4 +98,17 @@ data class UpliftCapacity(
     fun percentString(): String {
         return "${(percent * 100).roundToInt()}%"
     }
+
+    /**
+     * Returns a string representing the time at which this capacity was last updated.
+     * Of the form `"Updated: HH:MM AM"`
+     */
+    fun updatedString(): String {
+        val timeOfDay = TimeOfDay(
+            hour = updated.get(Calendar.HOUR),
+            minute = updated.get(Calendar.MINUTE),
+            isAM = updated.get(Calendar.AM_PM) == Calendar.AM
+        )
+        return "Updated: $timeOfDay"
+    }
 }
