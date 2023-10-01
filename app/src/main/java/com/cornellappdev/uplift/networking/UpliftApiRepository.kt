@@ -71,7 +71,7 @@ object UpliftApiRepository {
                     if (gymList == null) {
                         ApiResponse.Error
                     } else {
-                        ApiResponse.Success(gymList.map { query -> query.toUpliftGym() })
+                        ApiResponse.Success(gymList.map { query -> query.toUpliftGyms() }.flatten())
                     }
                 }
                 .catch {

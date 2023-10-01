@@ -17,7 +17,7 @@ data class UpliftGym(
     /**
      * A list of exactly 7 lists of time intervals. Each list of time intervals corresponds to a particular
      * day (index 0=Monday, ..., 6=Sunday), and the times in said list indicates the hours of
-     * this gym.
+     * this gym. Sorted in ascending order by time.
      *
      * Example: ((7:00 AM - 8:30 AM, 10:00AM - 10:45PM), ...) indicates that on Monday, this
      * gym is open from 7 to 8:30 AM, then closes, and then is open from 10 AM to 10:45 PM.

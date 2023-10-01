@@ -218,7 +218,7 @@ fun GymDetailScreen(
             }
         }
 
-        Spacer(Modifier.height(50.dp))
+        Spacer(Modifier.height(10.dp))
     }
 }
 

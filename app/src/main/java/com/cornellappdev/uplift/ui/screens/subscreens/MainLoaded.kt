@@ -252,6 +252,39 @@ fun MainLoaded(
             }
         }
 
+        // Gyms
+        item {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = "GYMS",
+                    fontFamily = montserratFamily,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight(700),
+                    lineHeight = 17.07.sp,
+                    textAlign = TextAlign.Center,
+                    color = GRAY04
+                )
+            }
+        }
+
+
+        items(items = gyms, key = { gym -> gym.hashCode() }) { gym ->
+            Box(modifier = Modifier.animateItemPlacement()) {
+                HomeCard(gym) {
+                    navController.navigateToGym(gymDetailViewModel = gymDetailViewModel, gym = gym)
+                }
+            }
+        }
+
+        item {
+            Spacer(Modifier.height(24.dp))
+        }
+
         // TODAY'S CLASSES
         item {
             Text(
@@ -291,36 +324,8 @@ fun MainLoaded(
             }
         }
 
-        // Gyms
         item {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = "GYMS",
-                    fontFamily = montserratFamily,
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight(700),
-                    lineHeight = 17.07.sp,
-                    textAlign = TextAlign.Center,
-                    color = GRAY04
-                )
-            }
-        }
-
-        items(items = gyms, key = { gym -> gym.hashCode() }) { gym ->
-            Box(modifier = Modifier.animateItemPlacement()) {
-                HomeCard(gym) {
-                    navController.navigateToGym(gymDetailViewModel = gymDetailViewModel, gym = gym)
-                }
-            }
-        }
-
-        item {
-            Spacer(Modifier.height(84.dp))
+            Spacer(Modifier.height(32.dp))
         }
     }
 }

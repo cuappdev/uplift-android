@@ -1,6 +1,6 @@
 package com.cornellappdev.uplift.models
 
-import java.util.*
+import java.util.Calendar
 
 /** A [TimeInterval] is one contiguous interval of time with a start and end [TimeOfDay]. */
 data class TimeInterval(

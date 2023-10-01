@@ -4,6 +4,7 @@ import com.cornellappdev.uplift.models.BowlingInfo
 import com.cornellappdev.uplift.models.EquipmentGrouping
 import com.cornellappdev.uplift.models.GymnasiumInfo
 import com.cornellappdev.uplift.models.PopularTimes
+import com.cornellappdev.uplift.models.SwimmingInfo
 import com.cornellappdev.uplift.models.TimeInterval
 import com.cornellappdev.uplift.models.TimeOfDay
 import com.cornellappdev.uplift.models.UpliftCapacity
@@ -18,18 +19,29 @@ import kotlin.math.roundToInt
 /**
  * Returns the popular times list representation for this gym query.
  */
-fun pullPopularTimes(gym: GymListQuery.Gym): List<PopularTimes> {
+fun GymListQuery.Gym.pullPopularTimes(
+    facilityIn: GymListQuery.Facility? = getFitnessFacility()
+): List<PopularTimes> {
     return listOf()
 }
 
+/**
+ * Returns the swimming info for this gym query.
+ */
+fun GymListQuery.Gym.pullSwimmingInfo(): List<SwimmingInfo?>? {
+    return null
+}
+
 /** Returns the gymnasium info for this gym query. */
-fun pullGymnasiumInfos(gym: GymListQuery.Gym): List<GymnasiumInfo?>? {
+fun GymListQuery.Gym.pullGymnasiumInfo(): List<GymnasiumInfo?>? {
     // TODO: Change to pull actual gymnasium info when backend adds that.
     return null
 }
 
 /** Returns the equipment groupings for the given gym query. */
-fun pullEquipmentGroupings(gym: GymListQuery.Gym): List<EquipmentGrouping> {
+fun GymListQuery.Gym.pullEquipmentGroupings(
+    facilityIn: GymListQuery.Facility? = getFitnessFacility()
+): List<EquipmentGrouping> {
     // TODO: Change to parse equipment grouping info when backend adds that.
     return listOf()
 }
@@ -37,26 +49,28 @@ fun pullEquipmentGroupings(gym: GymListQuery.Gym): List<EquipmentGrouping> {
 /**
  * Returns the miscellaneous details for this gym query.
  */
-fun pullMiscellaneous(gym: GymListQuery.Gym): List<String> {
+fun GymListQuery.Gym.pullMiscellaneous(): List<String> {
     return listOf()
 }
 
 /**
  * Returns the bowling info for this gym query.
  */
-fun pullBowling(gym: GymListQuery.Gym): List<BowlingInfo?>? {
+fun GymListQuery.Gym.pullBowling(): List<BowlingInfo?>? {
     return null
 }
 
 /**
  * Returns the hours for the given gym query.
  */
-fun pullHours(gym: GymListQuery.Gym): List<List<TimeInterval>?> {
+fun GymListQuery.Gym.pullHours(
+    facilityIn: GymListQuery.Facility? = getFitnessFacility()
+): List<List<TimeInterval>?> {
     // Initialize to always closed.
     val hours: MutableList<MutableList<TimeInterval>?> = MutableList(7) { null }
 
     // If fitness facility doesn't exist (...it always should...), return.
-    val facility = gym.getFitnessFacility() ?: return hours
+    val facility = facilityIn ?: return hours
 
     facility.openHours?.forEach { openHour ->
         if (openHour != null) {
@@ -83,18 +97,26 @@ fun pullHours(gym: GymListQuery.Gym): List<List<TimeInterval>?> {
         }
     }
 
+    for (i in 0 until 7) {
+        hours[i]!!.sortWith { h1, h2 ->
+            h1.end.compareTo(h2.end)
+        }
+    }
+
     return hours
 }
 
 /**
  * Returns the capacity at the given gym query.
  */
-fun pullCapacity(gym: GymListQuery.Gym): UpliftCapacity? {
+fun GymListQuery.Gym.pullCapacity(
+    facilityIn: GymListQuery.Facility? = getFitnessFacility()
+): UpliftCapacity? {
     // If fitness facility doesn't exist (...it always should...), return.
-    val facility = gym.getFitnessFacility() ?: return null
+    val facility = facilityIn ?: return null
     if (facility.capacity == null || facility.capacity.percent < 0.0) return null
 
-    val highCap = (facility.capacity.count / facility.capacity.percent)
+    val highCap = facility.capacity.count / facility.capacity.percent
 
     if (highCap.isNaN()) return null
 
@@ -118,23 +140,35 @@ private fun GymListQuery.Gym.getFitnessFacility(): GymListQuery.Facility? {
     }
 }
 
-fun GymListQuery.Gym.toUpliftGym(): UpliftGym {
-    return UpliftGym(
-        name = name,
-        id = id,
-        popularTimes = pullPopularTimes(this),
-        // Need replace because there's a typo with the single quote.
-        imageUrl = imageUrl?.replace("'", "") ?: defaultGymUrl,
-        hours = pullHours(this),
-        equipmentGroupings = pullEquipmentGroupings(this),
-        miscellaneous = pullMiscellaneous(this),
-        bowlingInfo = pullBowling(this),
-        // No swimming info in backend yet...
-        swimmingInfo = null,
-        gymnasiumInfo = pullGymnasiumInfos(this),
-        // TODO: Reflect actual capacity pulled from backend.
-        upliftCapacity = pullCapacity(this)
-    )
+/**
+ * Returns a list of all the [UpliftGym]s that this gym query represents.
+ *
+ * Example: Teagle Gym in backend has both Teagle Up and Teagle Down as separate fitness centers.
+ * This should separate them into distinct gyms.
+ */
+fun GymListQuery.Gym.toUpliftGyms(): List<UpliftGym> {
+    val fitnessFacilities = facilities?.filter { facility ->
+        facility?.facilityType.toString() == "FITNESS"
+    } ?: listOf()
+
+    return fitnessFacilities.filterNotNull().map { facility ->
+        UpliftGym(
+            name = facility.name,
+            id = facility.id,
+            popularTimes = pullPopularTimes(facility),
+            // Need replace because there's a typo with the single quote.
+            imageUrl = imageUrl?.replace("'", "") ?: defaultGymUrl,
+            hours = pullHours(facility),
+            equipmentGroupings = pullEquipmentGroupings(facility),
+            miscellaneous = pullMiscellaneous(),
+            bowlingInfo = pullBowling(),
+            // No swimming info in backend yet...
+            swimmingInfo = pullSwimmingInfo(),
+            gymnasiumInfo = pullGymnasiumInfo(),
+            // TODO: Reflect actual capacity pulled from backend.
+            upliftCapacity = pullCapacity(facility)
+        )
+    }
 }
 
 /*

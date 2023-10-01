@@ -46,12 +46,14 @@ import com.cornellappdev.uplift.util.*
 @Composable
 fun HomeCard(gym: UpliftGym, onClick: () -> Unit) {
     val day: Int = todayIndex()
-    val lastTime =
-        if (gym.hours[day] != null) {
-            gym.hours[day]!![(gym.hours[day]!!.size - 1)].end.toString()
-        } else {
-            null
-        }
+
+    // Gets the current time interval's ending time.
+    val activeInterval = gym.hours[day]!!.find { hour -> hour.within(getSystemTime()) }
+    val closesAtTime = activeInterval?.end?.toString()
+
+    // The next time the gym will open today, if ever.
+    val nextInterval = gym.hours[day]!!.find { hour -> hour.start.compareTo(getSystemTime()) > 0 }
+    val opensAtTime = nextInterval?.start?.toString()
 
     var loading by remember { mutableStateOf(true) }
     val infiniteTransition = rememberInfiniteTransition(label = "homeCardLoading")
@@ -173,7 +175,9 @@ fun HomeCard(gym: UpliftGym, onClick: () -> Unit) {
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = if (lastTime != null) "Closes at $lastTime" else "Closed today",
+                                text = if (closesAtTime != null) "Closes at $closesAtTime"
+                                else if (opensAtTime != null) "Opens at $opensAtTime"
+                                else "Closed today",
                                 fontSize = 12.sp,
                                 fontFamily = montserratFamily,
                                 fontWeight = FontWeight(500),

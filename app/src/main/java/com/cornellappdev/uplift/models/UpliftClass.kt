@@ -1,11 +1,15 @@
 package com.cornellappdev.uplift.models
 
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.cornellappdev.uplift.datastoreRepository
 import com.cornellappdev.uplift.util.calendarDayOfWeekToString
 import com.cornellappdev.uplift.util.calendarDayToString
-import java.util.*
+import java.util.Calendar
 
 /** An [UpliftClass] object represents all the data needed about a particular fitness class. */
 data class UpliftClass(
