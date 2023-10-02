@@ -5,6 +5,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -106,7 +107,7 @@ fun MainLoaded(
             .background(Color.White)
     ) {
         stickyHeader {
-            UpliftTopBar(showIcon = true, title = titleText) {
+            UpliftTopBar(showIcon = false, title = titleText) {
                 Button(
                     onClick = {
                         showCapacities = !showCapacities
@@ -217,7 +218,13 @@ fun MainLoaded(
                                         Box(
                                             modifier = Modifier
                                                 .padding(16.dp)
-                                                .widthIn(min = 143.dp),
+                                                .widthIn(min = 143.dp)
+                                                .clickable {
+                                                    navController.navigateToGym(
+                                                        gymDetailViewModel = gymDetailViewModel,
+                                                        gym = gymsWithCapacities[i * 2]
+                                                    )
+                                                },
                                             contentAlignment = Alignment.Center
                                         ) {
                                             GymCapacity(
@@ -231,7 +238,13 @@ fun MainLoaded(
                                             Box(
                                                 modifier = Modifier
                                                     .padding(16.dp)
-                                                    .widthIn(min = 143.dp),
+                                                    .widthIn(min = 143.dp)
+                                                    .clickable {
+                                                        navController.navigateToGym(
+                                                            gymDetailViewModel = gymDetailViewModel,
+                                                            gym = gymsWithCapacities[i * 2 + 1]
+                                                        )
+                                                    },
                                                 contentAlignment = Alignment.Center
                                             ) {
                                                 GymCapacity(

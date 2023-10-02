@@ -76,7 +76,7 @@ fun ClassScreen(
 
     Box(modifier = Modifier.fillMaxSize()) {
         Column {
-            UpliftTopBar(showIcon = true, title = "Classes")
+            UpliftTopBar(showIcon = false, title = "Classes")
 
             LazyColumn(
                 state = classesScrollState,

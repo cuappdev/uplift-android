@@ -105,7 +105,8 @@ fun getSystemTime(): TimeOfDay {
 fun isCurrentlyOpen(times: List<TimeInterval>?, timeOfDay: TimeOfDay = getSystemTime()): Boolean {
     if (times == null) return false
 
-    return times.find { interval -> interval.within(timeOfDay) } != null
+    val activeInterval = times.find { interval -> interval.within(timeOfDay) }
+    return activeInterval != null
 }
 
 /**

@@ -66,6 +66,7 @@ fun HomeCard(gym: UpliftGym, onClick: () -> Unit) {
         ),
         label = "homeCardLoading"
     )
+    val showGymCapacity = gym.upliftCapacity != null && isCurrentlyOpen(gym.hours[day]!!)
 
     Box(
         modifier = Modifier
@@ -185,7 +186,8 @@ fun HomeCard(gym: UpliftGym, onClick: () -> Unit) {
                                 color = GRAY03
                             )
                             Spacer(modifier = Modifier.weight(1f))
-                            if (gym.upliftCapacity == null)
+                            if (!showGymCapacity)
+                            // TODO: Distance from user to gym.
                                 Text(
                                     text = "1.2mi",
                                     fontSize = 12.sp,
@@ -196,9 +198,9 @@ fun HomeCard(gym: UpliftGym, onClick: () -> Unit) {
                                 )
                         }
                         Row(modifier = Modifier.padding(top = 2.dp)) {
-                            if (gym.upliftCapacity != null) {
+                            if (showGymCapacity) {
                                 Text(
-                                    text = gym.upliftCapacity.percent.let { perc ->
+                                    text = gym.upliftCapacity!!.percent.let { perc ->
                                         if (perc <= .5) "Light"
                                         else if (perc <= .8) "Cramped"
                                         else "Full"
