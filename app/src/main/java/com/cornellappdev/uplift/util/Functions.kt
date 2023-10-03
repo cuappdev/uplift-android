@@ -1,5 +1,6 @@
 package com.cornellappdev.uplift.util
 
+import android.location.Location
 import com.cornellappdev.uplift.models.TimeInterval
 import com.cornellappdev.uplift.models.TimeOfDay
 import java.util.Calendar
@@ -141,3 +142,30 @@ fun Calendar.asTimeOfDay(): TimeOfDay =
         minute = get(Calendar.MINUTE),
         isAM = get(Calendar.AM_PM) == Calendar.AM
     )
+
+/**
+ * Gets the spatial distance in miles between the two specified points in latitude and longitude.
+ */
+fun getDistanceBetween(
+    latitude1: Double,
+    longitude1: Double,
+    latitude2: Double,
+    longitude2: Double
+): Float {
+    var results = floatArrayOf(0f)
+    Location.distanceBetween(
+        latitude1,
+        longitude1,
+        latitude2,
+        longitude2,
+        results
+    )
+
+    // Currently in meters. Convert to miles.
+    results = results.map { meter ->
+        meter * 0.000621371f
+    }.toFloatArray()
+
+
+    return if (results.isNotEmpty()) results[0] else -1f
+}

@@ -141,7 +141,7 @@ fun GymHours(hours: List<List<TimeInterval>?>, today: Int) {
                     modifier = Modifier
                         .alpha(animationProgress)
                         .fillMaxWidth()
-                        .offset(x = ((1 - animationProgress) * -30f).dp),
+                        .offset(y = ((1 - animationProgress) * -15f).dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     val day = (today + i) % 7

@@ -186,10 +186,9 @@ fun HomeCard(gym: UpliftGym, onClick: () -> Unit) {
                                 color = GRAY03
                             )
                             Spacer(modifier = Modifier.weight(1f))
-                            if (!showGymCapacity)
-                            // TODO: Distance from user to gym.
+                            if (!showGymCapacity && gym.getDistance() != null)
                                 Text(
-                                    text = "1.2mi",
+                                    text = "${String.format("%.1f", gym.getDistance())}mi",
                                     fontSize = 12.sp,
                                     fontFamily = montserratFamily,
                                     fontWeight = FontWeight(500),
@@ -224,15 +223,16 @@ fun HomeCard(gym: UpliftGym, onClick: () -> Unit) {
                                     lineHeight = 14.63.sp,
                                     color = GRAY03
                                 )
-                                Spacer(modifier = Modifier.weight(1F))
-                                Text(
-                                    text = "1.2mi",
-                                    fontSize = 12.sp,
-                                    fontFamily = montserratFamily,
-                                    fontWeight = FontWeight(500),
-                                    lineHeight = 14.63.sp,
-                                    color = GRAY03
-                                )
+                                Spacer(modifier = Modifier.weight(1f))
+                                if (gym.getDistance() != null)
+                                    Text(
+                                        text = "${String.format("%.1f", gym.getDistance())}mi",
+                                        fontSize = 12.sp,
+                                        fontFamily = montserratFamily,
+                                        fontWeight = FontWeight(500),
+                                        lineHeight = 14.63.sp,
+                                        color = GRAY03
+                                    )
                             }
                         }
                     }

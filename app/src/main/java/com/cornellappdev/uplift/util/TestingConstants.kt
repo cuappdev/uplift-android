@@ -378,7 +378,9 @@ val testMorrison = UpliftGym(
     upliftCapacity = UpliftCapacity(
         .5,
         Calendar.getInstance()
-    )
+    ),
+    latitude = 5.0,
+    longitude = 5.0
 )
 
 val sports: List<Sport> = listOf(

@@ -22,6 +22,7 @@ import kotlin.math.roundToInt
 fun GymListQuery.Gym.pullPopularTimes(
     facilityIn: GymListQuery.Facility? = getFitnessFacility()
 ): List<PopularTimes> {
+    // TODO: Change to pull actual popular times info when backend adds that.
     return listOf()
 }
 
@@ -29,6 +30,7 @@ fun GymListQuery.Gym.pullPopularTimes(
  * Returns the swimming info for this gym query.
  */
 fun GymListQuery.Gym.pullSwimmingInfo(): List<SwimmingInfo?>? {
+    // TODO: Change to pull actual swimming info when backend adds that.
     return null
 }
 
@@ -50,6 +52,7 @@ fun GymListQuery.Gym.pullEquipmentGroupings(
  * Returns the miscellaneous details for this gym query.
  */
 fun GymListQuery.Gym.pullMiscellaneous(): List<String> {
+    // TODO: Change to pull actual miscellaneous info when backend adds that.
     return listOf()
 }
 
@@ -57,6 +60,7 @@ fun GymListQuery.Gym.pullMiscellaneous(): List<String> {
  * Returns the bowling info for this gym query.
  */
 fun GymListQuery.Gym.pullBowling(): List<BowlingInfo?>? {
+    // TODO: Change to pull actual bowling info when backend adds that.
     return null
 }
 
@@ -165,8 +169,9 @@ fun GymListQuery.Gym.toUpliftGyms(): List<UpliftGym> {
             // No swimming info in backend yet...
             swimmingInfo = pullSwimmingInfo(),
             gymnasiumInfo = pullGymnasiumInfo(),
-            // TODO: Reflect actual capacity pulled from backend.
-            upliftCapacity = pullCapacity(facility)
+            upliftCapacity = pullCapacity(facility),
+            latitude = latitude,
+            longitude = longitude
         )
     }
 }

@@ -5,6 +5,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.cornellappdev.uplift.datastoreRepository
+import com.cornellappdev.uplift.util.getDistanceBetween
 import java.util.Calendar
 import kotlin.math.roundToInt
 
@@ -63,7 +64,9 @@ data class UpliftGym(
     val miscellaneous: List<String>,
     val imageUrl: String,
     var classesToday: SnapshotStateList<UpliftClass> = mutableStateListOf(),
-    val upliftCapacity: UpliftCapacity?
+    val upliftCapacity: UpliftCapacity?,
+    val latitude: Double,
+    val longitude: Double
 ) {
     /**
      * Returns a boolean indicating whether this gym is favorited or not. Safe for recomposition.
@@ -81,6 +84,20 @@ data class UpliftGym(
             id,
             !datastoreRepository.favoriteGymsFlow.value.contains(id)
         )
+    }
+
+    /**
+     * Returns the distance from this gym to the user's current location. Safe for recomposition.
+     * Returns null if the user's location is not yet initialized.
+     */
+    fun getDistance(): Float? {
+        return LocationRepository.currentLocation.value?.let { user ->
+            if (LocationRepository.currentLocation.value != null) {
+                getDistanceBetween(latitude, longitude, user.latitude, user.longitude)
+            } else {
+                null
+            }
+        }
     }
 }
 

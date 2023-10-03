@@ -1,7 +1,6 @@
 package com.cornellappdev.uplift.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
-import com.cornellappdev.uplift.models.Sport
 import com.cornellappdev.uplift.models.TimeOfDay
 import com.cornellappdev.uplift.models.UpliftClass
 import com.cornellappdev.uplift.networking.ApiResponse
@@ -9,7 +8,6 @@ import com.cornellappdev.uplift.networking.UpliftApiRepository
 import com.cornellappdev.uplift.util.getSystemTime
 import com.cornellappdev.uplift.util.isCurrentlyOpen
 import com.cornellappdev.uplift.util.sameDayAs
-import com.cornellappdev.uplift.util.sports
 import com.cornellappdev.uplift.util.todayIndex
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -44,11 +42,6 @@ class HomeViewModel : ViewModel() {
         CoroutineScope(Dispatchers.Main), SharingStarted.Eagerly, ApiResponse.Loading
     )
 
-    private val _sportsFlow: MutableStateFlow<List<Sport>> = MutableStateFlow(sports)
-
-    /** Emits lists of sports that should be shown in the 'Your Sports' section. */
-    val sportsFlow = _sportsFlow.asStateFlow()
-
     /** Emits lists of gyms that should be shown in the 'Gyms' section. */
     val gymFlow = UpliftApiRepository.gymApiFlow.map { apiResponse ->
         when (apiResponse) {
@@ -64,10 +57,12 @@ class HomeViewModel : ViewModel() {
                     ) {
                         1
                     }
-                    // Both are either favorited and unfavorited, too.
+                    // Both are also sorted by favorited and unfavorited in `MainLoaded`.
                     else {
-                        // TODO: Convert to compare based off distance.
-                        gym1.name.compareTo(gym2.name)
+                        if (gym1.getDistance() != null && gym2.getDistance() != null)
+                            gym1.getDistance()!!.compareTo(gym2.getDistance()!!)
+                        else
+                            gym1.name.lowercase().compareTo(gym2.name.lowercase())
                     }
                 })
         }
