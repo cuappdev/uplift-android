@@ -54,7 +54,9 @@ import com.cornellappdev.uplift.util.GRAY02
 import com.cornellappdev.uplift.util.GRAY04
 import com.cornellappdev.uplift.util.asTimeOfDay
 import com.cornellappdev.uplift.util.colorInterp
+import com.cornellappdev.uplift.util.isCurrentlyOpen
 import com.cornellappdev.uplift.util.montserratFamily
+import com.cornellappdev.uplift.util.todayIndex
 import kotlinx.coroutines.launch
 import java.util.Calendar
 import java.util.GregorianCalendar
@@ -70,8 +72,24 @@ fun MainLoaded(
     navController: NavHostController,
     titleText: String
 ) {
-    val gymsFavorited = gymsList.filter { gym -> gym.isFavorite() }
-    val gymsUnfavorited = gymsList.filter { gym -> !gym.isFavorite() }
+    val gymComparator = { gym1: UpliftGym, gym2: UpliftGym ->
+        if (isCurrentlyOpen(gym1.hours[todayIndex()]) && !isCurrentlyOpen(gym2.hours[todayIndex()])) {
+            -1
+        } else if (!isCurrentlyOpen(gym1.hours[todayIndex()]) && isCurrentlyOpen(
+                gym2.hours[todayIndex()]
+            )
+        ) {
+            1
+        } else {
+            if (gym1.getDistance() != null && gym2.getDistance() != null)
+                gym1.getDistance()!!.compareTo(gym2.getDistance()!!)
+            else
+                gym1.name.lowercase().compareTo(gym2.name.lowercase())
+        }
+    }
+
+    val gymsFavorited = gymsList.filter { gym -> gym.isFavorite() }.sortedWith(gymComparator)
+    val gymsUnfavorited = gymsList.filter { gym -> !gym.isFavorite() }.sortedWith(gymComparator)
 
     val lastUpdatedCapacity =
         gymsList.map { gym -> gym.upliftCapacity }.fold<UpliftCapacity?, Calendar>(
