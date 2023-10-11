@@ -1,6 +1,9 @@
 package com.cornellappdev.uplift.util
 
+import android.content.Context
 import android.location.Location
+import coil.request.CachePolicy
+import coil.request.ImageRequest
 import com.cornellappdev.uplift.models.TimeInterval
 import com.cornellappdev.uplift.models.TimeOfDay
 import java.util.Calendar
@@ -168,4 +171,18 @@ fun getDistanceBetween(
 
 
     return if (results.isNotEmpty()) results[0] else -1f
+}
+
+/**
+ * Formats and returns an image request for the given image URL.
+ */
+fun makeImageRequest(imageUrl: String, context: Context): ImageRequest {
+    return ImageRequest.Builder(context)
+        .data(imageUrl)
+        .memoryCacheKey(imageUrl)
+        .diskCacheKey(imageUrl)
+        .diskCachePolicy(CachePolicy.ENABLED)
+        .memoryCachePolicy(CachePolicy.ENABLED)
+        .crossfade(200)
+        .build()
 }

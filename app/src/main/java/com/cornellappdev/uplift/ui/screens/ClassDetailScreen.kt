@@ -37,6 +37,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -46,6 +47,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import coil.compose.AsyncImagePainter
+import coil.imageLoader
 import com.cornellappdev.uplift.R
 import com.cornellappdev.uplift.models.UpliftClass
 import com.cornellappdev.uplift.ui.components.classdetail.ClassDateAndTime
@@ -60,6 +62,7 @@ import com.cornellappdev.uplift.util.GRAY03
 import com.cornellappdev.uplift.util.PRIMARY_BLACK
 import com.cornellappdev.uplift.util.bebasNeueFamily
 import com.cornellappdev.uplift.util.colorInterp
+import com.cornellappdev.uplift.util.makeImageRequest
 import com.cornellappdev.uplift.util.montserratFamily
 
 
@@ -109,7 +112,7 @@ fun ClassDetailScreen(
             }
         ) {
             AsyncImage(
-                model = upliftClass?.imageUrl,
+                model = makeImageRequest(upliftClass?.imageUrl ?: "", LocalContext.current),
                 contentDescription = null,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -124,7 +127,8 @@ fun ClassDetailScreen(
                 contentScale = ContentScale.Crop,
                 onState = { state ->
                     loading = state !is AsyncImagePainter.State.Success
-                }
+                },
+                imageLoader = LocalContext.current.imageLoader
             )
             Icon(
                 painter = painterResource(id = R.drawable.ic_back_arrow),

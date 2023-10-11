@@ -25,12 +25,14 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.compose.AsyncImagePainter
+import coil.imageLoader
 import com.cornellappdev.uplift.R
 import com.cornellappdev.uplift.models.UpliftGym
 import com.cornellappdev.uplift.ui.components.general.FavoriteButton
@@ -87,7 +89,7 @@ fun HomeCard(gym: UpliftGym, onClick: () -> Unit) {
             ) {
                 Box(modifier = Modifier.fillMaxSize()) {
                     AsyncImage(
-                        model = gym.imageUrl,
+                        model = makeImageRequest(gym.imageUrl, LocalContext.current),
                         modifier = Modifier
                             .fillMaxWidth()
                             .then(
@@ -98,7 +100,8 @@ fun HomeCard(gym: UpliftGym, onClick: () -> Unit) {
                         contentScale = ContentScale.Crop,
                         onState = { state ->
                             loading = state !is AsyncImagePainter.State.Success
-                        }
+                        },
+                        imageLoader = LocalContext.current.imageLoader
                     )
 
                     Box(
