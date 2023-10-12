@@ -166,7 +166,6 @@ fun GymListQuery.Gym.toUpliftGyms(): List<UpliftGym> {
             equipmentGroupings = pullEquipmentGroupings(facility),
             miscellaneous = pullMiscellaneous(),
             bowlingInfo = pullBowling(),
-            // No swimming info in backend yet...
             swimmingInfo = pullSwimmingInfo(),
             gymnasiumInfo = pullGymnasiumInfo(),
             upliftCapacity = pullCapacity(facility),

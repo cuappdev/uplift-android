@@ -1,6 +1,5 @@
 package com.cornellappdev.uplift.ui.viewmodels
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.cornellappdev.uplift.models.UpliftClass
 import com.cornellappdev.uplift.models.UpliftGym
@@ -71,7 +70,5 @@ class GymDetailViewModel : ViewModel() {
         stack.pop()
         if (stack.isNotEmpty())
             _gymFlow.value = stack.peek()
-        else
-            Log.i("stack", "Empty :-)")
     }
 }

@@ -75,7 +75,6 @@ object UpliftApiRepository {
                     }
                 }
                 .catch {
-                    it.printStackTrace()
                     emit(ApiResponse.Error)
                 }.stateIn(
                     CoroutineScope(Dispatchers.Main),
