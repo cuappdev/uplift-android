@@ -22,7 +22,11 @@ import com.cornellappdev.uplift.R
 import com.cornellappdev.uplift.models.UpliftClass
 import com.cornellappdev.uplift.nav.navigateToClass
 import com.cornellappdev.uplift.ui.viewmodels.ClassDetailViewModel
-import com.cornellappdev.uplift.util.*
+import com.cornellappdev.uplift.util.GRAY02
+import com.cornellappdev.uplift.util.GRAY03
+import com.cornellappdev.uplift.util.GRAY05
+import com.cornellappdev.uplift.util.PRIMARY_BLACK
+import com.cornellappdev.uplift.util.montserratFamily
 
 /**
  * A component displaying brief information as to a [UpliftClass]. Used on the home screen.

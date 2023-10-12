@@ -3,7 +3,6 @@ package com.cornellappdev.uplift.util
 import androidx.compose.runtime.mutableStateListOf
 import com.cornellappdev.uplift.R
 import com.cornellappdev.uplift.models.BowlingInfo
-import com.cornellappdev.uplift.models.Capacity
 import com.cornellappdev.uplift.models.CourtInfo
 import com.cornellappdev.uplift.models.EquipmentGrouping
 import com.cornellappdev.uplift.models.GymnasiumInfo
@@ -13,6 +12,7 @@ import com.cornellappdev.uplift.models.SwimmingInfo
 import com.cornellappdev.uplift.models.SwimmingTime
 import com.cornellappdev.uplift.models.TimeInterval
 import com.cornellappdev.uplift.models.TimeOfDay
+import com.cornellappdev.uplift.models.UpliftCapacity
 import com.cornellappdev.uplift.models.UpliftClass
 import com.cornellappdev.uplift.models.UpliftGym
 import java.util.Calendar
@@ -375,7 +375,12 @@ val testMorrison = UpliftGym(
         exampleClassMusclePump2
     ),
     imageUrl = "https://recreation.athletics.cornell.edu/sites/recreation.athletics.cornell.edu/files/photo-galleries/DB%20_%20Benches_TM.jpeg",
-    capacity = Capacity(Pair((Math.random() * 20 + 100).toInt(), 140), Calendar.getInstance())
+    upliftCapacity = UpliftCapacity(
+        .5,
+        Calendar.getInstance()
+    ),
+    latitude = 5.0,
+    longitude = 5.0
 )
 
 val sports: List<Sport> = listOf(

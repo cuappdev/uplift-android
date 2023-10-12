@@ -1,0 +1,41 @@
+query GymList {
+  gyms {
+    id
+    name
+    description
+    facilities {
+      details {
+        detailsType
+        equipment {
+          equipmentType
+          name
+          quantity
+          workoutType
+        }
+        imageUrls
+        items
+        prices
+        subFacilityNames
+        times {
+          day
+          timeRanges {
+            endTime
+            restrictions
+            specialHours
+            startTime
+          }
+        }
+      }
+      name
+    }
+    popular
+    times {
+      day
+      endTime
+      restrictions
+      specialHours
+      startTime
+    }
+    imageUrl
+  }
+}

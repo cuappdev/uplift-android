@@ -1,9 +1,9 @@
 package com.cornellappdev.uplift.util
 
+import android.location.Location
 import com.cornellappdev.uplift.models.TimeInterval
 import com.cornellappdev.uplift.models.TimeOfDay
 import java.util.Calendar
-import java.util.GregorianCalendar
 
 /**
  * Returns a flavor message corresponding to the numeric wait time input.
@@ -88,43 +88,11 @@ fun calendarDayOfWeekToString(calendar: Calendar, abbreviated: Boolean = false):
 }
 
 /**
- * Returns [string] as a [TimeOfDay]. If [string] is malformed, returns 12:00AM.
- *
- * Requires: [string] is formatted as: "hh:mm:ss"
- */
-fun parseTimeOfDay(string: String): TimeOfDay {
-    val split = string.split(":")
-    if (split.size != 3) return TimeOfDay(0)
-
-    return try {
-        TimeOfDay(split[0].toInt(), split[1].toInt())
-    } catch (n: java.lang.NumberFormatException) {
-        TimeOfDay(0)
-    }
-}
-
-/**
- * Returns [string] as a [Calendar] date. If [string] is malformed, returns the 0 date.
- *
- * Requires: [string] is formatted as: "YYYY-MM-DD"
- */
-fun parseDate(string: String): Calendar {
-    val split = string.split("-")
-    if (split.size != 3) return GregorianCalendar(0, 0, 0)
-
-    return try {
-        GregorianCalendar(split[0].toInt(), split[1].toInt() - 1, split[2].toInt())
-    } catch (n: java.lang.NumberFormatException) {
-        GregorianCalendar(0, 0, 0)
-    }
-}
-
-/**
  * Returns the current system time as a [TimeOfDay] object.
  */
 fun getSystemTime(): TimeOfDay {
     val c: Calendar = Calendar.getInstance()
-    val hour = if (c.get(Calendar.HOUR) == 0) 12 else c.get(Calendar.HOUR)
+    val hour = c.get(Calendar.HOUR)
     val minute = c.get(Calendar.MINUTE)
     val isAM = c.get(Calendar.AM_PM) == Calendar.AM
     return TimeOfDay(hour, minute, isAM)
@@ -138,7 +106,8 @@ fun getSystemTime(): TimeOfDay {
 fun isCurrentlyOpen(times: List<TimeInterval>?, timeOfDay: TimeOfDay = getSystemTime()): Boolean {
     if (times == null) return false
 
-    return times.find { interval -> interval.within(timeOfDay) } != null
+    val activeInterval = times.find { interval -> interval.within(timeOfDay) }
+    return activeInterval != null
 }
 
 /**
@@ -173,3 +142,30 @@ fun Calendar.asTimeOfDay(): TimeOfDay =
         minute = get(Calendar.MINUTE),
         isAM = get(Calendar.AM_PM) == Calendar.AM
     )
+
+/**
+ * Gets the spatial distance in miles between the two specified points in latitude and longitude.
+ */
+fun getDistanceBetween(
+    latitude1: Double,
+    longitude1: Double,
+    latitude2: Double,
+    longitude2: Double
+): Float {
+    var results = floatArrayOf(0f)
+    Location.distanceBetween(
+        latitude1,
+        longitude1,
+        latitude2,
+        longitude2,
+        results
+    )
+
+    // Currently in meters. Convert to miles.
+    results = results.map { meter ->
+        meter * 0.000621371f
+    }.toFloatArray()
+
+
+    return if (results.isNotEmpty()) results[0] else -1f
+}

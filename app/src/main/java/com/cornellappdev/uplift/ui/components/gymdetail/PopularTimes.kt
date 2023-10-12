@@ -6,11 +6,25 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -21,7 +35,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cornellappdev.uplift.models.PopularTimes
-import com.cornellappdev.uplift.util.*
+import com.cornellappdev.uplift.util.GRAY01
+import com.cornellappdev.uplift.util.GRAY03
+import com.cornellappdev.uplift.util.GRAY04
+import com.cornellappdev.uplift.util.LIGHT_YELLOW
+import com.cornellappdev.uplift.util.PRIMARY_BLACK
+import com.cornellappdev.uplift.util.PRIMARY_YELLOW
+import com.cornellappdev.uplift.util.montserratFamily
+import com.cornellappdev.uplift.util.waitTimeFlavorText
 
 /**
  * Displays the popular times designated by [popularTimes]. Each column can be tapped on to display
@@ -83,7 +104,6 @@ fun PopularTimesSection(popularTimes: PopularTimes) {
             textAlign = TextAlign.Center,
             color = PRIMARY_BLACK
         )
-
 
         // 0 AM Usually not too busy
         Row(
@@ -202,4 +222,3 @@ fun PopularTimesSection(popularTimes: PopularTimes) {
         Spacer(modifier = Modifier.height(26.dp))
     }
 }
-

@@ -5,7 +5,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.cornellappdev.uplift.datastoreRepository
+import com.cornellappdev.uplift.util.getDistanceBetween
 import java.util.Calendar
+import kotlin.math.roundToInt
 
 /**
  * A [UpliftGym] object represents all the information needed about one particular gym.
@@ -16,7 +18,7 @@ data class UpliftGym(
     /**
      * A list of exactly 7 lists of time intervals. Each list of time intervals corresponds to a particular
      * day (index 0=Monday, ..., 6=Sunday), and the times in said list indicates the hours of
-     * this gym.
+     * this gym. Sorted in ascending order by time.
      *
      * Example: ((7:00 AM - 8:30 AM, 10:00AM - 10:45PM), ...) indicates that on Monday, this
      * gym is open from 7 to 8:30 AM, then closes, and then is open from 10 AM to 10:45 PM.
@@ -62,8 +64,9 @@ data class UpliftGym(
     val miscellaneous: List<String>,
     val imageUrl: String,
     var classesToday: SnapshotStateList<UpliftClass> = mutableStateListOf(),
-    val capacity: Capacity
-    // TODO: Change to show actual data pulled from backend.
+    val upliftCapacity: UpliftCapacity?,
+    val latitude: Double,
+    val longitude: Double
 ) {
     /**
      * Returns a boolean indicating whether this gym is favorited or not. Safe for recomposition.
@@ -82,16 +85,47 @@ data class UpliftGym(
             !datastoreRepository.favoriteGymsFlow.value.contains(id)
         )
     }
+
+    /**
+     * Returns the distance from this gym to the user's current location. Safe for recomposition.
+     * Returns null if the user's location is not yet initialized.
+     */
+    fun getDistance(): Float? {
+        return LocationRepository.currentLocation.value?.let { user ->
+            if (LocationRepository.currentLocation.value != null) {
+                getDistanceBetween(latitude, longitude, user.latitude, user.longitude)
+            } else {
+                null
+            }
+        }
+    }
 }
 
 /**
  * A gym's capacity.
  */
-data class Capacity(
-    /**
-     * A pair containing, first, the number of people in the gym, and secondly, the maximum
-     * capacity at said gym.
-     */
-    val capacityPair: Pair<Int, Int>,
+data class UpliftCapacity(
+    /** The direct percent read from CFC. */
+    val percent: Double,
     val updated: Calendar
-)
+) {
+    /**
+     * Returns a string representation of the percentage capacity.
+     */
+    fun percentString(): String {
+        return "${(percent * 100).roundToInt()}%"
+    }
+
+    /**
+     * Returns a string representing the time at which this capacity was last updated.
+     * Of the form `"Updated: HH:MM AM"`
+     */
+    fun updatedString(): String {
+        val timeOfDay = TimeOfDay(
+            hour = updated.get(Calendar.HOUR),
+            minute = updated.get(Calendar.MINUTE),
+            isAM = updated.get(Calendar.AM_PM) == Calendar.AM
+        )
+        return "Updated: $timeOfDay"
+    }
+}

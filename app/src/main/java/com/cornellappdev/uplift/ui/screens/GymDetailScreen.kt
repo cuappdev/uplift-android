@@ -1,5 +1,11 @@
 package com.cornellappdev.uplift.ui.screens
 
+import androidx.activity.compose.BackHandler
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -13,6 +19,9 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -29,11 +38,13 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
+import coil.compose.AsyncImagePainter
 import com.cornellappdev.uplift.R
 import com.cornellappdev.uplift.ui.components.GymFacilitySection
 import com.cornellappdev.uplift.ui.components.GymHours
 import com.cornellappdev.uplift.ui.components.PopularTimesSection
 import com.cornellappdev.uplift.ui.components.general.FavoriteButton
+import com.cornellappdev.uplift.ui.components.gymdetail.GymCapacitiesSection
 import com.cornellappdev.uplift.ui.components.gymdetail.GymTodaysClasses
 import com.cornellappdev.uplift.ui.viewmodels.ClassDetailViewModel
 import com.cornellappdev.uplift.ui.viewmodels.GymDetailViewModel
@@ -53,10 +64,36 @@ fun GymDetailScreen(
     val gym by gymDetailViewModel.gymFlow.collectAsState()
     val day = todayIndex()
 
+    BackHandler {
+        onBack()
+    }
+
     val scrollState = rememberScrollState()
 
     val screenDensity = LocalConfiguration.current.densityDpi / 160f
     val screenHeightPx = LocalConfiguration.current.screenHeightDp.toFloat() * screenDensity
+
+    val hasOneFacility =
+        gym != null
+                && (gym!!.equipmentGroupings.isNotEmpty()
+                || gym!!.gymnasiumInfo != null
+                || gym!!.swimmingInfo != null
+                || gym!!.bowlingInfo != null
+                || gym!!.miscellaneous.isNotEmpty())
+
+
+    var loading by remember { mutableStateOf(true) }
+
+    val infiniteTransition = rememberInfiniteTransition(label = "gymDetailLoading")
+    val progress by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = .5f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1000),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "gymDetailLoading"
+    )
 
     Column(
         modifier = Modifier
@@ -79,8 +116,15 @@ fun GymDetailScreen(
                     .aspectRatio(1f)
                     .graphicsLayer {
                         alpha = 1 - (scrollState.value.toFloat() / screenHeightPx)
-                    },
-                contentScale = ContentScale.Crop
+                    }
+                    .then(
+                        if (loading) Modifier
+                            .background(colorInterp(progress, GRAY01, GRAY03)) else Modifier
+                    ),
+                contentScale = ContentScale.Crop,
+                onState = { state ->
+                    loading = state !is AsyncImagePainter.State.Success
+                }
             )
             Icon(
                 painter = painterResource(id = R.drawable.ic_back_arrow),
@@ -155,10 +199,17 @@ fun GymDetailScreen(
                     .background(Color.White)
             ) {
                 GymHours(hours = gym!!.hours, day)
+                if (gym!!.upliftCapacity != null) {
+                    LineSpacer()
+                    GymCapacitiesSection(gym!!.upliftCapacity!!)
+                }
+                if (gym!!.popularTimes.isNotEmpty()) {
+                    LineSpacer()
+                    PopularTimesSection(gym!!.popularTimes[day])
+                }
                 LineSpacer()
-                PopularTimesSection(gym!!.popularTimes[day])
-                LineSpacer()
-                GymFacilitySection(gym!!, day)
+                if (hasOneFacility)
+                    GymFacilitySection(gym!!, day)
                 GymTodaysClasses(
                     gymDetailViewModel = gymDetailViewModel,
                     classDetailViewModel = classDetailViewModel,
@@ -167,7 +218,7 @@ fun GymDetailScreen(
             }
         }
 
-        Spacer(Modifier.height(50.dp))
+        Spacer(Modifier.height(10.dp))
     }
 }
 

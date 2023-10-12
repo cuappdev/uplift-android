@@ -17,13 +17,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.cornellappdev.uplift.models.UpliftCapacity
 import com.cornellappdev.uplift.util.ACCENT_CLOSED
 import com.cornellappdev.uplift.util.ACCENT_OPEN
 import com.cornellappdev.uplift.util.ACCENT_ORANGE
 import com.cornellappdev.uplift.util.GRAY02
+import com.cornellappdev.uplift.util.GRAY04
 import com.cornellappdev.uplift.util.PRIMARY_BLACK
 import com.cornellappdev.uplift.util.colorInterp
 import com.cornellappdev.uplift.util.montserratFamily
@@ -33,12 +34,16 @@ import com.cornellappdev.uplift.util.montserratFamily
  *
  * @param capacity  A tuple whose first element is the current number of people at the gym
  *                  and whose second element is the max capacity.
- * @param label     The name of the gym placed under this indicator.
+ * @param label     The name of the gym placed under this indicator. Can be null to indicate no
+ *                  label.
  */
 @Composable
-@Preview
-fun GymCapacity(capacity: Pair<Int, Int> = Pair(35, 70), label: String = "Helen Newman") {
-    val fraction = capacity.first.toFloat() / capacity.second.toFloat()
+fun GymCapacity(
+    capacity: UpliftCapacity,
+    label: String?,
+    gymDetail: Boolean = false
+) {
+    val fraction = capacity.percent.toFloat()
     val animatedFraction = remember { Animatable(0f) }
 
     // When the composable launches, animate the fraction to the capacity fraction.
@@ -49,56 +54,65 @@ fun GymCapacity(capacity: Pair<Int, Int> = Pair(35, 70), label: String = "Helen 
         )
     }
 
+    val orangeCutoff = .65f
+
     // Choose a color. If between 0 & 0.5, tween between open and orange. If between 0.5 and 1,
     // tween between orange and closed.
     val color =
-        if (fraction > .5)
+        if (fraction > orangeCutoff)
             colorInterp(
-                (fraction - .5f) * 2,
+                (fraction - orangeCutoff) / (1 - orangeCutoff),
                 ACCENT_ORANGE,
                 ACCENT_CLOSED
             )
         else
             colorInterp(
-                fraction * 2,
+                fraction / orangeCutoff,
                 ACCENT_OPEN,
                 ACCENT_ORANGE
             )
 
+    val size = if (gymDetail) 104.5.dp else 72.dp
+    val percentFontSize = if (gymDetail) 17.sp else 12.sp
+    val labelColor = if (gymDetail) GRAY04 else PRIMARY_BLACK
+    val labelFontWeight = if (gymDetail) FontWeight(300) else FontWeight(600)
+    val labelPadding = if (gymDetail) 9.dp else 12.dp
 
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Box {
             CircularProgressIndicator(
                 color = GRAY02,
-                strokeWidth = 8.dp,
-                modifier = Modifier.size(72.dp),
+                strokeWidth = size / 9,
+                modifier = Modifier.size(size),
                 progress = 1f
             )
             CircularProgressIndicator(
                 color = color,
-                strokeWidth = 8.dp,
-                modifier = Modifier.size(72.dp),
+                strokeWidth = size / 9,
+                modifier = Modifier.size(size),
                 progress = animatedFraction.value,
                 strokeCap = StrokeCap.Round
             )
             Text(
-                text = "${capacity.first}/${capacity.second}",
+                text = capacity.percentString(),
                 fontFamily = montserratFamily,
-                fontSize = 12.sp,
+                fontSize = percentFontSize,
                 fontWeight = FontWeight(700),
                 color = PRIMARY_BLACK,
                 modifier = Modifier.align(Alignment.Center),
                 textAlign = TextAlign.Center,
             )
         }
-        Spacer(modifier = Modifier.height(12.dp))
-        Text(
-            text = label,
-            fontFamily = montserratFamily,
-            fontSize = 14.sp,
-            fontWeight = FontWeight(600),
-            color = PRIMARY_BLACK,
-            textAlign = TextAlign.Center,
-        )
+        if (label != null) {
+            Spacer(modifier = Modifier.height(labelPadding))
+            Text(
+                text = label,
+                fontFamily = montserratFamily,
+                fontSize = 14.sp,
+                fontWeight = labelFontWeight,
+                color = labelColor,
+                textAlign = TextAlign.Center,
+            )
+        }
     }
 }

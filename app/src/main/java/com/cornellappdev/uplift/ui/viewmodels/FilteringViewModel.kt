@@ -7,11 +7,11 @@ import kotlinx.coroutines.flow.asStateFlow
 class FilteringViewModel {
     private val _classesFlow: MutableStateFlow<List<UpliftClass?>> = MutableStateFlow(listOf(null))
     val classesFlow = _classesFlow.asStateFlow()
-    fun instructorList(){
+    fun instructorList() {
         //Get Instructors from API and collect as mutable state
     }
 
-    fun clasTypesList(){
+    fun clasTypesList() {
         //Get List of Classes from APi and collect as a mutable state
     }
 
