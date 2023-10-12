@@ -1,5 +1,8 @@
 package com.cornellappdev.uplift.ui.viewmodels
 
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.cornellappdev.uplift.models.TimeOfDay
 import com.cornellappdev.uplift.models.UpliftClass
@@ -50,6 +53,16 @@ class HomeViewModel : ViewModel() {
     }.stateIn(
         CoroutineScope(Dispatchers.Main), SharingStarted.Eagerly, ApiResponse.Loading
     )
+
+    /**
+     * Whether the home screen should show capacities.
+     */
+    val showCapacities: State<Boolean> = mutableStateOf(false)
+
+    /** Toggles whether the capacities window should be shown. */
+    fun toggleCapacities() {
+        (showCapacities as MutableState).value = !showCapacities.value
+    }
 
     /** Call before opening home to set all the proper display information for the home page. */
     fun openHome() {

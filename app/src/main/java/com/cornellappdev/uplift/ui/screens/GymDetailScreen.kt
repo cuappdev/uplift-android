@@ -6,6 +6,7 @@ import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -19,13 +20,11 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
@@ -38,10 +37,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import coil.compose.AsyncImage
-import coil.compose.AsyncImagePainter
-import coil.imageLoader
 import com.cornellappdev.uplift.R
+import com.cornellappdev.uplift.networking.ApiResponse
+import com.cornellappdev.uplift.networking.CoilRepository
 import com.cornellappdev.uplift.ui.components.GymFacilitySection
 import com.cornellappdev.uplift.ui.components.GymHours
 import com.cornellappdev.uplift.ui.components.PopularTimesSection
@@ -83,8 +81,7 @@ fun GymDetailScreen(
                 || gym!!.bowlingInfo != null
                 || gym!!.miscellaneous.isNotEmpty())
 
-
-    var loading by remember { mutableStateOf(true) }
+    val bitmapState = CoilRepository.getUrlState(gym?.imageUrl ?: "", LocalContext.current)
 
     val infiniteTransition = rememberInfiniteTransition(label = "gymDetailLoading")
     val progress by infiniteTransition.animateFloat(
@@ -110,8 +107,12 @@ fun GymDetailScreen(
                 translationY = 0.5f * scrollState.value
             })
         {
-            AsyncImage(
-                model = makeImageRequest(gym?.imageUrl ?: "", LocalContext.current),
+            Image(
+                bitmap = if (bitmapState.value is ApiResponse.Success) {
+                    (bitmapState.value as ApiResponse.Success<ImageBitmap>).data
+                } else {
+                    ImageBitmap(height = 1, width = 1)
+                },
                 contentDescription = null,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -120,14 +121,10 @@ fun GymDetailScreen(
                         alpha = 1 - (scrollState.value.toFloat() / screenHeightPx)
                     }
                     .then(
-                        if (loading) Modifier
+                        if (bitmapState.value !is ApiResponse.Success) Modifier
                             .background(colorInterp(progress, GRAY01, GRAY03)) else Modifier
                     ),
                 contentScale = ContentScale.Crop,
-                onState = { state ->
-                    loading = state !is AsyncImagePainter.State.Success
-                },
-                imageLoader = LocalContext.current.imageLoader
             )
             Icon(
                 painter = painterResource(id = R.drawable.ic_back_arrow),

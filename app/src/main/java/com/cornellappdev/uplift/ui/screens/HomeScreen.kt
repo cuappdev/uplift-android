@@ -4,6 +4,7 @@ import androidx.compose.animation.Crossfade
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -36,6 +37,7 @@ fun HomeScreen(
     val titleText = homeViewModel.titleFlow.collectAsState().value
     val classesState = homeViewModel.classesFlow.collectAsState().value
     val gymsState = homeViewModel.gymFlow.collectAsState().value
+    val showCapacities by homeViewModel.showCapacities
 
     val context = LocalContext.current
 
@@ -69,8 +71,11 @@ fun HomeScreen(
                 upliftClasses = classesList,
                 gymsList = gymsList,
                 navController = navController,
+                showCapacities = showCapacities,
                 titleText = titleText
-            )
+            ) {
+                homeViewModel.toggleCapacities()
+            }
         }
         // Some error
         else if (gState == ApiResponse.Error || cState == ApiResponse.Error) {
