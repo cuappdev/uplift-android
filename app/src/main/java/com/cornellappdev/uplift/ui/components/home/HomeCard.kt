@@ -14,9 +14,6 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.BottomCenter
 import androidx.compose.ui.Alignment.Companion.TopEnd
@@ -24,15 +21,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImage
-import coil.compose.AsyncImagePainter
 import com.cornellappdev.uplift.R
 import com.cornellappdev.uplift.models.UpliftGym
+import com.cornellappdev.uplift.networking.ApiResponse
+import com.cornellappdev.uplift.networking.CoilRepository
 import com.cornellappdev.uplift.ui.components.general.FavoriteButton
 import com.cornellappdev.uplift.util.*
 
@@ -55,7 +54,7 @@ fun HomeCard(gym: UpliftGym, onClick: () -> Unit) {
     val nextInterval = gym.hours[day]!!.find { hour -> hour.start.compareTo(getSystemTime()) > 0 }
     val opensAtTime = nextInterval?.start?.toString()
 
-    var loading by remember { mutableStateOf(true) }
+    val bitmapState = CoilRepository.getUrlState(gym.imageUrl, LocalContext.current)
     val infiniteTransition = rememberInfiniteTransition(label = "homeCardLoading")
     val progress by infiniteTransition.animateFloat(
         initialValue = 0f,
@@ -86,19 +85,20 @@ fun HomeCard(gym: UpliftGym, onClick: () -> Unit) {
                     .alpha(if (isCurrentlyOpen(gym.hours[day])) 1f else .6f)
             ) {
                 Box(modifier = Modifier.fillMaxSize()) {
-                    AsyncImage(
-                        model = gym.imageUrl,
+                    Image(
+                        bitmap = if (bitmapState.value is ApiResponse.Success) {
+                            (bitmapState.value as ApiResponse.Success<ImageBitmap>).data
+                        } else {
+                            ImageBitmap(height = 1, width = 1)
+                        },
                         modifier = Modifier
                             .fillMaxWidth()
                             .then(
-                                if (loading) Modifier
+                                if (bitmapState.value !is ApiResponse.Success) Modifier
                                     .background(colorInterp(progress, GRAY01, GRAY03)) else Modifier
                             ),
                         contentDescription = "",
                         contentScale = ContentScale.Crop,
-                        onState = { state ->
-                            loading = state !is AsyncImagePainter.State.Success
-                        }
                     )
 
                     Box(
