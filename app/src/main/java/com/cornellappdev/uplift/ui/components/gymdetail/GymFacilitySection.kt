@@ -176,11 +176,11 @@ fun GymFacilitySection(gym: UpliftGym, today: Int) {
 /**
  * One facility tab which can contain some Composable content that may be expanded upon a tap.
  *
- * @param painter The icon which this facility tab should display.
+ * @param painter The icon which this facility tab should display. Can be `null` to indicate no painter.
  */
 @Composable
 fun FacilityTab(
-    painter: Painter,
+    painter: Painter?,
     title: String,
     collapsed: Boolean,
     onClick: () -> Unit,
@@ -199,14 +199,16 @@ fun FacilityTab(
                 },
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(
-                modifier = Modifier
-                    .padding(start = 24.dp)
-                    .size(24.dp),
-                painter = painter,
-                contentDescription = null,
-                tint = Color.Black
-            )
+            if (painter != null) {
+                Icon(
+                    modifier = Modifier
+                        .padding(start = 24.dp)
+                        .size(24.dp),
+                    painter = painter,
+                    contentDescription = null,
+                    tint = Color.Black
+                )
+            }
             Text(
                 text = title,
                 fontFamily = montserratFamily,
@@ -214,7 +216,7 @@ fun FacilityTab(
                 fontWeight = FontWeight(500),
                 lineHeight = 19.5.sp,
                 textAlign = TextAlign.Left,
-                modifier = Modifier.padding(start = 8.dp),
+                modifier = Modifier.padding(start = (if (painter != null) 8 else 24).dp),
                 color = PRIMARY_BLACK
             )
             Spacer(modifier = Modifier.weight(1f))
