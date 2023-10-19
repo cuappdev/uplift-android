@@ -1,5 +1,6 @@
 package com.cornellappdev.uplift.ui.components.home
 
+import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
@@ -85,21 +86,32 @@ fun HomeCard(gym: UpliftGym, onClick: () -> Unit) {
                     .alpha(if (isCurrentlyOpen(gym.hours[day])) 1f else .6f)
             ) {
                 Box(modifier = Modifier.fillMaxSize()) {
-                    Image(
-                        bitmap = if (bitmapState.value is ApiResponse.Success) {
-                            (bitmapState.value as ApiResponse.Success<ImageBitmap>).data
-                        } else {
-                            ImageBitmap(height = 1, width = 1)
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .then(
-                                if (bitmapState.value !is ApiResponse.Success) Modifier
-                                    .background(colorInterp(progress, GRAY01, GRAY03)) else Modifier
-                            ),
-                        contentDescription = "",
-                        contentScale = ContentScale.Crop,
-                    )
+                    Crossfade(
+                        targetState = bitmapState.value,
+                        label = "imageFade",
+                        animationSpec = tween(250)
+                    ) { apiResponse ->
+                        when (apiResponse) {
+                            is ApiResponse.Success ->
+                                Image(
+                                    bitmap = apiResponse.data,
+                                    modifier = Modifier.fillMaxWidth(),
+                                    contentDescription = "",
+                                    contentScale = ContentScale.Crop
+                                )
+
+                            else ->
+                                Image(
+                                    bitmap = ImageBitmap(width = 1, height = 1),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .background(colorInterp(progress, GRAY01, GRAY03)),
+                                    contentDescription = "",
+                                    contentScale = ContentScale.Crop
+                                )
+                        }
+                    }
+
 
                     Box(
                         modifier = Modifier
