@@ -1,6 +1,7 @@
 package com.cornellappdev.uplift.ui.screens
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
@@ -107,25 +108,40 @@ fun GymDetailScreen(
                 translationY = 0.5f * scrollState.value
             })
         {
-            Image(
-                bitmap = if (bitmapState.value is ApiResponse.Success) {
-                    (bitmapState.value as ApiResponse.Success<ImageBitmap>).data
-                } else {
-                    ImageBitmap(height = 1, width = 1)
-                },
-                contentDescription = null,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(1f)
-                    .graphicsLayer {
-                        alpha = 1 - (scrollState.value.toFloat() / screenHeightPx)
-                    }
-                    .then(
-                        if (bitmapState.value !is ApiResponse.Success) Modifier
-                            .background(colorInterp(progress, GRAY01, GRAY03)) else Modifier
-                    ),
-                contentScale = ContentScale.Crop,
-            )
+            Crossfade(
+                targetState = bitmapState.value,
+                label = "imageFade",
+                animationSpec = tween(250)
+            ) { apiResponse ->
+                when (apiResponse) {
+                    is ApiResponse.Success ->
+                        Image(
+                            bitmap = apiResponse.data,
+                            contentDescription = null,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .aspectRatio(1f)
+                                .graphicsLayer {
+                                    alpha = 1 - (scrollState.value.toFloat() / screenHeightPx)
+                                },
+                            contentScale = ContentScale.Crop,
+                        )
+
+                    else ->
+                        Image(
+                            bitmap = ImageBitmap(height = 1, width = 1),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .aspectRatio(1f)
+                                .graphicsLayer {
+                                    alpha = 1 - (scrollState.value.toFloat() / screenHeightPx)
+                                }
+                                .background(colorInterp(progress, GRAY01, GRAY03)),
+                            contentScale = ContentScale.Crop,
+                        )
+                }
+            }
             Icon(
                 painter = painterResource(id = R.drawable.ic_back_arrow),
                 contentDescription = null,

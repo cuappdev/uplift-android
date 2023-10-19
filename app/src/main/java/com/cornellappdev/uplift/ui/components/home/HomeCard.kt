@@ -112,7 +112,6 @@ fun HomeCard(gym: UpliftGym, onClick: () -> Unit) {
                         }
                     }
 
-
                     Box(
                         modifier = Modifier
                             .align(TopEnd)
