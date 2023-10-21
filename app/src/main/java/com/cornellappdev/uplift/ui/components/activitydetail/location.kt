@@ -17,16 +17,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.cornellappdev.uplift.models.Gear
 import com.cornellappdev.uplift.models.OpenType
-import com.cornellappdev.uplift.models.TimeInterval
-import com.cornellappdev.uplift.models.TimeOfDay
 import com.cornellappdev.uplift.models.UpliftActivity
 import com.cornellappdev.uplift.models.UpliftClass
 import com.cornellappdev.uplift.ui.screens.LineSpacer
 import com.cornellappdev.uplift.util.PRIMARY_BLACK
 import com.cornellappdev.uplift.util.isCurrentlyOpen
 import com.cornellappdev.uplift.util.montserratFamily
+import com.cornellappdev.uplift.util.sampleLocation_A
+import com.cornellappdev.uplift.util.sampleLocation_B
 import java.util.Calendar
 
 /**
@@ -74,8 +73,10 @@ fun LocationSection(
                     true -> OpenType.OPEN
                     else -> OpenType.CLOSED
                 }
+
             ) {
                 ActivityInfoSection(today = today, location = location)
+
             }
 
 
@@ -106,93 +107,3 @@ fun LocationSectionPreview() {
         gymIdsSet.value = set
     }
 }
-
-
-val sampleLocation_A = UpliftActivity(
-    name = "Sample Location_A",
-    id = "location_id_1",
-    starred = false,
-    gymId = "gym_id_1",
-    address = "123 Sample Street",
-    hours = listOf(
-        listOf(
-            TimeInterval(TimeOfDay(8, 0, true), TimeOfDay(12, 0, true)),
-            TimeInterval(TimeOfDay(13, 0, true), TimeOfDay(17, 0, true))
-        ),
-        listOf(
-            TimeInterval(TimeOfDay(9, 0, true), TimeOfDay(11, 30, true)),
-            TimeInterval(TimeOfDay(14, 0, true), TimeOfDay(18, 0, true))
-        ),
-        listOf(
-            TimeInterval(TimeOfDay(9, 0, true), TimeOfDay(12, 30, true)),
-            TimeInterval(TimeOfDay(15, 0, true), TimeOfDay(19, 0, true))
-        ),
-        listOf(
-            TimeInterval(TimeOfDay(8, 30, true), TimeOfDay(11, 0, true)),
-            TimeInterval(TimeOfDay(13, 30, true), TimeOfDay(17, 30, true))
-        ),
-        null, // Location closed on Thursday
-        listOf(
-            TimeInterval(TimeOfDay(10, 0, true), TimeOfDay(13, 0, true)),
-            TimeInterval(TimeOfDay(16, 0, true), TimeOfDay(20, 0, true))
-        ),
-        listOf(
-            TimeInterval(TimeOfDay(9, 0, true), TimeOfDay(12, 0, true)),
-            TimeInterval(TimeOfDay(14, 0, true), TimeOfDay(18, 0, true))
-        )
-    ),
-    pricing = listOf(
-        Pair("one-time", 10),  // One-time visit pricing
-        Pair("membership", 60) // Monthly membership pricing
-    ),
-    equipment = listOf(Pair("Shoes", 10), Pair("Racket", 1)),
-    services = listOf("showers", "lockers", "parking"),
-    gear = setOf(Gear.NOT_REQUIRED, Gear.BRING_YOURSELF, Gear.CAN_RENT),
-    reservation = true,
-    imageUrl = "sample_image_url"
-)
-
-val sampleLocation_B = UpliftActivity(
-    name = "Sample Location_B",
-    id = "location_id_2",
-    starred = false,
-    gymId = "gym_id_2",
-    address = "456 Sample Street",
-    hours = listOf(
-        listOf(
-            TimeInterval(TimeOfDay(9, 0, true), TimeOfDay(11, 30, true)),
-            TimeInterval(TimeOfDay(14, 0, true), TimeOfDay(18, 0, true))
-        ),
-        listOf(
-            TimeInterval(TimeOfDay(9, 0, true), TimeOfDay(11, 30, true)),
-            TimeInterval(TimeOfDay(14, 0, true), TimeOfDay(18, 0, true))
-        ),
-        listOf(
-            TimeInterval(TimeOfDay(9, 0, true), TimeOfDay(11, 30, true)),
-            TimeInterval(TimeOfDay(14, 0, true), TimeOfDay(18, 0, true))
-        ),
-        listOf(
-            TimeInterval(TimeOfDay(8, 30, true), TimeOfDay(11, 0, true)),
-            TimeInterval(TimeOfDay(13, 30, true), TimeOfDay(17, 30, true))
-        ),
-        listOf(
-            TimeInterval(TimeOfDay(8, 30, true), TimeOfDay(11, 0, true)),
-            TimeInterval(TimeOfDay(13, 30, true), TimeOfDay(17, 30, true))
-        ),
-        listOf(
-            TimeInterval(TimeOfDay(10, 0, true), TimeOfDay(13, 0, true)),
-            TimeInterval(TimeOfDay(16, 0, true), TimeOfDay(20, 0, true))
-        ),
-        listOf(
-            TimeInterval(TimeOfDay(9, 0, true), TimeOfDay(12, 0, true)),
-            TimeInterval(TimeOfDay(14, 0, true), TimeOfDay(18, 0, true))
-        )
-    ),
-    pricing = null,
-    equipment = listOf(Pair("gear sample", 2)),
-    services = listOf("showers", "lockers", "parking"),
-    gear = setOf(Gear.NOT_REQUIRED),
-    reservation = true,
-    imageUrl = "sample_image_url"
-)
-
