@@ -47,6 +47,8 @@ class GymDetailViewModel : ViewModel() {
                         it.gymId == gym?.id
                                 && it.date.sameDayAs(GregorianCalendar())
                                 && it.time.end.compareTo(getSystemTime()) >= 0
+                    }.sortedWith { class1, class2 ->
+                        class1.time.start.compareTo(class2.time.start)
                     }
             }
         }.stateIn(
