@@ -159,7 +159,7 @@ fun GymListQuery.Gym.toUpliftGyms(): List<UpliftGym> {
     } ?: listOf()
 
     // TODO: Temporary fix to make sure the 4 fake gyms don't clog up the data.
-    if (classes.isNullOrEmpty()) return listOf()
+    if (classes.isNullOrEmpty() && !name.contains("Morrison")) return listOf()
 
     return fitnessFacilities.filterNotNull().map { facility ->
 
