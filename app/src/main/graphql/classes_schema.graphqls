@@ -1,7 +1,3 @@
-schema {
-  query: Query
-}
-
 type Capacity {
   id: ID!
   facilityId: Int!
@@ -10,6 +6,32 @@ type Capacity {
   updated: DateTime!
 }
 
+type Class {
+  id: ID!
+  name: String!
+  description: String!
+  gyms: [ClassInstance]
+}
+
+type ClassInstance {
+  id: ID!
+  gymId: Int
+  classId: Int!
+  location: String!
+  instructor: String!
+  isCanceled: Boolean!
+  isVirtual: Boolean!
+  startTime: DateTime
+  endTime: DateTime
+  class_: Class
+  gym: Gym
+}
+
+"""
+The `DateTime` scalar type represents a DateTime
+value as specified by
+[iso8601](https://en.wikipedia.org/wiki/ISO_8601).
+"""
 scalar DateTime
 
 type Facility {
@@ -22,6 +44,7 @@ type Facility {
   capacity: Capacity
 }
 
+"""An enumeration."""
 enum FacilityType {
   FITNESS
 }
@@ -35,6 +58,7 @@ type Gym {
   longitude: Float!
   imageUrl: String
   facilities: [Facility]
+  classes: [ClassInstance]
 }
 
 type OpenHours {
@@ -48,3 +72,4 @@ type OpenHours {
 type Query {
   gyms: [Gym]
 }
+

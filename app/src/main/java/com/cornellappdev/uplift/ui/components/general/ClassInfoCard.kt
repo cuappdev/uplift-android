@@ -51,7 +51,8 @@ fun ClassInfoCard(
                 classDetailViewModel = classDetailViewModel,
                 thisClass = thisClass
             )
-        }
+        },
+        elevation = 4.dp
     ) {
         Box(
             modifier = Modifier
@@ -63,7 +64,7 @@ fun ClassInfoCard(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Row {
+                Row(modifier = Modifier.weight(1f)) {
                     Column {
                         Text(
                             text = if (today.get(Calendar.MONTH) == thisClass.date.get(Calendar.MONTH) &&
@@ -96,8 +97,8 @@ fun ClassInfoCard(
                             fontSize = 16.sp,
                             fontWeight = FontWeight(500),
                             lineHeight = 17.07.sp,
-                            textAlign = TextAlign.Center,
-                            color = PRIMARY_BLACK
+                            color = PRIMARY_BLACK,
+                            modifier = Modifier.padding(end = 8.dp)
                         )
                         Text(
                             text = thisClass.location,

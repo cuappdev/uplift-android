@@ -31,9 +31,10 @@ import com.cornellappdev.uplift.ui.components.general.UpliftTopBar
 import com.cornellappdev.uplift.ui.viewmodels.ClassDetailViewModel
 import com.cornellappdev.uplift.ui.viewmodels.ClassesViewModel
 import com.cornellappdev.uplift.util.PRIMARY_BLACK
+import com.cornellappdev.uplift.util.calendarDayOfWeekToString
 import com.cornellappdev.uplift.util.montserratFamily
 import kotlinx.coroutines.launch
-import kotlin.math.absoluteValue
+import java.util.Calendar
 
 /**
  * The main screen for the "Classes" section of the app.
@@ -59,15 +60,24 @@ fun ClassScreen(
     // Needed in order to roughly center empty state in LazyColumn.
     val screenHeightDp = LocalConfiguration.current.screenHeightDp
 
-    val titleText = classesViewModel.selectedDay.collectAsState().value.let { day ->
+    val selectedDay = classesViewModel.selectedDay.collectAsState().value
+    val titleText = selectedDay.let { day ->
+        val cal = Calendar.getInstance()
+        cal.add(Calendar.DAY_OF_YEAR, day)
+        val dayOfWeek = calendarDayOfWeekToString(cal)
+
         if (day < -1) {
-            "${day.absoluteValue} days ago"
+            "Last $dayOfWeek"
         } else {
             when (day) {
                 -1 -> "Yesterday"
                 0 -> "Today"
                 1 -> "Tomorrow"
-                else -> "In $day days"
+                else -> if (day < 7) {
+                    dayOfWeek
+                } else {
+                    "Next $dayOfWeek"
+                }
             }
         }
     }
@@ -82,7 +92,6 @@ fun ClassScreen(
                 state = classesScrollState,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 20.dp)
                     .zIndex(-1f)
             ) {
                 stickyHeader {
@@ -95,7 +104,10 @@ fun ClassScreen(
                             )
                             .padding(vertical = 14.5.dp)
                     ) {
-                        CalendarBar(selectedDay = selectedDayState.value) { daySelected ->
+                        CalendarBar(
+                            daysAhead = 3,
+                            selectedDay = selectedDayState.value
+                        ) { daySelected ->
                             classesViewModel.selectDay(daySelected)
                             // Scroll to the top when a new day is pressed.
                             coroutineScope.launch {
@@ -127,7 +139,7 @@ fun ClassScreen(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.Center
                         ) {
-                            NoClasses(comingSoon = true)
+                            NoClasses()
                         }
                 }
 
@@ -140,7 +152,7 @@ fun ClassScreen(
                     Spacer(modifier = Modifier.height(12.dp))
                 }
                 item {
-                    Spacer(modifier = Modifier.height(100.dp))
+                    Spacer(modifier = Modifier.height(50.dp))
                 }
             }
         }

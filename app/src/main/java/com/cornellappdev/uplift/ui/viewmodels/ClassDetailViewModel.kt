@@ -41,6 +41,8 @@ class ClassDetailViewModel : ViewModel() {
                 ApiResponse.Error -> listOf()
                 is ApiResponse.Success -> apiResponse.data.filter {
                     it.name == upliftClass?.name && it.date > GregorianCalendar()
+                }.sortedWith { class1, class2 ->
+                    class1.date.compareTo(class2.date)
                 }
             }
         }.stateIn(

@@ -136,7 +136,11 @@ fun MainLoaded(
         animateFloatAsState(targetValue = if (showCapacities) 1f else 0f, label = "capacities")
 
     val refresh =
-        rememberPullRefreshState(refreshing = false, onRefresh = { UpliftApiRepository.reload() })
+        rememberPullRefreshState(
+            refreshing = false,
+            onRefresh = { UpliftApiRepository.reload() },
+            refreshThreshold = 120.dp
+        )
 
     Box(
         modifier = Modifier
@@ -310,6 +314,44 @@ fun MainLoaded(
                 }
             }
 
+            // TODAY'S CLASSES
+            item {
+                Text(
+                    text = "TODAY'S CLASSES",
+                    fontFamily = montserratFamily,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight(700),
+                    lineHeight = 17.07.sp,
+                    textAlign = TextAlign.Center,
+                    color = GRAY04,
+                    modifier = Modifier.padding(start = 16.dp)
+                )
+
+                if (upliftClasses.isEmpty()) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 12.dp, bottom = 24.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        NoClasses()
+                    }
+                } else LazyRow(
+                    state = rememberLazyListState(), contentPadding = PaddingValues(
+                        horizontal = 16.dp
+                    ), modifier = Modifier.padding(top = 12.dp, bottom = 24.dp)
+                ) {
+                    items(items = upliftClasses) { upliftClass ->
+                        BriefClassInfoCard(
+                            thisClass = upliftClass,
+                            navController = navController,
+                            classDetailViewModel = classDetailViewModel
+                        )
+                        Spacer(Modifier.width(16.dp))
+                    }
+                }
+            }
+
             // Gyms
             item {
                 Row(
@@ -338,49 +380,6 @@ fun MainLoaded(
                             gymDetailViewModel = gymDetailViewModel,
                             gym = gym
                         )
-                    }
-                }
-            }
-
-            item {
-                Spacer(Modifier.height(24.dp))
-            }
-
-            // TODAY'S CLASSES
-            item {
-                Text(
-                    text = "TODAY'S CLASSES",
-                    fontFamily = montserratFamily,
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight(700),
-                    lineHeight = 17.07.sp,
-                    textAlign = TextAlign.Center,
-                    color = GRAY04,
-                    modifier = Modifier.padding(start = 16.dp)
-                )
-
-                if (upliftClasses.isEmpty()) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 12.dp, bottom = 24.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        // TODO: Change to false when backend includes classes.
-                        NoClasses(comingSoon = true)
-                    }
-                } else LazyRow(
-                    state = rememberLazyListState(), contentPadding = PaddingValues(
-                        horizontal = 16.dp
-                    ), modifier = Modifier.padding(top = 12.dp, bottom = 24.dp)
-                ) {
-                    items(items = upliftClasses) { upliftClass ->
-                        BriefClassInfoCard(
-                            thisClass = upliftClass,
-                            navController = navController,
-                            classDetailViewModel = classDetailViewModel
-                        )
-                        Spacer(Modifier.width(16.dp))
                     }
                 }
             }

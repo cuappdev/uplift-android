@@ -178,7 +178,7 @@ fun MainNavigationWrapper(
                         navController.popBackGym(gymDetailViewModel)
                     }
                 }
-                composable(route = "classDetail") {
+                composable(route = "classDetailHome") {
                     ClassDetailScreen(
                         classDetailViewModel = classDetailViewModel,
                         navController = navController
@@ -195,7 +195,7 @@ fun MainNavigationWrapper(
                         classesViewModel = classesViewModel
                     )
                 }
-                composable(route = "classDetail") {
+                composable(route = "classDetailClasses") {
                     ClassDetailScreen(
                         classDetailViewModel = classDetailViewModel,
                         navController = navController

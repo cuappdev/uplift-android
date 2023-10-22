@@ -12,7 +12,12 @@ fun NavHostController.navigateToClass(
 ) {
     // Opens the new class.
     classDetailViewModel.openClass(thisClass)
-    navigate("classDetail")
+
+    if (currentDestination?.route.toString() == "classesMain") {
+        navigate("classDetailClasses")
+    } else {
+        navigate("classDetailHome")
+    }
 }
 
 fun NavHostController.navigateToGym(

@@ -8,9 +8,14 @@ import com.cornellappdev.uplift.models.SwimmingInfo
 import com.cornellappdev.uplift.models.TimeInterval
 import com.cornellappdev.uplift.models.TimeOfDay
 import com.cornellappdev.uplift.models.UpliftCapacity
+import com.cornellappdev.uplift.models.UpliftClass
 import com.cornellappdev.uplift.models.UpliftGym
+import com.cornellappdev.uplift.util.asTimeOfDay
+import com.cornellappdev.uplift.util.defaultClassUrl
 import com.cornellappdev.uplift.util.defaultGymUrl
+import com.example.rocketreserver.ClassListQuery
 import com.example.rocketreserver.GymListQuery
+import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -125,9 +130,7 @@ fun GymListQuery.Gym.pullCapacity(
     if (highCap.isNaN()) return null
 
     // Ex: "2023-09-19T18:42:00"
-    val cal = Calendar.getInstance()
-    val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.ENGLISH)
-    cal.time = sdf.parse(facility.capacity.updated.toString()) ?: Calendar.getInstance().time
+    val cal = parseCalendar(facility.capacity.updated.toString())
 
     return UpliftCapacity(
         percent = facility.capacity.percent,
@@ -155,10 +158,15 @@ fun GymListQuery.Gym.toUpliftGyms(): List<UpliftGym> {
         facility?.facilityType.toString() == "FITNESS"
     } ?: listOf()
 
+    // TODO: Temporary fix to make ids line up.
+    //  Currently, there is a duplicate of each gym that has the correct id and classes
+    //  but everything else wrong. Why must backend do this.
+    val idMap = mapOf("1792236" to "1", "3454585" to "4", "9537684" to "2", "10423374" to "3")
+
     return fitnessFacilities.filterNotNull().map { facility ->
         UpliftGym(
             name = facility.name,
-            id = facility.id,
+            id = if (idMap.containsKey(id)) idMap[id]!! else id,
             popularTimes = pullPopularTimes(facility),
             // Need replace because there's a typo with the single quote.
             imageUrl = imageUrl?.replace("'", "") ?: defaultGymUrl,
@@ -175,24 +183,46 @@ fun GymListQuery.Gym.toUpliftGyms(): List<UpliftGym> {
     }
 }
 
-/*
-fun ClassListQuery.Class.toUpliftClass(): UpliftClass {
-    return UpliftClass(
-        name = details.name,
-        id = id,
-        gymId = gymId ?: "NO_GYM",
-        location = location,
-        instructorName = instructor,
-        date = parseDate(date.toString()),
-        time = TimeInterval(
-            parseTimeOfDay(startTime.toString()),
-            parseTimeOfDay(endTime.toString())
-        ),
-        functions = details.tags.filterNotNull().map { tag -> tag.label },
-        // Preparation is not supplied by backend yet...
-        preparation = "",
-        description = details.description,
-        imageUrl = imageUrl
-    )
+
+fun ClassListQuery.Class.toUpliftClass(imageUrl: String = defaultClassUrl): UpliftClass? {
+    try {
+        val start = parseCalendar(startTime.toString())
+        val end = parseCalendar(endTime.toString())
+
+        return UpliftClass(
+            name = class_?.name ?: "NO_NAME",
+            id = id,
+            gymId = gymId?.toString() ?: "NO_GYM",
+            location = location,
+            instructorName = instructor,
+            date = end,
+            time = TimeInterval(
+                start.asTimeOfDay(),
+                end.asTimeOfDay()
+            ),
+            // TODO: Functions aren't in backend yet (as far as I can tell). Update when added.
+            functions = listOf(),
+            // TODO: Preparation is not supplied by backend yet. Update when added.
+            preparation = "",
+            description = class_?.description ?: "NO_DESC",
+            imageUrl = imageUrl.replace("'", ""),
+        )
+    } catch (_: ParseException) {
+        return null
+    }
 }
-*/
+
+/**
+ * Returns a [Calendar] whose time is set to the time input, given in format:
+ *
+ * "yyyy-MM-dd'T'HH:mm:ss"
+ *
+ * Requires that the date is in the above format.
+ */
+fun parseCalendar(dateString: String): Calendar {
+    val cal = Calendar.getInstance()
+    val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.ENGLISH)
+    cal.time = sdf.parse(dateString) ?: Calendar.getInstance().time
+
+    return cal
+}
