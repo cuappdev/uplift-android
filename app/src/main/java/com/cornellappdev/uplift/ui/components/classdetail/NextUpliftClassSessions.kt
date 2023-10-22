@@ -58,6 +58,6 @@ fun NextUpliftClassSessions(
             )
             Spacer(modifier = Modifier.height(12.dp))
         }
-        Spacer(Modifier.height(36.dp))
+        Spacer(Modifier.height(24.dp))
     }
 }

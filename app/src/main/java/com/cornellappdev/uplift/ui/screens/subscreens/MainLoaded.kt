@@ -136,7 +136,11 @@ fun MainLoaded(
         animateFloatAsState(targetValue = if (showCapacities) 1f else 0f, label = "capacities")
 
     val refresh =
-        rememberPullRefreshState(refreshing = false, onRefresh = { UpliftApiRepository.reload() })
+        rememberPullRefreshState(
+            refreshing = false,
+            onRefresh = { UpliftApiRepository.reload() },
+            refreshThreshold = 120.dp
+        )
 
     Box(
         modifier = Modifier

@@ -194,7 +194,7 @@ fun ClassListQuery.Class.toUpliftClass(imageUrl: String = defaultClassUrl): Upli
             gymId = gymId?.toString() ?: "NO_GYM",
             location = location,
             instructorName = instructor,
-            date = start,
+            date = end,
             time = TimeInterval(
                 start.asTimeOfDay(),
                 end.asTimeOfDay()
@@ -204,7 +204,7 @@ fun ClassListQuery.Class.toUpliftClass(imageUrl: String = defaultClassUrl): Upli
             // TODO: Preparation is not supplied by backend yet. Update when added.
             preparation = "",
             description = class_?.description ?: "NO_DESC",
-            imageUrl = imageUrl
+            imageUrl = imageUrl.replace("'", ""),
         )
     } catch (_: ParseException) {
         return null

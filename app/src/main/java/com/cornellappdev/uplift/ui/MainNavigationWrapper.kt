@@ -178,13 +178,13 @@ fun MainNavigationWrapper(
                         navController.popBackGym(gymDetailViewModel)
                     }
                 }
-                composable(route = "classDetail") {
-//                    ClassDetailScreen(
-//                        classDetailViewModel = classDetailViewModel,
-//                        navController = navController
-//                    ) {
-//                        navController.popBackClass(classDetailViewModel)
-//                    }
+                composable(route = "classDetailHome") {
+                    ClassDetailScreen(
+                        classDetailViewModel = classDetailViewModel,
+                        navController = navController
+                    ) {
+                        navController.popBackClass(classDetailViewModel)
+                    }
                 }
             }
             navigation(startDestination = "classesMain", route = "classes") {
@@ -195,7 +195,7 @@ fun MainNavigationWrapper(
                         classesViewModel = classesViewModel
                     )
                 }
-                composable(route = "classDetail") {
+                composable(route = "classDetailClasses") {
                     ClassDetailScreen(
                         classDetailViewModel = classDetailViewModel,
                         navController = navController

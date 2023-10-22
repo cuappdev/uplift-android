@@ -5,6 +5,7 @@ import com.cornellappdev.uplift.models.UpliftClass
 import com.cornellappdev.uplift.models.UpliftGym
 import com.cornellappdev.uplift.networking.UpliftApiRepository.classesApiFlow
 import com.cornellappdev.uplift.networking.UpliftApiRepository.gymApiFlow
+import com.cornellappdev.uplift.util.defaultGymUrl
 import com.example.rocketreserver.ClassListQuery
 import com.example.rocketreserver.GymListQuery
 import kotlinx.coroutines.CoroutineScope
@@ -99,9 +100,16 @@ object UpliftApiRepository {
                         ApiResponse.Error
                     } else {
                         val classList =
-                            gyms.filterNotNull().mapNotNull { gym -> gym.classes }.flatten()
+                            gyms.filterNotNull().mapNotNull { gym ->
+                                gym.classes?.map { classQuery ->
+                                    Pair(
+                                        classQuery,
+                                        gym.imageUrl ?: defaultGymUrl
+                                    )
+                                }
+                            }.flatten().filter { pair -> pair.first != null }
                         val upliftClasses =
-                            classList.filterNotNull().mapNotNull { query -> query.toUpliftClass() }
+                            classList.mapNotNull { query -> query.first!!.toUpliftClass(query.second) }
                         ApiResponse.Success(
                             upliftClasses.distinctBy { upliftClass ->
                                 Triple(

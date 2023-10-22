@@ -51,7 +51,8 @@ fun ClassInfoCard(
                 classDetailViewModel = classDetailViewModel,
                 thisClass = thisClass
             )
-        }
+        },
+        elevation = 4.dp
     ) {
         Box(
             modifier = Modifier
