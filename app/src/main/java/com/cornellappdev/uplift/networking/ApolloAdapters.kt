@@ -158,17 +158,15 @@ fun GymListQuery.Gym.toUpliftGyms(): List<UpliftGym> {
         facility?.facilityType.toString() == "FITNESS"
     } ?: listOf()
 
-    // TODO: Temporary fix to make sure the 4 fake gyms don't clog up the data.
-    //  Currently, there is a duplicate of each gym that has the correct id but everything else wrong.
-    //  So, this sets the correct id and ignores the gym duplicate.
-    //  Why must backend do this.
+    // TODO: Temporary fix to make ids line up.
+    //  Currently, there is a duplicate of each gym that has the correct id and classes
+    //  but everything else wrong. Why must backend do this.
     val idMap = mapOf("1792236" to "1", "3454585" to "4", "9537684" to "2", "10423374" to "3")
-    if (!idMap.containsKey(id)) return listOf()
 
     return fitnessFacilities.filterNotNull().map { facility ->
         UpliftGym(
             name = facility.name,
-            id = idMap[id]!!,
+            id = if (idMap.containsKey(id)) idMap[id]!! else id,
             popularTimes = pullPopularTimes(facility),
             // Need replace because there's a typo with the single quote.
             imageUrl = imageUrl?.replace("'", "") ?: defaultGymUrl,
