@@ -7,7 +7,6 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.core.graphics.drawable.toBitmap
 import coil.imageLoader
-import coil.request.CachePolicy
 import coil.request.ImageRequest
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -33,11 +32,6 @@ object CoilRepository {
         if (!urlMap.containsKey(imageUrl) || urlMap[imageUrl]!!.value is ApiResponse.Error) {
             val imageRequest = ImageRequest.Builder(context)
                 .data(imageUrl)
-                .memoryCacheKey(imageUrl)
-                .diskCacheKey(imageUrl)
-                .diskCachePolicy(CachePolicy.ENABLED)
-                .memoryCachePolicy(CachePolicy.ENABLED)
-                .crossfade(200)
                 .build()
 
             urlMap[imageUrl] = mutableStateOf(ApiResponse.Loading)
