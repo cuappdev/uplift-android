@@ -1,5 +1,6 @@
 package com.cornellappdev.uplift.ui.viewmodels
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.cornellappdev.uplift.models.UpliftClass
 import com.cornellappdev.uplift.models.UpliftGym
@@ -44,6 +45,7 @@ class GymDetailViewModel : ViewModel() {
                 ApiResponse.Error -> listOf()
                 is ApiResponse.Success -> apiResponse.data
                     .filter {
+                        Log.d("filterGym", "${it.gymId}  ${gym?.id}")
                         it.gymId == gym?.id
                                 && it.date.sameDayAs(GregorianCalendar())
                                 && it.time.end.compareTo(getSystemTime()) >= 0

@@ -63,8 +63,7 @@ fun GymTodaysClasses(
         }
         if (todaysClasses.value.isEmpty()) {
             Text(
-                text = "Classes are coming soon!\nStay tuned for an Uplift update.",
-                // TODO: Change to: text = "We are done for today.\nPlease check again tomorrow!",
+                text = "We are done for today.\nPlease check again tomorrow!",
                 fontFamily = montserratFamily,
                 fontSize = 14.sp,
                 fontWeight = FontWeight(300),

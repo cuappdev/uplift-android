@@ -366,8 +366,7 @@ fun MainLoaded(
                             .padding(top = 12.dp, bottom = 24.dp),
                         contentAlignment = Alignment.Center
                     ) {
-                        // TODO: Change to false when backend includes classes.
-                        NoClasses(comingSoon = true)
+                        NoClasses()
                     }
                 } else LazyRow(
                     state = rememberLazyListState(), contentPadding = PaddingValues(

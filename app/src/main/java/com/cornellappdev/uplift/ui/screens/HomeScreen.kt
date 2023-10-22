@@ -9,7 +9,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.cornellappdev.uplift.models.LocationRepository
-import com.cornellappdev.uplift.models.UpliftClass
 import com.cornellappdev.uplift.networking.ApiResponse
 import com.cornellappdev.uplift.ui.screens.subscreens.MainError
 import com.cornellappdev.uplift.ui.screens.subscreens.MainLoaded
@@ -62,9 +61,9 @@ fun HomeScreen(
         val cState = state.second
 
         // Loaded!
-        if (gState is ApiResponse.Success /* && cState is ApiResponse.Success */) {
+        if (gState is ApiResponse.Success && cState is ApiResponse.Success) {
             val gymsList = gState.data
-            val classesList = listOf<UpliftClass>() // cState.data
+            val classesList = cState.data
             MainLoaded(
                 gymDetailViewModel = gymDetailViewModel,
                 classDetailViewModel = classDetailViewModel,

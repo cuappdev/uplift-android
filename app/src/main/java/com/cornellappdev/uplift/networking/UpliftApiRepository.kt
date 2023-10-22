@@ -5,6 +5,7 @@ import com.cornellappdev.uplift.models.UpliftClass
 import com.cornellappdev.uplift.models.UpliftGym
 import com.cornellappdev.uplift.networking.UpliftApiRepository.classesApiFlow
 import com.cornellappdev.uplift.networking.UpliftApiRepository.gymApiFlow
+import com.example.rocketreserver.ClassListQuery
 import com.example.rocketreserver.GymListQuery
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -29,7 +30,7 @@ object UpliftApiRepository {
         .build()
 
     private val gymQuery = apolloClient.query(GymListQuery())
-    // private val classQuery = apolloClient.query(ClassListQuery())
+    private val classQuery = apolloClient.query(ClassListQuery())
 
     private val _gymApiFlow: MutableStateFlow<ApiResponse<List<UpliftGym>>> =
         MutableStateFlow(ApiResponse.Loading)
@@ -85,14 +86,31 @@ object UpliftApiRepository {
                 }
         }
 
-        /*(activeClassJob = CoroutineScope(Dispatchers.IO).launch {
+        // TODO: Backend has refactored such that classes are under gyms now.
+        //  Thus, in pretty much a gymQuery, we have to map and then flatten
+        //  to get a list of all classes. Then, pretty much pipeline it down [_classesApiFlow].
+        //  This can be done with a query that just queries each gym's classes list.
+        //  I'll do that here.
+        activeClassJob = CoroutineScope(Dispatchers.IO).launch {
             classQuery.toFlow().cancellable()
                 .map {
-                    val classList = it.data?.classes?.filterNotNull()
-                    if (classList == null) {
+                    val gyms = it.data?.gyms
+                    if (gyms == null) {
                         ApiResponse.Error
                     } else {
-                        ApiResponse.Success(classList.map { query -> query.toUpliftClass() })
+                        val classList =
+                            gyms.filterNotNull().mapNotNull { gym -> gym.classes }.flatten()
+                        val upliftClasses =
+                            classList.filterNotNull().mapNotNull { query -> query.toUpliftClass() }
+                        ApiResponse.Success(
+                            upliftClasses.distinctBy { upliftClass ->
+                                Triple(
+                                    upliftClass.name,
+                                    upliftClass.location,
+                                    upliftClass.time
+                                )
+                            }
+                        )
                     }
                 }
                 .catch {
@@ -104,7 +122,7 @@ object UpliftApiRepository {
                 ).collect {
                     _classesApiFlow.emit(it)
                 }
-        }*/
+        }
     }
 
     init {
