@@ -70,6 +70,7 @@ dependencies {
     implementation "com.apollographql.apollo3:apollo-runtime:3.8.0"
     implementation 'com.valentinilk.shimmer:compose-shimmer:1.0.5'
     implementation 'com.google.android.gms:play-services-location:21.0.1'
+    implementation 'androidx.core:core-splashscreen:1.0.1'
 }
 
 apollo {

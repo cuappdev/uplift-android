@@ -5,6 +5,7 @@ import android.content.pm.ActivityInfo
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.datastore.preferences.preferencesDataStore
 import com.cornellappdev.uplift.models.DatastoreRepository
 import com.cornellappdev.uplift.ui.MainNavigationWrapper
@@ -22,6 +23,8 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        installSplashScreen()
+
         // If statement needed to fix crash when datastore initializes twice.
         if (!::datastoreRepository.isInitialized)
             datastoreRepository = DatastoreRepository(dataStore)

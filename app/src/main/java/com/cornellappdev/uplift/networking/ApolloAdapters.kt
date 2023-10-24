@@ -169,7 +169,8 @@ fun GymListQuery.Gym.toUpliftGyms(): List<UpliftGym> {
             id = if (idMap.containsKey(id)) idMap[id]!! else id,
             popularTimes = pullPopularTimes(facility),
             // Need replace because there's a typo with the single quote.
-            imageUrl = imageUrl?.replace("'", "") ?: defaultGymUrl,
+            imageUrl = imageUrl?.replace("'", "")
+                ?.replace("toni-morrison-outside", "toni_morrison_outside") ?: defaultGymUrl,
             hours = pullHours(facility),
             equipmentGroupings = pullEquipmentGroupings(facility),
             miscellaneous = pullMiscellaneous(),
@@ -182,7 +183,6 @@ fun GymListQuery.Gym.toUpliftGyms(): List<UpliftGym> {
         )
     }
 }
-
 
 fun ClassListQuery.Class.toUpliftClass(imageUrl: String = defaultClassUrl): UpliftClass? {
     try {
