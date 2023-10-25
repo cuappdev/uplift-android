@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import com.cornellappdev.uplift.models.UpliftClass
 import com.cornellappdev.uplift.networking.ApiResponse
 import com.cornellappdev.uplift.networking.UpliftApiRepository
+import com.cornellappdev.uplift.util.startTimeComparator
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -32,9 +33,7 @@ class ClassesViewModel : ViewModel() {
                     val dateFromToday = Calendar.getInstance()
                     dateFromToday.add(Calendar.DAY_OF_YEAR, day)
                     it.date.get(Calendar.DAY_OF_YEAR) == dateFromToday.get(Calendar.DAY_OF_YEAR)
-                }.sortedWith { class1, class2 ->
-                    class1.time.start.compareTo(class2.time.start)
-                })
+                }.sortedWith(startTimeComparator))
             })
         }.stateIn(
             CoroutineScope(Dispatchers.Main),

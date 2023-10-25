@@ -106,7 +106,6 @@ fun ClassInfoCard(
                             fontSize = 12.sp,
                             fontWeight = FontWeight(400),
                             lineHeight = 14.63.sp,
-                            textAlign = TextAlign.Center,
                             color = PRIMARY_BLACK
                         )
 

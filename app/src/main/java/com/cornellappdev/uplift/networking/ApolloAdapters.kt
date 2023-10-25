@@ -167,6 +167,7 @@ fun GymListQuery.Gym.toUpliftGyms(): List<UpliftGym> {
         UpliftGym(
             name = facility.name,
             id = if (idMap.containsKey(id)) idMap[id]!! else id,
+            facilityId = facility.id,
             popularTimes = pullPopularTimes(facility),
             // Need replace because there's a typo with the single quote.
             imageUrl = imageUrl?.replace("'", "")

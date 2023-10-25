@@ -3,6 +3,7 @@ package com.cornellappdev.uplift.util
 import android.location.Location
 import com.cornellappdev.uplift.models.TimeInterval
 import com.cornellappdev.uplift.models.TimeOfDay
+import com.cornellappdev.uplift.models.UpliftClass
 import java.util.Calendar
 
 /**
@@ -168,4 +169,16 @@ fun getDistanceBetween(
 
 
     return if (results.isNotEmpty()) results[0] else -1f
+}
+
+/**
+ * A comparator for [UpliftClass]es that will sort in ascending order by start time,
+ * irrespective of day.
+ */
+val startTimeComparator = { class1: UpliftClass, class2: UpliftClass ->
+    if (class1.time.start.compareTo(class2.time.start) != 0) {
+        class1.time.start.compareTo(class2.time.start)
+    } else {
+        class1.time.end.compareTo(class2.time.end)
+    }
 }

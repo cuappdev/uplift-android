@@ -7,6 +7,7 @@ import com.cornellappdev.uplift.networking.ApiResponse
 import com.cornellappdev.uplift.networking.UpliftApiRepository
 import com.cornellappdev.uplift.util.getSystemTime
 import com.cornellappdev.uplift.util.sameDayAs
+import com.cornellappdev.uplift.util.startTimeComparator
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -47,9 +48,7 @@ class GymDetailViewModel : ViewModel() {
                         it.gymId == gym?.id
                                 && it.date.sameDayAs(GregorianCalendar())
                                 && it.time.end.compareTo(getSystemTime()) >= 0
-                    }.sortedWith { class1, class2 ->
-                        class1.time.start.compareTo(class2.time.start)
-                    }
+                    }.sortedWith(startTimeComparator)
             }
         }.stateIn(
             CoroutineScope(Dispatchers.Main),
