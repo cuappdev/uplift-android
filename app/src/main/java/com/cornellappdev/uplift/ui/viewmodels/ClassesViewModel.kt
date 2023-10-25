@@ -33,7 +33,11 @@ class ClassesViewModel : ViewModel() {
                     dateFromToday.add(Calendar.DAY_OF_YEAR, day)
                     it.date.get(Calendar.DAY_OF_YEAR) == dateFromToday.get(Calendar.DAY_OF_YEAR)
                 }.sortedWith { class1, class2 ->
-                    class1.time.start.compareTo(class2.time.start)
+                    if (class1.time.start.compareTo(class2.time.start) != 0) {
+                        class1.time.start.compareTo(class2.time.start)
+                    } else {
+                        class1.time.end.compareTo(class2.time.end)
+                    }
                 })
             })
         }.stateIn(

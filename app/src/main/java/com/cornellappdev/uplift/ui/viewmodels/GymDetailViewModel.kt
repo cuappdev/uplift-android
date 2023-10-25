@@ -48,7 +48,11 @@ class GymDetailViewModel : ViewModel() {
                                 && it.date.sameDayAs(GregorianCalendar())
                                 && it.time.end.compareTo(getSystemTime()) >= 0
                     }.sortedWith { class1, class2 ->
-                        class1.time.start.compareTo(class2.time.start)
+                        if (class1.time.start.compareTo(class2.time.start) != 0) {
+                            class1.time.start.compareTo(class2.time.start)
+                        } else {
+                            class1.time.end.compareTo(class2.time.end)
+                        }
                     }
             }
         }.stateIn(
