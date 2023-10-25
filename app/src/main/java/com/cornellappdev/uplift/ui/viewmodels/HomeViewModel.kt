@@ -37,7 +37,14 @@ class HomeViewModel : ViewModel() {
                     upliftClass.date.sameDayAs(GregorianCalendar())
                 }.filter { upliftClass ->
                     upliftClass.time.end.compareTo(getSystemTime()) > 0
-                })
+                }.sortedWith { class1, class2 ->
+                    if (class1.time.start.compareTo(class2.time.start) != 0) {
+                        class1.time.start.compareTo(class2.time.start)
+                    } else {
+                        class1.time.end.compareTo(class2.time.end)
+                    }
+                }
+            )
         }
     }.stateIn(
         CoroutineScope(Dispatchers.Main), SharingStarted.Eagerly, ApiResponse.Loading
