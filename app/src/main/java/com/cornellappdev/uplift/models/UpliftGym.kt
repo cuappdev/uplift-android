@@ -14,7 +14,14 @@ import kotlin.math.roundToInt
  */
 data class UpliftGym(
     val name: String,
+    /**
+     * The gym id.
+     */
     val id: String,
+    /**
+     * The fitness facility ID (see [id] for gym id).
+     */
+    val facilityId: String,
     /**
      * A list of exactly 7 lists of time intervals. Each list of time intervals corresponds to a particular
      * day (index 0=Monday, ..., 6=Sunday), and the times in said list indicates the hours of
@@ -73,7 +80,7 @@ data class UpliftGym(
      */
     @Composable
     fun isFavorite(): Boolean {
-        return datastoreRepository.favoriteGymsFlow.collectAsState().value.contains(id)
+        return datastoreRepository.favoriteGymsFlow.collectAsState().value.contains(facilityId)
     }
 
     /**
@@ -81,8 +88,8 @@ data class UpliftGym(
      */
     fun toggleFavorite() {
         datastoreRepository.saveFavoriteGym(
-            id,
-            !datastoreRepository.favoriteGymsFlow.value.contains(id)
+            facilityId,
+            !datastoreRepository.favoriteGymsFlow.value.contains(facilityId)
         )
     }
 
