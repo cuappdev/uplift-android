@@ -1,6 +1,5 @@
 package com.cornellappdev.uplift.networking
 
-import android.util.Log
 import com.apollographql.apollo3.ApolloClient
 import com.cornellappdev.uplift.models.UpliftClass
 import com.cornellappdev.uplift.models.UpliftGym
@@ -20,7 +19,6 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import java.util.Calendar
 
 /**
  * A repository dealing with all API backend connection in Uplift.
@@ -113,10 +111,6 @@ object UpliftApiRepository {
 
                         val upliftClasses =
                             classList.mapNotNull { query -> query.first!!.toUpliftClass(query.second) }
-
-                        Log.d("classes", upliftClasses.map {
-                            it.date.get(Calendar.DAY_OF_MONTH)
-                        }.toString())
 
                         ApiResponse.Success(
                             upliftClasses.distinctBy { upliftClass ->
