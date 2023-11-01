@@ -19,8 +19,11 @@ import com.cornellappdev.uplift.ui.components.home.GymCapacity
 import com.cornellappdev.uplift.util.PRIMARY_BLACK
 import com.cornellappdev.uplift.util.montserratFamily
 
+/**
+ * The Gym Detail's Capacity section.
+ */
 @Composable
-fun GymCapacitiesSection(capacity: UpliftCapacity) {
+fun GymCapacitiesSection(closed: Boolean, capacity: UpliftCapacity?) {
     Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
         Spacer(modifier = Modifier.height(14.dp))
         // Title
@@ -37,7 +40,8 @@ fun GymCapacitiesSection(capacity: UpliftCapacity) {
         Row(modifier = Modifier.padding(top = 18.dp, bottom = 24.dp)) {
             GymCapacity(
                 capacity = capacity,
-                label = capacity.updatedString(),
+                label = capacity?.updatedString(),
+                closed = closed,
                 gymDetail = true
             )
         }

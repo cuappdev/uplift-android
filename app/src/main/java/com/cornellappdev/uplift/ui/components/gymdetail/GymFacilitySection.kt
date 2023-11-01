@@ -38,7 +38,7 @@ import com.cornellappdev.uplift.ui.screens.LineSpacer
 import com.cornellappdev.uplift.util.ACCENT_CLOSED
 import com.cornellappdev.uplift.util.ACCENT_OPEN
 import com.cornellappdev.uplift.util.PRIMARY_BLACK
-import com.cornellappdev.uplift.util.isCurrentlyOpen
+import com.cornellappdev.uplift.util.isOpen
 import com.cornellappdev.uplift.util.montserratFamily
 
 /**
@@ -105,7 +105,7 @@ fun GymFacilitySection(gym: UpliftGym, today: Int) {
                     openedFacility = if (openedFacility == 2) -1 else 2
                 },
                 open = when (gym.gymnasiumInfo[today] != null
-                        && isCurrentlyOpen(gym.gymnasiumInfo[today]!!.hours)) {
+                        && isOpen(gym.gymnasiumInfo[today]!!.hours)) {
                     true -> OpenType.OPEN
                     else -> OpenType.CLOSED
                 }
@@ -125,7 +125,7 @@ fun GymFacilitySection(gym: UpliftGym, today: Int) {
                     openedFacility = if (openedFacility == 3) -1 else 3
                 },
                 open = when (gym.swimmingInfo[today] != null
-                        && isCurrentlyOpen(gym.swimmingInfo[today]!!.hours())) {
+                        && isOpen(gym.swimmingInfo[today]!!.hours())) {
                     true -> OpenType.OPEN
                     else -> OpenType.CLOSED
                 }
@@ -146,7 +146,7 @@ fun GymFacilitySection(gym: UpliftGym, today: Int) {
                     openedFacility = if (openedFacility == 4) -1 else 4
                 },
                 open = when (gym.bowlingInfo[today] != null
-                        && isCurrentlyOpen(gym.bowlingInfo[today]!!.hours)) {
+                        && isOpen(gym.bowlingInfo[today]!!.hours)) {
                     true -> OpenType.OPEN
                     else -> OpenType.CLOSED
                 }
