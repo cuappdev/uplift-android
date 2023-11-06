@@ -70,7 +70,7 @@ import com.cornellappdev.uplift.util.GRAY04
 import com.cornellappdev.uplift.util.PRIMARY_YELLOW
 import com.cornellappdev.uplift.util.asTimeOfDay
 import com.cornellappdev.uplift.util.colorInterp
-import com.cornellappdev.uplift.util.isCurrentlyOpen
+import com.cornellappdev.uplift.util.isOpen
 import com.cornellappdev.uplift.util.montserratFamily
 import com.cornellappdev.uplift.util.todayIndex
 import kotlinx.coroutines.launch
@@ -91,9 +91,9 @@ fun MainLoaded(
     onToggleCapacities: () -> Unit,
 ) {
     val gymComparator = { gym1: UpliftGym, gym2: UpliftGym ->
-        if (isCurrentlyOpen(gym1.hours[todayIndex()]) && !isCurrentlyOpen(gym2.hours[todayIndex()])) {
+        if (isOpen(gym1.hours[todayIndex()]) && !isOpen(gym2.hours[todayIndex()])) {
             -1
-        } else if (!isCurrentlyOpen(gym1.hours[todayIndex()]) && isCurrentlyOpen(
+        } else if (!isOpen(gym1.hours[todayIndex()]) && isOpen(
                 gym2.hours[todayIndex()]
             )
         ) {
@@ -249,66 +249,67 @@ fun MainLoaded(
                                 .padding(top = 12.dp, bottom = 24.dp),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            gyms.filter { gym -> gym.upliftCapacity != null }
-                                .let { gymsWithCapacities ->
-                                    // Place two capacities per row, or one if it's the last row and only 1 is left.
-                                    val bound = (gymsWithCapacities.size / 2f).roundToInt()
-                                    for (i in 0 until bound) {
-                                        Row(
+                            gyms.let { gymsWithCapacities ->
+                                // Place two capacities per row, or one if it's the last row and only 1 is left.
+                                val bound = (gymsWithCapacities.size / 2f).roundToInt()
+                                for (i in 0 until bound) {
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(horizontal = 30.dp),
+                                        horizontalArrangement = Arrangement.SpaceEvenly
+                                    ) {
+                                        // First index [i * 2] should always exist.
+                                        Box(
                                             modifier = Modifier
-                                                .fillMaxWidth()
-                                                .padding(horizontal = 30.dp),
-                                            horizontalArrangement = Arrangement.SpaceEvenly
+                                                .padding(16.dp)
+                                                .widthIn(min = 143.dp)
+                                                .clickable(
+                                                    indication = null,
+                                                    interactionSource = MutableInteractionSource()
+                                                ) {
+                                                    navController.navigateToGym(
+                                                        gymDetailViewModel = gymDetailViewModel,
+                                                        gym = gymsWithCapacities[i * 2]
+                                                    )
+                                                },
+                                            contentAlignment = Alignment.Center
                                         ) {
-                                            // First index [i * 2] should always exist.
+                                            GymCapacity(
+                                                capacity = gymsWithCapacities[i * 2].upliftCapacity,
+                                                label = gymsWithCapacities[i * 2].name,
+                                                closed = !isOpen(gymsWithCapacities[i * 2].hours[todayIndex()])
+                                            )
+                                        }
+
+                                        // Second index [i * 2 + 1] may not exist.
+                                        if (i * 2 + 1 < gymsWithCapacities.size) {
                                             Box(
                                                 modifier = Modifier
                                                     .padding(16.dp)
                                                     .widthIn(min = 143.dp)
-                                                    .clickable(
-                                                        indication = null,
-                                                        interactionSource = MutableInteractionSource()
-                                                    ) {
+                                                    .clickable {
                                                         navController.navigateToGym(
                                                             gymDetailViewModel = gymDetailViewModel,
-                                                            gym = gymsWithCapacities[i * 2]
+                                                            gym = gymsWithCapacities[i * 2 + 1]
                                                         )
                                                     },
                                                 contentAlignment = Alignment.Center
                                             ) {
                                                 GymCapacity(
-                                                    capacity = gymsWithCapacities[i * 2].upliftCapacity!!,
-                                                    label = gymsWithCapacities[i * 2].name
+                                                    capacity = gymsWithCapacities[i * 2 + 1].upliftCapacity,
+                                                    label = gymsWithCapacities[i * 2 + 1].name,
+                                                    closed = !isOpen(gymsWithCapacities[i * 2].hours[todayIndex()])
                                                 )
                                             }
-
-                                            // Second index [i * 2 + 1] may not exist.
-                                            if (i * 2 + 1 < gymsWithCapacities.size) {
-                                                Box(
-                                                    modifier = Modifier
-                                                        .padding(16.dp)
-                                                        .widthIn(min = 143.dp)
-                                                        .clickable {
-                                                            navController.navigateToGym(
-                                                                gymDetailViewModel = gymDetailViewModel,
-                                                                gym = gymsWithCapacities[i * 2 + 1]
-                                                            )
-                                                        },
-                                                    contentAlignment = Alignment.Center
-                                                ) {
-                                                    GymCapacity(
-                                                        capacity = gymsWithCapacities[i * 2 + 1].upliftCapacity!!,
-                                                        label = gymsWithCapacities[i * 2 + 1].name
-                                                    )
-                                                }
-                                            }
-                                        }
-
-                                        if (i != bound - 1) {
-                                            Spacer(modifier = Modifier.height(12.dp))
                                         }
                                     }
+
+                                    if (i != bound - 1) {
+                                        Spacer(modifier = Modifier.height(12.dp))
+                                    }
                                 }
+                            }
                         }
                     }
                 }

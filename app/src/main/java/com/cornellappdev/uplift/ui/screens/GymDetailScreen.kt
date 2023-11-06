@@ -182,7 +182,7 @@ fun GymDetailScreen(
             )
 
             // CLOSED
-            if (gym != null && (gym!!.hours[day] == null || !isCurrentlyOpen(gym!!.hours[day]!!))) {
+            if (gym != null && (gym!!.hours[day] == null || !isOpen(gym!!.hours[day]!!))) {
                 Box(
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
@@ -209,16 +209,18 @@ fun GymDetailScreen(
         }
 
         if (gym != null) {
+            val closed = !isOpen(gym!!.hours[day])
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(Color.White)
             ) {
                 GymHours(hours = gym!!.hours, day)
-                if (gym!!.upliftCapacity != null) {
-                    LineSpacer()
-                    GymCapacitiesSection(gym!!.upliftCapacity!!)
-                }
+                LineSpacer()
+                GymCapacitiesSection(
+                    capacity = gym!!.upliftCapacity,
+                    closed = closed
+                )
                 if (gym!!.popularTimes.isNotEmpty()) {
                     LineSpacer()
                     PopularTimesSection(gym!!.popularTimes[day])

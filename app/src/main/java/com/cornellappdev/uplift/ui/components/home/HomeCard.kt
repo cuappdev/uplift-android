@@ -66,7 +66,7 @@ fun HomeCard(gym: UpliftGym, onClick: () -> Unit) {
         ),
         label = "homeCardLoading"
     )
-    val showGymCapacity = gym.upliftCapacity != null && isCurrentlyOpen(gym.hours[day]!!)
+    val showGymCapacity = gym.upliftCapacity != null && isOpen(gym.hours[day]!!)
 
     Box(
         modifier = Modifier
@@ -83,7 +83,7 @@ fun HomeCard(gym: UpliftGym, onClick: () -> Unit) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .alpha(if (isCurrentlyOpen(gym.hours[day])) 1f else .6f)
+                    .alpha(if (isOpen(gym.hours[day])) 1f else .6f)
             ) {
                 Box(modifier = Modifier.fillMaxSize()) {
                     Crossfade(
@@ -169,7 +169,7 @@ fun HomeCard(gym: UpliftGym, onClick: () -> Unit) {
                             }
                         }
                         Row {
-                            if (isCurrentlyOpen(gym.hours[day])) Text(
+                            if (isOpen(gym.hours[day])) Text(
                                 text = "Open",
                                 fontSize = 12.sp,
                                 color = ACCENT_OPEN,

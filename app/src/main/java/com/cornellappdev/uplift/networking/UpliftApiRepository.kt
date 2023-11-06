@@ -108,14 +108,17 @@ object UpliftApiRepository {
                                     )
                                 }
                             }.flatten().filter { pair -> pair.first != null }
+
                         val upliftClasses =
                             classList.mapNotNull { query -> query.first!!.toUpliftClass(query.second) }
+
                         ApiResponse.Success(
                             upliftClasses.distinctBy { upliftClass ->
-                                Triple(
+                                listOf(
                                     upliftClass.name,
                                     upliftClass.location,
-                                    upliftClass.time
+                                    upliftClass.time,
+                                    upliftClass.date
                                 )
                             }
                         )

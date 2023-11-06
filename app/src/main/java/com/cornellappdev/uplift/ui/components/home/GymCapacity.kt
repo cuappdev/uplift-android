@@ -36,14 +36,16 @@ import com.cornellappdev.uplift.util.montserratFamily
  *                  and whose second element is the max capacity.
  * @param label     The name of the gym placed under this indicator. Can be null to indicate no
  *                  label.
+ * @param closed    If this gym is closed.
  */
 @Composable
 fun GymCapacity(
-    capacity: UpliftCapacity,
+    capacity: UpliftCapacity?,
     label: String?,
+    closed: Boolean,
     gymDetail: Boolean = false
 ) {
-    val fraction = capacity.percent.toFloat()
+    val fraction = if (!closed && capacity != null) capacity.percent.toFloat() else 0f
     val animatedFraction = remember { Animatable(0f) }
 
     // When the composable launches, animate the fraction to the capacity fraction.
@@ -73,7 +75,8 @@ fun GymCapacity(
             )
 
     val size = if (gymDetail) 104.5.dp else 72.dp
-    val percentFontSize = if (gymDetail) 17.sp else 12.sp
+    val percentFontSize =
+        (if (gymDetail) 17.sp else 12.sp) * (if (closed || capacity != null) 1f else .9f)
     val labelColor = if (gymDetail) GRAY04 else PRIMARY_BLACK
     val labelFontWeight = if (gymDetail) FontWeight(300) else FontWeight(600)
     val labelPadding = if (gymDetail) 9.dp else 12.dp
@@ -94,11 +97,12 @@ fun GymCapacity(
                 strokeCap = StrokeCap.Round
             )
             Text(
-                text = capacity.percentString(),
+                text = if (closed) "CLOSED"
+                else capacity?.percentString() ?: "NO DATA",
                 fontFamily = montserratFamily,
                 fontSize = percentFontSize,
                 fontWeight = FontWeight(700),
-                color = PRIMARY_BLACK,
+                color = if (closed || capacity == null) GRAY02 else PRIMARY_BLACK,
                 modifier = Modifier.align(Alignment.Center),
                 textAlign = TextAlign.Center,
             )
