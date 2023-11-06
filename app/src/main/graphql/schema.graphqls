@@ -1,66 +1,56 @@
 type Query {
-  gyms(day: Date, id: String): [GymType]
-
-  classes(detailIds: [String], day: Date, name: String, tags: [String], gymId: String, instructor: String): [ClassType]
+  gyms: [Gym]
 }
 
-type GymType {
-  id: String!
+type Gym {
+  id: ID!
 
   name: String!
 
   description: String!
 
-  facilities: [FacilityType]!
+  location: String!
 
-  popular: [[Int]]
+  latitude: Float!
 
-  times: [DayTimeRangeType]!
+  longitude: Float!
 
   imageUrl: String
+
+  facilities: [Facility]
+
+  classes: [ClassInstance]
 }
+
+"""
+The `ID` scalar type represents a unique identifier, often used to refetch an object or as key for a cache. The ID type appears in a JSON response as a String; however, it is not intended to be human-readable. When expected as an input type, any string (such as `"4"`) or integer (such as `4`) input value will be accepted as an ID.
+"""
+scalar ID
 
 """
 The `String` scalar type represents textual data, represented as UTF-8 character sequences. The String type is most often used by GraphQL to represent free-form human-readable text.
 """
 scalar String
 
-type FacilityType {
-  details: [FacilityDetailsType]!
+"""
+The `Float` scalar type represents signed double-precision fractional values as specified by [IEEE 754](http://en.wikipedia.org/wiki/IEEE_floating_point). 
+"""
+scalar Float
 
-  name: String!
-}
+type Facility {
+  id: ID!
 
-type FacilityDetailsType {
-  detailsType: String!
-
-  equipment: [EquipmentType]!
-
-  imageUrls: [String]!
-
-  items: [String]!
-
-  prices: [String]!
-
-  subFacilityNames: [String]!
-
-  times: [DayTimeRangesType]!
-}
-
-type EquipmentType {
-  equipmentType: String!
+  gymId: Int!
 
   name: String!
 
-  quantity: String!
+  facilityType: FacilityType!
 
-  workoutType: String!
-}
+  openHours(name: String): [OpenHours]
 
-type DayTimeRangesType {
-  day: Int!
+  capacities: [Capacity]
 
-  timeRanges: [TimeRangeType]!
+  capacity: Capacity
 }
 
 """
@@ -68,89 +58,83 @@ The `Int` scalar type represents non-fractional signed whole numeric values. Int
 """
 scalar Int
 
-type TimeRangeType {
-  endTime: Time!
+"""
+An enumeration.
+"""
+enum FacilityType {
+  FITNESS
 
-  restrictions: String!
+  POOL
+}
 
-  specialHours: Boolean!
+type OpenHours {
+  id: ID!
 
-  startTime: Time!
+  facilityId: Int!
+
+  day: Int!
+
+  startTime: String!
+
+  endTime: String!
+}
+
+type Capacity {
+  id: ID!
+
+  facilityId: Int!
+
+  count: Int!
+
+  percent: Float!
+
+  updated: DateTime!
 }
 
 """
-The `Time` scalar type represents a Time value as
-specified by
+The `DateTime` scalar type represents a DateTime
+value as specified by
 [iso8601](https://en.wikipedia.org/wiki/ISO_8601).
 """
-scalar Time
+scalar DateTime
+
+type ClassInstance {
+  id: ID!
+
+  gymId: Int
+
+  classId: Int!
+
+  location: String!
+
+  instructor: String!
+
+  isCanceled: Boolean!
+
+  isVirtual: Boolean!
+
+  startTime: DateTime!
+
+  endTime: DateTime!
+
+  class_: Class
+
+  gym: Gym
+}
 
 """
 The `Boolean` scalar type represents `true` or `false`.
 """
 scalar Boolean
 
-type DayTimeRangeType {
-  day: Int!
-
-  endTime: Time!
-
-  restrictions: String!
-
-  specialHours: Boolean!
-
-  startTime: Time!
-}
-
-"""
-The `Date` scalar type represents a Date
-value as specified by
-[iso8601](https://en.wikipedia.org/wiki/ISO_8601).
-"""
-scalar Date
-
-type ClassType {
-  id: String!
-
-  gymId: String
-
-  gym: GymType
-
-  location: String!
-
-  detailsId: String!
-
-  details: ClassDetailType!
-
-  date: Date!
-
-  startTime: Time
-
-  endTime: Time
-
-  instructor: String!
-
-  isCancelled: Boolean!
-
-  imageUrl: String!
-}
-
-type ClassDetailType {
-  id: String!
+type Class {
+  id: ID!
 
   name: String!
 
   description: String!
 
-  tags: [TagType]!
-
-  categories: [String]!
-}
-
-type TagType {
-  label: String!
-
-  imageUrl: String!
+  gyms: [ClassInstance]
 }
 
 """
@@ -310,11 +294,11 @@ type __Directive {
 
   args: [__InputValue!]!
 
-  onOperation: Boolean!
+  onOperation: Boolean! @deprecated(reason: "Use `locations`.")
 
-  onFragment: Boolean!
+  onFragment: Boolean! @deprecated(reason: "Use `locations`.")
 
-  onField: Boolean!
+  onField: Boolean! @deprecated(reason: "Use `locations`.")
 }
 
 """
@@ -411,6 +395,16 @@ enum __DirectiveLocation {
   """
   INPUT_FIELD_DEFINITION
 }
+
+"""
+Directs the executor to include this field or fragment only when the `if` argument is true.
+"""
+directive @include ("Included when true." if: Boolean!) on FIELD|FRAGMENT_SPREAD|INLINE_FRAGMENT
+
+"""
+Directs the executor to skip this field or fragment when the `if` argument is true.
+"""
+directive @skip ("Skipped when true." if: Boolean!) on FIELD|FRAGMENT_SPREAD|INLINE_FRAGMENT
 
 schema {
   query: Query

@@ -34,8 +34,5 @@ query GymList {
     latitude
     longitude
     imageUrl
-    classes {
-	id
-    }
   }
 }
