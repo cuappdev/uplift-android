@@ -45,7 +45,9 @@ fun GymCapacity(
     closed: Boolean,
     gymDetail: Boolean = false
 ) {
-    val fraction = if (!closed && capacity != null) capacity.percent.toFloat() else 0f
+    val grayedOut = closed || capacity == null
+
+    val fraction = if (!grayedOut) capacity!!.percent.toFloat() else 0f
     val animatedFraction = remember { Animatable(0f) }
 
     // When the composable launches, animate the fraction to the capacity fraction.
@@ -102,12 +104,12 @@ fun GymCapacity(
                 fontFamily = montserratFamily,
                 fontSize = percentFontSize,
                 fontWeight = FontWeight(700),
-                color = if (closed || capacity == null) GRAY02 else PRIMARY_BLACK,
+                color = if (grayedOut) GRAY02 else PRIMARY_BLACK,
                 modifier = Modifier.align(Alignment.Center),
                 textAlign = TextAlign.Center,
             )
         }
-        if (label != null) {
+        if (label != null && !(gymDetail && grayedOut)) {
             Spacer(modifier = Modifier.height(labelPadding))
             Text(
                 text = label,
