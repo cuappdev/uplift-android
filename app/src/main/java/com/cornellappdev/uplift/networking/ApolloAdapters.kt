@@ -1,6 +1,5 @@
 package com.cornellappdev.uplift.networking
 
-import android.util.Log
 import com.cornellappdev.uplift.ClassListQuery
 import com.cornellappdev.uplift.GymListQuery
 import com.cornellappdev.uplift.models.BowlingInfo
@@ -164,11 +163,9 @@ fun GymListQuery.Gym.toUpliftGyms(): List<UpliftGym> {
     val fitnessFacilities = facilities?.filter { facility ->
         facility?.facilityType.toString() == "FITNESS"
     } ?: listOf()
-    Log.d("query", "$id ...has $fitnessFacilities")
 
-    // TODO: Temporary fix to make ids line up.
-    //  Currently, there is a duplicate of each gym that has the correct id and classes
-    //  but everything else wrong. Why must backend do this.
+    // As of 11/8/23, there are duplicates of each gym with the wrong id.
+    //  This maps their ids correctly.
     val idMap = mapOf("1792236" to "1", "3454585" to "4", "9537684" to "2", "10423374" to "3")
 
     val gyms = fitnessFacilities.filterNotNull().map { facility ->
@@ -191,8 +188,6 @@ fun GymListQuery.Gym.toUpliftGyms(): List<UpliftGym> {
             longitude = longitude
         )
     }
-
-    Log.d("query", "$id finally turns into: $gyms")
 
     return gyms
 }
