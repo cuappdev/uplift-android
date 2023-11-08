@@ -41,21 +41,19 @@ import com.cornellappdev.uplift.util.montserratFamily
 @Composable
 fun TabContentSelector(tabs: List<Pair<String, @Composable () -> Unit>>) {
     var selectedTab by remember { mutableIntStateOf(0) }
+
     val labels = tabs.map { it.first }
     val composables = tabs.map { it.second }
+    val composableToShow = composables[selectedTab]
 
     val n = labels.size.toFloat()
-
     val leftWeightState = animateFloatAsState(
         targetValue = selectedTab / n,
         animationSpec = spring(DampingRatioLowBouncy, StiffnessMediumLow),
         label = "yellow_bar"
     )
-
     val leftWeight = leftWeightState.value
     val rightWeight = (n - 1) / n - leftWeight
-
-    val composableToShow = composables[selectedTab]
 
     Column(modifier = Modifier.fillMaxWidth()) {
         // Tabs.
@@ -72,7 +70,10 @@ fun TabContentSelector(tabs: List<Pair<String, @Composable () -> Unit>>) {
                     }
 
                     val fontWeight =
-                        animateIntAsState(targetValue = if (i == selectedTab) 700 else 500)
+                        animateIntAsState(
+                            targetValue = if (i == selectedTab) 700 else 500,
+                            label = "label_weight"
+                        )
 
                     val label = labels[i]
                     Box(
@@ -129,7 +130,6 @@ fun TabContentSelector(tabs: List<Pair<String, @Composable () -> Unit>>) {
                 if (rightWeight > 0)
                     Box(modifier = Modifier.weight(rightWeight)) {}
             }
-
         }
 
         // Content.
