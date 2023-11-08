@@ -19,18 +19,19 @@ object LocationRepository {
     private val _currentLocation: MutableState<Location?> = mutableStateOf(null)
 
     /**
-     * Either valued by the current user's location, or null if the location has not yet
+     * Either is the current user's location, or null if the location has not yet
      * been initialized.
      * */
-    var currentLocation: State<Location?> = _currentLocation
+    var currentLocation = (_currentLocation as State<Location?>)
 
     /**
-     * Updates [currentLocation] to the user's current location.
+     * Starts updating [currentLocation] to the user's current location.
      */
     fun instantiate(context: Context) {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
         updateLocation(context)
     }
+
 
     private fun updateLocation(context: Context) {
         if (ActivityCompat.checkSelfPermission(

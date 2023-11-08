@@ -48,11 +48,11 @@ fun HomeCard(gym: UpliftGym, onClick: () -> Unit) {
     val day: Int = todayIndex()
 
     // Gets the current time interval's ending time.
-    val activeInterval = gym.hours[day]!!.find { hour -> hour.within(getSystemTime()) }
+    val activeInterval = gym.hours[day]?.find { hour -> hour.within(getSystemTime()) }
     val closesAtTime = activeInterval?.end?.toString()
 
     // The next time the gym will open today, if ever.
-    val nextInterval = gym.hours[day]!!.find { hour -> hour.start.compareTo(getSystemTime()) > 0 }
+    val nextInterval = gym.hours[day]?.find { hour -> hour.start.compareTo(getSystemTime()) > 0 }
     val opensAtTime = nextInterval?.start?.toString()
 
     val bitmapState = CoilRepository.getUrlState(gym.imageUrl, LocalContext.current)
@@ -66,7 +66,7 @@ fun HomeCard(gym: UpliftGym, onClick: () -> Unit) {
         ),
         label = "homeCardLoading"
     )
-    val showGymCapacity = gym.upliftCapacity != null && isOpen(gym.hours[day]!!)
+    val showGymCapacity = gym.upliftCapacity != null && isOpen(gym.hours[day])
 
     Box(
         modifier = Modifier

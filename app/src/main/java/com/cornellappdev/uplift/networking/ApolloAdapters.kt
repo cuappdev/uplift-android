@@ -1,5 +1,7 @@
 package com.cornellappdev.uplift.networking
 
+import com.cornellappdev.uplift.ClassListQuery
+import com.cornellappdev.uplift.GymListQuery
 import com.cornellappdev.uplift.models.BowlingInfo
 import com.cornellappdev.uplift.models.EquipmentGrouping
 import com.cornellappdev.uplift.models.GymnasiumInfo
@@ -13,13 +15,12 @@ import com.cornellappdev.uplift.models.UpliftGym
 import com.cornellappdev.uplift.util.asTimeOfDay
 import com.cornellappdev.uplift.util.defaultClassUrl
 import com.cornellappdev.uplift.util.defaultGymUrl
-import com.example.rocketreserver.ClassListQuery
-import com.example.rocketreserver.GymListQuery
 import java.text.ParseException
 import java.text.SimpleDateFormat
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Locale
-import kotlin.math.roundToInt
 
 /**
  * Returns the popular times list representation for this gym query.
@@ -90,14 +91,17 @@ fun GymListQuery.Gym.pullHours(
                 hours[day] = mutableListOf()
             }
 
+            val start = LocalTime.parse(openHour.startTime, DateTimeFormatter.ofPattern("HH:mm:ss"))
+            val end = LocalTime.parse(openHour.endTime, DateTimeFormatter.ofPattern("HH:mm:ss"))
+
             val newTimeInterval = TimeInterval(
                 start = TimeOfDay(
-                    hour = openHour.startTime.toInt(),
-                    minute = ((openHour.startTime - openHour.startTime.toInt()) * 60).roundToInt()
+                    hour = start.hour,
+                    minute = start.minute
                 ),
                 end = TimeOfDay(
-                    hour = openHour.endTime.toInt(),
-                    minute = ((openHour.endTime - openHour.endTime.toInt()) * 60).roundToInt()
+                    hour = end.hour,
+                    minute = end.minute
                 )
             )
 
@@ -106,9 +110,11 @@ fun GymListQuery.Gym.pullHours(
         }
     }
 
-    for (i in 0 until 7) {
-        hours[i]!!.sortWith { h1, h2 ->
-            h1.end.compareTo(h2.end)
+    for (i in 0 until hours.size) {
+        if (hours[i] != null) {
+            hours[i]!!.sortWith { h1, h2 ->
+                h1.end.compareTo(h2.end)
+            }
         }
     }
 
@@ -158,15 +164,14 @@ fun GymListQuery.Gym.toUpliftGyms(): List<UpliftGym> {
         facility?.facilityType.toString() == "FITNESS"
     } ?: listOf()
 
-    // TODO: Temporary fix to make ids line up.
-    //  Currently, there is a duplicate of each gym that has the correct id and classes
-    //  but everything else wrong. Why must backend do this.
+    // As of 11/8/23, there are duplicates of each gym with the wrong id.
+    //  This maps their ids correctly.
     val idMap = mapOf("1792236" to "1", "3454585" to "4", "9537684" to "2", "10423374" to "3")
 
-    return fitnessFacilities.filterNotNull().map { facility ->
+    val gyms = fitnessFacilities.filterNotNull().map { facility ->
         UpliftGym(
             name = facility.name,
-            id = if (idMap.containsKey(id)) idMap[id]!! else id,
+            id = idMap[id] ?: id,
             facilityId = facility.id,
             popularTimes = pullPopularTimes(facility),
             // Need replace because there's a typo with the single quote.
@@ -183,6 +188,8 @@ fun GymListQuery.Gym.toUpliftGyms(): List<UpliftGym> {
             longitude = longitude
         )
     }
+
+    return gyms
 }
 
 fun ClassListQuery.Class.toUpliftClass(imageUrl: String = defaultClassUrl): UpliftClass? {

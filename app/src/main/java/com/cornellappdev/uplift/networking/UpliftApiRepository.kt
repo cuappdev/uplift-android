@@ -1,13 +1,14 @@
 package com.cornellappdev.uplift.networking
 
+import android.util.Log
 import com.apollographql.apollo3.ApolloClient
+import com.cornellappdev.uplift.ClassListQuery
+import com.cornellappdev.uplift.GymListQuery
 import com.cornellappdev.uplift.models.UpliftClass
 import com.cornellappdev.uplift.models.UpliftGym
 import com.cornellappdev.uplift.networking.UpliftApiRepository.classesApiFlow
 import com.cornellappdev.uplift.networking.UpliftApiRepository.gymApiFlow
 import com.cornellappdev.uplift.util.defaultGymUrl
-import com.example.rocketreserver.ClassListQuery
-import com.example.rocketreserver.GymListQuery
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -27,7 +28,7 @@ import kotlinx.coroutines.launch
  */
 object UpliftApiRepository {
     private val apolloClient = ApolloClient.Builder()
-        .serverUrl("http://uplift-backend.cornellappdev.com/graphql")
+        .serverUrl("https://uplift-backend.cornellappdev.com/graphql")
         .build()
 
     private val gymQuery = apolloClient.query(GymListQuery())
@@ -77,6 +78,7 @@ object UpliftApiRepository {
                     }
                 }
                 .catch {
+                    Log.e("query", it.stackTraceToString())
                     emit(ApiResponse.Error)
                 }.stateIn(
                     CoroutineScope(Dispatchers.Main),
@@ -87,11 +89,6 @@ object UpliftApiRepository {
                 }
         }
 
-        // TODO: Backend has refactored such that classes are under gyms now.
-        //  Thus, in pretty much a gymQuery, we have to map and then flatten
-        //  to get a list of all classes. Then, pretty much pipeline it down [_classesApiFlow].
-        //  This can be done with a query that just queries each gym's classes list.
-        //  I'll do that here.
         activeClassJob = CoroutineScope(Dispatchers.IO).launch {
             classQuery.toFlow().cancellable()
                 .map {
@@ -125,6 +122,7 @@ object UpliftApiRepository {
                     }
                 }
                 .catch {
+                    Log.e("query", it.stackTraceToString())
                     emit(ApiResponse.Error)
                 }.stateIn(
                     CoroutineScope(Dispatchers.Main),

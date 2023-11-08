@@ -105,7 +105,7 @@ fun ClassScreen(
                             .padding(vertical = 14.5.dp)
                     ) {
                         CalendarBar(
-                            daysAhead = 3,
+                            daysAhead = 8,
                             selectedDay = selectedDayState.value
                         ) { daySelected ->
                             classesViewModel.selectDay(daySelected)

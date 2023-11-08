@@ -1,7 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
-    id "com.apollographql.apollo3" version "3.8.0"
+    id "com.apollographql.apollo3" version "3.8.2"
 }
 
 android {
@@ -67,7 +67,7 @@ dependencies {
     implementation "androidx.navigation:navigation-compose:$nav_version"
     implementation "com.google.accompanist:accompanist-systemuicontroller:0.28.0"
     implementation "com.google.accompanist:accompanist-permissions:0.28.0"
-    implementation "com.apollographql.apollo3:apollo-runtime:3.8.0"
+    implementation "com.apollographql.apollo3:apollo-runtime:3.8.2"
     implementation 'com.valentinilk.shimmer:compose-shimmer:1.0.5'
     implementation 'com.google.android.gms:play-services-location:21.0.1'
     implementation 'androidx.core:core-splashscreen:1.0.1'
@@ -75,6 +75,6 @@ dependencies {
 
 apollo {
     service("service") {
-        packageName.set("com.example.rocketreserver")
+        packageName.set("com.cornellappdev.uplift")
     }
 }
