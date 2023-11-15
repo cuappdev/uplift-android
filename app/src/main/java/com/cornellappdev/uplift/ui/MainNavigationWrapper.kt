@@ -1,13 +1,10 @@
 package com.cornellappdev.uplift.ui
 
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
-import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -40,7 +37,6 @@ import com.cornellappdev.uplift.ui.viewmodels.ClassDetailViewModel
 import com.cornellappdev.uplift.ui.viewmodels.ClassesViewModel
 import com.cornellappdev.uplift.ui.viewmodels.GymDetailViewModel
 import com.cornellappdev.uplift.ui.viewmodels.HomeViewModel
-import com.cornellappdev.uplift.util.GRAY01
 import com.cornellappdev.uplift.util.PRIMARY_BLACK
 import com.cornellappdev.uplift.util.PRIMARY_YELLOW
 import com.cornellappdev.uplift.util.montserratFamily
@@ -49,7 +45,6 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.valentinilk.shimmer.ShimmerBounds
 import com.valentinilk.shimmer.defaultShimmerTheme
 import com.valentinilk.shimmer.rememberShimmer
-import com.valentinilk.shimmer.shimmer
 
 /**
  * The main navigation controller for the app.
@@ -69,8 +64,8 @@ fun MainNavigationWrapper(
         shaderColors = listOf(
             Color.Unspecified.copy(alpha = 1f),
             Color.Unspecified.copy(alpha = .25f),
-            Color.Unspecified.copy(alpha = 1f),
-        ),
+            Color.Unspecified.copy(alpha = 1f)
+        )
     )
     val shimmer = rememberShimmer(shimmerBounds = ShimmerBounds.Window, theme = yourShimmerTheme)
 
@@ -143,15 +138,6 @@ fun MainNavigationWrapper(
                         )
                     }
                 }
-            else if (gymsState is ApiResponse.Loading) {
-                Surface(
-                    modifier = Modifier
-                        .height(83.dp)
-                        .fillMaxWidth()
-                        .shimmer(shimmer),
-                    color = GRAY01
-                ) {}
-            }
         }
     ) {
         NavHost(
