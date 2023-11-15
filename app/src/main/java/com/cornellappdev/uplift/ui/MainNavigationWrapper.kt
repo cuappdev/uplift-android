@@ -164,6 +164,12 @@ fun MainNavigationWrapper(
                         navController.popBackGym(gymDetailViewModel)
                     }
                 }
+                // TODO: I split these across multiple screens to make it so the user sticks to
+                //  the side of the app they were originally on.
+                //  However, I think this might cause a bug if you have classes open on BOTH
+                //  sides of the app then pop back. I think both will end up popping back.
+                //  I can't test RN cuz backend is down, so test this and see. If it's broken,
+                //  change it to just use one "classDetail" route on the class half.
                 composable(route = "classDetailHome") {
                     ClassDetailScreen(
                         classDetailViewModel = classDetailViewModel,
