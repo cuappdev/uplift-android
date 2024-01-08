@@ -42,28 +42,19 @@ data class UpliftGym(
     val popularTimes: List<PopularTimes>,
 
     val equipmentGroupings: List<EquipmentGrouping>,
-    /**
-     * A list of exactly 7 [GymnasiumInfo] objects. Each object corresponds to a particular
-     * day (index 0=Monday, ..., 6=Sunday). A null object indicates that the gymnasium is closed
-     * that day.
-     *
-     * If the list itself is null, that indicates gymnasiums are not offered by this gym.
-     */
-    val gymnasiumInfo: List<GymnasiumInfo?>?,
+
+    /** A list of courts at this fitness center. */
+    val courtInfo: List<CourtFacility>,
 
     /**
-     * A list of exactly 7 [SwimmingInfo] objects. Each object corresponds to a particular
-     * day (index 0=Monday, ..., 6=Sunday). A null object indicates that the pool is closed
-     * that day.
+     * A list of exactly 7 [SwimmingInfo] objects for each day, starting on Monday.
      *
      * If the list itself is null, that indicates swimming is not offered by this gym.
      */
     val swimmingInfo: List<SwimmingInfo?>?,
 
     /**
-     * A list of exactly 7 [SwimmingInfo] objects. Each object corresponds to a particular
-     * day (index 0=Monday, ..., 6=Sunday). A null object indicates that the pool is closed
-     * that day.
+     * A list of exactly 7 [BowlingInfo] objects for each day, starting on Monday.
      *
      * If the list itself is null, that indicates bowling is not offered by this gym.
      */

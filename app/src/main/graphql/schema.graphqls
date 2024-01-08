@@ -5,21 +5,21 @@ type Query {
 type Gym {
   id: ID!
 
-  name: String!
+  address: String!
 
-  description: String!
-
-  location: String!
+  imageUrl: String
 
   latitude: Float!
 
   longitude: Float!
 
-  imageUrl: String
+  name: String!
+
+  amenities: [Amenity]
 
   facilities: [Facility]
 
-  classes: [ClassInstance]
+  hours: [OpenHours]
 }
 
 """
@@ -37,20 +37,12 @@ The `Float` scalar type represents signed double-precision fractional values as 
 """
 scalar Float
 
-type Facility {
+type Amenity {
   id: ID!
 
   gymId: Int!
 
-  name: String!
-
-  facilityType: FacilityType!
-
-  openHours(name: String): [OpenHours]
-
-  capacities: [Capacity]
-
-  capacity: Capacity
+  type: AmenityType!
 }
 
 """
@@ -61,81 +53,90 @@ scalar Int
 """
 An enumeration.
 """
+enum AmenityType {
+  SHOWERS
+
+  LOCKERS
+
+  PARKING
+
+  ELEVATORS
+}
+
+type Facility {
+  id: ID!
+
+  facilityType: FacilityType!
+
+  gymId: Int!
+
+  name: String!
+
+  capacity: Capacity
+
+  hours: [OpenHours]
+}
+
+"""
+An enumeration.
+"""
 enum FacilityType {
   FITNESS
 
   POOL
-}
 
-type OpenHours {
-  id: ID!
+  BOWLING
 
-  facilityId: Int!
-
-  day: Int!
-
-  startTime: String!
-
-  endTime: String!
+  COURT
 }
 
 type Capacity {
   id: ID!
 
-  facilityId: Int!
-
   count: Int!
+
+  facilityId: Int!
 
   percent: Float!
 
-  updated: DateTime!
+  updated: Int!
 }
 
-"""
-The `DateTime` scalar type represents a DateTime
-value as specified by
-[iso8601](https://en.wikipedia.org/wiki/ISO_8601).
-"""
-scalar DateTime
-
-type ClassInstance {
+type OpenHours {
   id: ID!
+
+  courtType: CourtType
+
+  endTime: Int!
+
+  facilityId: Int
 
   gymId: Int
 
-  classId: Int!
+  isShallow: Boolean
 
-  location: String!
+  isSpecial: Boolean!
 
-  instructor: String!
+  isWomen: Boolean
 
-  isCanceled: Boolean!
+  startTime: Int!
+}
 
-  isVirtual: Boolean!
+"""
+An enumeration.
+"""
+enum CourtType {
+  BASKETBALL
 
-  startTime: DateTime!
+  VOLLEYBALL
 
-  endTime: DateTime!
-
-  class_: Class
-
-  gym: Gym
+  BADMINTON
 }
 
 """
 The `Boolean` scalar type represents `true` or `false`.
 """
 scalar Boolean
-
-type Class {
-  id: ID!
-
-  name: String!
-
-  description: String!
-
-  gyms: [ClassInstance]
-}
 
 """
 A GraphQL Schema defines the capabilities of a GraphQL server. It exposes all available types and directives on the server, as well as the entry points for query, mutation and subscription operations.

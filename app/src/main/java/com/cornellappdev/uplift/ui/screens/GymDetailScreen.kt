@@ -46,7 +46,6 @@ import com.cornellappdev.uplift.ui.components.GymHours
 import com.cornellappdev.uplift.ui.components.PopularTimesSection
 import com.cornellappdev.uplift.ui.components.general.FavoriteButton
 import com.cornellappdev.uplift.ui.components.gymdetail.GymCapacitiesSection
-import com.cornellappdev.uplift.ui.components.gymdetail.GymTodaysClasses
 import com.cornellappdev.uplift.ui.viewmodels.ClassDetailViewModel
 import com.cornellappdev.uplift.ui.viewmodels.GymDetailViewModel
 import com.cornellappdev.uplift.util.*
@@ -77,7 +76,7 @@ fun GymDetailScreen(
     val hasOneFacility =
         gym != null
                 && (gym!!.equipmentGroupings.isNotEmpty()
-                || gym!!.gymnasiumInfo != null
+                || gym!!.courtInfo.isNotEmpty()
                 || gym!!.swimmingInfo != null
                 || gym!!.bowlingInfo != null
                 || gym!!.miscellaneous.isNotEmpty())
@@ -228,15 +227,16 @@ fun GymDetailScreen(
                 LineSpacer()
                 if (hasOneFacility)
                     GymFacilitySection(gym!!, day)
-                GymTodaysClasses(
-                    gymDetailViewModel = gymDetailViewModel,
-                    classDetailViewModel = classDetailViewModel,
-                    navController = navController
-                )
+                // TODO: Uncomment when classes added to backend
+//                GymTodaysClasses(
+//                    gymDetailViewModel = gymDetailViewModel,
+//                    classDetailViewModel = classDetailViewModel,
+//                    navController = navController
+//                )
             }
         }
 
-        Spacer(Modifier.height(10.dp))
+        Spacer(Modifier.height(30.dp))
     }
 }
 

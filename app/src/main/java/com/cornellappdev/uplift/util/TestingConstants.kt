@@ -3,9 +3,7 @@ package com.cornellappdev.uplift.util
 import androidx.compose.runtime.mutableStateListOf
 import com.cornellappdev.uplift.R
 import com.cornellappdev.uplift.models.BowlingInfo
-import com.cornellappdev.uplift.models.CourtInfo
 import com.cornellappdev.uplift.models.EquipmentGrouping
-import com.cornellappdev.uplift.models.GymnasiumInfo
 import com.cornellappdev.uplift.models.PopularTimes
 import com.cornellappdev.uplift.models.Sport
 import com.cornellappdev.uplift.models.SwimmingInfo
@@ -332,33 +330,7 @@ val testMorrison = UpliftGym(
             )
         )
     ),
-    gymnasiumInfo = listOf(
-        GymnasiumInfo(
-            hours = listOf(
-                TimeInterval(start = TimeOfDay(6), end = TimeOfDay(7)),
-                TimeInterval(start = TimeOfDay(7, 30), end = TimeOfDay(10)),
-            ),
-            courts = listOf(
-                CourtInfo(
-                    "Basketball", hours = listOf(
-                        TimeInterval(start = TimeOfDay(6), end = TimeOfDay(7)),
-                        TimeInterval(start = TimeOfDay(7, 30), end = TimeOfDay(10)),
-                    )
-                ),
-                CourtInfo(
-                    "Volleyball", hours = listOf(
-                        TimeInterval(start = TimeOfDay(7, 30), end = TimeOfDay(10)),
-                    )
-                )
-            )
-        ),
-        null,
-        null,
-        null,
-        null,
-        null,
-        null
-    ),
+    courtInfo = listOf(),
     swimmingInfo = listOf(
         SwimmingInfo(swimmingTimes = exampleSwimmingList1),
         null,

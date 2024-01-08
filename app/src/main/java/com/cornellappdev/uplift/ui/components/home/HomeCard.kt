@@ -159,7 +159,7 @@ fun HomeCard(gym: UpliftGym, onClick: () -> Unit) {
                                     colorFilter = ColorFilter.tint(color = GRAY04)
                                 )
                             }
-                            if (gym.gymnasiumInfo != null) {
+                            if (gym.courtInfo.isNotEmpty()) {
                                 Spacer(Modifier.width(4.dp))
                                 Image(
                                     painter = painterResource(id = R.drawable.ic_basketball_hoop),

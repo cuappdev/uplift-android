@@ -1,15 +1,19 @@
 package com.cornellappdev.uplift.models
 
-/** Gymnasium info for one day. Gymnasiums have can have one or more courts open per day. */
-data class GymnasiumInfo(
-    val hours: List<TimeInterval>,
-    val courts: List<CourtInfo>
+/**
+ * A facility representing one court at a fitness center.
+ */
+data class CourtFacility(
+    /** The court's name (e.g. "Court 1") */
+    val name: String,
+    /** Exactly 7 lists of [CourtTime] objects: Monday, Tuesday, etc. for this court. */
+    val hours: List<List<CourtTime>?>
 )
 
-/** One court's name and hours. */
-data class CourtInfo(
-    val name: String,
-    val hours: List<TimeInterval>
+/** A court time interval which can be designated to a sport. */
+data class CourtTime(
+    val time: TimeInterval,
+    val type: String
 )
 
 /** Swimming information for one day. */

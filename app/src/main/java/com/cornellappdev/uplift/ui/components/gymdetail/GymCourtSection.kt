@@ -1,7 +1,6 @@
 package com.cornellappdev.uplift.ui.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,11 +9,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -25,8 +25,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cornellappdev.uplift.R
+import com.cornellappdev.uplift.models.CourtFacility
 import com.cornellappdev.uplift.models.TimeInterval
-import com.cornellappdev.uplift.models.UpliftGym
+import com.cornellappdev.uplift.ui.components.gymdetail.TimeFlag
 import com.cornellappdev.uplift.util.ACCENT_CLOSED
 import com.cornellappdev.uplift.util.PRIMARY_BLACK
 import com.cornellappdev.uplift.util.PRIMARY_YELLOW
@@ -39,11 +40,12 @@ import com.cornellappdev.uplift.util.montserratFamily
  * given by parameter [today].
  */
 @Composable
-fun GymGymnasiumSection(today: Int, gym: UpliftGym) {
+fun GymCourtSection(today: Int, court: CourtFacility) {
     var selectedDay by remember {
-        mutableStateOf(today)
+        mutableIntStateOf(today)
     }
-    val gymnasiumInfo = gym.gymnasiumInfo?.get(selectedDay)
+
+    val gymnasiumInfo = court.hours[selectedDay]
 
     Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
         Spacer(modifier = Modifier.height(5.dp))
@@ -51,33 +53,22 @@ fun GymGymnasiumSection(today: Int, gym: UpliftGym) {
             selectedDay = day
         }
         Spacer(modifier = Modifier.height(16.dp))
-        if (gymnasiumInfo != null) {
-            for (interval in gymnasiumInfo.hours) {
-                Text(
-                    text = interval.toString(),
-                    fontFamily = montserratFamily,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight(300),
-                    lineHeight = 26.sp,
-                    textAlign = TextAlign.Left,
-                    modifier = Modifier.padding(bottom = 5.dp),
-                    color = PRIMARY_BLACK
-                )
-            }
-            Spacer(Modifier.padding(bottom = 16.dp))
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-                for (i in gymnasiumInfo.courts.indices) {
-                    val courtInfo = gymnasiumInfo.courts[i]
-                    CourtComponent(
-                        times = courtInfo.hours,
-                        overallTimeInterval = getOverallTimeInterval(gymnasiumInfo.hours),
-                        title = if (gymnasiumInfo.courts.size > 1) "Court #${i + 1}" else "Court",
-                        courtName = courtInfo.name.uppercase()
+        if (!gymnasiumInfo.isNullOrEmpty()) {
+            for (interval in gymnasiumInfo) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = interval.time.toString(),
+                        fontFamily = montserratFamily,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight(300),
+                        lineHeight = 26.sp,
+                        textAlign = TextAlign.Left,
+                        color = PRIMARY_BLACK
                     )
+                    Spacer(Modifier.width(8.dp))
+                    TimeFlag(interval.type)
                 }
-            }
-            if (gymnasiumInfo.courts.isNotEmpty()) {
-                Spacer(modifier = Modifier.height(13.dp))
+                Spacer(Modifier.height(5.dp))
             }
         } else {
             Text(
@@ -96,7 +87,8 @@ fun GymGymnasiumSection(today: Int, gym: UpliftGym) {
     }
 }
 
-
+// Not in use. Shows a court icon with some text in it. Currently not used since design doesn't
+//  account for all possible court data scenarios.
 @Composable
 fun CourtComponent(
     times: List<TimeInterval>,

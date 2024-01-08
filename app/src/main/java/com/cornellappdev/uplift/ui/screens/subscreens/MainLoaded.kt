@@ -22,7 +22,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -55,9 +54,7 @@ import com.cornellappdev.uplift.models.UpliftClass
 import com.cornellappdev.uplift.models.UpliftGym
 import com.cornellappdev.uplift.nav.navigateToGym
 import com.cornellappdev.uplift.networking.UpliftApiRepository
-import com.cornellappdev.uplift.ui.components.general.NoClasses
 import com.cornellappdev.uplift.ui.components.general.UpliftTopBar
-import com.cornellappdev.uplift.ui.components.home.BriefClassInfoCard
 import com.cornellappdev.uplift.ui.components.home.GymCapacity
 import com.cornellappdev.uplift.ui.components.home.HomeCard
 import com.cornellappdev.uplift.ui.viewmodels.ClassDetailViewModel
@@ -67,6 +64,7 @@ import com.cornellappdev.uplift.util.GRAY00
 import com.cornellappdev.uplift.util.GRAY01
 import com.cornellappdev.uplift.util.GRAY02
 import com.cornellappdev.uplift.util.GRAY04
+import com.cornellappdev.uplift.util.GRAY06
 import com.cornellappdev.uplift.util.PRIMARY_YELLOW
 import com.cornellappdev.uplift.util.asTimeOfDay
 import com.cornellappdev.uplift.util.colorInterp
@@ -197,7 +195,8 @@ fun MainLoaded(
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_chevron_down),
                                 contentDescription = null,
-                                modifier = Modifier.rotate(capacityAnimation.value * 180f)
+                                modifier = Modifier.rotate(capacityAnimation.value * 180f),
+                                tint = GRAY06
                             )
                         }
                     }
@@ -315,43 +314,43 @@ fun MainLoaded(
                 }
             }
 
-            // TODAY'S CLASSES
-            item {
-                Text(
-                    text = "TODAY'S CLASSES",
-                    fontFamily = montserratFamily,
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight(700),
-                    lineHeight = 17.07.sp,
-                    textAlign = TextAlign.Center,
-                    color = GRAY04,
-                    modifier = Modifier.padding(start = 16.dp)
-                )
-
-                if (upliftClasses.isEmpty()) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 12.dp, bottom = 24.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        NoClasses()
-                    }
-                } else LazyRow(
-                    state = rememberLazyListState(), contentPadding = PaddingValues(
-                        horizontal = 16.dp
-                    ), modifier = Modifier.padding(top = 12.dp, bottom = 24.dp)
-                ) {
-                    items(items = upliftClasses) { upliftClass ->
-                        BriefClassInfoCard(
-                            thisClass = upliftClass,
-                            navController = navController,
-                            classDetailViewModel = classDetailViewModel
-                        )
-                        Spacer(Modifier.width(16.dp))
-                    }
-                }
-            }
+            // TODAY'S CLASSES TODO: uncomment when classes are added back.
+//            item {
+//                Text(
+//                    text = "TODAY'S CLASSES",
+//                    fontFamily = montserratFamily,
+//                    fontSize = 14.sp,
+//                    fontWeight = FontWeight(700),
+//                    lineHeight = 17.07.sp,
+//                    textAlign = TextAlign.Center,
+//                    color = GRAY04,
+//                    modifier = Modifier.padding(start = 16.dp)
+//                )
+//
+//                if (upliftClasses.isEmpty()) {
+//                    Box(
+//                        modifier = Modifier
+//                            .fillMaxWidth()
+//                            .padding(top = 12.dp, bottom = 24.dp),
+//                        contentAlignment = Alignment.Center
+//                    ) {
+//                        NoClasses()
+//                    }
+//                } else LazyRow(
+//                    state = rememberLazyListState(), contentPadding = PaddingValues(
+//                        horizontal = 16.dp
+//                    ), modifier = Modifier.padding(top = 12.dp, bottom = 24.dp)
+//                ) {
+//                    items(items = upliftClasses) { upliftClass ->
+//                        BriefClassInfoCard(
+//                            thisClass = upliftClass,
+//                            navController = navController,
+//                            classDetailViewModel = classDetailViewModel
+//                        )
+//                        Spacer(Modifier.width(16.dp))
+//                    }
+//                }
+//            }
 
             // Gyms
             item {
@@ -396,7 +395,8 @@ fun MainLoaded(
             modifier = Modifier
                 .align(Alignment.TopCenter)
                 .offset(y = (-5).dp),
-            contentColor = PRIMARY_YELLOW
+            contentColor = PRIMARY_YELLOW,
+            backgroundColor = Color.White
         )
     }
 }
