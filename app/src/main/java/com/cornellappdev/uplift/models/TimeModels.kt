@@ -2,6 +2,12 @@ package com.cornellappdev.uplift.models
 
 import java.util.Calendar
 
+// TODO: Justin is dumb and didn't realize Time models exist in the form of stuff like [Calendar]
+//  built into Kotlin/Java. Since my implementations may be buggy, it's probably best to replace any
+//  instances of these classes with Calendar (or some other Kotlin library) instead.
+//  Note: I still think a distinct TimeInterval class is good, but you can probably implement this
+//  with Calendars instead.
+
 /** A [TimeInterval] is one contiguous interval of time with a start and end [TimeOfDay]. */
 data class TimeInterval(
     val start: TimeOfDay,

@@ -54,7 +54,7 @@ data class UpliftGym(
     val swimmingInfo: List<SwimmingInfo?>?,
 
     /**
-     * A list of exactly 7 [SwimmingInfo] objects for each day, starting on Monday.
+     * A list of exactly 7 [BowlingInfo] objects for each day, starting on Monday.
      *
      * If the list itself is null, that indicates bowling is not offered by this gym.
      */

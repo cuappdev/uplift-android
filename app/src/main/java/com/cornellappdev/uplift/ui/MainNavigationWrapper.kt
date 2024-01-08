@@ -71,10 +71,8 @@ fun MainNavigationWrapper(
 
     val items = listOf(
         BottomNavScreen.Home,
-        BottomNavScreen.Classes,
-        // TODO: Uncomment when sports and favorites are implemented.
-//        BottomNavScreen.Sports,
-//        BottomNavScreen.Favorites
+//        BottomNavScreen.Classes,
+        // TODO: Add new items when activities and profile are implemented.
     )
 
     systemUiController.setStatusBarColor(PRIMARY_YELLOW)
