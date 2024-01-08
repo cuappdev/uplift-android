@@ -393,7 +393,8 @@ fun MainLoaded(
             modifier = Modifier
                 .align(Alignment.TopCenter)
                 .offset(y = (-5).dp),
-            contentColor = PRIMARY_YELLOW
+            contentColor = PRIMARY_YELLOW,
+            backgroundColor = Color.White
         )
     }
 }
