@@ -36,6 +36,8 @@ import com.cornellappdev.uplift.util.montserratFamily
 import kotlinx.coroutines.launch
 import java.util.Calendar
 
+// TODO: Looks weird on dark mode. Manually add white backgrounds.
+
 /**
  * The main screen for the "Classes" section of the app.
  */
