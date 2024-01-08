@@ -77,7 +77,7 @@ fun GymDetailScreen(
     val hasOneFacility =
         gym != null
                 && (gym!!.equipmentGroupings.isNotEmpty()
-                || gym!!.gymnasiumInfo != null
+                || gym!!.courtInfo.isNotEmpty()
                 || gym!!.swimmingInfo != null
                 || gym!!.bowlingInfo != null
                 || gym!!.miscellaneous.isNotEmpty())

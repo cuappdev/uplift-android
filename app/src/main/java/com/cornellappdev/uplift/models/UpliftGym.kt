@@ -44,7 +44,7 @@ data class UpliftGym(
     val equipmentGroupings: List<EquipmentGrouping>,
 
     /** A list of courts at this fitness center. */
-    val gymnasiumInfo: List<CourtFacility?>?,
+    val courtInfo: List<CourtFacility>,
 
     /**
      * A list of exactly 7 [SwimmingInfo] objects for each day, starting on Monday.

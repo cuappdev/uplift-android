@@ -36,7 +36,7 @@ fun GymFields.Facility?.pullSwimmingInfo(): List<SwimmingInfo?>? {
         it?.openHoursFields
     } ?: return null
 
-    val intervals = pullHours(hours).toSwimmingTime()
+    val intervals = pullHours(hours, HourAdditionalData.WOMEN_ONLY).toSwimmingTime()
 
     return intervals.map { list ->
         if (list != null)
@@ -53,7 +53,10 @@ fun GymListQuery.Gym.pullGymnasiumInfo(): List<CourtFacility> {
 
     return courts.map { facility ->
         val hours =
-            pullHours(facility.facilityFields.hours?.map { it?.openHoursFields }).toCourtTime()
+            pullHours(
+                facility.facilityFields.hours?.map { it?.openHoursFields },
+                HourAdditionalData.COURT_TYPE
+            ).toCourtTime()
 
         CourtFacility(facility.facilityFields.name, hours)
     }
@@ -121,9 +124,10 @@ fun List<List<Pair<TimeInterval, String>>?>.toCourtTime(): List<List<CourtTime>?
 /**
  * Returns the hours for the given open hour list. Works for any open hour list.
  *
- * If additional data is NONE, packages an empty string.
- * If additional data is WOMEN_ONLY, packages either "true" or "false".
- * If additional data is COURT_TYPE, packages the name of the court.
+ * Can package some additional data as the second in the tuple:
+ * - If additional data is NONE, packages an empty string.
+ * - If additional data is WOMEN_ONLY, packages either "true" or "false".
+ * - If additional data is COURT_TYPE, packages the name of the court.
  */
 fun pullHours(
     hoursFields: List<OpenHoursFields?>?,
@@ -156,16 +160,11 @@ fun pullHours(
                 else -> -1
             }
 
-            // Initialize hours at index day if it doesn't have an entry.
-            if (hoursList[day] == null) {
-                hoursList[day] = mutableListOf()
-            }
-
             val data = when (additionalData) {
                 HourAdditionalData.NONE -> ""
                 HourAdditionalData.WOMEN_ONLY -> (openHour.isWomen == true).toString()
                 HourAdditionalData.COURT_TYPE -> openHour.courtType.toString()
-            }
+            }.lowercase()
 
             val newTimeInterval = TimeInterval(
                 start = TimeOfDay(
@@ -177,6 +176,11 @@ fun pullHours(
                     minute = endCal.get(Calendar.MINUTE)
                 )
             )
+
+            // Initialize hours at index day if it doesn't have an entry.
+            if (hoursList[day] == null) {
+                hoursList[day] = mutableListOf()
+            }
 
             // Know it is non-null from if statement above.
             hoursList[day]!!.add(Pair(newTimeInterval, data))
@@ -269,7 +273,7 @@ fun GymListQuery.Gym.toUpliftGyms(): List<UpliftGym> {
             miscellaneous = pullMiscellaneous(),
             bowlingInfo = bowlingFacility.pullBowling(),
             swimmingInfo = poolFacility.pullSwimmingInfo(),
-            gymnasiumInfo = pullGymnasiumInfo(),
+            courtInfo = pullGymnasiumInfo(),
             upliftCapacity = pullCapacity(facility),
             latitude = gymFields.latitude,
             longitude = gymFields.longitude

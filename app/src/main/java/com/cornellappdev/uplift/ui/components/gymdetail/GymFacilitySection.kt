@@ -18,7 +18,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -47,7 +47,7 @@ import com.cornellappdev.uplift.util.montserratFamily
  */
 @Composable
 fun GymFacilitySection(gym: UpliftGym, today: Int) {
-    var openedFacility by remember { mutableStateOf(-1) }
+    var openedFacility by remember { mutableIntStateOf(-1) }
 
     Column(
         modifier = Modifier
@@ -97,21 +97,20 @@ fun GymFacilitySection(gym: UpliftGym, today: Int) {
         LineSpacer(paddingStart = 24.dp, paddingEnd = 24.dp)
 
         // TODO: Change to court-by-court design.
-        if (gym.gymnasiumInfo != null) {
+        gym.courtInfo.forEachIndexed { i, court ->
             FacilityTab(
                 painterResource(id = R.drawable.ic_basketball_hoop),
-                "GYMNASIUM",
-                openedFacility != 2,
+                title = court.name,
+                openedFacility != 5 + i,
                 onClick = {
-                    openedFacility = if (openedFacility == 2) -1 else 2
+                    openedFacility = if (openedFacility == 5 + i) -1 else 5 + i
                 },
-                open = when (gym.gymnasiumInfo[today] != null
-                        && isOpen(gym.gymnasiumInfo[today]!!.hours)) {
+                open = when (isOpen(court.hours[today]?.map { it.time })) {
                     true -> OpenType.OPEN
                     else -> OpenType.CLOSED
                 }
             ) {
-                GymGymnasiumSection(today = today, gym = gym)
+                GymCourtSection(today = today, court = court)
             }
 
             LineSpacer(paddingStart = 24.dp, paddingEnd = 24.dp)
@@ -121,9 +120,9 @@ fun GymFacilitySection(gym: UpliftGym, today: Int) {
             FacilityTab(
                 painterResource(id = R.drawable.ic_swimming_pool),
                 "SWIMMING POOL",
-                openedFacility != 3,
+                openedFacility != 2,
                 onClick = {
-                    openedFacility = if (openedFacility == 3) -1 else 3
+                    openedFacility = if (openedFacility == 2) -1 else 2
                 },
                 open = when (gym.swimmingInfo[today] != null
                         && isOpen(gym.swimmingInfo[today]!!.hours())) {
@@ -142,9 +141,9 @@ fun GymFacilitySection(gym: UpliftGym, today: Int) {
             FacilityTab(
                 painterResource(id = R.drawable.ic_bowling_pins),
                 "BOWLING LANES",
-                openedFacility != 4,
+                openedFacility != 3,
                 onClick = {
-                    openedFacility = if (openedFacility == 4) -1 else 4
+                    openedFacility = if (openedFacility == 3) -1 else 3
                 },
                 open = when (gym.bowlingInfo[today] != null
                         && isOpen(gym.bowlingInfo[today]!!.hours)) {
@@ -162,9 +161,9 @@ fun GymFacilitySection(gym: UpliftGym, today: Int) {
             FacilityTab(
                 painterResource(id = R.drawable.ic_miscellaneous_dots),
                 "MISCELLANEOUS",
-                openedFacility != 5,
+                openedFacility != 4,
                 onClick = {
-                    openedFacility = if (openedFacility == 5) -1 else 5
+                    openedFacility = if (openedFacility == 4) -1 else 4
                 },
                 open = OpenType.NOT_APPLICABLE
             ) {
