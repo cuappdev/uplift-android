@@ -96,6 +96,7 @@ fun GymFacilitySection(gym: UpliftGym, today: Int) {
 
         LineSpacer(paddingStart = 24.dp, paddingEnd = 24.dp)
 
+        // TODO: Change to court-by-court design.
         if (gym.gymnasiumInfo != null) {
             FacilityTab(
                 painterResource(id = R.drawable.ic_basketball_hoop),

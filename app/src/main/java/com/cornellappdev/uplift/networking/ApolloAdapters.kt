@@ -4,8 +4,9 @@ import com.cornellappdev.uplift.GymListQuery
 import com.cornellappdev.uplift.fragment.GymFields
 import com.cornellappdev.uplift.fragment.OpenHoursFields
 import com.cornellappdev.uplift.models.BowlingInfo
+import com.cornellappdev.uplift.models.CourtFacility
+import com.cornellappdev.uplift.models.CourtTime
 import com.cornellappdev.uplift.models.EquipmentGrouping
-import com.cornellappdev.uplift.models.GymnasiumInfo
 import com.cornellappdev.uplift.models.PopularTimes
 import com.cornellappdev.uplift.models.SwimmingInfo
 import com.cornellappdev.uplift.models.SwimmingTime
@@ -30,28 +31,32 @@ fun GymListQuery.Gym.pullPopularTimes(
  * Returns the swimming info for this gym query.
  */
 fun GymFields.Facility?.pullSwimmingInfo(): List<SwimmingInfo?>? {
-    // If bowling facility doesn't exist, return.
+    // If swimming facility doesn't exist, return.
     val hours = this?.facilityFields?.hours?.map {
         it?.openHoursFields
     } ?: return null
 
-    val intervals = pullHours(hours)
+    val intervals = pullHours(hours).toSwimmingTime()
 
     return intervals.map { list ->
         if (list != null)
-            SwimmingInfo(list.map {
-                // TODO: Not sure if women-only times are still a thing,
-                //  but putting to only false for now.
-                SwimmingTime(it, false)
-            })
+            SwimmingInfo(list)
         else null
     }
 }
 
-/** Returns the gymnasium info for this gym query. */
-fun GymListQuery.Gym.pullGymnasiumInfo(): List<GymnasiumInfo?>? {
-    // TODO: Change to pull actual gymnasium info when backend adds that.
-    return null
+/** Returns the court info for this fitness center. */
+fun GymListQuery.Gym.pullGymnasiumInfo(): List<CourtFacility> {
+    val courts = gymFields.facilities?.filterNotNull()?.filter { facility ->
+        facility.facilityFields.facilityType.toString() == "COURT"
+    } ?: listOf()
+
+    return courts.map { facility ->
+        val hours =
+            pullHours(facility.facilityFields.hours?.map { it?.openHoursFields }).toCourtTime()
+
+        CourtFacility(facility.facilityFields.name, hours)
+    }
 }
 
 /** Returns the equipment groupings for the given fitness facility. */
@@ -79,7 +84,7 @@ fun GymFields.Facility?.pullBowling(): List<BowlingInfo?>? {
         it?.openHoursFields
     } ?: return null
 
-    val intervals = pullHours(hours)
+    val intervals = pullHours(hours).toTimeInterval()
 
     return intervals.map {
         if (it != null)
@@ -88,14 +93,44 @@ fun GymFields.Facility?.pullBowling(): List<BowlingInfo?>? {
     }
 }
 
+enum class HourAdditionalData {
+    NONE, WOMEN_ONLY, COURT_TYPE
+}
+
+/**
+ * Parses the output of [pullHours] for a NONE input.
+ */
+fun List<List<Pair<TimeInterval, String>>?>.toTimeInterval(): List<List<TimeInterval>?> {
+    return this.map { it?.map { it.first } }
+}
+
+/**
+ * Parses the output of [pullHours] for a WOMEN_ONLY input.
+ */
+fun List<List<Pair<TimeInterval, String>>?>.toSwimmingTime(): List<List<SwimmingTime>?> {
+    return this.map { it?.map { SwimmingTime(it.first, it.second == "true") } }
+}
+
+/**
+ * Parses the output of [pullHours] for a COURT_TYPE input.
+ */
+fun List<List<Pair<TimeInterval, String>>?>.toCourtTime(): List<List<CourtTime>?> {
+    return this.map { it?.map { CourtTime(it.first, it.second) } }
+}
+
 /**
  * Returns the hours for the given open hour list. Works for any open hour list.
+ *
+ * If additional data is NONE, packages an empty string.
+ * If additional data is WOMEN_ONLY, packages either "true" or "false".
+ * If additional data is COURT_TYPE, packages the name of the court.
  */
 fun pullHours(
-    hoursFields: List<OpenHoursFields?>?
-): List<List<TimeInterval>?> {
+    hoursFields: List<OpenHoursFields?>?,
+    additionalData: HourAdditionalData = HourAdditionalData.NONE
+): List<List<Pair<TimeInterval, String>>?> {
     // Initialize to always closed.
-    val hoursList: MutableList<MutableList<TimeInterval>?> = MutableList(7) { null }
+    val hoursList: MutableList<MutableList<Pair<TimeInterval, String>>?> = MutableList(7) { null }
 
     // If fitness facility doesn't exist (...it always should...), return.
     val hours = hoursFields ?: return hoursList
@@ -126,6 +161,12 @@ fun pullHours(
                 hoursList[day] = mutableListOf()
             }
 
+            val data = when (additionalData) {
+                HourAdditionalData.NONE -> ""
+                HourAdditionalData.WOMEN_ONLY -> (openHour.isWomen == true).toString()
+                HourAdditionalData.COURT_TYPE -> openHour.courtType.toString()
+            }
+
             val newTimeInterval = TimeInterval(
                 start = TimeOfDay(
                     hour = startCal.get(Calendar.HOUR_OF_DAY),
@@ -138,14 +179,14 @@ fun pullHours(
             )
 
             // Know it is non-null from if statement above.
-            hoursList[day]!!.add(newTimeInterval)
+            hoursList[day]!!.add(Pair(newTimeInterval, data))
         }
     }
 
     for (i in 0 until hoursList.size) {
         if (hoursList[i] != null) {
             hoursList[i]!!.sortWith { h1, h2 ->
-                h1.end.compareTo(h2.end)
+                h1.first.end.compareTo(h2.first.end)
             }
         }
     }
@@ -223,7 +264,7 @@ fun GymListQuery.Gym.toUpliftGyms(): List<UpliftGym> {
             imageUrl = gymFields.imageUrl?.replace("'", "")
                 ?.replace("toni-morrison-outside", "toni_morrison_outside")
                 ?: defaultGymUrl,
-            hours = pullHours(facility.facilityFields.hours?.map { it?.openHoursFields }),
+            hours = pullHours(facility.facilityFields.hours?.map { it?.openHoursFields }).toTimeInterval(),
             equipmentGroupings = pullEquipmentGroupings(facility),
             miscellaneous = pullMiscellaneous(),
             bowlingInfo = bowlingFacility.pullBowling(),
