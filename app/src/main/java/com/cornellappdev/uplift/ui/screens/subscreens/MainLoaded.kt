@@ -64,6 +64,7 @@ import com.cornellappdev.uplift.util.GRAY00
 import com.cornellappdev.uplift.util.GRAY01
 import com.cornellappdev.uplift.util.GRAY02
 import com.cornellappdev.uplift.util.GRAY04
+import com.cornellappdev.uplift.util.GRAY06
 import com.cornellappdev.uplift.util.PRIMARY_YELLOW
 import com.cornellappdev.uplift.util.asTimeOfDay
 import com.cornellappdev.uplift.util.colorInterp
@@ -194,7 +195,8 @@ fun MainLoaded(
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_chevron_down),
                                 contentDescription = null,
-                                modifier = Modifier.rotate(capacityAnimation.value * 180f)
+                                modifier = Modifier.rotate(capacityAnimation.value * 180f),
+                                tint = GRAY06
                             )
                         }
                     }
