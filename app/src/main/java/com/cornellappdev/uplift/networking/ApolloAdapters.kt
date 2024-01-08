@@ -1,32 +1,26 @@
 package com.cornellappdev.uplift.networking
 
-import com.cornellappdev.uplift.ClassListQuery
 import com.cornellappdev.uplift.GymListQuery
+import com.cornellappdev.uplift.fragment.GymFields
+import com.cornellappdev.uplift.fragment.OpenHoursFields
 import com.cornellappdev.uplift.models.BowlingInfo
 import com.cornellappdev.uplift.models.EquipmentGrouping
 import com.cornellappdev.uplift.models.GymnasiumInfo
 import com.cornellappdev.uplift.models.PopularTimes
 import com.cornellappdev.uplift.models.SwimmingInfo
+import com.cornellappdev.uplift.models.SwimmingTime
 import com.cornellappdev.uplift.models.TimeInterval
 import com.cornellappdev.uplift.models.TimeOfDay
 import com.cornellappdev.uplift.models.UpliftCapacity
-import com.cornellappdev.uplift.models.UpliftClass
 import com.cornellappdev.uplift.models.UpliftGym
-import com.cornellappdev.uplift.util.asTimeOfDay
-import com.cornellappdev.uplift.util.defaultClassUrl
 import com.cornellappdev.uplift.util.defaultGymUrl
-import java.text.ParseException
-import java.text.SimpleDateFormat
-import java.time.LocalTime
-import java.time.format.DateTimeFormatter
 import java.util.Calendar
-import java.util.Locale
 
 /**
  * Returns the popular times list representation for this gym query.
  */
 fun GymListQuery.Gym.pullPopularTimes(
-    facilityIn: GymListQuery.Facility? = getFitnessFacility()
+    facilityIn: GymFields.Facility?
 ): List<PopularTimes> {
     // TODO: Change to pull actual popular times info when backend adds that.
     return listOf()
@@ -35,9 +29,23 @@ fun GymListQuery.Gym.pullPopularTimes(
 /**
  * Returns the swimming info for this gym query.
  */
-fun GymListQuery.Gym.pullSwimmingInfo(): List<SwimmingInfo?>? {
-    // TODO: Change to pull actual swimming info when backend adds that.
-    return null
+fun GymFields.Facility?.pullSwimmingInfo(): List<SwimmingInfo?>? {
+    // If bowling facility doesn't exist, return.
+    val hours = this?.facilityFields?.hours?.map {
+        it?.openHoursFields
+    } ?: return null
+
+    val intervals = pullHours(hours)
+
+    return intervals.map { list ->
+        if (list != null)
+            SwimmingInfo(list.map {
+                // TODO: Not sure if women-only times are still a thing,
+                //  but putting to only false for now.
+                SwimmingTime(it, false)
+            })
+        else null
+    }
 }
 
 /** Returns the gymnasium info for this gym query. */
@@ -46,9 +54,9 @@ fun GymListQuery.Gym.pullGymnasiumInfo(): List<GymnasiumInfo?>? {
     return null
 }
 
-/** Returns the equipment groupings for the given gym query. */
+/** Returns the equipment groupings for the given fitness facility. */
 fun GymListQuery.Gym.pullEquipmentGroupings(
-    facilityIn: GymListQuery.Facility? = getFitnessFacility()
+    facilityIn: GymFields.Facility?
 ): List<EquipmentGrouping> {
     // TODO: Change to parse equipment grouping info when backend adds that.
     return listOf()
@@ -63,94 +71,127 @@ fun GymListQuery.Gym.pullMiscellaneous(): List<String> {
 }
 
 /**
- * Returns the bowling info for this gym query.
+ * Returns the bowling info for the given bowling facility.
  */
-fun GymListQuery.Gym.pullBowling(): List<BowlingInfo?>? {
-    // TODO: Change to pull actual bowling info when backend adds that.
-    return null
+fun GymFields.Facility?.pullBowling(): List<BowlingInfo?>? {
+    // If bowling facility doesn't exist, return.
+    val hours = this?.facilityFields?.hours?.map {
+        it?.openHoursFields
+    } ?: return null
+
+    val intervals = pullHours(hours)
+
+    return intervals.map {
+        if (it != null)
+            BowlingInfo(it, "$4.00", "$3.00")
+        else null
+    }
 }
 
 /**
- * Returns the hours for the given gym query.
+ * Returns the hours for the given open hour list. Works for any open hour list.
  */
-fun GymListQuery.Gym.pullHours(
-    facilityIn: GymListQuery.Facility? = getFitnessFacility()
+fun pullHours(
+    hoursFields: List<OpenHoursFields?>?
 ): List<List<TimeInterval>?> {
     // Initialize to always closed.
-    val hours: MutableList<MutableList<TimeInterval>?> = MutableList(7) { null }
+    val hoursList: MutableList<MutableList<TimeInterval>?> = MutableList(7) { null }
 
     // If fitness facility doesn't exist (...it always should...), return.
-    val facility = facilityIn ?: return hours
+    val hours = hoursFields ?: return hoursList
 
-    facility.openHours?.forEach { openHour ->
+    hours.forEach { openHour ->
         if (openHour != null) {
-            val day = openHour.day
+            val startMillis: Long = openHour.startTime.toLong() * 1000
+            val endMillis: Long = openHour.endTime.toLong() * 1000
 
-            // Initialize hours at index day if it doesn't have an entry.
-            if (hours[day] == null) {
-                hours[day] = mutableListOf()
+            val startCal = Calendar.getInstance()
+            startCal.timeInMillis = startMillis
+            val endCal = Calendar.getInstance()
+            endCal.timeInMillis = endMillis
+
+            val day = when (startCal.get(Calendar.DAY_OF_WEEK)) {
+                Calendar.SUNDAY -> 6
+                Calendar.MONDAY -> 0
+                Calendar.TUESDAY -> 1
+                Calendar.WEDNESDAY -> 2
+                Calendar.THURSDAY -> 3
+                Calendar.FRIDAY -> 4
+                Calendar.SATURDAY -> 5
+                else -> -1
             }
 
-            val start = LocalTime.parse(openHour.startTime, DateTimeFormatter.ofPattern("HH:mm:ss"))
-            val end = LocalTime.parse(openHour.endTime, DateTimeFormatter.ofPattern("HH:mm:ss"))
+            // Initialize hours at index day if it doesn't have an entry.
+            if (hoursList[day] == null) {
+                hoursList[day] = mutableListOf()
+            }
 
             val newTimeInterval = TimeInterval(
                 start = TimeOfDay(
-                    hour = start.hour,
-                    minute = start.minute
+                    hour = startCal.get(Calendar.HOUR_OF_DAY),
+                    minute = startCal.get(Calendar.MINUTE)
                 ),
                 end = TimeOfDay(
-                    hour = end.hour,
-                    minute = end.minute
+                    hour = endCal.get(Calendar.HOUR_OF_DAY),
+                    minute = endCal.get(Calendar.MINUTE)
                 )
             )
 
             // Know it is non-null from if statement above.
-            hours[day]!!.add(newTimeInterval)
+            hoursList[day]!!.add(newTimeInterval)
         }
     }
 
-    for (i in 0 until hours.size) {
-        if (hours[i] != null) {
-            hours[i]!!.sortWith { h1, h2 ->
+    for (i in 0 until hoursList.size) {
+        if (hoursList[i] != null) {
+            hoursList[i]!!.sortWith { h1, h2 ->
                 h1.end.compareTo(h2.end)
             }
         }
     }
 
-    return hours
+    return hoursList
 }
 
 /**
  * Returns the capacity at the given gym query.
  */
 fun GymListQuery.Gym.pullCapacity(
-    facilityIn: GymListQuery.Facility? = getFitnessFacility()
+    facilityIn: GymFields.Facility?
 ): UpliftCapacity? {
     // If fitness facility doesn't exist (...it always should...), return.
     val facility = facilityIn ?: return null
-    if (facility.capacity == null || facility.capacity.percent < 0.0) return null
+    if (facility.facilityFields.capacity == null
+        || facility.facilityFields.capacity.capacityFields.percent < 0.0
+    ) return null
 
-    val highCap = facility.capacity.count / facility.capacity.percent
+    val highCap = facility.facilityFields.capacity.capacityFields.let {
+        it.count / it.percent
+    }
 
     if (highCap.isNaN()) return null
 
     // Ex: "2023-09-19T18:42:00"
-    val cal = parseCalendar(facility.capacity.updated.toString())
+    val cal = Calendar.getInstance()
+    cal.timeInMillis = facility.facilityFields.capacity.capacityFields.updated * 1000L
 
     return UpliftCapacity(
-        percent = facility.capacity.percent,
+        percent = facility.facilityFields.capacity.capacityFields.percent,
         updated = cal
     )
 }
 
 /**
- * Returns the "FITNESS" facility at a gym. `null` if the gym does not have it.
+ * Returns the name of the given gym facility.
+ *
+ * Serves as a temporary fix to the gym vs. fitness facility debacle.
  */
-private fun GymListQuery.Gym.getFitnessFacility(): GymListQuery.Facility? {
-    return facilities?.find { facility ->
-        facility?.facilityType.toString() == "FITNESS"
+fun GymFields.Facility.pullName(gymName: String): String {
+    if (gymName.lowercase().contains("teagle")) {
+        return if (facilityFields.name.lowercase().contains("up")) "Teagle Up"
+        else "Teagle Down"
     }
+    return gymName
 }
 
 /**
@@ -160,77 +201,39 @@ private fun GymListQuery.Gym.getFitnessFacility(): GymListQuery.Facility? {
  * This should separate them into distinct gyms.
  */
 fun GymListQuery.Gym.toUpliftGyms(): List<UpliftGym> {
-    val fitnessFacilities = facilities?.filter { facility ->
-        facility?.facilityType.toString() == "FITNESS"
+    val fitnessFacilities = gymFields.facilities?.filterNotNull()?.filter { facility ->
+        facility.facilityFields.facilityType.toString() == "FITNESS"
     } ?: listOf()
 
-    // As of 11/8/23, there are duplicates of each gym with the wrong id.
-    //  This maps their ids correctly.
-    val idMap = mapOf("1792236" to "1", "3454585" to "4", "9537684" to "2", "10423374" to "3")
+    val bowlingFacility = gymFields.facilities?.filterNotNull()?.firstOrNull { facility ->
+        facility.facilityFields.facilityType.toString() == "BOWLING"
+    }
 
-    val gyms = fitnessFacilities.filterNotNull().map { facility ->
+    val poolFacility = gymFields.facilities?.filterNotNull()?.firstOrNull { facility ->
+        facility.facilityFields.facilityType.toString() == "POOL"
+    }
+
+    val gyms = fitnessFacilities.map { facility ->
         UpliftGym(
-            name = facility.name,
-            id = idMap[id] ?: id,
-            facilityId = facility.id,
+            name = facility.pullName(gymFields.name),
+            id = gymFields.id,
+            facilityId = facility.facilityFields.id,
             popularTimes = pullPopularTimes(facility),
             // Need replace because there's a typo with the single quote.
-            imageUrl = imageUrl?.replace("'", "")
-                ?.replace("toni-morrison-outside", "toni_morrison_outside") ?: defaultGymUrl,
-            hours = pullHours(facility),
+            imageUrl = gymFields.imageUrl?.replace("'", "")
+                ?.replace("toni-morrison-outside", "toni_morrison_outside")
+                ?: defaultGymUrl,
+            hours = pullHours(facility.facilityFields.hours?.map { it?.openHoursFields }),
             equipmentGroupings = pullEquipmentGroupings(facility),
             miscellaneous = pullMiscellaneous(),
-            bowlingInfo = pullBowling(),
-            swimmingInfo = pullSwimmingInfo(),
+            bowlingInfo = bowlingFacility.pullBowling(),
+            swimmingInfo = poolFacility.pullSwimmingInfo(),
             gymnasiumInfo = pullGymnasiumInfo(),
             upliftCapacity = pullCapacity(facility),
-            latitude = latitude,
-            longitude = longitude
+            latitude = gymFields.latitude,
+            longitude = gymFields.longitude
         )
     }
 
     return gyms
-}
-
-fun ClassListQuery.Class.toUpliftClass(imageUrl: String = defaultClassUrl): UpliftClass? {
-    try {
-        val start = parseCalendar(startTime.toString())
-        val end = parseCalendar(endTime.toString())
-
-        return UpliftClass(
-            name = class_?.name ?: "NO_NAME",
-            id = id,
-            gymId = gymId?.toString() ?: "NO_GYM",
-            location = location,
-            instructorName = instructor,
-            date = end,
-            time = TimeInterval(
-                start.asTimeOfDay(),
-                end.asTimeOfDay()
-            ),
-            // TODO: Functions aren't in backend yet (as far as I can tell). Update when added.
-            functions = listOf(),
-            // TODO: Preparation is not supplied by backend yet. Update when added.
-            preparation = "",
-            description = class_?.description ?: "NO_DESC",
-            imageUrl = imageUrl.replace("'", ""),
-        )
-    } catch (_: ParseException) {
-        return null
-    }
-}
-
-/**
- * Returns a [Calendar] whose time is set to the time input, given in format:
- *
- * "yyyy-MM-dd'T'HH:mm:ss"
- *
- * Requires that the date is in the above format.
- */
-fun parseCalendar(dateString: String): Calendar {
-    val cal = Calendar.getInstance()
-    val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.ENGLISH)
-    cal.time = sdf.parse(dateString) ?: Calendar.getInstance().time
-
-    return cal
 }

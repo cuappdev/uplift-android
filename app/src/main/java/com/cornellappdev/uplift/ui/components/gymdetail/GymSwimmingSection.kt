@@ -43,8 +43,7 @@ fun GymSwimmingSection(today: Int, gym: UpliftGym) {
     }
     Spacer(Modifier.height(12.dp))
     Row(modifier = Modifier.fillMaxWidth()) {
-        Spacer(modifier = Modifier.weight(1f))
-        Column(horizontalAlignment = Alignment.Start) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
             if (swimmingInfo != null) {
                 for (swimmingTime in swimmingInfo.swimmingTimes) {
                     Row(
