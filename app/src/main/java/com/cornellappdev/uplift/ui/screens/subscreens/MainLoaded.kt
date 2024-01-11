@@ -298,7 +298,7 @@ fun MainLoaded(
                                                 GymCapacity(
                                                     capacity = gymsWithCapacities[i * 2 + 1].upliftCapacity,
                                                     label = gymsWithCapacities[i * 2 + 1].name,
-                                                    closed = !isOpen(gymsWithCapacities[i * 2].hours[todayIndex()])
+                                                    closed = !isOpen(gymsWithCapacities[i * 2 + 1].hours[todayIndex()])
                                                 )
                                             }
                                         }
