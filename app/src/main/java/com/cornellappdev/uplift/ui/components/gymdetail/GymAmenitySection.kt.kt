@@ -41,6 +41,7 @@ import com.cornellappdev.uplift.fragment.GymFields
 import com.cornellappdev.uplift.models.EquipmentGrouping
 import com.cornellappdev.uplift.models.UpliftGym
 import com.cornellappdev.uplift.nav.navigateToClass
+import com.cornellappdev.uplift.util.GRAY01
 import com.cornellappdev.uplift.util.PRIMARY_BLACK
 import com.cornellappdev.uplift.util.montserratFamily
 
@@ -107,7 +108,7 @@ fun AmenityElement(painter: Painter, name: String){
             .wrapContentSize()
             .padding(horizontal = 4.dp),
         shape = RoundedCornerShape(8.dp),
-        color = colorResource(R.color.grey),
+        color = GRAY01,
     ) {
         Row(
             Modifier

@@ -13,10 +13,12 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -181,31 +183,74 @@ fun GymDetailScreen(
                 fontFamily = montserratFamily
             )
 
-            // CLOSED
-            if (gym != null && (gym!!.hours[day] == null || !isOpen(gym!!.hours[day]!!))) {
-                Box(
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .graphicsLayer {
-                            translationY = -0.5f * scrollState.value
-                        }
-                        .background(PRIMARY_BLACK)
-                        .fillMaxWidth()
-                        .height(60.dp)
-                ) {
-                    Text(
-                        text = "CLOSED",
-                        fontWeight = FontWeight(500),
-                        fontSize = 16.sp,
-                        lineHeight = 19.5.sp,
-                        textAlign = TextAlign.Center,
-                        letterSpacing = 3.sp,
-                        color = Color.White,
-                        fontFamily = montserratFamily,
-                        modifier = Modifier.align(Alignment.Center)
-                    )
+            Surface(
+                shape = CircleShape,
+                color = Color.White,
+                modifier = Modifier
+                    .size(104.dp)
+                    .offset(y = 51.dp)
+                    .align(Alignment.BottomCenter)
+                    .graphicsLayer {
+                        translationY = -0.5f * scrollState.value.toFloat()
+                    }
+            ) {
+                Box(modifier = Modifier.fillMaxSize()) {
+                    if (gym != null && (gym!!.hours[day] == null || !isOpen(gym!!.hours[day]!!))) {
+                        Text(
+                            text = "Closed",
+                            fontWeight = FontWeight(700),
+                            fontSize = 14.sp,
+                            lineHeight = 17.07.sp,
+                            textAlign = TextAlign.Center,
+                            color = ACCENT_CLOSED,
+                            fontFamily = montserratFamily,
+                            modifier = Modifier
+                                .align(Alignment.TopCenter)
+                                .offset(y = 25.dp)
+                        )
+                    }else{
+                        Text(
+                            text = "Closed",
+                            fontWeight = FontWeight(700),
+                            fontSize = 14.sp,
+                            lineHeight = 17.07.sp,
+                            textAlign = TextAlign.Center,
+                            color = ACCENT_OPEN,
+                            fontFamily = montserratFamily,
+                            modifier = Modifier
+                                .align(Alignment.TopCenter)
+                                .offset(y = 25.dp)
+                        )
+                    }
+
                 }
             }
+
+            // CLOSED
+//            if (gym != null && (gym!!.hours[day] == null || !isOpen(gym!!.hours[day]!!))) {
+//                Box(
+//                    modifier = Modifier
+//                        .align(Alignment.BottomCenter)
+//                        .graphicsLayer {
+//                            translationY = -0.5f * scrollState.value
+//                        }
+//                        .background(PRIMARY_BLACK)
+//                        .fillMaxWidth()
+//                        .height(60.dp)
+//                ) {
+//                    Text(
+//                        text = "CLOSED",
+//                        fontWeight = FontWeight(500),
+//                        fontSize = 16.sp,
+//                        lineHeight = 19.5.sp,
+//                        textAlign = TextAlign.Center,
+//                        letterSpacing = 3.sp,
+//                        color = Color.White,
+//                        fontFamily = montserratFamily,
+//                        modifier = Modifier.align(Alignment.Center)
+//                    )
+//                }
+//            }
         }
 
         if (gym != null) {
