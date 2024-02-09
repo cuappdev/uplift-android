@@ -353,7 +353,8 @@ val testMorrison = UpliftGym(
     ),
     latitude = 5.0,
     longitude = 5.0,
-    facilityId = "3"
+    facilityId = "3",
+    amenities = listOf()
 )
 
 val sports: List<Sport> = listOf(

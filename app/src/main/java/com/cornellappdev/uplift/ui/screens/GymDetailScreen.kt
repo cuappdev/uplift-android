@@ -45,6 +45,7 @@ import com.cornellappdev.uplift.ui.components.GymFacilitySection
 import com.cornellappdev.uplift.ui.components.GymHours
 import com.cornellappdev.uplift.ui.components.PopularTimesSection
 import com.cornellappdev.uplift.ui.components.general.FavoriteButton
+import com.cornellappdev.uplift.ui.components.gymdetail.GymAmenitySection
 import com.cornellappdev.uplift.ui.components.gymdetail.GymCapacitiesSection
 import com.cornellappdev.uplift.ui.viewmodels.ClassDetailViewModel
 import com.cornellappdev.uplift.ui.viewmodels.GymDetailViewModel
@@ -214,6 +215,10 @@ fun GymDetailScreen(
                     .fillMaxWidth()
                     .background(Color.White)
             ) {
+
+                GymAmenitySection(amenities = gym!!.amenities)
+
+
                 GymHours(hours = gym!!.hours, day)
                 LineSpacer()
                 GymCapacitiesSection(
