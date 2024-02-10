@@ -52,7 +52,8 @@ import com.cornellappdev.uplift.util.montserratFamily
 @Composable
 fun GymAmenitySection(amenities: List<GymFields.Amenity?>?) {
 
-    if (amenities != null){
+
+    if (amenities != null) {
         Spacer(modifier = Modifier.height(8.dp))
         FlowRow(
             modifier = Modifier
@@ -64,37 +65,28 @@ fun GymAmenitySection(amenities: List<GymFields.Amenity?>?) {
 
 
         ) {
-            for(amenity in amenities){
-                if (amenity != null) {
-                    if(amenity.type.rawValue == "SHOWERS")
-                        AmenityElement(
-                            painter = painterResource(id = R.drawable.ic_shower),
-                            name = "Showers"
-                        )
-                    if(amenity.type.rawValue == "LOCKERS")
-                        AmenityElement(
-                            painter = painterResource(id = R.drawable.ic_lock),
-                            name = "Lockers"
-                        )
-                    if(amenity.type.rawValue == "PARKING")
-                        AmenityElement(
-                            painter = painterResource(id = R.drawable.ic_parking),
-                            name = "Parking"
-                        )
-                    if(amenity.type.rawValue == "ELEVATORS")
-                        AmenityElement(
-                            painter = painterResource(id = R.drawable.ic_elevator),
-                            name = "Elevators/Lifts"
-                        )
+            // Define a map to map amenity types to drawable resources and names
+            val amenityMap = mapOf(
+                "SHOWERS" to Pair(R.drawable.ic_shower, "Showers"),
+                "LOCKERS" to Pair(R.drawable.ic_lock, "Lockers"),
+                "PARKING" to Pair(R.drawable.ic_parking, "Parking"),
+                "ELEVATORS" to Pair(R.drawable.ic_elevator, "Elevators/Lifts")
+            )
+
+            // Iterate over amenities
+            for (amenity in amenities) {
+                if (amenity != null && amenity.type.rawValue in amenityMap) {
+                    val (drawableId, amenityName) = amenityMap[amenity.type.rawValue]!!
+                    AmenityElement(
+                        painter = painterResource(id = drawableId),
+                        name = amenityName
+                    )
                 }
             }
-
-
         }
     }
-
-
 }
+
 
 /**
  * A single amenity composable content
@@ -102,7 +94,7 @@ fun GymAmenitySection(amenities: List<GymFields.Amenity?>?) {
  * @param painter The icon which this facility tab should display.
  */
 @Composable
-fun AmenityElement(painter: Painter, name: String){
+fun AmenityElement(painter: Painter, name: String) {
     Surface(
         modifier = Modifier
             .wrapContentSize()
@@ -138,6 +130,5 @@ fun AmenityElement(painter: Painter, name: String){
                 color = PRIMARY_BLACK
             )
         }
-
     }
 }

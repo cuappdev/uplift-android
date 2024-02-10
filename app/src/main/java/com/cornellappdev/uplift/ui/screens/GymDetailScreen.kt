@@ -197,7 +197,7 @@ fun GymDetailScreen(
                 Box(modifier = Modifier.fillMaxSize()) {
                     if (gym != null && (gym!!.hours[day] == null || !isOpen(gym!!.hours[day]!!))) {
                         Text(
-                            text = "Closed",
+                            text = "CLOSED",
                             fontWeight = FontWeight(700),
                             fontSize = 14.sp,
                             lineHeight = 17.07.sp,
@@ -210,7 +210,7 @@ fun GymDetailScreen(
                         )
                     }else{
                         Text(
-                            text = "Closed",
+                            text = "OPEN",
                             fontWeight = FontWeight(700),
                             fontSize = 14.sp,
                             lineHeight = 17.07.sp,
