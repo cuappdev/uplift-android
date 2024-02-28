@@ -5,6 +5,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.cornellappdev.uplift.datastoreRepository
+import com.cornellappdev.uplift.fragment.GymFields
 import com.cornellappdev.uplift.util.getDistanceBetween
 import java.util.Calendar
 import kotlin.math.roundToInt
@@ -64,7 +65,8 @@ data class UpliftGym(
     var classesToday: SnapshotStateList<UpliftClass> = mutableStateListOf(),
     val upliftCapacity: UpliftCapacity?,
     val latitude: Double,
-    val longitude: Double
+    val longitude: Double,
+    val amenities: List<GymFields.Amenity?>?,
 ) {
     /**
      * Returns a boolean indicating whether this gym is favorited or not. Safe for recomposition.

@@ -96,6 +96,7 @@ fun GymFields.Facility?.pullBowling(): List<BowlingInfo?>? {
     }
 }
 
+
 enum class HourAdditionalData {
     NONE, WOMEN_ONLY, COURT_TYPE
 }
@@ -276,7 +277,8 @@ fun GymListQuery.Gym.toUpliftGyms(): List<UpliftGym> {
             courtInfo = pullGymnasiumInfo(),
             upliftCapacity = pullCapacity(facility),
             latitude = gymFields.latitude,
-            longitude = gymFields.longitude
+            longitude = gymFields.longitude,
+            amenities = gymFields.amenities
         )
     }
 

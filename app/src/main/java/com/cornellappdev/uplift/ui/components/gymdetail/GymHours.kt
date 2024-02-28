@@ -65,7 +65,7 @@ fun GymHours(hours: List<List<TimeInterval>?>, today: Int) {
             .background(Color.White),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(12.dp))
         Text(
             text = "HOURS",
             fontFamily = montserratFamily,
