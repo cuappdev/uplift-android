@@ -23,6 +23,17 @@ fragment facilityFields on Facility {
     ...openHoursFields
   }
   name
+  equipment {
+    ...equipmentFields
+  }
+}
+fragment equipmentFields on Equipment {
+  id
+  name
+  equipmentType
+  facilityId
+  quantity
+  accessibility
 }
 
 fragment gymFields on Gym {

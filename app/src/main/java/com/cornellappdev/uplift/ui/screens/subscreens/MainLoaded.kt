@@ -361,7 +361,7 @@ fun MainLoaded(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = "GYMS",
+                        text = "REC CENTERS",
                         fontFamily = montserratFamily,
                         fontSize = 14.sp,
                         fontWeight = FontWeight(700),

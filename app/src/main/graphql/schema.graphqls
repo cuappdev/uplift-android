@@ -75,6 +75,8 @@ type Facility {
   capacity: Capacity
 
   hours: [OpenHours]
+
+  equipment: [Equipment]
 }
 
 """
@@ -137,6 +139,46 @@ enum CourtType {
 The `Boolean` scalar type represents `true` or `false`.
 """
 scalar Boolean
+
+type Equipment {
+  id: ID!
+
+  name: String!
+
+  equipmentType: EquipmentType!
+
+  facilityId: Int!
+
+  quantity: Int
+
+  accessibility: AccessibilityType
+}
+
+"""
+An enumeration.
+"""
+enum EquipmentType {
+  CARDIO
+
+  RACKS_AND_BENCHES
+
+  SELECTORIZED
+
+  MULTI_CABLE
+
+  FREE_WEIGHTS
+
+  MISCELLANEOUS
+
+  PLATE_LOADED
+}
+
+"""
+An enumeration.
+"""
+enum AccessibilityType {
+  WHEELCHAIR
+}
 
 """
 A GraphQL Schema defines the capabilities of a GraphQL server. It exposes all available types and directives on the server, as well as the entry points for query, mutation and subscription operations.

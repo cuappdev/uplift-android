@@ -20,7 +20,7 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.valentinilk.shimmer.Shimmer
 import kotlinx.coroutines.delay
-
+import android.util.Log
 /**
  * The home page of Uplift.
  */
