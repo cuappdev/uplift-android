@@ -1,6 +1,5 @@
 package com.cornellappdev.uplift.ui.components
 
-import android.util.Log
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
@@ -68,7 +67,6 @@ fun GymFacilitySection(gym: UpliftGym, today: Int) {
         )
         Spacer(modifier = Modifier.height(24.dp))
         // Equipment Tab
-        Log.d("asdf", gym.equipmentGroupings.toString())
         if (gym.equipmentGroupings.isNotEmpty())
             FacilityTab(
                 painterResource(id = R.drawable.ic_dumbbell),

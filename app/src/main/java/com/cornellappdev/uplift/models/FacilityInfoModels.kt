@@ -45,25 +45,6 @@ data class BowlingInfo(
     val shoeRental: String
 )
 
-/**
- * Representation type of accessibility there is at the facility
- */
-//enum class AccessibilityType {
-//    WHEELCHAIR
-//}
-/**
- * Representation type of Equipment each is
- */
-//enum class EquipmentType{
-//    CARDIO,
-//    RACKS_AND_BENCHES,
-//    SELECTORIZED,
-//    MULTI_CABLE,
-//    FREE_WEIGHTS,
-//    MISCELLANEOUS,
-//    PLATE_LOADED,
-//}
-
 /** An [EquipmentField] is all of the equipment that exist at a gym facility */
 data class EquipmentField(
     /** The title of this equipment grouping. (e.g. "Cardio Machines") */
@@ -79,15 +60,7 @@ data class EquipmentField(
  * they carry. */
 data class EquipmentGrouping(
 
-    /** A list of equipment that this grouping offe
-    val equipmentType: EquipmentType,rs.
-     *
-     * Example: The list (("Treadmills", 5), ("Rowing Machines", 3)) indicates that this grouping has
-     * 5 treadmills and 3 rowing machines.
-     * */
-//    val name: String,
     val equipmentType: EquipmentType,
-//    val equipmentList: List<Pair<String, Int>>
     val equipmentList: ArrayList<EquipmentField>
 
 )

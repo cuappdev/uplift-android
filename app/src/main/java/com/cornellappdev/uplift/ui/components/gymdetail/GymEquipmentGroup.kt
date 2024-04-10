@@ -71,8 +71,7 @@ fun GymEquipmentGroup(group: EquipmentGrouping) {
                     Spacer(modifier = Modifier.weight(1f))
 
                     //TODO fix design once new design comes out
-                    if(equipmentField.quantity != 0){
-
+                    if (equipmentField.quantity != 0) {
                         Text(
                             text = equipmentField.quantity.toString(),
                             fontWeight = FontWeight(300),

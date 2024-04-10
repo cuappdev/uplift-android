@@ -1,6 +1,6 @@
 package com.cornellappdev.uplift.networking
 
-//import androidx.compose.ui.tooling.data.EmptyGroup.name
+
 import com.cornellappdev.uplift.GymListQuery
 import com.cornellappdev.uplift.fragment.GymFields
 import com.cornellappdev.uplift.fragment.OpenHoursFields
@@ -9,7 +9,6 @@ import com.cornellappdev.uplift.models.CourtFacility
 import com.cornellappdev.uplift.models.CourtTime
 import com.cornellappdev.uplift.models.EquipmentField
 import com.cornellappdev.uplift.models.EquipmentGrouping
-//import com.cornellappdev.uplift.models.EquipmentType
 import com.cornellappdev.uplift.models.PopularTimes
 import com.cornellappdev.uplift.models.SwimmingInfo
 import com.cornellappdev.uplift.models.SwimmingTime
@@ -17,7 +16,6 @@ import com.cornellappdev.uplift.models.TimeInterval
 import com.cornellappdev.uplift.models.TimeOfDay
 import com.cornellappdev.uplift.models.UpliftCapacity
 import com.cornellappdev.uplift.models.UpliftGym
-import com.cornellappdev.uplift.type.Equipment
 import com.cornellappdev.uplift.type.EquipmentType
 import com.cornellappdev.uplift.util.defaultGymUrl
 import java.util.Calendar
