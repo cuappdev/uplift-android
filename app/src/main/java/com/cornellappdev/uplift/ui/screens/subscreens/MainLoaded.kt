@@ -1,10 +1,15 @@
 package com.cornellappdev.uplift.ui.screens.subscreens
 
+
+import android.app.Dialog
+import android.graphics.Color
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -21,32 +26,48 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.Card
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme.colors
+import androidx.compose.material.SnackbarDefaults.backgroundColor
 import androidx.compose.material.Text
+import androidx.compose.material.TextField
+import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavHostController
 import com.cornellappdev.uplift.R
 import com.cornellappdev.uplift.models.UpliftCapacity
@@ -88,6 +109,16 @@ fun MainLoaded(
     titleText: String,
     onToggleCapacities: () -> Unit,
 ) {
+
+    //Will delete giveaway pop up
+    var isPopupVisible by remember { mutableStateOf(true) }
+
+    if (isPopupVisible) {
+        PopupGiveaway(
+            onDismissRequest = { isPopupVisible = false }
+        )
+    }
+
     val gymComparator = { gym1: UpliftGym, gym2: UpliftGym ->
         if (isOpen(gym1.hours[todayIndex()]) && !isOpen(gym2.hours[todayIndex()])) {
             -1
@@ -398,5 +429,140 @@ fun MainLoaded(
             contentColor = PRIMARY_YELLOW,
             backgroundColor = Color.White
         )
+    }
+}
+
+@Composable
+fun PopupGiveaway(onDismissRequest: () -> Unit) {
+
+    var email by remember { mutableStateOf("") }
+    var instagram by remember { mutableStateOf("") }
+    var isSubmited by remember { mutableStateOf(0) }
+    val painter: Painter = painterResource(id = R.drawable.framegiveaway)
+    Dialog(onDismissRequest = { onDismissRequest() }) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(500.dp)
+                .padding(16.dp),
+            shape = RoundedCornerShape(16.dp),
+            backgroundColor = Color.White
+        ) {
+            if (isSubmited == 0) {
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize(),
+
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    Box(
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        Image(
+                            painter = painter,
+                            modifier = Modifier.fillMaxWidth(),
+                            contentDescription = "",
+                            contentScale = ContentScale.Crop
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = "Uplift Giveaway!",
+                        textAlign = TextAlign.Center,
+                        color = Color.Black,
+                        fontWeight = FontWeight(500),
+                        fontSize = 25.sp,
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = "Tell us who you are for a chance to win special prizes!!",
+                        modifier = Modifier
+                            .wrapContentSize(Alignment.Center),
+                        textAlign = TextAlign.Center,
+                        color = Color.Black
+
+                    )
+                    Spacer(modifier = Modifier.height(24.dp))
+                    TextField(
+                        value = email,
+                        onValueChange = { email = it },
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp)
+                            .border(1.dp, Color.Gray, RoundedCornerShape(16.dp)),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = TextFieldDefaults.textFieldColors(
+                            textColor = Color.Black,
+                            placeholderColor = Color.Gray,
+
+
+                            disabledTextColor = Color.LightGray,
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent,
+                            disabledIndicatorColor = Color.Transparent,
+                            cursorColor = Color.Black
+                        ),
+
+
+                        placeholder = { Text(text = "Cornell NetID") }
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    TextField(
+                        value = instagram,
+                        onValueChange = { instagram = it },
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp)
+                            .border(1.dp, Color.Gray, RoundedCornerShape(16.dp)),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = TextFieldDefaults.textFieldColors(
+                            textColor = Color.Black,
+                            placeholderColor = Color.Gray,
+
+                            backgroundColor = Color.White,
+                            disabledTextColor = Color.LightGray,
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent,
+                            disabledIndicatorColor = Color.Transparent,
+                            cursorColor = Color.Black
+                        ),
+                        placeholder = { Text("Instagram Account") }
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Button(
+                        onClick = { isSubmited = 1 },
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = Color.Yellow,
+                            contentColor = Color.Black
+                        ),
+                        shape = RoundedCornerShape(24.dp),
+                    ) {
+                        Text(
+                            text = "Submit",
+                            modifier = Modifier
+                                .wrapContentSize(Alignment.Center),
+                            textAlign = TextAlign.Center,
+                            color = Color.Black,
+                            fontWeight = FontWeight(500),
+                            fontSize = 15.sp,
+
+                            )
+                    }
+
+                }
+            }
+
+            if (isSubmited == 1) {
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.thankyousvg),
+                        modifier = Modifier.fillMaxSize(),
+                        contentDescription = "",
+                        contentScale = ContentScale.Crop
+                    )
+                }
+            }
+        }
     }
 }
