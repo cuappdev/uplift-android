@@ -1,5 +1,6 @@
 package com.cornellappdev.uplift.ui.components
 
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -17,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+//import androidx.compose.ui.tooling.data.EmptyGroup.name
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cornellappdev.uplift.models.EquipmentGrouping
@@ -42,7 +44,7 @@ fun GymEquipmentGroup(group: EquipmentGrouping) {
                 .padding(16.dp)
         ) {
             Text(
-                text = group.name,
+                text = group.equipmentType.toString(),
                 fontWeight = FontWeight(700),
                 fontSize = 14.sp,
                 lineHeight = 17.07.sp,
@@ -52,13 +54,13 @@ fun GymEquipmentGroup(group: EquipmentGrouping) {
                 modifier = Modifier.padding(bottom = 4.dp)
             )
 
-            for ((name, num) in group.equipmentList) {
+            for (equipmentField in group.equipmentList) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = name,
+                        text = equipmentField.name,
                         fontWeight = FontWeight(300),
                         fontSize = 12.sp,
                         lineHeight = 18.sp,
@@ -67,15 +69,19 @@ fun GymEquipmentGroup(group: EquipmentGrouping) {
                         fontFamily = montserratFamily
                     )
                     Spacer(modifier = Modifier.weight(1f))
-                    Text(
-                        text = num.toString(),
-                        fontWeight = FontWeight(300),
-                        fontSize = 12.sp,
-                        lineHeight = 18.sp,
-                        textAlign = TextAlign.Left,
-                        color = PRIMARY_BLACK,
-                        fontFamily = montserratFamily
-                    )
+
+                    //TODO fix design once new design comes out
+                    if (equipmentField.quantity != 0) {
+                        Text(
+                            text = equipmentField.quantity.toString(),
+                            fontWeight = FontWeight(300),
+                            fontSize = 12.sp,
+                            lineHeight = 18.sp,
+                            textAlign = TextAlign.Left,
+                            color = PRIMARY_BLACK,
+                            fontFamily = montserratFamily
+                        )
+                    }
                 }
             }
         }
