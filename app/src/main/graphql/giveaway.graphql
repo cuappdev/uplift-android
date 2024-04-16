@@ -1,0 +1,7 @@
+mutation CreateUser($instagram: String!, $netId: String!){
+    createUser(instagram: $instagram, netId:$netId){
+        user{
+            id
+        }
+    }
+}

@@ -1,0 +1,7 @@
+mutation EnterGiveaway($giveawayId: Int!, $netId: String!){
+    enterGiveaway(giveawayId:$giveawayId,  userNetId:$netId){
+        giveawayInstance{
+            id
+        }
+    }
+}

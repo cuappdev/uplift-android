@@ -1,8 +1,6 @@
 package com.cornellappdev.uplift.ui.screens.subscreens
 
 
-import android.app.Dialog
-import android.graphics.Color
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.BorderStroke
@@ -37,8 +35,6 @@ import androidx.compose.material.Card
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme.colors
-import androidx.compose.material.SnackbarDefaults.backgroundColor
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
@@ -56,13 +52,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -435,7 +428,7 @@ fun MainLoaded(
 @Composable
 fun PopupGiveaway(onDismissRequest: () -> Unit) {
 
-    var email by remember { mutableStateOf("") }
+    var netid by remember { mutableStateOf("") }
     var instagram by remember { mutableStateOf("") }
     var isSubmited by remember { mutableStateOf(0) }
     val painter: Painter = painterResource(id = R.drawable.framegiveaway)
@@ -485,8 +478,8 @@ fun PopupGiveaway(onDismissRequest: () -> Unit) {
                     )
                     Spacer(modifier = Modifier.height(24.dp))
                     TextField(
-                        value = email,
-                        onValueChange = { email = it },
+                        value = netid,
+                        onValueChange = { netid = it },
                         modifier = Modifier
                             .padding(horizontal = 16.dp)
                             .border(1.dp, Color.Gray, RoundedCornerShape(16.dp)),
@@ -494,16 +487,13 @@ fun PopupGiveaway(onDismissRequest: () -> Unit) {
                         colors = TextFieldDefaults.textFieldColors(
                             textColor = Color.Black,
                             placeholderColor = Color.Gray,
-
-
+                            backgroundColor = Color.White,
                             disabledTextColor = Color.LightGray,
                             focusedIndicatorColor = Color.Transparent,
                             unfocusedIndicatorColor = Color.Transparent,
                             disabledIndicatorColor = Color.Transparent,
                             cursorColor = Color.Black
                         ),
-
-
                         placeholder = { Text(text = "Cornell NetID") }
                     )
                     Spacer(modifier = Modifier.height(8.dp))
@@ -517,7 +507,6 @@ fun PopupGiveaway(onDismissRequest: () -> Unit) {
                         colors = TextFieldDefaults.textFieldColors(
                             textColor = Color.Black,
                             placeholderColor = Color.Gray,
-
                             backgroundColor = Color.White,
                             disabledTextColor = Color.LightGray,
                             focusedIndicatorColor = Color.Transparent,
@@ -529,7 +518,8 @@ fun PopupGiveaway(onDismissRequest: () -> Unit) {
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Button(
-                        onClick = { isSubmited = 1 },
+                        onClick = { isSubmited = 1
+                            UpliftApiRepository.giveaway(instagram, netid)},
                         colors = ButtonDefaults.buttonColors(
                             backgroundColor = Color.Yellow,
                             contentColor = Color.Black

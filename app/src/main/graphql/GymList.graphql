@@ -55,7 +55,7 @@ fragment gymFields on Gym {
 }
 
 query GymList {
-  gyms {
+  getAllGyms {
     ...gymFields
   }
 }

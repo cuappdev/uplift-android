@@ -23,7 +23,7 @@ import java.util.Calendar
 /**
  * Returns the popular times list representation for this gym query.
  */
-fun GymListQuery.Gym.pullPopularTimes(
+fun GymListQuery.GetAllGym.pullPopularTimes(
     facilityIn: GymFields.Facility?
 ): List<PopularTimes> {
     // TODO: Change to pull actual popular times info when backend adds that.
@@ -49,7 +49,7 @@ fun GymFields.Facility?.pullSwimmingInfo(): List<SwimmingInfo?>? {
 }
 
 /** Returns the court info for this fitness center. */
-fun GymListQuery.Gym.pullGymnasiumInfo(): List<CourtFacility> {
+fun GymListQuery.GetAllGym.pullGymnasiumInfo(): List<CourtFacility> {
     val courts = gymFields.facilities?.filterNotNull()?.filter { facility ->
         facility.facilityFields.facilityType.toString() == "COURT"
     } ?: listOf()
@@ -70,7 +70,7 @@ fun GymListQuery.Gym.pullGymnasiumInfo(): List<CourtFacility> {
 /**
  * Returns the miscellaneous details for this gym query.
  */
-fun GymListQuery.Gym.pullMiscellaneous(): List<String> {
+fun GymListQuery.GetAllGym.pullMiscellaneous(): List<String> {
     // TODO: Change to pull actual miscellaneous info when backend adds that.
     return listOf()
 }
@@ -199,7 +199,7 @@ fun pullHours(
 /**
  * Returns the capacity at the given gym query.
  */
-fun GymListQuery.Gym.pullCapacity(
+fun GymListQuery.GetAllGym.pullCapacity(
     facilityIn: GymFields.Facility?
 ): UpliftCapacity? {
     // If fitness facility doesn't exist (...it always should...), return.
@@ -225,7 +225,7 @@ fun GymListQuery.Gym.pullCapacity(
 }
 
 /** Returns the equipment groupings for the given fitness facility. */
-fun GymListQuery.Gym.pullEquipmentGroupings(
+fun GymListQuery.GetAllGym.pullEquipmentGroupings(
     facilityIn: GymFields.Facility?
 ): List<EquipmentGrouping> {
     // TODO: Change to parse equipment grouping info when backend adds that.
@@ -281,7 +281,7 @@ fun GymFields.Facility.pullName(gymName: String): String {
  * Example: Teagle Gym in backend has both Teagle Up and Teagle Down as separate fitness centers.
  * This should separate them into distinct gyms.
  */
-fun GymListQuery.Gym.toUpliftGyms(): List<UpliftGym> {
+fun GymListQuery.GetAllGym.toUpliftGyms(): List<UpliftGym> {
     val fitnessFacilities = gymFields.facilities?.filterNotNull()?.filter { facility ->
         facility.facilityFields.facilityType.toString() == "FITNESS"
     } ?: listOf()

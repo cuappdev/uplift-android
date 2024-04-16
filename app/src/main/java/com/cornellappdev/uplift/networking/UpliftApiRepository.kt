@@ -2,6 +2,8 @@ package com.cornellappdev.uplift.networking
 
 import android.util.Log
 import com.apollographql.apollo3.ApolloClient
+import com.cornellappdev.uplift.CreateUserMutation
+import com.cornellappdev.uplift.EnterGiveawayMutation
 import com.cornellappdev.uplift.GymListQuery
 import com.cornellappdev.uplift.models.UpliftClass
 import com.cornellappdev.uplift.models.UpliftGym
@@ -18,7 +20,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-
+import com.apollographql.apollo3.exception.ApolloException
 /**
  * A repository dealing with all API backend connection in Uplift.
  *
@@ -26,8 +28,8 @@ import kotlinx.coroutines.launch
  */
 object UpliftApiRepository {
     private val apolloClient = ApolloClient.Builder()
-//        .serverUrl("https://uplift-backend.cornellappdev.com/graphql")
-        .serverUrl("https://uplift-dev.cornellappdev.com/graphql")
+        .serverUrl("https://uplift-backend.cornellappdev.com/graphql")
+//        .serverUrl("https://uplift-dev.cornellappdev.com/graphql")
         .build()
 
     private val gymQuery = apolloClient.query(GymListQuery())
@@ -69,7 +71,7 @@ object UpliftApiRepository {
         activeGymJob = CoroutineScope(Dispatchers.IO).launch {
             gymQuery.toFlow().cancellable()
                 .map {
-                    val gymList = it.data?.gyms?.filterNotNull()
+                    val gymList = it.data?.getAllGyms?.filterNotNull()
                     if (gymList == null) {
                         ApiResponse.Error
                     } else {
@@ -133,6 +135,27 @@ object UpliftApiRepository {
 //                    _classesApiFlow.emit(it)
 //                }
 //        }
+    }
+    //giveaway query
+    fun giveaway(instagram: String, netId: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+
+            val response = try {
+                val resp = apolloClient.mutation(CreateUserMutation(instagram, netId)).execute()
+                Log.d("response", resp.data.toString())
+
+            } catch (e: ApolloException){
+                Log.e("giveaway post request failed", e.toString())
+            }
+
+            val enterGiveawayResponse = try {
+                val resp = apolloClient.mutation(EnterGiveawayMutation(1, netId)).execute()
+                Log.d("response enterGiveaway", resp.data.toString())
+            } catch (e: ApolloException){
+                Log.e("giveaway post request failed", e.toString())
+            }
+
+        }
     }
 
     init {
