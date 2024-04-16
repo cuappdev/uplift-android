@@ -1,5 +1,9 @@
 package com.cornellappdev.uplift.models
 
+import com.cornellappdev.uplift.type.AccessibilityType
+import com.cornellappdev.uplift.type.EquipmentType
+import kotlin.collections.ArrayList
+
 /**
  * A facility representing one court at a fitness center.
  */
@@ -41,16 +45,22 @@ data class BowlingInfo(
     val shoeRental: String
 )
 
+/** An [EquipmentField] is all of the equipment that exist at a gym facility */
+data class EquipmentField(
+    /** The title of this equipment grouping. (e.g. "Cardio Machines") */
+    val id : String,
+    val accessibility: AccessibilityType?,
+    val name: String,
+    val facilityId: Int,
+    val quantity: Int
+)
+
 /** An [EquipmentGrouping] is a grouping of one or more pieces of gym equipment under a particular
  * category. [UpliftGym] objects may have multiple [EquipmentGrouping]s to specify all the equipment
  * they carry. */
 data class EquipmentGrouping(
-    /** The title of this equipment grouping. (e.g. "Cardio Machines") */
-    val name: String,
-    /** A list of equipment that this grouping offers.
-     *
-     * Example: The list (("Treadmills", 5), ("Rowing Machines", 3)) indicates that this grouping has
-     * 5 treadmills and 3 rowing machines.
-     * */
-    val equipmentList: List<Pair<String, Int>>
+
+    val equipmentType: EquipmentType,
+    val equipmentList: ArrayList<EquipmentField>
+
 )

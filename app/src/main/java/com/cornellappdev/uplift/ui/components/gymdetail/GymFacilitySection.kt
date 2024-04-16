@@ -86,6 +86,7 @@ fun GymFacilitySection(gym: UpliftGym, today: Int) {
                         )
                 ) {
                     Spacer(modifier = Modifier.width(24.dp))
+
                     for (group in gym.equipmentGroupings) {
                         GymEquipmentGroup(group = group)
                         Spacer(modifier = Modifier.width(10.dp))
