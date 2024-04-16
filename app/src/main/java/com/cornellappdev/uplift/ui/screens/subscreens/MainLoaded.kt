@@ -1,6 +1,6 @@
 package com.cornellappdev.uplift.ui.screens.subscreens
 
-
+import android.content.Context
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.BorderStroke
@@ -46,6 +46,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -55,6 +56,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -103,12 +105,14 @@ fun MainLoaded(
     onToggleCapacities: () -> Unit,
 ) {
 
+    val context = LocalContext.current
     //Will delete giveaway pop up
-    var isPopupVisible by remember { mutableStateOf(true) }
 
+    var isPopupVisible by rememberSaveable { mutableStateOf(loadDataFromStorage(context)) }
     if (isPopupVisible) {
         PopupGiveaway(
-            onDismissRequest = { isPopupVisible = false }
+            onDismissRequest = {isPopupVisible = false
+                saveDataToStorage(context, isPopupVisible) }
         )
     }
 
@@ -430,7 +434,7 @@ fun PopupGiveaway(onDismissRequest: () -> Unit) {
 
     var netid by remember { mutableStateOf("") }
     var instagram by remember { mutableStateOf("") }
-    var isSubmited by remember { mutableStateOf(0) }
+    var isSubmited by remember { mutableStateOf(false) }
     val painter: Painter = painterResource(id = R.drawable.framegiveaway)
     Dialog(onDismissRequest = { onDismissRequest() }) {
         Card(
@@ -441,7 +445,7 @@ fun PopupGiveaway(onDismissRequest: () -> Unit) {
             shape = RoundedCornerShape(16.dp),
             backgroundColor = Color.White
         ) {
-            if (isSubmited == 0) {
+            if (!isSubmited) {
 
                 Column(
                     modifier = Modifier
@@ -518,7 +522,7 @@ fun PopupGiveaway(onDismissRequest: () -> Unit) {
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Button(
-                        onClick = { isSubmited = 1
+                        onClick = { isSubmited = true
                             UpliftApiRepository.giveaway(instagram, netid)},
                         colors = ButtonDefaults.buttonColors(
                             backgroundColor = Color.Yellow,
@@ -541,7 +545,7 @@ fun PopupGiveaway(onDismissRequest: () -> Unit) {
                 }
             }
 
-            if (isSubmited == 1) {
+            if (isSubmited) {
                 Box(
                     modifier = Modifier.fillMaxWidth(),
                 ) {
@@ -555,4 +559,15 @@ fun PopupGiveaway(onDismissRequest: () -> Unit) {
             }
         }
     }
+}
+// Function to load data from storage
+fun loadDataFromStorage(context: Context): Boolean {
+    val sharedPreferences = context.getSharedPreferences("my_prefs", Context.MODE_PRIVATE)
+    return sharedPreferences.getBoolean("giveaway", true) ?: true
+}
+
+// Function to save data to storage
+fun saveDataToStorage(context: Context, data: Boolean) {
+    val sharedPreferences = context.getSharedPreferences("my_prefs", Context.MODE_PRIVATE)
+    sharedPreferences.edit().putBoolean("giveaway", data).apply()
 }
