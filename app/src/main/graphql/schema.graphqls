@@ -1,5 +1,15 @@
 type Query {
-  gyms: [Gym]
+  """
+  Get all gyms.
+  """
+  getAllGyms: [Gym]
+
+  """
+  Get all users given a giveaway ID.
+  """
+  getUsersByGiveawayId(id: Int): [User]
+
+  activities: [Activity]
 }
 
 type Gym {
@@ -14,6 +24,8 @@ type Gym {
   longitude: Float!
 
   name: String!
+
+  activities: [Activity]
 
   amenities: [Amenity]
 
@@ -37,6 +49,55 @@ The `Float` scalar type represents signed double-precision fractional values as 
 """
 scalar Float
 
+type Activity {
+  id: ID!
+
+  facilityId: Int!
+
+  gymId: Int!
+
+  hasMembership: Boolean!
+
+  name: String!
+
+  needsReserve: Boolean!
+
+  pricing: [Price]
+}
+
+"""
+The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31 - 1) and 2^31 - 1 since represented in JSON as double-precision floating point numbers specifiedby [IEEE 754](http://en.wikipedia.org/wiki/IEEE_floating_point).
+"""
+scalar Int
+
+"""
+The `Boolean` scalar type represents `true` or `false`.
+"""
+scalar Boolean
+
+type Price {
+  id: ID!
+
+  activityId: Int!
+
+  name: String!
+
+  cost: Float!
+
+  rate: String
+
+  type: PriceType!
+}
+
+"""
+An enumeration.
+"""
+enum PriceType {
+  RATE
+
+  GEAR
+}
+
 type Amenity {
   id: ID!
 
@@ -44,11 +105,6 @@ type Amenity {
 
   type: AmenityType!
 }
-
-"""
-The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31 - 1) and 2^31 - 1 since represented in JSON as double-precision floating point numbers specifiedby [IEEE 754](http://en.wikipedia.org/wiki/IEEE_floating_point).
-"""
-scalar Int
 
 """
 An enumeration.
@@ -72,11 +128,13 @@ type Facility {
 
   name: String!
 
+  activities: [Activity]
+
   capacity: Capacity
 
-  hours: [OpenHours]
-
   equipment: [Equipment]
+
+  hours: [OpenHours]
 }
 
 """
@@ -103,42 +161,6 @@ type Capacity {
 
   updated: Int!
 }
-
-type OpenHours {
-  id: ID!
-
-  courtType: CourtType
-
-  endTime: Int!
-
-  facilityId: Int
-
-  gymId: Int
-
-  isShallow: Boolean
-
-  isSpecial: Boolean!
-
-  isWomen: Boolean
-
-  startTime: Int!
-}
-
-"""
-An enumeration.
-"""
-enum CourtType {
-  BASKETBALL
-
-  VOLLEYBALL
-
-  BADMINTON
-}
-
-"""
-The `Boolean` scalar type represents `true` or `false`.
-"""
-scalar Boolean
 
 type Equipment {
   id: ID!
@@ -178,6 +200,94 @@ An enumeration.
 """
 enum AccessibilityType {
   WHEELCHAIR
+}
+
+type OpenHours {
+  id: ID!
+
+  courtType: CourtType
+
+  endTime: Int!
+
+  facilityId: Int
+
+  gymId: Int
+
+  isShallow: Boolean
+
+  isSpecial: Boolean!
+
+  isWomen: Boolean
+
+  startTime: Int!
+}
+
+"""
+An enumeration.
+"""
+enum CourtType {
+  BASKETBALL
+
+  VOLLEYBALL
+
+  BADMINTON
+}
+
+type User {
+  id: ID!
+
+  instagram: String
+
+  netId: String!
+
+  giveaways: [Giveaway]
+}
+
+type Giveaway {
+  id: ID!
+
+  name: String!
+
+  users: [User]
+}
+
+type Mutation {
+  """
+  Creates a new giveaway.
+  """
+  createGiveaway(name: String!): CreateGiveaway
+
+  """
+  Creates a new user.
+  """
+  createUser(instagram: String, netId: String!): CreateUser
+
+  """
+  Enters a user into a giveaway.
+  """
+  enterGiveaway(giveawayId: Int!, userNetId: String!): EnterGiveaway
+}
+
+type CreateGiveaway {
+  giveaway: Giveaway
+}
+
+type CreateUser {
+  user: User
+}
+
+type EnterGiveaway {
+  giveawayInstance: GiveawayInstance
+}
+
+type GiveawayInstance {
+  id: ID!
+
+  userId: Int!
+
+  giveawayId: Int!
+
+  numEntries: Int!
 }
 
 """
@@ -451,4 +561,5 @@ directive @skip ("Skipped when true." if: Boolean!) on FIELD|FRAGMENT_SPREAD|INL
 
 schema {
   query: Query
+  mutation: Mutation
 }
