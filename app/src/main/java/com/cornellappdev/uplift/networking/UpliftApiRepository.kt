@@ -26,8 +26,8 @@ import kotlinx.coroutines.launch
  */
 object UpliftApiRepository {
     private val apolloClient = ApolloClient.Builder()
-//        .serverUrl("https://uplift-backend.cornellappdev.com/graphql")
-        .serverUrl("https://uplift-dev.cornellappdev.com/graphql")
+        .serverUrl("https://uplift-backend.cornellappdev.com/graphql")
+//        .serverUrl("https://uplift-dev.cornellappdev.com/graphql")
         .build()
 
     private val gymQuery = apolloClient.query(GymListQuery())
@@ -69,7 +69,7 @@ object UpliftApiRepository {
         activeGymJob = CoroutineScope(Dispatchers.IO).launch {
             gymQuery.toFlow().cancellable()
                 .map {
-                    val gymList = it.data?.gyms?.filterNotNull()
+                    val gymList = it.data?.getAllGyms?.filterNotNull()
                     if (gymList == null) {
                         ApiResponse.Error
                     } else {

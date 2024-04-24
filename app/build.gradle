@@ -12,8 +12,8 @@ android {
         applicationId "com.cornellappdev.uplift"
         minSdk 30
         targetSdk 34
-        versionCode 5
-        versionName "1.1.1"
+        versionCode 7
+        versionName "1.2-urlfix"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
