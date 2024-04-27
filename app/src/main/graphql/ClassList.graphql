@@ -1,0 +1,21 @@
+query ClassList {
+    getAllGyms {
+        imageUrl
+        classes {
+            id
+            gymId
+            classId
+            location
+            instructor
+            isCanceled
+            isVirtual
+            startTime
+            endTime
+            class_ {
+                id
+                name
+                description
+            }
+        }
+    }
+}

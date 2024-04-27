@@ -71,7 +71,7 @@ fun MainNavigationWrapper(
 
     val items = listOf(
         BottomNavScreen.Home,
-//        BottomNavScreen.Classes,
+        BottomNavScreen.Classes,
         // TODO: Add new items when activities and profile are implemented.
     )
 
