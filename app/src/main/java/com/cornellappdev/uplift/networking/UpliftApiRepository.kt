@@ -2,11 +2,13 @@ package com.cornellappdev.uplift.networking
 
 import android.util.Log
 import com.apollographql.apollo3.ApolloClient
+import com.cornellappdev.uplift.ClassListQuery
 import com.cornellappdev.uplift.GymListQuery
 import com.cornellappdev.uplift.models.UpliftClass
 import com.cornellappdev.uplift.models.UpliftGym
 import com.cornellappdev.uplift.networking.UpliftApiRepository.classesApiFlow
 import com.cornellappdev.uplift.networking.UpliftApiRepository.gymApiFlow
+import com.cornellappdev.uplift.util.defaultGymUrl
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -26,11 +28,12 @@ import kotlinx.coroutines.launch
  */
 object UpliftApiRepository {
     private val apolloClient = ApolloClient.Builder()
-        .serverUrl("https://uplift-backend.cornellappdev.com/graphql")
-//        .serverUrl("https://uplift-dev.cornellappdev.com/graphql")
+//        .serverUrl("https://uplift-backend.cornellappdev.com/graphql")
+        .serverUrl("https://uplift-dev.cornellappdev.com/graphql")
         .build()
 
     private val gymQuery = apolloClient.query(GymListQuery())
+    private val classQuery = apolloClient.query(ClassListQuery())
 
     private val _gymApiFlow: MutableStateFlow<ApiResponse<List<UpliftGym>>> =
         MutableStateFlow(ApiResponse.Loading)
@@ -90,49 +93,51 @@ object UpliftApiRepository {
 
         // TODO: Classes taken out for 2024 backend rework. Most of this logic will likely be
         //  invalidated when classes are pushed for real.
-//        activeClassJob = CoroutineScope(Dispatchers.IO).launch {
-//            classQuery.toFlow().cancellable()
-//                .map {
-//                    val gyms = it.data?.gyms
-//                    if (gyms == null) {
-//                        ApiResponse.Error
-//                    } else {
-//                        val classList =
-//                            gyms.filterNotNull().mapNotNull { gym ->
-//                                gym.classes?.map { classQuery ->
-//                                    Pair(
-//                                        classQuery,
-//                                        gym.imageUrl ?: defaultGymUrl
-//                                    )
-//                                }
-//                            }.flatten().filter { pair -> pair.first != null }
-//
-//                        val upliftClasses =
-//                            classList.mapNotNull { query -> query.first!!.toUpliftClass(query.second) }
-//
-//                        ApiResponse.Success(
-//                            upliftClasses.distinctBy { upliftClass ->
-//                                listOf(
-//                                    upliftClass.name,
-//                                    upliftClass.location,
-//                                    upliftClass.time,
-//                                    upliftClass.date
-//                                )
-//                            }
-//                        )
-//                    }
-//                }
-//                .catch {
-//                    Log.e("query", it.stackTraceToString())
-//                    emit(ApiResponse.Error)
-//                }.stateIn(
-//                    CoroutineScope(Dispatchers.Main),
-//                    SharingStarted.Eagerly,
-//                    ApiResponse.Loading
-//                ).collect {
-//                    _classesApiFlow.emit(it)
-//                }
-//        }
+        activeClassJob = CoroutineScope(Dispatchers.IO).launch {
+            classQuery.toFlow().cancellable()
+                .map {
+                    val gyms = it.data?.getAllGyms
+                    if (gyms == null) {
+                        ApiResponse.Error
+                    } else {
+                        val classList =
+                            gyms.filterNotNull().mapNotNull { gym ->
+
+                                gym.classes?.map { classQuery ->
+
+                                    Pair(
+                                        classQuery,
+                                        gym.imageUrl ?: defaultGymUrl
+                                    )
+                                }
+                            }.flatten().filter { pair -> pair.first != null }
+
+                        val upliftClasses =
+                            classList.mapNotNull { query -> query.first!!.toUpliftClass(query.second) }
+
+                        ApiResponse.Success(
+                            upliftClasses.distinctBy { upliftClass ->
+                                listOf(
+                                    upliftClass.name,
+                                    upliftClass.location,
+                                    upliftClass.time,
+                                    upliftClass.date
+                                )
+                            }
+                        )
+                    }
+                }
+                .catch {
+                    Log.e("query", it.stackTraceToString())
+                    emit(ApiResponse.Error)
+                }.stateIn(
+                    CoroutineScope(Dispatchers.Main),
+                    SharingStarted.Eagerly,
+                    ApiResponse.Loading
+                ).collect {
+                    _classesApiFlow.emit(it)
+                }
+        }
     }
 
     init {

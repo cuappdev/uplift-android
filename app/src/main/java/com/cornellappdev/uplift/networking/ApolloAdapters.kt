@@ -1,6 +1,7 @@
 package com.cornellappdev.uplift.networking
 
 
+import com.cornellappdev.uplift.ClassListQuery
 import com.cornellappdev.uplift.GymListQuery
 import com.cornellappdev.uplift.fragment.GymFields
 import com.cornellappdev.uplift.fragment.OpenHoursFields
@@ -15,10 +16,16 @@ import com.cornellappdev.uplift.models.SwimmingTime
 import com.cornellappdev.uplift.models.TimeInterval
 import com.cornellappdev.uplift.models.TimeOfDay
 import com.cornellappdev.uplift.models.UpliftCapacity
+import com.cornellappdev.uplift.models.UpliftClass
 import com.cornellappdev.uplift.models.UpliftGym
 import com.cornellappdev.uplift.type.EquipmentType
+import com.cornellappdev.uplift.util.asTimeOfDay
+import com.cornellappdev.uplift.util.defaultClassUrl
 import com.cornellappdev.uplift.util.defaultGymUrl
+import java.text.ParseException
+import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Locale
 
 /**
  * Returns the popular times list representation for this gym query.
@@ -272,6 +279,48 @@ fun GymFields.Facility.pullName(gymName: String): String {
         else "Teagle Down"
     }
     return gymName
+}
+
+/**
+ * Returns a [Calendar] whose time is set to the time input, given in format:
+ *
+ * "yyyy-MM-dd'T'HH:mm:ss"
+ *
+ * Requires that the date is in the above format.
+ */
+fun parseCalendar(dateString: String): Calendar {
+    val cal = Calendar.getInstance()
+    val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.ENGLISH)
+    cal.time = sdf.parse(dateString) ?: Calendar.getInstance().time
+
+    return cal
+}
+fun ClassListQuery.Class.toUpliftClass(imageUrl: String = defaultClassUrl): UpliftClass? {
+    try {
+        val start = parseCalendar(startTime.toString())
+        val end = parseCalendar(endTime.toString())
+
+        return UpliftClass(
+            name = class_?.name ?: "NO_NAME",
+            id = id,
+            gymId = gymId?.toString() ?: "NO_GYM",
+            location = location,
+            instructorName = instructor,
+            date = end,
+            time = TimeInterval(
+                start.asTimeOfDay(),
+                end.asTimeOfDay()
+            ),
+            // TODO: Functions aren't in backend yet (as far as I can tell). Update when added.
+            functions = listOf(),
+            // TODO: Preparation is not supplied by backend yet. Update when added.
+            preparation = "",
+            description = class_?.description ?: "NO_DESC",
+            imageUrl = imageUrl.replace("'", ""),
+        )
+    } catch (_: ParseException) {
+        return null
+    }
 }
 
 /**
