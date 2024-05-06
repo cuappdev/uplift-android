@@ -49,6 +49,7 @@ import com.cornellappdev.uplift.ui.components.PopularTimesSection
 import com.cornellappdev.uplift.ui.components.general.FavoriteButton
 import com.cornellappdev.uplift.ui.components.gymdetail.GymAmenitySection
 import com.cornellappdev.uplift.ui.components.gymdetail.GymCapacitiesSection
+import com.cornellappdev.uplift.ui.components.gymdetail.GymTodaysClasses
 import com.cornellappdev.uplift.ui.viewmodels.ClassDetailViewModel
 import com.cornellappdev.uplift.ui.viewmodels.GymDetailViewModel
 import com.cornellappdev.uplift.util.*
@@ -277,12 +278,12 @@ fun GymDetailScreen(
                 LineSpacer()
                 if (hasOneFacility)
                     GymFacilitySection(gym!!, day)
-                // TODO: Uncomment when classes added to backend
-//                GymTodaysClasses(
-//                    gymDetailViewModel = gymDetailViewModel,
-//                    classDetailViewModel = classDetailViewModel,
-//                    navController = navController
-//                )
+
+                GymTodaysClasses(
+                    gymDetailViewModel = gymDetailViewModel,
+                    classDetailViewModel = classDetailViewModel,
+                    navController = navController
+                )
             }
         }
 
