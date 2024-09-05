@@ -56,7 +56,7 @@ jobs:
         with:
           serviceAccountJson: service_account.json
           packageName: ${{ secrets.PACKAGE_NAME }}
-          releaseFile: app/build/outputs/bundle/release/app-release.aab
+          releaseFiles: "app/build/outputs/bundle/release/app-release.aab"
           track: beta
           whatsNewDirectory: whatsnew/
 
