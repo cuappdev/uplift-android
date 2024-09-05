@@ -6,12 +6,12 @@ plugins {
 
 android {
     namespace 'com.cornellappdev.uplift'
-    compileSdk 34
+    compileSdk 35
 
     defaultConfig {
         applicationId "com.cornellappdev.uplift"
         minSdk 28
-        targetSdk 34
+        targetSdk 35
         versionCode 9
         versionName "1.3-classes"
 
