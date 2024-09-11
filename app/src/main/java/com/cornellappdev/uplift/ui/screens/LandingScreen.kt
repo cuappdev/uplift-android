@@ -23,11 +23,14 @@ import kotlinx.coroutines.delay
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.paddingFromBaseline
 import androidx.compose.foundation.layout.width
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -52,19 +55,18 @@ fun LandingScreen() {
     systemUiController.isNavigationBarVisible = false // Navigation bar
     systemUiController.isSystemBarsVisible = false
 
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(bottom = 54.dp),
-        verticalArrangement = Arrangement.Bottom,
-        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
             painter = painterResource(id = R.drawable.ic_main_logo),
             contentDescription = "Uplift logo",
             modifier = Modifier
+                .offset(y = (-100).dp)
                 .height(130.dp)
                 .width(115.dp)
+                .align(Alignment.Center)
         )
 
         Spacer(modifier = Modifier.height(387.dp));
@@ -73,8 +75,11 @@ fun LandingScreen() {
             painter = painterResource(id = R.drawable.ic_appdev_logo),
             contentDescription = "Cornell AppDev logo",
             modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .paddingFromBaseline(bottom = 80.dp)
                 .height(26.dp)
                 .width(158.dp)
+
         )
     }
 }
