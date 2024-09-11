@@ -44,21 +44,29 @@ import com.cornellappdev.uplift.R
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun LandingScreen() {
-    Column(modifier = Modifier.fillMaxSize().padding(bottom=54.dp),
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(bottom = 54.dp),
         verticalArrangement = Arrangement.Bottom,
-        horizontalAlignment = Alignment.CenterHorizontally) {
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         Image(
             painter = painterResource(id = R.drawable.ic_main_logo),
             contentDescription = "Uplift logo",
-            modifier = Modifier.height(130.dp).width(115.dp)
+            modifier = Modifier
+                .height(130.dp)
+                .width(115.dp)
         )
-        
+
         Spacer(modifier = Modifier.height(387.dp));
 
         Image(
             painter = painterResource(id = R.drawable.ic_appdev_logo),
             contentDescription = "Cornell AppDev logo",
-            modifier = Modifier.height(26.dp).width(158.dp)
-            )
+            modifier = Modifier
+                .height(26.dp)
+                .width(158.dp)
+        )
     }
 }
