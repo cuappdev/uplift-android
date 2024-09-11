@@ -37,6 +37,8 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.cornellappdev.uplift.R
+import com.google.accompanist.systemuicontroller.SystemUiController
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 /**
  * The landing page during the Uplift onboarding process.
@@ -44,6 +46,12 @@ import com.cornellappdev.uplift.R
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun LandingScreen() {
+    val systemUiController: SystemUiController = rememberSystemUiController()
+
+    systemUiController.isStatusBarVisible = false
+    systemUiController.isNavigationBarVisible = false // Navigation bar
+    systemUiController.isSystemBarsVisible = false
+
     Column(
         modifier = Modifier
             .fillMaxSize()
