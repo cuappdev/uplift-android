@@ -61,10 +61,16 @@ fun SignInPromptScreen() {
 
     Box() {
         Canvas(modifier = Modifier.fillMaxSize()) {
-            drawCircle(color = LIGHT_YELLOW, radius = 244.dp.toPx(), center = Offset(x= 142.dp.toPx(),y=(-35).dp.toPx()))
+            drawCircle(
+                color = LIGHT_YELLOW,
+                radius = 244.dp.toPx(),
+                center = Offset(x = 142.dp.toPx(), y = (-35).dp.toPx())
+            )
         }
-        Column(horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxSize()) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.fillMaxSize()
+        ) {
             Spacer(modifier = Modifier.height(88.dp))
 
             Image(
@@ -76,58 +82,148 @@ fun SignInPromptScreen() {
             )
             Spacer(modifier = Modifier.height(60.dp))
 
-            Text(text = "Find what uplifts you.", fontSize = 24.sp, fontFamily = montserratFamily, fontWeight = FontWeight.Bold)
+            Text(
+                text = "Find what uplifts you.",
+                fontSize = 24.sp,
+                fontFamily = montserratFamily,
+                fontWeight = FontWeight.Bold
+            )
 
             Spacer(modifier = Modifier.height(80.dp))
 
-            Text("Log in to:", fontSize = 16.sp, fontFamily = montserratFamily, fontWeight = FontWeight.Bold)
+            Text(
+                "Log in to:",
+                fontSize = 16.sp,
+                fontFamily = montserratFamily,
+                fontWeight = FontWeight.Bold
+            )
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            Column(
-                modifier = Modifier.wrapContentHeight(),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                ElevatedCard(modifier = Modifier.wrapContentHeight().width(240.dp).shadow(elevation=20.dp, ambientColor = GRAY01, spotColor = GRAY01, shape = RoundedCornerShape(8.dp)), colors = CardDefaults.cardColors(containerColor = Color.White)) {
-                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.padding(12.dp)) {
-                        Image(painter = painterResource(R.drawable.goal), contentDescription = "")
-                        Text(
-                            "Create fitness goals",
-                            fontSize = 16.sp,
-                            fontFamily = montserratFamily,
-                            fontWeight = FontWeight.Normal
-                        )
-                    }
-                }
-                ElevatedCard(modifier = Modifier.wrapContentHeight().width(240.dp).shadow(elevation=20.dp, ambientColor = GRAY01, spotColor = GRAY01, shape = RoundedCornerShape(8.dp)), colors = CardDefaults.cardColors(containerColor = Color.White)) {
-
-                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.padding(12.dp)) {
-                        Image(painter = painterResource(R.drawable.gym_simple), contentDescription = "")
-                        Text("Track fitness progress", fontSize = 16.sp, fontFamily = montserratFamily, fontWeight = FontWeight.Normal)
-                    }
-                }
-                ElevatedCard(modifier = Modifier.wrapContentHeight().width(240.dp).shadow(elevation=20.dp, ambientColor = GRAY01, spotColor = GRAY01, shape = RoundedCornerShape(8.dp)), colors = CardDefaults.cardColors(containerColor = Color.White)) {
-                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.padding(12.dp)) {
-                        Image(painter = painterResource(R.drawable.history), modifier = Modifier.size(22.dp), contentDescription = "")
-                        Text("View workout history", fontSize = 16.sp, fontFamily = montserratFamily, fontWeight = FontWeight.Normal)
-                    }
-                }
-            }
+            upliftUsesCardList()
 
             Spacer(modifier = Modifier.height(125.dp))
-            Button(
-                onClick = {},
-                elevation = androidx.compose.material.ButtonDefaults.elevation(5.dp),
-                colors = androidx.compose.material.ButtonDefaults.buttonColors(backgroundColor = PRIMARY_YELLOW)
+            signinButton()
+
+
+        }
+    }
+}
+
+@Composable
+private fun signinButton() {
+    Button(
+        onClick = {},
+        elevation = androidx.compose.material.ButtonDefaults.elevation(5.dp),
+        colors = androidx.compose.material.ButtonDefaults.buttonColors(backgroundColor = PRIMARY_YELLOW)
+    ) {
+        Text(
+            "Log in",
+            fontSize = 16.sp,
+            fontFamily = montserratFamily,
+            fontWeight = FontWeight.Bold
+        )
+    }
+
+    Spacer(modifier = Modifier.height(12.dp))
+    Text(
+        "Skip",
+        fontSize = 14.sp,
+        fontFamily = montserratFamily,
+        fontWeight = FontWeight.Normal,
+        color = GRAY04
+    )
+}
+
+@Composable
+private fun upliftUsesCardList() {
+    Column(
+        modifier = Modifier.wrapContentHeight(),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        ElevatedCard(
+            modifier = Modifier
+                .wrapContentHeight()
+                .width(240.dp)
+                .shadow(
+                    elevation = 20.dp,
+                    ambientColor = GRAY01,
+                    spotColor = GRAY01,
+                    shape = RoundedCornerShape(8.dp)
+                ), colors = CardDefaults.cardColors(containerColor = Color.White)
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.padding(12.dp)
             ) {
-                Text("Log in", fontSize=16.sp, fontFamily = montserratFamily, fontWeight = FontWeight.Bold)
+                Image(painter = painterResource(R.drawable.goal), contentDescription = "")
+                Text(
+                    "Create fitness goals",
+                    fontSize = 16.sp,
+                    fontFamily = montserratFamily,
+                    fontWeight = FontWeight.Normal
+                )
             }
+        }
+        ElevatedCard(
+            modifier = Modifier
+                .wrapContentHeight()
+                .width(240.dp)
+                .shadow(
+                    elevation = 20.dp,
+                    ambientColor = GRAY01,
+                    spotColor = GRAY01,
+                    shape = RoundedCornerShape(8.dp)
+                ), colors = CardDefaults.cardColors(containerColor = Color.White)
+        ) {
 
-            Spacer(modifier = Modifier.height(12.dp))
-            Text("Skip", fontSize=14.sp, fontFamily = montserratFamily, fontWeight = FontWeight.Normal, color = GRAY04)
-
-
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.padding(12.dp)
+            ) {
+                Image(
+                    painter = painterResource(R.drawable.gym_simple),
+                    contentDescription = ""
+                )
+                Text(
+                    "Track fitness progress",
+                    fontSize = 16.sp,
+                    fontFamily = montserratFamily,
+                    fontWeight = FontWeight.Normal
+                )
+            }
+        }
+        ElevatedCard(
+            modifier = Modifier
+                .wrapContentHeight()
+                .width(240.dp)
+                .shadow(
+                    elevation = 20.dp,
+                    ambientColor = GRAY01,
+                    spotColor = GRAY01,
+                    shape = RoundedCornerShape(8.dp)
+                ), colors = CardDefaults.cardColors(containerColor = Color.White)
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.padding(12.dp)
+            ) {
+                Image(
+                    painter = painterResource(R.drawable.history),
+                    modifier = Modifier.size(22.dp),
+                    contentDescription = ""
+                )
+                Text(
+                    "View workout history",
+                    fontSize = 16.sp,
+                    fontFamily = montserratFamily,
+                    fontWeight = FontWeight.Normal
+                )
+            }
         }
     }
 }
