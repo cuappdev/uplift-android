@@ -89,6 +89,7 @@ fun ProfileCreationScreen() {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Spacer(modifier = Modifier.height(46.dp))
+            //TODO - this Box placeholder will be replaced with a component to choose photo
             Box(
                 modifier = Modifier
                     .size(155.dp)
