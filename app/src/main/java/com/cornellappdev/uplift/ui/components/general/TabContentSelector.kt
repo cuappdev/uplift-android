@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material.Text
 import androidx.compose.material.ripple.rememberRipple
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -82,7 +83,7 @@ fun TabContentSelector(tabs: List<Pair<String, @Composable () -> Unit>>) {
                             .fillMaxHeight()
                             .clickable(
                                 interactionSource = interaction,
-                                indication = rememberRipple()
+                                indication = ripple()
                             ) {
                                 selectedTab = i
                             }, contentAlignment = Alignment.Center
