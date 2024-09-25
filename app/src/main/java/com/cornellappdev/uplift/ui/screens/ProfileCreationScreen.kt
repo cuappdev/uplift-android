@@ -58,7 +58,7 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 fun ProfileCreationScreen() {
     val systemUiController: SystemUiController = rememberSystemUiController()
     val checkboxColors: CheckboxColors =
-        CheckboxDefaults.colors(checkedColor = PRIMARY_YELLOW, checkmarkColor = Color.Black)
+        CheckboxDefaults.colors(checkedColor = PRIMARY_YELLOW, checkmarkColor = Color.Black, uncheckedColor = GRAY03)
 
     systemUiController.isStatusBarVisible = false
     systemUiController.isNavigationBarVisible = false // Navigation bar
