@@ -38,45 +38,35 @@ import com.cornellappdev.uplift.R
  *  @param onPhotoSelected: function to call when the user selects a photo. Takes in uri parameter
  */
 @Composable
-fun PhotoPicker(onPhotoSelected: (Uri) -> Unit){
+fun PhotoPicker(imageUri: Uri? = null, onPhotoSelected: (Uri) -> Unit) {
     // State to store the selected image URI
-    var selectedImageUri by rememberSaveable { mutableStateOf<Uri?>(null) }
+    var selectedImageUri by rememberSaveable { mutableStateOf<Uri?>(imageUri) }
 
     // Registers a photo picker activity launcher in single-select mode.
-    val pickMedia = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-        // Callback is invoked after the user selects a media item or closes the
-        // photo picker.
-        if (uri != null) {
-            selectedImageUri = uri
-            onPhotoSelected(uri)
+    val pickMedia =
+        rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+            // Callback is invoked after the user selects a media item or closes the
+            // photo picker.
+            if (uri != null) {
+                selectedImageUri = uri
+                onPhotoSelected(uri)
+            }
         }
-    }
 
     Box(
-        modifier = Modifier
-            .size(160.dp),
-        contentAlignment = Alignment.Center
-    ){
-        ElevatedCard(
-            elevation = CardDefaults.cardElevation(
-                defaultElevation = 10.dp
-            ),
-            colors = CardDefaults.cardColors(
-                containerColor = Color.White,
-            ),
-            shape = CircleShape,
-            modifier = Modifier
-                .size(160.dp),
-            onClick = {
-                // Launch the photo picker and let the user choose only images.
-                pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-            }
-        ){
+        modifier = Modifier.size(160.dp), contentAlignment = Alignment.Center
+    ) {
+        ElevatedCard(elevation = CardDefaults.cardElevation(
+            defaultElevation = 10.dp
+        ), colors = CardDefaults.cardColors(
+            containerColor = Color.White,
+        ), shape = CircleShape, modifier = Modifier.size(160.dp), onClick = {
+            // Launch the photo picker and let the user choose only images.
+            pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+        }) {
             Box(
-                modifier = Modifier
-                    .fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ){
+                modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
+            ) {
                 // Check if a photo is selected, and display it, otherwise show the camera icon
                 if (selectedImageUri != null) {
                     Image(
@@ -110,8 +100,7 @@ fun PhotoPicker(onPhotoSelected: (Uri) -> Unit){
             Image(
                 painter = painterResource(id = R.drawable.ic_camera_circle),
                 contentDescription = null,
-                modifier = Modifier
-                    .offset(60.dp, 64.dp)
+                modifier = Modifier.offset(60.dp, 64.dp)
             )
         }
     }
@@ -120,12 +109,11 @@ fun PhotoPicker(onPhotoSelected: (Uri) -> Unit){
 @Preview(showBackground = true)
 @Composable
 private fun PhotoPickerPreview() {
-        Column(
-            modifier = Modifier
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ){
-            PhotoPicker {}
-        }
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        PhotoPicker {}
+    }
 }
