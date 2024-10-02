@@ -19,9 +19,8 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
-import androidx.compose.material.ButtonElevation
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CardElevation
@@ -100,10 +99,10 @@ fun SignInPromptScreen() {
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            upliftUsesCardList()
+            UpliftUsesCardList()
 
             Spacer(modifier = Modifier.height(125.dp))
-            signinButton()
+            SigninButton({})
 
 
         }
@@ -111,11 +110,11 @@ fun SignInPromptScreen() {
 }
 
 @Composable
-private fun signinButton() {
+private fun SigninButton(onClick: () -> Unit) {
     Button(
-        onClick = {},
-        elevation = androidx.compose.material.ButtonDefaults.elevation(5.dp),
-        colors = androidx.compose.material.ButtonDefaults.buttonColors(backgroundColor = PRIMARY_YELLOW)
+        onClick = onClick,
+        elevation = ButtonDefaults.elevation(5.dp),
+        colors = ButtonDefaults.buttonColors(backgroundColor = PRIMARY_YELLOW)
     ) {
         Text(
             "Log in",
@@ -136,7 +135,7 @@ private fun signinButton() {
 }
 
 @Composable
-private fun upliftUsesCardList() {
+private fun UpliftUsesCardList() {
     Column(
         modifier = Modifier.wrapContentHeight(),
         verticalArrangement = Arrangement.spacedBy(12.dp),
