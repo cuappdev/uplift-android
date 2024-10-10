@@ -9,6 +9,7 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.datastore.preferences.preferencesDataStore
 import com.cornellappdev.uplift.models.DatastoreRepository
 import com.cornellappdev.uplift.ui.MainNavigationWrapper
+import com.cornellappdev.uplift.ui.screens.ProfileCreationScreen
 import com.cornellappdev.uplift.ui.theme.UpliftTheme
 import com.cornellappdev.uplift.util.LockScreenOrientation
 import com.cornellappdev.uplift.util.PREFERENCES_NAME
@@ -30,10 +31,11 @@ class MainActivity : ComponentActivity() {
             datastoreRepository = DatastoreRepository(dataStore)
 
         setContent {
-            UpliftTheme {
-                LockScreenOrientation(orientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
-                MainNavigationWrapper()
-            }
+//            UpliftTheme {
+//                LockScreenOrientation(orientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
+//                MainNavigationWrapper()
+//            }
+            ProfileCreationScreen()
         }
     }
 }
