@@ -1,6 +1,7 @@
 package com.cornellappdev.uplift.ui.screens
 
 import android.widget.ImageButton
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -27,10 +28,13 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Outline
@@ -81,6 +85,7 @@ fun ProfileCreationScreen() {
         val checkedState = remember { mutableStateOf(false) }
         val checkedState2 = remember { mutableStateOf(false) }
         val checkedState3 = remember { mutableStateOf(false) }
+        val allchecked = checkedState.value && checkedState2.value && checkedState3.value
 
         Column(
             modifier = Modifier
@@ -118,94 +123,25 @@ fun ProfileCreationScreen() {
             )
             Spacer(modifier = Modifier.height(25.dp))
 
-
-
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Checkbox(
-                        checked = checkedState.value,
-                        onCheckedChange = { checkedState.value = it },
-                        colors = checkboxColors
-                    )
-                    Text(
-                        text = "I agree with EULA terms and agreements",
-                        fontSize = 12.sp,
-                        fontFamily = montserratFamily,
-                        fontWeight = FontWeight.Normal
-                    )
-                }
+                InfoCheckboxRow(checkedState, checkboxColors, "I agree with EULA terms and agreements")
 
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Checkbox(
-                        checked = checkedState2.value,
-                        onCheckedChange = { checkedState2.value = it },
-                        colors = checkboxColors
-                    )
-                    Text(
-                        text = "I allow Uplift to access data on my gym usage",
-                        fontSize = 12.sp,
-                        fontFamily = montserratFamily,
-                        fontWeight = FontWeight.Normal
-                    )
-                }
+                InfoCheckboxRow(checkedState2, checkboxColors, "I allow Uplift to access data on my gym usage")
 
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Checkbox(
-                        checked = checkedState3.value,
-                        onCheckedChange = { checkedState3.value = it },
-                        colors = checkboxColors
-                    )
-                    Text(
-                        text = "I allow Uplift to access my location",
-                        fontSize = 12.sp,
-                        fontFamily = montserratFamily,
-                        fontWeight = FontWeight.Normal
-                    )
-                }
+                InfoCheckboxRow(checkedState3, checkboxColors, "I allow Uplift to access my location")
 
             }
 
-            if (checkedState.value && checkedState2.value && checkedState3.value) {
+
                 Spacer(modifier = Modifier.height(155.dp))
 
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(bottom = 25.dp)
-                ) {
-                    Text(
-                        text = "Are you ready to",
-                        fontSize = 16.sp,
-                        fontFamily = montserratFamily,
-                        fontWeight = FontWeight.Bold
-                    )
+            val animatedOpacity: Float by animateFloatAsState(if(allchecked) 1f else 0f)
+            val opacityModifier: Modifier = Modifier.alpha(animatedOpacity)
+            ReadyToUplift(opacityModifier)
 
-                    Spacer(modifier = Modifier.width(6.dp))
-
-                    Image(
-                        painter = painterResource(R.drawable.ic_main_logo),
-                        contentDescription = "",
-                        modifier = Modifier.size(width = 26.dp, height = 23.dp)
-                    )
-
-                    Image(
-                        painter = painterResource(R.drawable.lift_logo),
-                        contentDescription = "",
-                    )
-                    Spacer(modifier = Modifier.width(6.dp))
-
-                    Text(
-                        text = "?",
-                        fontSize = 16.sp,
-                        fontFamily = montserratFamily,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
-            } else {
-                Spacer(modifier = Modifier.height(205.dp))
-            }
             Button(
                 {},
-                enabled = checkedState.value && checkedState2.value && checkedState3.value,
+                enabled = allchecked,
                 colors = ButtonDefaults.buttonColors(
                     backgroundColor = PRIMARY_YELLOW,
                     disabledBackgroundColor = GRAY02,
@@ -215,7 +151,7 @@ fun ProfileCreationScreen() {
                 modifier = Modifier.size(height = 44.dp, width = 144.dp)
             ) {
                 Text(
-                    text = if (checkedState.value && checkedState2.value && checkedState3.value) "Get started" else "Next",
+                    text = "Next",
                     fontSize = 16.sp,
                     fontFamily = montserratFamily,
                     fontWeight = FontWeight.Bold
@@ -223,5 +159,64 @@ fun ProfileCreationScreen() {
             }
 
         }
+    }
+}
+
+@Composable
+private fun ReadyToUplift(
+    modifier: Modifier = Modifier
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier.padding(bottom = 25.dp)
+    ) {
+        Text(
+            text = "Are you ready to",
+            fontSize = 16.sp,
+            fontFamily = montserratFamily,
+            fontWeight = FontWeight.Bold
+        )
+
+        Spacer(modifier = Modifier.width(6.dp))
+
+        Image(
+            painter = painterResource(R.drawable.ic_main_logo),
+            contentDescription = "",
+            modifier = Modifier.size(width = 26.dp, height = 23.dp)
+        )
+
+        Image(
+            painter = painterResource(R.drawable.lift_logo),
+            contentDescription = "",
+        )
+        Spacer(modifier = Modifier.width(6.dp))
+
+        Text(
+            text = "?",
+            fontSize = 16.sp,
+            fontFamily = montserratFamily,
+            fontWeight = FontWeight.Bold
+        )
+    }
+}
+
+@Composable
+private fun InfoCheckboxRow(
+    checkedState: MutableState<Boolean>,
+    checkboxColors: CheckboxColors,
+    message: String
+) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Checkbox(
+            checked = checkedState.value,
+            onCheckedChange = { checkedState.value = it },
+            colors = checkboxColors
+        )
+        Text(
+            text = message,
+            fontSize = 12.sp,
+            fontFamily = montserratFamily,
+            fontWeight = FontWeight.Normal
+        )
     }
 }
