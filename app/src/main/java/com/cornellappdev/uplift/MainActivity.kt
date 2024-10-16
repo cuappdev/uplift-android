@@ -31,11 +31,10 @@ class MainActivity : ComponentActivity() {
             datastoreRepository = DatastoreRepository(dataStore)
 
         setContent {
-//            UpliftTheme {
-//                LockScreenOrientation(orientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
-//                MainNavigationWrapper()
-//            }
-            ProfileCreationScreen()
+            UpliftTheme {
+                LockScreenOrientation(orientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
+                MainNavigationWrapper()
+            }
         }
     }
 }
