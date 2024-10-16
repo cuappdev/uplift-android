@@ -26,6 +26,7 @@ import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -44,6 +45,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.cornellappdev.uplift.R
 import com.cornellappdev.uplift.util.GRAY01
 import com.cornellappdev.uplift.util.GRAY02
@@ -59,7 +61,9 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
  */
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileCreationScreen() {
+fun ProfileCreationScreen(
+    navController: NavHostController,
+) {
     val systemUiController: SystemUiController = rememberSystemUiController()
     val checkboxColors: CheckboxColors =
         CheckboxDefaults.colors(checkedColor = PRIMARY_YELLOW, checkmarkColor = Color.Black, uncheckedColor = GRAY03)
@@ -140,7 +144,7 @@ fun ProfileCreationScreen() {
             ReadyToUplift(opacityModifier)
 
             Button(
-                {},
+                { navController.navigate(route = "home")},
                 enabled = allchecked,
                 colors = ButtonDefaults.buttonColors(
                     backgroundColor = PRIMARY_YELLOW,
@@ -150,12 +154,14 @@ fun ProfileCreationScreen() {
                 shape = RoundedCornerShape(38.dp),
                 modifier = Modifier.size(height = 44.dp, width = 144.dp)
             ) {
-                Text(
-                    text = "Next",
-                    fontSize = 16.sp,
-                    fontFamily = montserratFamily,
-                    fontWeight = FontWeight.Bold
-                )
+
+                    Text(
+                        text = "Next",
+                        fontSize = 16.sp,
+                        fontFamily = montserratFamily,
+                        fontWeight = FontWeight.Bold
+                    )
+
             }
 
         }

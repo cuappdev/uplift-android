@@ -33,6 +33,8 @@ import com.cornellappdev.uplift.ui.screens.ClassDetailScreen
 import com.cornellappdev.uplift.ui.screens.ClassScreen
 import com.cornellappdev.uplift.ui.screens.GymDetailScreen
 import com.cornellappdev.uplift.ui.screens.HomeScreen
+import com.cornellappdev.uplift.ui.screens.ProfileCreationScreen
+import com.cornellappdev.uplift.ui.screens.SignInPromptScreen
 import com.cornellappdev.uplift.ui.viewmodels.ClassDetailViewModel
 import com.cornellappdev.uplift.ui.viewmodels.ClassesViewModel
 import com.cornellappdev.uplift.ui.viewmodels.GymDetailViewModel
@@ -85,9 +87,15 @@ fun MainNavigationWrapper(
         }
     }
 
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
+
     Scaffold(
         bottomBar = {
-            if (gymsState is ApiResponse.Success)
+            if (gymsState is ApiResponse.Success
+                && (currentRoute != "signInPrompt")
+                && (currentRoute != "profileCreation")
+                )
                 BottomNavigation(
                     backgroundColor = PRIMARY_YELLOW,
                     contentColor = PRIMARY_BLACK,
@@ -140,7 +148,7 @@ fun MainNavigationWrapper(
     ) {
         NavHost(
             navController = navController,
-            startDestination = "home",
+            startDestination = "onboarding",
             modifier = Modifier.padding(it)
         ) {
             navigation(startDestination = "homeMain", route = "home") {
@@ -198,8 +206,19 @@ fun MainNavigationWrapper(
                 composable(route = "sportsMain") {}
             }
             navigation(startDestination = "favoritesMain", route = "favorites") {
-                composable(route = "favoritesMain") {}
+                composable(route = "favoritesMain") {
+                }
             }
+            navigation(startDestination = "signInPrompt", route = "onboarding") {
+                composable(route = "signInPrompt") {
+                    SignInPromptScreen(navController = navController)
+                }
+                composable(route = "profileCreation") {
+                    ProfileCreationScreen(navController = navController)
+                }
+            }
+
+
         }
     }
 }
