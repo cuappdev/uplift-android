@@ -26,6 +26,7 @@ import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -44,6 +45,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.cornellappdev.uplift.R
 import com.cornellappdev.uplift.util.GRAY01
 import com.cornellappdev.uplift.util.GRAY02
@@ -59,10 +61,16 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
  */
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileCreationScreen() {
+fun ProfileCreationScreen(
+    navController: NavHostController,
+) {
     val systemUiController: SystemUiController = rememberSystemUiController()
     val checkboxColors: CheckboxColors =
-        CheckboxDefaults.colors(checkedColor = PRIMARY_YELLOW, checkmarkColor = Color.Black, uncheckedColor = GRAY03)
+        CheckboxDefaults.colors(
+            checkedColor = PRIMARY_YELLOW,
+            checkmarkColor = Color.Black,
+            uncheckedColor = GRAY03
+        )
 
     systemUiController.isStatusBarVisible = false
     systemUiController.isNavigationBarVisible = false // Navigation bar
@@ -124,23 +132,35 @@ fun ProfileCreationScreen() {
             Spacer(modifier = Modifier.height(25.dp))
 
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                InfoCheckboxRow(checkedState, checkboxColors, "I agree with EULA terms and agreements")
+                InfoCheckboxRow(
+                    checkedState,
+                    checkboxColors,
+                    "I agree with EULA terms and agreements"
+                )
 
-                InfoCheckboxRow(checkedState2, checkboxColors, "I allow Uplift to access data on my gym usage")
+                InfoCheckboxRow(
+                    checkedState2,
+                    checkboxColors,
+                    "I allow Uplift to access data on my gym usage"
+                )
 
-                InfoCheckboxRow(checkedState3, checkboxColors, "I allow Uplift to access my location")
+                InfoCheckboxRow(
+                    checkedState3,
+                    checkboxColors,
+                    "I allow Uplift to access my location"
+                )
 
             }
 
 
-                Spacer(modifier = Modifier.height(155.dp))
+            Spacer(modifier = Modifier.height(155.dp))
 
-            val animatedOpacity: Float by animateFloatAsState(if(allchecked) 1f else 0f)
+            val animatedOpacity: Float by animateFloatAsState(if (allchecked) 1f else 0f)
             val opacityModifier: Modifier = Modifier.alpha(animatedOpacity)
             ReadyToUplift(opacityModifier)
 
             Button(
-                {},
+                { navController.navigate(route = "home") },
                 enabled = allchecked,
                 colors = ButtonDefaults.buttonColors(
                     backgroundColor = PRIMARY_YELLOW,
@@ -150,12 +170,14 @@ fun ProfileCreationScreen() {
                 shape = RoundedCornerShape(38.dp),
                 modifier = Modifier.size(height = 44.dp, width = 144.dp)
             ) {
+
                 Text(
                     text = "Next",
                     fontSize = 16.sp,
                     fontFamily = montserratFamily,
                     fontWeight = FontWeight.Bold
                 )
+
             }
 
         }
