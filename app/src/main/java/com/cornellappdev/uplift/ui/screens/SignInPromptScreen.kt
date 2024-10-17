@@ -107,7 +107,9 @@ fun SignInPromptScreen(
             UpliftUsesCardList()
 
             Spacer(modifier = Modifier.height(125.dp))
-            SignInButton(onClick = {navController.navigate(route = "profileCreation")}, nextOnClick = {navController.navigate(route = "home")})
+            SignInButton(
+                onClick = { navController.navigate(route = "profileCreation") },
+                nextOnClick = { navController.navigate(route = "home") })
         }
     }
 }

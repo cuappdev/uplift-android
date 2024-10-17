@@ -66,7 +66,11 @@ fun ProfileCreationScreen(
 ) {
     val systemUiController: SystemUiController = rememberSystemUiController()
     val checkboxColors: CheckboxColors =
-        CheckboxDefaults.colors(checkedColor = PRIMARY_YELLOW, checkmarkColor = Color.Black, uncheckedColor = GRAY03)
+        CheckboxDefaults.colors(
+            checkedColor = PRIMARY_YELLOW,
+            checkmarkColor = Color.Black,
+            uncheckedColor = GRAY03
+        )
 
     systemUiController.isStatusBarVisible = false
     systemUiController.isNavigationBarVisible = false // Navigation bar
@@ -128,23 +132,35 @@ fun ProfileCreationScreen(
             Spacer(modifier = Modifier.height(25.dp))
 
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                InfoCheckboxRow(checkedState, checkboxColors, "I agree with EULA terms and agreements")
+                InfoCheckboxRow(
+                    checkedState,
+                    checkboxColors,
+                    "I agree with EULA terms and agreements"
+                )
 
-                InfoCheckboxRow(checkedState2, checkboxColors, "I allow Uplift to access data on my gym usage")
+                InfoCheckboxRow(
+                    checkedState2,
+                    checkboxColors,
+                    "I allow Uplift to access data on my gym usage"
+                )
 
-                InfoCheckboxRow(checkedState3, checkboxColors, "I allow Uplift to access my location")
+                InfoCheckboxRow(
+                    checkedState3,
+                    checkboxColors,
+                    "I allow Uplift to access my location"
+                )
 
             }
 
 
-                Spacer(modifier = Modifier.height(155.dp))
+            Spacer(modifier = Modifier.height(155.dp))
 
-            val animatedOpacity: Float by animateFloatAsState(if(allchecked) 1f else 0f)
+            val animatedOpacity: Float by animateFloatAsState(if (allchecked) 1f else 0f)
             val opacityModifier: Modifier = Modifier.alpha(animatedOpacity)
             ReadyToUplift(opacityModifier)
 
             Button(
-                { navController.navigate(route = "home")},
+                { navController.navigate(route = "home") },
                 enabled = allchecked,
                 colors = ButtonDefaults.buttonColors(
                     backgroundColor = PRIMARY_YELLOW,
@@ -155,12 +171,12 @@ fun ProfileCreationScreen(
                 modifier = Modifier.size(height = 44.dp, width = 144.dp)
             ) {
 
-                    Text(
-                        text = "Next",
-                        fontSize = 16.sp,
-                        fontFamily = montserratFamily,
-                        fontWeight = FontWeight.Bold
-                    )
+                Text(
+                    text = "Next",
+                    fontSize = 16.sp,
+                    fontFamily = montserratFamily,
+                    fontWeight = FontWeight.Bold
+                )
 
             }
 

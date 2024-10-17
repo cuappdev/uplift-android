@@ -95,7 +95,7 @@ fun MainNavigationWrapper(
             if (gymsState is ApiResponse.Success
                 && (currentRoute != "signInPrompt")
                 && (currentRoute != "profileCreation")
-                )
+            )
                 BottomNavigation(
                     backgroundColor = PRIMARY_YELLOW,
                     contentColor = PRIMARY_BLACK,
