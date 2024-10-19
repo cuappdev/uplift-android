@@ -11,6 +11,13 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -96,4 +103,37 @@ fun LoadingTopBar(shimmerInstance: Shimmer) {
             Spacer(Modifier.weight(1f))
         }
     }
+}
+
+/**
+ * A variant of the top bar that displays a central title and has a back arrow button
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun UpliftTopBarWithBack(
+    title: String,
+    onBackClick: () -> Unit = {},
+    withBack: Boolean = true
+) {
+    CenterAlignedTopAppBar(
+        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+            containerColor = Color(0xfff8fafa)
+        ),
+        title = {
+            androidx.compose.material3.Text(
+                title, fontFamily = montserratFamily, fontWeight = FontWeight.Bold, fontSize = 16.sp
+
+            )
+        },
+        navigationIcon = {
+            if (withBack) {
+                IconButton(onClick = { onBackClick() }) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Localized description"
+                    )
+                }
+            }
+        },
+    )
 }
