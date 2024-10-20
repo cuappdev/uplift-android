@@ -5,12 +5,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -19,23 +17,32 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.cornellappdev.uplift.ui.components.general.UpliftTopBarWithBack
 import com.cornellappdev.uplift.ui.components.reporting.ReportDescription
+import com.cornellappdev.uplift.ui.components.reporting.ReportDropdown
 import com.cornellappdev.uplift.ui.components.reporting.SubmitButton
-import com.cornellappdev.uplift.util.PRIMARY_BLACK
-import com.cornellappdev.uplift.util.montserratFamily
 
+/**
+ * ReportIssueScreen is a composable that displays the report issue screen where users can report
+ * an issue with the app.
+ */
 @Composable
-fun ReportIssueScreen() {
+fun ReportIssueScreen(
+    onSubmit: (issue: String, gym: String, description: String) -> Unit,
+    onBack: () -> Unit
+) {
+    var selectedIssue by remember { mutableStateOf("Choose an option ...") }
+    var selectedGym by remember { mutableStateOf("Choose an option ...") }
     var description by remember { mutableStateOf("") }
+    var errorStateIssue by remember { mutableStateOf(false) }
+    var errorStateGym by remember { mutableStateOf(false) }
 
     Scaffold(topBar = {
         UpliftTopBarWithBack(
             title = "Report an issue",
+            onBackClick = onBack,
             withBack = true
         )
     }) { padding ->
@@ -55,12 +62,34 @@ fun ReportIssueScreen() {
                     .fillMaxWidth()
                     .padding(top = 24.dp, start = 16.dp, end = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(24.dp)
-            ){
+            ) {
                 ReportDropdown(
-                    title = "What was the issue?"
+                    title = "What was the issue?",
+                    selectedOption = selectedIssue,
+                    onSelect = { selectedIssue = it },
+                    options = listOf(
+                        "Inaccurate equipment",
+                        "Incorrect hours",
+                        "Inaccurate description",
+                        "Wait times not updated",
+                        "Other"
+                    ),
+                    errorState = errorStateIssue,
+                    onErrorStateChange = { errorStateIssue = it }
                 )
                 ReportDropdown(
-                    title = "Which gym does it concern?"
+                    title = "Which gym does it concern?",
+                    selectedOption = selectedGym,
+                    onSelect = { selectedGym = it },
+                    options = listOf(
+                        "Morrison",
+                        "Teagle",
+                        "Helen Newman",
+                        "Noyes",
+                        "Other"
+                    ),
+                    errorState = errorStateGym,
+                    onErrorStateChange = { errorStateGym = it }
                 )
                 ReportDescription(
                     label = "Describe what's wrong for us.",
@@ -72,11 +101,17 @@ fun ReportIssueScreen() {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 77.dp),
+                    .padding(top = 68.dp, bottom = 77.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 SubmitButton(
-                    onSubmit = { }
+                    onSubmit = {
+                        errorStateIssue = selectedIssue == "Choose an option ..."
+                        errorStateGym = selectedGym == "Choose an option ..."
+                        if (!errorStateIssue && !errorStateGym) {
+                            onSubmit(selectedIssue, selectedGym, description)
+                        }
+                    }
                 )
             }
 
@@ -85,32 +120,12 @@ fun ReportIssueScreen() {
     }
 }
 
-@Composable
-fun ReportDropdown(
-    title: String,
-//    options: List<String>,
-//    selectedOption: String,
-//    onOptionSelected: (String) -> Unit
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        Text(
-            text = title,
-            color = PRIMARY_BLACK,
-            fontSize = 16.sp,
-            fontFamily = montserratFamily,
-            fontWeight = FontWeight.Bold
-        )
-
-    }
-
-}
 
 @Preview(showBackground = true)
 @Composable
 private fun ReportIssueScreenPreview() {
-    ReportIssueScreen()
+    ReportIssueScreen(
+        onSubmit = { _, _, _ -> },
+        onBack = { }
+    )
 }

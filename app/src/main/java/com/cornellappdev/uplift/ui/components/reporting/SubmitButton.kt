@@ -16,9 +16,12 @@ import com.cornellappdev.uplift.util.PRIMARY_BLACK
 import com.cornellappdev.uplift.util.PRIMARY_YELLOW
 import com.cornellappdev.uplift.util.montserratFamily
 
+/**
+ * SubmitButton is a composable that displays a button for the user to submit their report.
+ */
 @Composable
 fun SubmitButton(
-    onSubmit : () -> Unit
+    onSubmit: () -> Unit
 ) {
     Surface(
         color = PRIMARY_YELLOW,
