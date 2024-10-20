@@ -119,8 +119,8 @@ fun ReportDropdown(
                     .menuAnchor()
                     .height(48.dp)
                     .border(
-                        if (errorState) 1.dp else 0.dp,
-                        if (errorState) Color.Red else Color.Transparent,
+                        if (errorState && !expanded) 1.dp else 0.dp,
+                        if (errorState && !expanded) Color.Red else Color.Transparent,
                         RoundedCornerShape(8.dp)
                     )
             )
