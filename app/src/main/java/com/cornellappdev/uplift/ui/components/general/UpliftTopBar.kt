@@ -112,7 +112,8 @@ fun LoadingTopBar(shimmerInstance: Shimmer) {
 @Composable
 fun UpliftTopBarWithBack(
     title: String,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit = {},
+    withBack: Boolean = true
 ) {
     CenterAlignedTopAppBar(
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
@@ -125,11 +126,13 @@ fun UpliftTopBarWithBack(
             )
         },
         navigationIcon = {
-            IconButton(onClick = { onBackClick() }) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Localized description"
-                )
+            if (withBack) {
+                IconButton(onClick = { onBackClick() }) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Localized description"
+                    )
+                }
             }
         },
     )
