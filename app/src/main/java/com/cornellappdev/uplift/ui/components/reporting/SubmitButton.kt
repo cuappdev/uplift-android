@@ -39,11 +39,8 @@ fun SubmitButton(
             .height(42.dp)
             .alpha(enabledAlpha),
         shadowElevation = 4.dp,
-        onClick = {
-            if (enabled) {
-                onSubmit()
-            }
-        }
+        onClick = { onSubmit() },
+        enabled = enabled
     ) {
         Text(
             text = "SUBMIT",
