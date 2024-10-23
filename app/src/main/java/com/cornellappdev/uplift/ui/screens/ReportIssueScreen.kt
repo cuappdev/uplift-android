@@ -30,7 +30,9 @@ import com.cornellappdev.uplift.ui.components.reporting.SubmitButton
  */
 @Composable
 fun ReportIssueScreen(
+    /* TODO: Replace onSubmit with corresponding VM function call */
     onSubmit: (issue: String, gym: String, description: String) -> Unit,
+    /* TODO: Replace onBack with corresponding navigation function call */
     onBack: () -> Unit
 ) {
     var selectedIssue by remember { mutableStateOf("Choose an option ...") }
