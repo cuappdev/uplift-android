@@ -38,6 +38,8 @@ fun ReportIssueScreen(
     var description by remember { mutableStateOf("") }
     var errorStateIssue by remember { mutableStateOf(false) }
     var errorStateGym by remember { mutableStateOf(false) }
+    /* TODO: Handle enabled logic for submit button when report is sent to backend*/
+    var enabled by remember { mutableStateOf(true) }
 
     Scaffold(topBar = {
         UpliftTopBarWithBack(
@@ -111,7 +113,8 @@ fun ReportIssueScreen(
                         if (!errorStateIssue && !errorStateGym) {
                             onSubmit(selectedIssue, selectedGym, description)
                         }
-                    }
+                    },
+                    enabled = enabled
                 )
             }
 

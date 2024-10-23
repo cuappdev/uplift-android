@@ -72,7 +72,7 @@ fun ReportDropdown(
     Column(
         modifier = Modifier
             .fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         Text(
             text = title,
@@ -95,9 +95,8 @@ fun ReportDropdown(
                     focusedContainerColor = GRAY01,
                     unfocusedIndicatorColor = Color.Transparent,
                     focusedIndicatorColor = Color.Transparent,
-                    cursorColor = PRIMARY_BLACK,
-
-                    ),
+                    cursorColor = PRIMARY_BLACK
+                ),
                 textStyle = TextStyle(
                     color = GRAY04,
                     fontSize = 14.sp,
@@ -106,19 +105,11 @@ fun ReportDropdown(
                 ),
                 shape = RoundedCornerShape(8.dp),
                 trailingIcon = {
-                    if (expanded) {
-                        Icon(
-                            Icons.Filled.KeyboardArrowUp,
-                            contentDescription = "Close dropdown",
-                            tint = GRAY03
-                        )
-                    } else {
-                        Icon(
-                            Icons.Filled.KeyboardArrowDown,
-                            contentDescription = "Open dropdown",
-                            tint = GRAY03
-                        )
-                    }
+                    Icon(
+                        imageVector = if (expanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
+                        contentDescription = null,
+                        tint = GRAY03
+                    )
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -130,15 +121,7 @@ fun ReportDropdown(
                         RoundedCornerShape(8.dp)
                     )
             )
-            Text(
-                text = "This is a required field.",
-                color = Color.Red,
-                fontSize = 12.sp,
-                fontFamily = montserratFamily,
-                modifier = Modifier
-                    .padding(top = 54.dp, start = 6.dp)
-                    .alpha(alpha)
-            )
+
             AnimatedVisibility(
                 visible = expanded,
                 enter = expandVertically(animationSpec = tween(300)) + fadeIn(),
@@ -163,8 +146,7 @@ fun ReportDropdown(
                             fontWeight = FontWeight.Medium,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(horizontal = 16.dp)
-                                .padding(vertical = 8.dp)
+                                .padding(horizontal = 16.dp, vertical = 8.dp)
                                 .clickable {
                                     onSelect(option)
                                     onErrorStateChange(false)
@@ -176,7 +158,16 @@ fun ReportDropdown(
             }
         }
 
+        Text(
+            text = "This is a required field.",
+            color = Color.Red,
+            fontSize = 12.sp,
+            fontFamily = montserratFamily,
+            modifier = Modifier
+                .padding(start = 6.dp)
+                .alpha(alpha)
+        )
         // Add a Spacer to create the necessary gap when the dropdown is expanded
-        Spacer(modifier = Modifier.height(if (expanded) 24.dp else 0.dp))
+        Spacer(modifier = Modifier.height(if (expanded) 16.dp else 0.dp))
     }
 }
