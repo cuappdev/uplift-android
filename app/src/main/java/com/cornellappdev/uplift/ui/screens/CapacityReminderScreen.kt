@@ -37,6 +37,7 @@ import com.cornellappdev.uplift.ui.components.capacityreminder.ReminderDays
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun CapacityReminderScreen(
+    /* TODO: Change parameters to VM calls */
     checked: Boolean,
     onChecked: (Boolean) -> Unit = {},
     initialSelectedDays: Set<String> = emptySet(),
@@ -100,13 +101,17 @@ fun CapacityReminderScreen(
 @Composable
 private fun CapacityReminderScreenPreview() {
     val checked by remember { mutableStateOf(true) }
+    var sliderVal by remember { mutableStateOf(0.5f) }
+    var selectedDays by remember { mutableStateOf(setOf("M", "Tu", "W", "Th", "F")) }
+    var selectedGyms by remember { mutableStateOf(setOf("Teagle Up", "Teagle Down", "Helen Newman")) }
     CapacityReminderScreen(
         checked,
         {},
-        setOf("M", "Tu", "W", "Th", "F"),
-        {},
-        0.75f,
-        {},
-        setOf("Teagle Up", "Teagle Down", "Helen Newman"),
-        {}) {}
+        selectedDays,
+        { selectedDays = it },
+        sliderVal,
+        { sliderVal = it },
+        selectedGyms,
+        { selectedGyms = it }
+        ) {}
 }

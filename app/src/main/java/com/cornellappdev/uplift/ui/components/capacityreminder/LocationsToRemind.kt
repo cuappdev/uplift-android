@@ -23,13 +23,11 @@ import com.cornellappdev.uplift.util.montserratFamily
  */
 @Composable
 fun LocationsToRemind(
-    initialSelectedGyms: Set<String> = emptySet(),
+    selectedGyms: Set<String> = emptySet(),
     onGymSelected: (Set<String>) -> Unit
 ) {
     val topRow = listOf("Teagle Up", "Teagle Down", "Helen Newman")
     val bottomRow = listOf("Toni Morrison", "Noyes")
-
-    var selectedGyms by remember { mutableStateOf(initialSelectedGyms) }
 
     Column(
         modifier = Modifier
@@ -54,7 +52,6 @@ fun LocationsToRemind(
                 gyms = topRow,
                 selectedGyms = selectedGyms,
                 onGymSelected = {
-                    selectedGyms = it
                     onGymSelected(it)
                 }
             )
@@ -62,7 +59,6 @@ fun LocationsToRemind(
                 gyms = bottomRow,
                 selectedGyms = selectedGyms,
                 onGymSelected = {
-                    selectedGyms = it
                     onGymSelected(it)
                 }
             )

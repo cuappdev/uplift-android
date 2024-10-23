@@ -52,7 +52,6 @@ fun CapacityThreshold(
     sliderVal: Float = 0.5f,
     onSliderValChange: (Float) -> Unit = {}
 ) {
-    var sliderValue by remember { mutableFloatStateOf(sliderVal) }
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -79,7 +78,7 @@ fun CapacityThreshold(
                         .height(36.dp)
                         .align(Alignment.CenterStart)
                         .offset(
-                            x = (sliderValue * LocalDensity.current.density * 112).dp,
+                            x = (sliderVal * LocalDensity.current.density * 112).dp,
                             y = (-40).dp
                         )
                         .background(
@@ -89,7 +88,7 @@ fun CapacityThreshold(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "${(min(sliderValue, 0.99f) * 100).toInt()}%",
+                        text = "${(min(sliderVal, 0.99f) * 100).toInt()}%",
                         fontFamily = montserratFamily,
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 12.sp,
@@ -98,9 +97,8 @@ fun CapacityThreshold(
                 }
                 Slider(
                     modifier = Modifier.fillMaxWidth(),
-                    value = sliderValue,
+                    value = sliderVal,
                     onValueChange = {
-                        sliderValue = it
                         onSliderValChange(it)
                     },
                     thumb = {

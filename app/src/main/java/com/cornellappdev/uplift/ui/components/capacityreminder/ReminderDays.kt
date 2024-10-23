@@ -20,7 +20,7 @@ import com.cornellappdev.uplift.util.montserratFamily
  */
 @Composable
 fun ReminderDays(
-    initialDays: Set<String> = emptySet(),
+    selectedDays: Set<String> = emptySet(),
     onDaySelected: (Set<String>) -> Unit
 ) {
     Column(
@@ -37,7 +37,7 @@ fun ReminderDays(
             color = GRAY03
         )
         DayOfWeekBar(
-            initialSelectedDays = initialDays,
+            selectedDays = selectedDays,
             onDaySelected = onDaySelected
         )
 

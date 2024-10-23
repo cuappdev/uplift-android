@@ -73,11 +73,9 @@ fun CalendarBar(
  */
 @Composable
 fun DayOfWeekBar(
-    initialSelectedDays: Set<String> = emptySet(),
+    selectedDays: Set<String> = emptySet(),
     onDaySelected: (Set<String>) -> Unit
 ) {
-    var selectedDays by remember { mutableStateOf(initialSelectedDays) }
-
     val daysOfWeek = listOf("M", "T", "W", "Th", "F", "Sa", "Su")
 
     Row(
@@ -92,12 +90,12 @@ fun DayOfWeekBar(
                 day = day,
                 selected = selectedDays.contains(day),
                 onSelect = {
-                    selectedDays = if (selectedDays.contains(day)) {
-                        selectedDays - day
+                    val newSelectedDays = if (selectedDays.contains(day)) {
+                        selectedDays.minus(day)
                     } else {
-                        selectedDays + day
+                        selectedDays.plus(day)
                     }
-                    onDaySelected(selectedDays)
+                    onDaySelected(newSelectedDays)
                 })
         }
     }
@@ -228,12 +226,14 @@ fun DayOfWeekSelection(
 @Preview(showBackground = true)
 @Composable
 private fun CalendarBarPreview() {
+    var selectedDays by remember { mutableStateOf(setOf("Sa", "M")) }
     Column(
         modifier = Modifier
             .padding(16.dp)
             .fillMaxSize()
     ) {
-        DayOfWeekBar(initialSelectedDays = setOf("Sa", "M")) {
+        DayOfWeekBar(selectedDays = selectedDays) {
+            selectedDays = it
         }
     }
 }
