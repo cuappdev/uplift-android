@@ -1,6 +1,7 @@
 package com.cornellappdev.uplift.ui.components.reporting
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -35,6 +36,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
@@ -62,6 +64,10 @@ fun ReportDropdown(
     onErrorStateChange: (Boolean) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
+    val alpha by animateFloatAsState(
+        targetValue = if (errorState && !expanded) 1f else 0f,
+        label = "error text"
+    )
 
     Column(
         modifier = Modifier
@@ -124,18 +130,15 @@ fun ReportDropdown(
                         RoundedCornerShape(8.dp)
                     )
             )
-            if (errorState) {
-                Text(
-                    text = "This is a required field.",
-                    color = Color.Red,
-                    fontSize = 12.sp,
-                    fontFamily = montserratFamily,
-                    modifier = Modifier.padding(
-                        top = 54.dp,
-                        start = 6.dp,
-                    )
-                )
-            }
+            Text(
+                text = "This is a required field.",
+                color = Color.Red,
+                fontSize = 12.sp,
+                fontFamily = montserratFamily,
+                modifier = Modifier
+                    .padding(top = 54.dp, start = 6.dp)
+                    .alpha(alpha)
+            )
             AnimatedVisibility(
                 visible = expanded,
                 enter = expandVertically(animationSpec = tween(300)) + fadeIn(),
