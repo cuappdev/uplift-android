@@ -120,7 +120,7 @@ fun UpliftTopBarWithBack(
             containerColor = Color(0xfff8fafa)
         ),
         title = {
-            androidx.compose.material3.Text(
+            Text(
                 title, fontFamily = montserratFamily, fontWeight = FontWeight.Bold, fontSize = 16.sp
 
             )
