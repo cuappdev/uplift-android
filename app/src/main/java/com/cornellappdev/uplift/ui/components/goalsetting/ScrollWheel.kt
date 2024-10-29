@@ -1,6 +1,5 @@
 package com.cornellappdev.uplift.ui.components.goalsetting
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
@@ -42,6 +41,19 @@ import com.cornellappdev.uplift.util.montserratFamily
 import kotlinx.coroutines.launch
 import kotlin.math.abs
 
+/**
+ * @param width: the width of the scroll wheel
+ * @param itemHeight: the height of each item in the scroll wheel
+ * @param numberOfDisplayedItems: the number of items displayed at once
+ * @param items: the list of items to display
+ * @param initialItem: the item to select initially
+ * @param itemScaleFact: the scale factor for the selected item
+ * @param textStyle: the text style for the items
+ * @param textColor: the color of the unselected items
+ * @param selectedTextColor: the color of the selected item
+ * @param onItemSelected: the callback for when an item is selected
+ * @return ScrollWheel composable that allows the user to select an item from a list of items
+ */
 @Composable
 fun <T> ScrollWheel(
     width: Dp,
@@ -91,7 +103,8 @@ fun <T> ScrollWheel(
                         val y = coordinates.positionInParent().y - itemHalfHeight
                         val parentHalfHeight = (itemHalfHeight * numberOfDisplayedItems)
                         val isSelected =
-                            (y > parentHalfHeight - itemHalfHeight && y < parentHalfHeight + itemHalfHeight)
+                            (y > parentHalfHeight - itemHalfHeight &&
+                                    y < parentHalfHeight + itemHalfHeight)
                         val index = i - 1
                         if (isSelected && lastSelectedIndex != index) {
                             onItemSelected(index % itemsState.size, item)
@@ -120,7 +133,11 @@ fun <T> ScrollWheel(
     }
 }
 
-
+/**
+ * @param initialIsAm: whether the initial selection is AM
+ * @param onValueChanged: callback for when the selection changes
+ * @return AmPmSelector composable that allows the user to select AM or PM
+ */
 @Composable
 fun AmPmSelector(
     initialIsAm: Boolean = true, onValueChanged: (Boolean) -> Unit = {}
@@ -129,14 +146,12 @@ fun AmPmSelector(
     val itemHeight = 24.dp
     val scope = rememberCoroutineScope()
     val scrollState = rememberLazyListState()
-    var selectedIndex by remember { mutableStateOf(if (initialIsAm) 0 else 1) }
+    var selectedIndex by remember { mutableIntStateOf(if (initialIsAm) 0 else 1) }
     val density = LocalDensity.current
 
-    // Initial scroll position
     LaunchedEffect(Unit) {
         scrollState.scrollToItem(if (initialIsAm) 0 else 1)
     }
-
     Box(
         modifier = Modifier.height(itemHeight * 3)
     ) {
@@ -163,7 +178,9 @@ fun AmPmSelector(
                             val totalHeight = with(density) { (itemHeight * 3).toPx() }
                             val middlePosition = totalHeight / 2f
 
-                            if (abs(position - middlePosition) < with(density) { itemHeight.toPx() } / 2) {
+                            if (abs(position - middlePosition) <
+                                with(density) { itemHeight.toPx() } / 2
+                            ) {
                                 if (selectedIndex != index) {
                                     selectedIndex = index
                                     onValueChanged(index == 0)
@@ -183,8 +200,6 @@ fun AmPmSelector(
                     )
                 }
             }
-
-            // Bottom spacer
             item {
                 Spacer(modifier = Modifier.height(itemHeight))
             }
@@ -197,18 +212,8 @@ fun AmPmSelector(
 @Composable
 fun ScrollWheelPreview() {
     var day by remember {
-        mutableStateOf(1)
+        mutableIntStateOf(1)
     }
-    var month by remember {
-        mutableStateOf(1)
-    }
-    var year by remember {
-        mutableStateOf(2023)
-    }
-    var lastDayInMonth by remember {
-        mutableStateOf(55)
-    }
-
     var isAm by remember {
         mutableStateOf(false)
     }
@@ -219,7 +224,7 @@ fun ScrollWheelPreview() {
     ) {
         ScrollWheel(width = 70.dp,
             itemHeight = 50.dp,
-            items = (1..lastDayInMonth).toMutableList(),
+            items = (1..55).toMutableList(),
             initialItem = day,
             textStyle = TextStyle(fontSize = 23.sp),
             textColor = Color.LightGray,

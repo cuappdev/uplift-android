@@ -12,6 +12,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.cornellappdev.uplift.util.PRIMARY_YELLOW
 
+/**
+ * @param checked: whether the switch is checked
+ * @param onCheckedChange: callback for when the switch is checked
+ * @return ReminderSwitch composable that allows the user to toggle a reminder on or off
+ */
 @Composable
 fun ReminderSwitch(
     checked: Boolean,

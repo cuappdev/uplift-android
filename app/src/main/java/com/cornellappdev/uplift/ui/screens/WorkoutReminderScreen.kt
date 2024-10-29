@@ -4,10 +4,8 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -15,29 +13,38 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.cornellappdev.uplift.ui.components.general.UpliftTopBarWithBack
-import com.cornellappdev.uplift.ui.components.goalsetting.EditReminderCard
+import com.cornellappdev.uplift.ui.components.goalsetting.DeleteDialog
 import com.cornellappdev.uplift.ui.components.goalsetting.GoalSlider
-import com.cornellappdev.uplift.ui.components.goalsetting.NewReminderButton
-import com.cornellappdev.uplift.ui.components.goalsetting.ReminderCard
-import com.cornellappdev.uplift.ui.components.goalsetting.WorkoutReminderHeader
 import com.cornellappdev.uplift.ui.components.goalsetting.WorkoutReminders
-import com.cornellappdev.uplift.ui.components.goalsetting.mapSelectedDays
 
+/**
+ * @param time: time of the reminder
+ * @param days: days of the week the reminder is set for
+ * @param enabled: whether the reminder is enabled
+ * @return Reminder data class
+ */
 data class Reminder(
     val time: String,
     val days: Set<String>,
-    val enabled: Boolean,
-    val onEnabledChange: (Boolean) -> Unit
+    val enabled: Boolean
 )
 
+/**
+ * @param reminders: list of reminders
+ * @param onRemindersChange: callback for when reminders are changed
+ * @param goalValue: value of the goal slider
+ * @param onGoalValueChange: callback for when the goal slider value is changed
+ * @param onBackClick: callback for when the back button is clicked
+ * @return WorkoutReminderScreen composable
+ */
 @Composable
 fun WorkoutReminderScreen(
     reminders: List<Reminder> = emptyList(),
@@ -46,10 +53,10 @@ fun WorkoutReminderScreen(
     onGoalValueChange: (Float) -> Unit = {},
     onBackClick: () -> Unit = {}
 ) {
-    var enabled by remember { mutableStateOf(true) }
-    var addNewReminderState by remember { mutableStateOf(true) }
+    var selectedReminder by remember { mutableStateOf<Reminder?>(null) }
+    var addNewReminderState by remember { mutableStateOf(false) }
+    var deleteDialogOpen by remember { mutableStateOf(false) }
 
-    // Scaffold for the top bar
     Scaffold(topBar = {
         UpliftTopBarWithBack(
             title = "Goals",
@@ -66,16 +73,33 @@ fun WorkoutReminderScreen(
                 )
                 .verticalScroll(rememberScrollState()),
         ) {
-            // Goal Slider
             GoalSlider(value = goalValue, onValueChange = onGoalValueChange)
 
             WorkoutReminders(
+                selectedReminder = selectedReminder,
+                onSelectedReminderChange = { selectedReminder = it },
                 reminders = reminders,
                 onRemindersChange = onRemindersChange,
-                enabled = enabled,
-                onEnabledChange = { enabled = it },
                 addNewReminderState = addNewReminderState,
-                onAddNewReminderStateChange = { addNewReminderState = it }
+                onAddNewReminderStateChange = { addNewReminderState = it },
+                openDelete = { deleteDialogOpen = true }
+            )
+        }
+        AnimatedVisibility(
+            visible = deleteDialogOpen,
+            enter = fadeIn(),
+            exit = fadeOut()
+        ) {
+            DeleteDialog(
+                onConfirm = {
+                    selectedReminder?.let { reminder ->
+                        onRemindersChange(reminders.filter { it != reminder })
+                    }
+                    deleteDialogOpen = false
+                    selectedReminder = null
+                    addNewReminderState = false
+                },
+                onDismiss = { deleteDialogOpen = false }
             )
         }
     }
@@ -86,65 +110,30 @@ fun WorkoutReminderScreen(
 @Composable
 fun WorkoutReminderScreenPreview() {
     var sliderVal by remember { mutableFloatStateOf(1f) }
-    var enabled1 by remember { mutableStateOf(true) }
-    var enabled2 by remember { mutableStateOf(true) }
-    var enabled3 by remember { mutableStateOf(false) }
-    var enabled4 by remember { mutableStateOf(true) }
-    var enabled5 by remember { mutableStateOf(true) }
-    var reminders by remember {
-        mutableStateOf(
-            listOf(
-                Reminder(
-                    time = "9:00 AM",
-                    days = setOf("M", "T", "W", "Th", "F"),
-                    enabled = enabled1,
-                    onEnabledChange = {
-                        enabled1 = it
-                    }
-                ),
-                Reminder(
-                    time = "3:00 PM",
-                    days = setOf("Sa", "Su"),
-                    enabled = enabled2,
-                    onEnabledChange = {
-                        enabled2 = it
-                    }
-                ),
-                Reminder(
-                    time = "12:00 PM",
-                    days = setOf("M", "W", "F"),
-                    enabled = enabled3,
-                    onEnabledChange = {
-                        enabled3 = it
-                    }
-                ),
-                Reminder(
-                    time = "6:00 AM",
-                    days = setOf("T", "W", "Th", "F", "Sa", "Su"),
-                    enabled = enabled4,
-                    onEnabledChange = {
-                        enabled4 = it
-                    }
-                ),
-                Reminder(
-                    time = "8:00 PM",
-                    days = setOf("M", "T", "W", "Th", "F", "Sa", "Su"),
-                    enabled = enabled5,
-                    onEnabledChange = {
-                        enabled5 = it
-                    }
-                )
+    val reminders = remember {
+        mutableStateListOf(
+            Reminder(time = "9:00 AM", days = setOf("M", "T", "W", "Th", "F"), enabled = true),
+            Reminder(time = "3:00 PM", days = setOf("Sa", "Su"), enabled = true),
+            Reminder(time = "12:00 PM", days = setOf("M", "W", "F"), enabled = false),
+            Reminder(
+                time = "6:00 AM",
+                days = setOf("T", "W", "Th", "F", "Sa", "Su"),
+                enabled = true
+            ),
+            Reminder(
+                time = "8:00 PM",
+                days = setOf("M", "T", "W", "Th", "F", "Sa", "Su"),
+                enabled = true
             )
         )
     }
-    Column(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        WorkoutReminderScreen(
-            reminders = reminders,
-            onRemindersChange = { reminders = it },
-            goalValue = sliderVal,
-            onGoalValueChange = { sliderVal = it }
-        )
-    }
+    WorkoutReminderScreen(
+        reminders = reminders,
+        onRemindersChange = { updatedReminders ->
+            reminders.clear()
+            reminders.addAll(updatedReminders)
+        },
+        goalValue = sliderVal,
+        onGoalValueChange = { sliderVal = it }
+    )
 }

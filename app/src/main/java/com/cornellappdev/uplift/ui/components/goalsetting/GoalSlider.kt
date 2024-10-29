@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -24,7 +23,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
@@ -34,6 +32,13 @@ import com.cornellappdev.uplift.util.PRIMARY_BLACK
 import com.cornellappdev.uplift.util.PRIMARY_YELLOW
 import com.cornellappdev.uplift.util.montserratFamily
 
+/**
+ * @param value the current value of the slider
+ * @param onValueChange a callback that is called when the value of the slider changes
+ * @return composable that displays a slider for the user to select the number of days they
+ * would like to work out in a week.
+ * @sample GoalSlider(3f) {}
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GoalSlider(
@@ -95,7 +100,8 @@ fun GoalSlider(
             track = { sliderState ->
                 val fraction by remember {
                     derivedStateOf {
-                        (sliderState.value - sliderState.valueRange.start) / (sliderState.valueRange.endInclusive - sliderState.valueRange.start)
+                        (sliderState.value - sliderState.valueRange.start) /
+                                (sliderState.valueRange.endInclusive - sliderState.valueRange.start)
                     }
                 }
                 Box(Modifier.fillMaxWidth()) {
@@ -116,14 +122,12 @@ fun GoalSlider(
                 }
             }
         )
-
-        // Adding labels
         Box(
             Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 10.dp)
         ) {
-            val stepLabels = listOf("0", "1", "2", "3", "4", "5", "6", "7") // Labels for each step
+            val stepLabels = listOf("0", "1", "2", "3", "4", "5", "6", "7")
             Row(
                 Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(
