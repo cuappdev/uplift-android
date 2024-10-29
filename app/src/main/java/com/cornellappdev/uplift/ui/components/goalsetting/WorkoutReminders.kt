@@ -87,7 +87,7 @@ fun WorkoutReminders(
                         if (it == selectedReminder) updatedReminder else it
                     })
                 } else {
-                    onRemindersChange(reminders + updatedReminder)
+                    onRemindersChange(listOf(updatedReminder) + reminders)
                 }
                 onAddNewReminderStateChange(false)
                 onSelectedReminderChange(null)
