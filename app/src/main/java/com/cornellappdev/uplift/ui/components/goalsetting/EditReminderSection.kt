@@ -55,7 +55,9 @@ fun EditReminderSection(
     var checkedState by remember {
         mutableStateOf(reminder != null && reminder.days.size == 7)
     }
-    var setTimeOn by remember { mutableStateOf(reminder != null) }
+    var setTimeOn by remember {
+        mutableStateOf(reminder != null && reminder.time != "9:00 AM")
+    }
     var hour by remember { mutableIntStateOf(reminderTimeParams?.get(0)?.toInt() ?: 9) }
     var minute by remember { mutableStateOf(reminderTimeMinMeridian?.get(0) ?: "00") }
     var isAm by remember {
@@ -72,7 +74,14 @@ fun EditReminderSection(
             checkedState = checkedState,
             onCheckedChange = { checkedState = it },
             setTimeOn = setTimeOn,
-            onSetTimeChange = { setTimeOn = it },
+            onSetTimeChange = {
+                setTimeOn = it
+                if (!it) {
+                    hour = 9
+                    minute = "00"
+                    isAm = true
+                }
+            },
             hour = hour,
             minute = minute,
             isAm = isAm,
