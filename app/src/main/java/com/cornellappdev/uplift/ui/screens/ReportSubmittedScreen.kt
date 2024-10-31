@@ -39,6 +39,7 @@ import com.cornellappdev.uplift.util.montserratFamily
  */
 @Composable
 fun ReportSubmittedScreen(
+    /* TODO Replace with viewmodel calls */
     onSubmitAnother: () -> Unit = {},
     onReturnHome: () -> Unit = {}
 ) {
@@ -59,84 +60,104 @@ fun ReportSubmittedScreen(
             ),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(26.dp)
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.ic_check_circle),
-                    contentDescription = "Check Circle",
-                )
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    Text(
-                        text = "Thank you for your input!",
-                        fontFamily = montserratFamily,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp,
-                    )
-                    Text(
-                        text = "Your report has been submitted.",
-                        fontFamily = montserratFamily,
-                        fontSize = 14.sp,
-                    )
-                }
-
-            }
-            Column(
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-            ) {
-                Surface(
-                    color = GRAY01,
-                    shape = RoundedCornerShape(38.dp),
-                    modifier = Modifier
-                        .width(184.dp)
-                        .height(42.dp),
-                    shadowElevation = 2.dp,
-                    onClick = { onSubmitAnother() }
-                ) {
-                    Text(
-                        text = "SUBMIT ANOTHER",
-                        fontFamily = montserratFamily,
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.padding(12.dp)
-                    )
-                }
-                Row(
-                    modifier = Modifier
-                        .width(184.dp)
-                        .clickable(onClick = { onReturnHome() }),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(
-                        8.dp,
-                        Alignment.CenterHorizontally
-                    ),
-                ) {
-                    Text(
-                        text = "Return to Home",
-                        fontFamily = montserratFamily,
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Medium,
-                        color = GRAY04
-                    )
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                        contentDescription = "Right Arrow",
-                        tint = GRAY05,
-                        modifier = Modifier
-                            .height(20.dp)
-
-                    )
-                }
-
-            }
+            SubmittedMessageColumn()
+            ButtonsColumn(onSubmitAnother, onReturnHome)
         }
     }
 
+}
+
+@Composable
+private fun ButtonsColumn(onSubmitAnother: () -> Unit, onReturnHome: () -> Unit) {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
+        SubmitAnotherButton(onSubmitAnother)
+        ReturnHomeButton(onReturnHome)
+
+    }
+}
+
+@Composable
+private fun ReturnHomeButton(onReturnHome: () -> Unit) {
+    Row(
+        modifier = Modifier
+            .width(184.dp)
+            .clickable(onClick = { onReturnHome() }),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(
+            8.dp,
+            Alignment.CenterHorizontally
+        ),
+    ) {
+        Text(
+            text = "Return to Home",
+            fontFamily = montserratFamily,
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Medium,
+            color = GRAY04
+        )
+        Icon(
+            imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+            contentDescription = "Right Arrow",
+            tint = GRAY05,
+            modifier = Modifier
+                .height(20.dp)
+
+        )
+    }
+}
+
+@Composable
+private fun SubmitAnotherButton(onSubmitAnother: () -> Unit) {
+    Surface(
+        color = GRAY01,
+        shape = RoundedCornerShape(38.dp),
+        modifier = Modifier
+            .width(184.dp)
+            .height(42.dp),
+        shadowElevation = 2.dp,
+        onClick = { onSubmitAnother() }
+    ) {
+        Text(
+            text = "SUBMIT ANOTHER",
+            fontFamily = montserratFamily,
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(12.dp)
+        )
+    }
+}
+
+@Composable
+private fun SubmittedMessageColumn() {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(26.dp)
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.ic_check_circle),
+            contentDescription = "Check Circle",
+        )
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            Text(
+                text = "Thank you for your input!",
+                fontFamily = montserratFamily,
+                fontWeight = FontWeight.Bold,
+                fontSize = 16.sp,
+            )
+            Text(
+                text = "Your report has been submitted.",
+                fontFamily = montserratFamily,
+                fontSize = 14.sp,
+            )
+        }
+
+    }
 }
 
 @Preview(showBackground = true)
