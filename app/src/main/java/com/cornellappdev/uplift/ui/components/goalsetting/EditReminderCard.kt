@@ -69,7 +69,7 @@ import com.cornellappdev.uplift.util.montserratFamily
  */
 @Composable
 fun EditReminderCard(
-    reminder: Reminder? = null,
+    reminder: Reminder?,
     selectedDays: Set<String>,
     onDaySelected: (Set<String>) -> Unit,
     checkedState: Boolean,
@@ -82,7 +82,7 @@ fun EditReminderCard(
     onHourChange: (Int) -> Unit,
     onMinuteChange: (String) -> Unit,
     onAmChange: (Boolean) -> Unit,
-    addNewReminderState: Boolean = false
+    addNewReminderState: Boolean
 ) {
 
     val elevation by animateDpAsState(
@@ -146,9 +146,9 @@ fun EditReminderCard(
 @Composable
 private fun DaySelection(
     selectedDays: Set<String> = emptySet(),
-    onDaySelected: (Set<String>) -> Unit = {},
-    checkedState: Boolean = false,
-    onCheckedChange: (Boolean) -> Unit = {},
+    onDaySelected: (Set<String>) -> Unit,
+    checkedState: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
 ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -182,12 +182,12 @@ private fun DaySelection(
  */
 @Composable
 private fun TimePicker(
-    hour: Int = 9,
-    minute: String = "00",
-    isAm: Boolean = true,
-    onHourChange: (Int) -> Unit = {},
-    onMinuteChange: (String) -> Unit = {},
-    onAmChange: (Boolean) -> Unit = {}
+    hour: Int,
+    minute: String,
+    isAm: Boolean,
+    onHourChange: (Int) -> Unit,
+    onMinuteChange: (String) -> Unit,
+    onAmChange: (Boolean) -> Unit
 ) {
     val hours = (1..12).toMutableList()
     val minutes = (0..55 step 5).map {

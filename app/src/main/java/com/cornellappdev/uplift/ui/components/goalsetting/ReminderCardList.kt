@@ -38,9 +38,9 @@ import com.cornellappdev.uplift.util.montserratFamily
  */
 @Composable
 fun ReminderCardList(
-    reminders: List<Reminder> = emptyList(),
-    onRemindersChange: (List<Reminder>) -> Unit = {},
-    onReminderClick: (Reminder) -> Unit = {}
+    reminders: List<Reminder>,
+    onRemindersChange: (List<Reminder>) -> Unit,
+    onReminderClick: (Reminder) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -87,8 +87,8 @@ fun ReminderCard(
     dayOfWeek: String,
     time: String,
     enabled: Boolean,
-    onEnabledChange: (Boolean) -> Unit = {},
-    onReminderClick: () -> Unit = {}
+    onEnabledChange: (Boolean) -> Unit,
+    onReminderClick: () -> Unit
 ) {
     ElevatedCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),

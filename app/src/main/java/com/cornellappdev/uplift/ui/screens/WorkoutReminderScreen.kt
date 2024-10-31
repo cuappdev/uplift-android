@@ -58,10 +58,10 @@ data class Reminder(
 fun WorkoutReminderScreen(
     /* TODO: Replace functions with viewmodel calls */
     reminders: List<Reminder> = emptyList(),
-    onRemindersChange: (List<Reminder>) -> Unit = {},
-    goalValue: Float = 1f,
-    onGoalValueChange: (Float) -> Unit = {},
-    onBackClick: () -> Unit = {},
+    onRemindersChange: (List<Reminder>) -> Unit,
+    goalValue: Float,
+    onGoalValueChange: (Float) -> Unit,
+    onBackClick: () -> Unit,
     isOnboarding: Boolean = false,
     onNext: () -> Unit = {},
     onSkip: () -> Unit = {}
@@ -179,6 +179,7 @@ fun WorkoutReminderScreenPreview() {
             reminders.addAll(updatedReminders)
         },
         goalValue = sliderVal,
-        onGoalValueChange = { sliderVal = it }
+        onGoalValueChange = { sliderVal = it },
+        onBackClick = {},
     )
 }

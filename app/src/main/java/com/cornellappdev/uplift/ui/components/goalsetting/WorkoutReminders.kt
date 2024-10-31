@@ -56,13 +56,13 @@ import com.cornellappdev.uplift.util.montserratFamily
  */
 @Composable
 fun WorkoutReminders(
-    selectedReminder: Reminder? = null,
-    onSelectedReminderChange: (Reminder?) -> Unit = {},
-    reminders: List<Reminder> = emptyList(),
-    onRemindersChange: (List<Reminder>) -> Unit = {},
-    addNewReminderState: Boolean = false,
-    onAddNewReminderStateChange: (Boolean) -> Unit = {},
-    openDelete: () -> Unit = {}
+    selectedReminder: Reminder?,
+    onSelectedReminderChange: (Reminder?) -> Unit,
+    reminders: List<Reminder>,
+    onRemindersChange: (List<Reminder>) -> Unit,
+    addNewReminderState: Boolean,
+    onAddNewReminderStateChange: (Boolean) -> Unit,
+    openDelete: () -> Unit
 ) {
     WorkoutReminderHeader()
     NewReminderButton(
@@ -147,9 +147,9 @@ private fun WorkoutReminderHeader() {
  */
 @Composable
 private fun NewReminderButton(
-    enabled: Boolean = true,
-    addNewReminderState: Boolean = false,
-    onAddNewReminderStateChange: (Boolean) -> Unit = {}
+    enabled: Boolean,
+    addNewReminderState: Boolean,
+    onAddNewReminderStateChange: (Boolean) -> Unit
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,

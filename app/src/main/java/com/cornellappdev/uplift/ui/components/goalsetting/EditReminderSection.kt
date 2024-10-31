@@ -44,10 +44,10 @@ import com.cornellappdev.uplift.util.montserratFamily
  */
 @Composable
 fun EditReminderSection(
-    reminder: Reminder? = null,
-    addNewReminderState: Boolean = false,
-    onReminderSave: (Reminder) -> Unit = {},
-    openDelete: () -> Unit = {}
+    reminder: Reminder?,
+    addNewReminderState: Boolean,
+    onReminderSave: (Reminder) -> Unit,
+    openDelete: () -> Unit
 ) {
     val reminderTimeParams = reminder?.time?.split(":")
     val reminderTimeMinMeridian = reminderTimeParams?.get(1)?.split(" ")
