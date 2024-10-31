@@ -48,7 +48,6 @@ fun ReminderCardList(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(28.dp)
     ) {
-        // Render Reminder list
         reminders.forEachIndexed { index, reminder ->
             ReminderCard(
                 dayOfWeek = mapSelectedDays(reminder.days),
@@ -105,31 +104,7 @@ fun ReminderCard(
                 .padding(20.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Box(
-                    modifier = Modifier
-                        .width(IntrinsicSize.Max)
-                        .height(50.dp)
-                        .border(1.dp, GRAY02, RoundedCornerShape(10.dp)),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = dayOfWeek,
-                        fontFamily = montserratFamily,
-                        fontSize = 24.sp,
-                        color = PRIMARY_BLACK,
-                        fontWeight = FontWeight.SemiBold,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.padding(vertical = 10.dp, horizontal = 15.dp)
-                    )
-                }
-
-                ReminderSwitch(checked = enabled, onCheckedChange = onEnabledChange)
-            }
+            ReminderCardTopRow(dayOfWeek, enabled, onEnabledChange)
 
             Text(
                 text = time,
@@ -140,6 +115,39 @@ fun ReminderCard(
                 modifier = Modifier.padding(start = 15.dp)
             )
         }
+    }
+}
+
+@Composable
+private fun ReminderCardTopRow(
+    dayOfWeek: String,
+    enabled: Boolean,
+    onEnabledChange: (Boolean) -> Unit
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Box(
+            modifier = Modifier
+                .width(IntrinsicSize.Max)
+                .height(50.dp)
+                .border(1.dp, GRAY02, RoundedCornerShape(10.dp)),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = dayOfWeek,
+                fontFamily = montserratFamily,
+                fontSize = 24.sp,
+                color = PRIMARY_BLACK,
+                fontWeight = FontWeight.SemiBold,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(vertical = 10.dp, horizontal = 15.dp)
+            )
+        }
+
+        ReminderSwitch(checked = enabled, onCheckedChange = onEnabledChange)
     }
 }
 

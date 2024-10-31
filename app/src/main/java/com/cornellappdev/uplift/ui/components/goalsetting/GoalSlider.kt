@@ -76,9 +76,7 @@ fun GoalSlider(
                 }
             },
             modifier = Modifier.padding(end = 30.dp)
-
         )
-
         Slider(
             modifier = Modifier
                 .fillMaxWidth()
@@ -122,28 +120,33 @@ fun GoalSlider(
                 }
             }
         )
-        Box(
-            Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 10.dp)
+        StepLabels()
+    }
+}
+
+@Composable
+private fun StepLabels() {
+    Box(
+        Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 10.dp)
+    ) {
+        val stepLabels = listOf("0", "1", "2", "3", "4", "5", "6", "7")
+        Row(
+            Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(
+                36.dp,
+                Alignment.CenterHorizontally
+            )
         ) {
-            val stepLabels = listOf("0", "1", "2", "3", "4", "5", "6", "7")
-            Row(
-                Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(
-                    36.dp,
-                    Alignment.CenterHorizontally
+            stepLabels.forEach { label ->
+                Text(
+                    text = label,
+                    fontFamily = montserratFamily,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = PRIMARY_BLACK
                 )
-            ) {
-                stepLabels.forEach { label ->
-                    Text(
-                        text = label,
-                        fontFamily = montserratFamily,
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = PRIMARY_BLACK
-                    )
-                }
             }
         }
     }
