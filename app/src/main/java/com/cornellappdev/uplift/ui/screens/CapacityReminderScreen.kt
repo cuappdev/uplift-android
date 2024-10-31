@@ -14,6 +14,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -50,9 +51,11 @@ fun CapacityReminderScreen(
 ) {
     var switchChecked by remember { mutableStateOf(checked) }
     Scaffold(topBar = {
-        UpliftTopBarWithBack(title = "Capacity Reminder") {
-            onBackClick()
-        }
+        UpliftTopBarWithBack(
+            title = "Capacity Reminder",
+            onBackClick = onBackClick,
+            withBack = true
+        )
     }) { padding ->
         Column(
             modifier = Modifier
@@ -101,7 +104,7 @@ fun CapacityReminderScreen(
 @Composable
 private fun CapacityReminderScreenPreview() {
     val checked by remember { mutableStateOf(true) }
-    var sliderVal by remember { mutableStateOf(0.5f) }
+    var sliderVal by remember { mutableFloatStateOf(0.5f) }
     var selectedDays by remember { mutableStateOf(setOf("M", "Tu", "W", "Th", "F")) }
     var selectedGyms by remember { mutableStateOf(setOf("Teagle Up", "Teagle Down", "Helen Newman")) }
     CapacityReminderScreen(
