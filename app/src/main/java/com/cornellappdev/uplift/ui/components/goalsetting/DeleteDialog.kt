@@ -1,5 +1,8 @@
 package com.cornellappdev.uplift.ui.components.goalsetting
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -42,94 +45,113 @@ import com.cornellappdev.uplift.util.montserratFamily
  */
 @Composable
 fun DeleteDialog(
+    deleteDialogOpen: Boolean,
     onConfirm: () -> Unit,
     onDismiss: () -> Unit
 ) {
-    Dialog(
-        onDismissRequest = onDismiss
+    AnimatedVisibility(
+        visible = deleteDialogOpen,
+        enter = fadeIn(),
+        exit = fadeOut()
     ) {
-        Card(
-            colors = CardDefaults.cardColors(
-                containerColor = Color.White
-            ),
-            modifier = Modifier
-                .width(250.dp)
-                .height(268.dp),
-            shape = RoundedCornerShape(16.dp),
+        Dialog(
+            onDismissRequest = onDismiss
         ) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
+            Card(
+                colors = CardDefaults.cardColors(
+                    containerColor = Color.White
+                ),
+                modifier = Modifier
+                    .width(250.dp)
+                    .height(268.dp),
+                shape = RoundedCornerShape(16.dp),
             ) {
-                Icon(
-                    imageVector = Icons.Default.Close,
-                    contentDescription = "Close",
-                    tint = PRIMARY_BLACK,
-                    modifier = Modifier
-                        .size(32.dp)
-                        .offset(x = 206.dp, y = 12.dp)
-                        .clickable(
-                            interactionSource = remember { MutableInteractionSource() },
-                            indication = null
-                        ) {
-                            onDismiss()
-                        }
-                )
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 24.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(20.dp)
+                Box(
+                    modifier = Modifier.fillMaxSize(),
                 ) {
-
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_trash),
-                        contentDescription = "Delete",
-                        modifier = Modifier.size(52.dp)
-                    )
-                    Text(
-                        text = "Are you sure you want to delete this reminder?",
-                        fontFamily = montserratFamily,
-                        textAlign = TextAlign.Center,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Surface(
-                        shape = RoundedCornerShape(38.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(42.dp)
-                            .padding(horizontal = 8.dp),
-                        color = Color.Black,
-                        shadowElevation = 6.dp,
-                        onClick = onConfirm,
-                    ) {
-                        Text(
-                            text = "Yes, I'm sure",
-                            fontFamily = montserratFamily,
-                            fontSize = 14.sp,
-                            color = Color.White,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.padding(top = 12.dp),
-                            textAlign = TextAlign.Center
-                        )
-                    }
-
-                    Text(
-                        text = "Cancel",
-                        fontFamily = montserratFamily,
-                        fontSize = 14.sp,
-                        color = PRIMARY_BLACK,
-                        fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.clickable(onClick = onDismiss)
-                    )
-
+                    CloseButton(onDismiss)
+                    MainDialogColumn(onConfirm, onDismiss)
                 }
             }
-
-
         }
-
     }
 
+}
+
+@Composable
+private fun MainDialogColumn(onConfirm: () -> Unit, onDismiss: () -> Unit) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(20.dp)
+    ) {
+
+        Icon(
+            painter = painterResource(id = R.drawable.ic_trash),
+            contentDescription = "Delete",
+            modifier = Modifier.size(52.dp)
+        )
+        Text(
+            text = "Are you sure you want to delete this reminder?",
+            fontFamily = montserratFamily,
+            textAlign = TextAlign.Center,
+            fontWeight = FontWeight.Bold
+        )
+        ConfirmButton(onConfirm)
+
+        Text(
+            text = "Cancel",
+            fontFamily = montserratFamily,
+            fontSize = 14.sp,
+            color = PRIMARY_BLACK,
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.clickable(onClick = onDismiss)
+        )
+
+    }
+}
+
+@Composable
+private fun CloseButton(onDismiss: () -> Unit) {
+    Icon(
+        imageVector = Icons.Default.Close,
+        contentDescription = "Close",
+        tint = PRIMARY_BLACK,
+        modifier = Modifier
+            .size(32.dp)
+            .offset(x = 206.dp, y = 12.dp)
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null
+            ) {
+                onDismiss()
+            }
+    )
+}
+
+@Composable
+private fun ConfirmButton(onConfirm: () -> Unit) {
+    Surface(
+        shape = RoundedCornerShape(38.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(42.dp)
+            .padding(horizontal = 8.dp),
+        color = Color.Black,
+        shadowElevation = 6.dp,
+        onClick = onConfirm,
+    ) {
+        Text(
+            text = "Yes, I'm sure",
+            fontFamily = montserratFamily,
+            fontSize = 14.sp,
+            color = Color.White,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(top = 12.dp),
+            textAlign = TextAlign.Center
+        )
+    }
 }

@@ -95,7 +95,6 @@ fun WorkoutReminders(
             openDelete = openDelete
 
         )
-
     }
     ReminderCardList(
         reminders,
@@ -106,7 +105,6 @@ fun WorkoutReminders(
             }
         }
     )
-
 }
 
 /**
