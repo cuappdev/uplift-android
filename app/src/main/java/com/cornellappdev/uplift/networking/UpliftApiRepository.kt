@@ -2,6 +2,7 @@ package com.cornellappdev.uplift.networking
 
 import android.util.Log
 import com.apollographql.apollo3.ApolloClient
+import com.cornellappdev.uplift.BuildConfig
 import com.cornellappdev.uplift.ClassListQuery
 import com.cornellappdev.uplift.GymListQuery
 import com.cornellappdev.uplift.models.UpliftClass
@@ -28,8 +29,8 @@ import kotlinx.coroutines.launch
  */
 object UpliftApiRepository {
     private val apolloClient = ApolloClient.Builder()
-//        .serverUrl("https://uplift-backend.cornellappdev.com/graphql")
-        .serverUrl("https://uplift-dev.cornellappdev.com/graphql")
+            //        .serverUrl(BuildConfig.PROD_API_URL)
+        .serverUrl(BuildConfig.API_URL)
         .build()
 
     private val gymQuery = apolloClient.query(GymListQuery())

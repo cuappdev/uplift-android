@@ -32,11 +32,12 @@ import com.cornellappdev.uplift.networking.ApiResponse
 import com.cornellappdev.uplift.ui.screens.ClassDetailScreen
 import com.cornellappdev.uplift.ui.screens.ClassScreen
 import com.cornellappdev.uplift.ui.screens.GymDetailScreen
-import com.cornellappdev.uplift.ui.screens.HomeScreen
+import com.cornellappdev.uplift.ui.screens.ReportIssueScreen
 import com.cornellappdev.uplift.ui.viewmodels.ClassDetailViewModel
 import com.cornellappdev.uplift.ui.viewmodels.ClassesViewModel
 import com.cornellappdev.uplift.ui.viewmodels.GymDetailViewModel
 import com.cornellappdev.uplift.ui.viewmodels.HomeViewModel
+import com.cornellappdev.uplift.ui.viewmodels.ReportViewModel
 import com.cornellappdev.uplift.util.PRIMARY_BLACK
 import com.cornellappdev.uplift.util.PRIMARY_YELLOW
 import com.cornellappdev.uplift.util.montserratFamily
@@ -45,6 +46,7 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.valentinilk.shimmer.ShimmerBounds
 import com.valentinilk.shimmer.defaultShimmerTheme
 import com.valentinilk.shimmer.rememberShimmer
+import kotlinx.serialization.Serializable
 
 /**
  * The main navigation controller for the app.
@@ -54,7 +56,8 @@ fun MainNavigationWrapper(
     gymDetailViewModel: GymDetailViewModel = viewModel(),
     classDetailViewModel: ClassDetailViewModel = viewModel(),
     classesViewModel: ClassesViewModel = viewModel(),
-    homeViewModel: HomeViewModel = viewModel()
+    homeViewModel: HomeViewModel = viewModel(),
+    reportViewModel: ReportViewModel = viewModel()
 ) {
     val navController = rememberNavController()
     val systemUiController: SystemUiController = rememberSystemUiController()
@@ -145,13 +148,17 @@ fun MainNavigationWrapper(
         ) {
             navigation(startDestination = "homeMain", route = "home") {
                 composable(route = "homeMain") {
-                    HomeScreen(
-                        homeViewModel = homeViewModel,
-                        navController = navController,
-                        classDetailViewModel = classDetailViewModel,
-                        gymDetailViewModel = gymDetailViewModel,
-                        loadingShimmer = shimmer
+                    ReportIssueScreen(
+                        onSubmit = reportViewModel::createReport,
+                        onBack = { navController.popBackStack() }
                     )
+//                    HomeScreen(
+//                        homeViewModel = homeViewModel,
+//                        navController = navController,
+//                        classDetailViewModel = classDetailViewModel,
+//                        gymDetailViewModel = gymDetailViewModel,
+//                        loadingShimmer = shimmer
+//                    )
                 }
                 composable(route = "gymDetail") {
                     GymDetailScreen(
@@ -202,4 +209,25 @@ fun MainNavigationWrapper(
             }
         }
     }
+}
+
+@Serializable
+sealed class UpliftRootRoute {
+    @Serializable
+    data object Home : UpliftRootRoute()
+
+    @Serializable
+    data object Classes : UpliftRootRoute()
+
+    @Serializable
+    data object Sports : UpliftRootRoute()
+
+    @Serializable
+    data object Favorites : UpliftRootRoute()
+
+    @Serializable
+    data object Profile : UpliftRootRoute()
+
+    @Serializable
+    data object ReportIssue : UpliftRootRoute()
 }

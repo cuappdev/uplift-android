@@ -50,9 +50,7 @@ fun CapacityReminderScreen(
 ) {
     var switchChecked by remember { mutableStateOf(checked) }
     Scaffold(topBar = {
-        UpliftTopBarWithBack(title = "Capacity Reminder") {
-            onBackClick()
-        }
+        UpliftTopBarWithBack(title = "Capacity Reminder", onBackClick = onBackClick)
     }) { padding ->
         Column(
             modifier = Modifier
