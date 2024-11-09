@@ -24,10 +24,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.cornellappdev.uplift.ui.components.general.UpliftTopBarWithBack
 import com.cornellappdev.uplift.ui.components.reporting.ReportDescription
 import com.cornellappdev.uplift.ui.components.reporting.ReportDropdown
-import com.cornellappdev.uplift.ui.components.reporting.SubmitButton
 import com.cornellappdev.uplift.ui.viewmodels.ReportViewModel
 import kotlinx.coroutines.launch
 import kotlin.reflect.KSuspendFunction4
+import com.cornellappdev.uplift.ui.components.general.UpliftButton
 
 /**
  * ReportIssueScreen is a composable that displays the report issue screen where users can report
@@ -113,8 +113,8 @@ fun ReportIssueScreen(
                     .padding(top = 68.dp, bottom = 77.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                SubmitButton(
-                    onSubmit = {
+                UpliftButton(
+                    onClick = {
                         errorStateIssue = selectedIssue == "Choose an option ..."
                         errorStateGym = selectedGym == "Choose an option ..."
                         if (!errorStateIssue && !errorStateGym) {
@@ -132,7 +132,9 @@ fun ReportIssueScreen(
 
                         }
                     },
-                    enabled = enabled
+                    enabled = enabled,
+                    width = 106.dp,
+                    height = 42.dp
                 )
             }
 
