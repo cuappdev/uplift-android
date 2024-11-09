@@ -11,8 +11,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 
-abstract class UpliftViewModel<UiState>(initialUIState: UiState) : ViewModel() {
-    private val _uiStateFlow = MutableStateFlow(initialUIState)
+abstract class UpliftViewModel<UiState>(initialUiState: UiState) : ViewModel() {
+    private val _uiStateFlow = MutableStateFlow(initialUiState)
     val uiStateFlow: StateFlow<UiState> = _uiStateFlow.asStateFlow()
 
     /**

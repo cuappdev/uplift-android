@@ -29,8 +29,8 @@ import kotlinx.coroutines.launch
  */
 object UpliftApiRepository {
     private val apolloClient = ApolloClient.Builder()
-            //        .serverUrl(BuildConfig.PROD_API_URL)
-        .serverUrl(BuildConfig.API_URL)
+                    .serverUrl(BuildConfig.PROD_API_URL)
+//        .serverUrl(BuildConfig.API_URL)
         .build()
 
     private val gymQuery = apolloClient.query(GymListQuery())

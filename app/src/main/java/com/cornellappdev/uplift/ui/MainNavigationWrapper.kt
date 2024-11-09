@@ -7,6 +7,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -17,6 +18,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -25,19 +27,21 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
-import com.cornellappdev.uplift.nav.BottomNavScreen
+import com.cornellappdev.uplift.nav.BottomNavScreens
 import com.cornellappdev.uplift.nav.popBackClass
 import com.cornellappdev.uplift.nav.popBackGym
 import com.cornellappdev.uplift.networking.ApiResponse
 import com.cornellappdev.uplift.ui.screens.ClassDetailScreen
 import com.cornellappdev.uplift.ui.screens.ClassScreen
 import com.cornellappdev.uplift.ui.screens.GymDetailScreen
+import com.cornellappdev.uplift.ui.screens.HomeScreen
 import com.cornellappdev.uplift.ui.screens.ReportIssueScreen
 import com.cornellappdev.uplift.ui.viewmodels.ClassDetailViewModel
 import com.cornellappdev.uplift.ui.viewmodels.ClassesViewModel
 import com.cornellappdev.uplift.ui.viewmodels.GymDetailViewModel
 import com.cornellappdev.uplift.ui.viewmodels.HomeViewModel
 import com.cornellappdev.uplift.ui.viewmodels.ReportViewModel
+import com.cornellappdev.uplift.ui.viewmodels.RootNavigationViewModel
 import com.cornellappdev.uplift.util.PRIMARY_BLACK
 import com.cornellappdev.uplift.util.PRIMARY_YELLOW
 import com.cornellappdev.uplift.util.montserratFamily
@@ -57,8 +61,10 @@ fun MainNavigationWrapper(
     classDetailViewModel: ClassDetailViewModel = viewModel(),
     classesViewModel: ClassesViewModel = viewModel(),
     homeViewModel: HomeViewModel = viewModel(),
-    reportViewModel: ReportViewModel = viewModel()
+    reportViewModel: ReportViewModel = viewModel(),
+    rootNavigationViewModel: RootNavigationViewModel = hiltViewModel()
 ) {
+    val uiState = rootNavigationViewModel.collectUiStateValue()
     val navController = rememberNavController()
     val systemUiController: SystemUiController = rememberSystemUiController()
     val gymsState = homeViewModel.gymFlow.collectAsState().value
@@ -73,20 +79,34 @@ fun MainNavigationWrapper(
     val shimmer = rememberShimmer(shimmerBounds = ShimmerBounds.Window, theme = yourShimmerTheme)
 
     val items = listOf(
-        BottomNavScreen.Home,
-        BottomNavScreen.Classes,
+        BottomNavScreens.Home,
+        BottomNavScreens.Classes,
         // TODO: Add new items when activities and profile are implemented.
     )
 
     systemUiController.setStatusBarColor(PRIMARY_YELLOW)
 
-    navController.addOnDestinationChangedListener { controller, destination, arguments ->
-        when (destination.route) {
-            "homeMain" -> {
-                homeViewModel.openHome()
-            }
+//    navController.addOnDestinationChangedListener { controller, destination, arguments ->
+//        when (destination.route) {
+//            "homeMain" -> {
+//                homeViewModel.openHome()
+//            }
+//        }
+//    }
+
+    LaunchedEffect(uiState.navEvent) {
+        uiState.navEvent?.consumeSuspend {
+            // Navigate.
+            navController.navigate(it)
         }
     }
+
+    LaunchedEffect(uiState.popBackStack) {
+        uiState.popBackStack?.consumeSuspend {
+            navController.popBackStack()
+        }
+    }
+
 
     Scaffold(
         bottomBar = {
@@ -100,7 +120,7 @@ fun MainNavigationWrapper(
                     val currentDestination = navBackStackEntry?.destination
                     items.forEach { screen ->
                         val selected =
-                            currentDestination?.hierarchy?.any { it.route == screen.route } == true
+                            currentDestination?.hierarchy?.any { it.route == screen.route::class.qualifiedName } == true
                         BottomNavigationItem(
                             icon = {
                                 Icon(
@@ -143,24 +163,24 @@ fun MainNavigationWrapper(
     ) {
         NavHost(
             navController = navController,
-            startDestination = "home",
+            startDestination = UpliftRootRoute.Home,
             modifier = Modifier.padding(it)
         ) {
-            navigation(startDestination = "homeMain", route = "home") {
-                composable(route = "homeMain") {
-                    ReportIssueScreen(
-                        onSubmit = reportViewModel::createReport,
-                        onBack = { navController.popBackStack() }
-                    )
-//                    HomeScreen(
-//                        homeViewModel = homeViewModel,
-//                        navController = navController,
-//                        classDetailViewModel = classDetailViewModel,
-//                        gymDetailViewModel = gymDetailViewModel,
-//                        loadingShimmer = shimmer
+//            navigation(startDestination = "homeMain", route = "home") {
+                composable<UpliftRootRoute.Home> {
+//                    ReportIssueScreen(
+//                        onSubmit = reportViewModel::createReport,
+//                        onBack = { navController.popBackStack() }
 //                    )
+                    HomeScreen(
+                        homeViewModel = homeViewModel,
+                        navController = navController,
+                        classDetailViewModel = classDetailViewModel,
+                        gymDetailViewModel = gymDetailViewModel,
+                        loadingShimmer = shimmer
+                    )
                 }
-                composable(route = "gymDetail") {
+                composable<UpliftRootRoute.GymDetail> {
                     GymDetailScreen(
                         gymDetailViewModel = gymDetailViewModel,
                         navController = navController,
@@ -175,7 +195,7 @@ fun MainNavigationWrapper(
                 //  sides of the app then pop back. I think both will end up popping back.
                 //  I can't test RN cuz backend is down, so test this and see. If it's broken,
                 //  change it to just use one "classDetail" route on the class half.
-                composable(route = "classDetailHome") {
+                composable<UpliftRootRoute.ClassDetail> {
                     ClassDetailScreen(
                         classDetailViewModel = classDetailViewModel,
                         navController = navController
@@ -183,30 +203,30 @@ fun MainNavigationWrapper(
                         navController.popBackClass(classDetailViewModel)
                     }
                 }
-            }
-            navigation(startDestination = "classesMain", route = "classes") {
-                composable(route = "classesMain") {
+//            }
+//            navigation(startDestination = "classesMain", route = "classes") {
+                composable<UpliftRootRoute.Classes> {
                     ClassScreen(
                         classDetailViewModel = classDetailViewModel,
                         navController = navController,
                         classesViewModel = classesViewModel
                     )
                 }
-                composable(route = "classDetailClasses") {
-                    ClassDetailScreen(
-                        classDetailViewModel = classDetailViewModel,
-                        navController = navController
-                    ) {
-                        navController.popBackClass(classDetailViewModel)
-                    }
-                }
-            }
-            navigation(startDestination = "sportsMain", route = "sports") {
-                composable(route = "sportsMain") {}
-            }
-            navigation(startDestination = "favoritesMain", route = "favorites") {
-                composable(route = "favoritesMain") {}
-            }
+//                composable(route = "classDetailClasses") {
+//                    ClassDetailScreen(
+//                        classDetailViewModel = classDetailViewModel,
+//                        navController = navController
+//                    ) {
+//                        navController.popBackClass(classDetailViewModel)
+//                    }
+//                }
+//            }
+//            navigation(startDestination = "sportsMain", route = "sports") {
+                composable<UpliftRootRoute.Sports> {}
+//            }
+//            navigation(startDestination = "favoritesMain", route = "favorites") {
+                composable<UpliftRootRoute.Favorites> {}
+//            }
         }
     }
 }
@@ -217,7 +237,13 @@ sealed class UpliftRootRoute {
     data object Home : UpliftRootRoute()
 
     @Serializable
+    data object GymDetail : UpliftRootRoute()
+
+    @Serializable
     data object Classes : UpliftRootRoute()
+
+    @Serializable
+    data object ClassDetail : UpliftRootRoute()
 
     @Serializable
     data object Sports : UpliftRootRoute()

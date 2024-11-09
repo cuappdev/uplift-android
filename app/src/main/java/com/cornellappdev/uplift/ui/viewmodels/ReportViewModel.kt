@@ -2,6 +2,8 @@ package com.cornellappdev.uplift.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
 import com.cornellappdev.uplift.domain.ReportClient
+import com.cornellappdev.uplift.nav.RootNavigationRepository
+import com.cornellappdev.uplift.ui.UpliftRootRoute
 import com.cornellappdev.uplift.util.HELEN_NEWMAN_ID
 import com.cornellappdev.uplift.util.MORRISON_ID
 import com.cornellappdev.uplift.util.NOYES_ID
@@ -12,6 +14,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ReportViewModel @Inject constructor(
+    private val rootNavigationRepository: RootNavigationRepository,
     private val reportClient: ReportClient
 ) : ViewModel() {
     suspend fun createReport(
@@ -46,6 +49,14 @@ class ReportViewModel @Inject constructor(
             "Wait times not updated" -> "WAIT_TIMES_NOT_UPDATED"
             else -> "OTHER"
         }
+    }
+
+    fun navigateBack() {
+        rootNavigationRepository.popBackStack()
+    }
+
+    fun navigateToHome() {
+        rootNavigationRepository.navigate(UpliftRootRoute.Home)
     }
 
 }

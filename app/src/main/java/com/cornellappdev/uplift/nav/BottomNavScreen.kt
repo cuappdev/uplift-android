@@ -1,32 +1,36 @@
 package com.cornellappdev.uplift.nav
 
 import com.cornellappdev.uplift.R
+import com.cornellappdev.uplift.ui.UpliftRootRoute
+import kotlinx.serialization.Serializable
 
-sealed class BottomNavScreen(
-    val route: String,
+@Serializable
+sealed class BottomNavScreens<T>(
+    val route: T,
     val painterIds: Pair<Int, Int>,
     val titleText: String
 ) {
-    object Home : BottomNavScreen(
-        route = "home",
+    @Serializable
+    data object Home : BottomNavScreens<UpliftRootRoute.Home>(
+        route = UpliftRootRoute.Home,
         painterIds = Pair(R.drawable.ic_dumbbell_inactive, R.drawable.ic_dumbbell_active),
         titleText = "Home"
     )
 
-    object Classes : BottomNavScreen(
-        route = "classes",
+    data object Classes : BottomNavScreens<UpliftRootRoute.Classes>(
+        route = UpliftRootRoute.Classes,
         painterIds = Pair(R.drawable.ic_classes_inactive, R.drawable.ic_classes_active),
         titleText = "Classes"
     )
 
-    object Sports : BottomNavScreen(
-        route = "sports",
+    data object Sports : BottomNavScreens<UpliftRootRoute.Sports>(
+        route = UpliftRootRoute.Sports,
         painterIds = Pair(R.drawable.ic_sports_inactive, R.drawable.ic_sports_inactive),
         titleText = "Sports"
     )
 
-    object Favorites : BottomNavScreen(
-        route = "favorites",
+    data object Favorites : BottomNavScreens<UpliftRootRoute.Favorites>(
+        route = UpliftRootRoute.Favorites,
         painterIds = Pair(R.drawable.ic_favorites_inactive, R.drawable.ic_favorites_inactive),
         titleText = "Favorites"
     )
