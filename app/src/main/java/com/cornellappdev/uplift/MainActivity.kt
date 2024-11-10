@@ -36,11 +36,8 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             UpliftTheme {
-                val reportViewModel = hiltViewModel<ReportViewModel>()
                 LockScreenOrientation(orientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
-                MainNavigationWrapper(
-                    reportViewModel = reportViewModel
-                )
+                MainNavigationWrapper()
             }
         }
     }

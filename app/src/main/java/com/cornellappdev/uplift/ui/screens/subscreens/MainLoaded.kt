@@ -87,6 +87,7 @@ fun MainLoaded(
     showCapacities: Boolean,
     titleText: String,
     onToggleCapacities: () -> Unit,
+    reload: () -> Unit
 ) {
     val gymComparator = { gym1: UpliftGym, gym2: UpliftGym ->
         if (isOpen(gym1.hours[todayIndex()]) && !isOpen(gym2.hours[todayIndex()])) {
@@ -136,7 +137,7 @@ fun MainLoaded(
     val refresh =
         rememberPullRefreshState(
             refreshing = false,
-            onRefresh = { UpliftApiRepository.reload() },
+            onRefresh = reload,
             refreshThreshold = 120.dp
         )
 

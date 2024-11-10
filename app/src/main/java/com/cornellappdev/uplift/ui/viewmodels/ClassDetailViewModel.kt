@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import com.cornellappdev.uplift.models.UpliftClass
 import com.cornellappdev.uplift.networking.ApiResponse
 import com.cornellappdev.uplift.networking.UpliftApiRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -15,9 +16,13 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import java.util.GregorianCalendar
 import java.util.Stack
+import javax.inject.Inject
 
 /** A [ClassDetailViewModel] is a view model for ClassDetailScreen.*/
-class ClassDetailViewModel : ViewModel() {
+@HiltViewModel
+class ClassDetailViewModel @Inject constructor(
+    private val upliftApiRepository: UpliftApiRepository
+) : ViewModel() {
     /**
      * A Stack containing all the previous classes seen, including the current class.
      */
@@ -35,7 +40,7 @@ class ClassDetailViewModel : ViewModel() {
      * A [Flow] detailing the [UpliftClass]es to display in the Next Sessions section.
      */
     val nextSessionsFlow =
-        UpliftApiRepository.classesApiFlow.combine(classFlow) { apiResponse, upliftClass ->
+        upliftApiRepository.classesApiFlow.combine(classFlow) { apiResponse, upliftClass ->
             when (apiResponse) {
                 ApiResponse.Loading -> listOf()
                 ApiResponse.Error -> listOf()

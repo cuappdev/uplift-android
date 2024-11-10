@@ -20,11 +20,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.cornellappdev.uplift.ui.components.general.UpliftTopBarWithBack
 import com.cornellappdev.uplift.ui.components.reporting.ReportDescription
 import com.cornellappdev.uplift.ui.components.reporting.ReportDropdown
-import com.cornellappdev.uplift.ui.viewmodels.ReportViewModel
 import kotlinx.coroutines.launch
 import kotlin.reflect.KSuspendFunction4
 import com.cornellappdev.uplift.ui.components.general.UpliftButton
@@ -35,7 +33,6 @@ import com.cornellappdev.uplift.ui.components.general.UpliftButton
  */
 @Composable
 fun ReportIssueScreen(
-    reportViewModel: ReportViewModel = hiltViewModel(),
     onSubmit: KSuspendFunction4<String, String, String, Int, Unit>,
     /* TODO: Replace onBack with corresponding navigation function call */
     onBack: () -> Unit

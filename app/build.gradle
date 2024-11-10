@@ -1,6 +1,6 @@
 buildscript {
     Properties properties = new Properties()
-    def propertiesFile = rootProject.file('local.properties')
+    def propertiesFile = rootProject.file('secrets.properties')
     if (propertiesFile.exists()) {
         properties.load(propertiesFile.newDataInputStream())
     }
@@ -43,7 +43,6 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             buildConfigField("String","API_URL", "\"${rootProject.ext.prod_api_url}\"")
-            buildConfigField("String","PROD_API_URL", "\"${rootProject.ext.prod_api_url}\"")
         }
 
         debug {

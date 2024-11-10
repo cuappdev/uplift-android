@@ -5,6 +5,7 @@ import com.cornellappdev.uplift.models.UpliftClass
 import com.cornellappdev.uplift.networking.ApiResponse
 import com.cornellappdev.uplift.networking.UpliftApiRepository
 import com.cornellappdev.uplift.util.startTimeComparator
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,8 +15,11 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import java.util.Calendar
-
-class ClassesViewModel : ViewModel() {
+import javax.inject.Inject
+@HiltViewModel
+class ClassesViewModel @Inject constructor(
+    private val upliftApiRepository: UpliftApiRepository
+) : ViewModel() {
     private val _selectedDay: MutableStateFlow<Int> = MutableStateFlow(0)
     val selectedDay = _selectedDay.asStateFlow()
 
@@ -24,7 +28,7 @@ class ClassesViewModel : ViewModel() {
      * [selectedDay], which is mutable by [selectDay].
      */
     val classesFlow: StateFlow<ApiResponse<List<UpliftClass>>> =
-        UpliftApiRepository.classesApiFlow.combine(selectedDay) { apiResponse, day ->
+        upliftApiRepository.classesApiFlow.combine(selectedDay) { apiResponse, day ->
             (when (apiResponse) {
                 ApiResponse.Loading -> ApiResponse.Loading
                 ApiResponse.Error -> ApiResponse.Error

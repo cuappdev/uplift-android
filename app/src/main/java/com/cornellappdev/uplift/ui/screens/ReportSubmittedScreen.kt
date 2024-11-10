@@ -51,7 +51,9 @@ fun ReportSubmittedScreen(
     }) { padding ->
         Column(
             modifier = Modifier
-                .padding(padding)
+                .padding(
+                    top = padding.calculateTopPadding(),
+                )
                 .fillMaxSize()
                 .background(Color.White),
             verticalArrangement = Arrangement.spacedBy(

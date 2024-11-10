@@ -36,6 +36,7 @@ import com.cornellappdev.uplift.ui.screens.ClassScreen
 import com.cornellappdev.uplift.ui.screens.GymDetailScreen
 import com.cornellappdev.uplift.ui.screens.HomeScreen
 import com.cornellappdev.uplift.ui.screens.ReportIssueScreen
+import com.cornellappdev.uplift.ui.screens.ReportSubmittedScreen
 import com.cornellappdev.uplift.ui.viewmodels.ClassDetailViewModel
 import com.cornellappdev.uplift.ui.viewmodels.ClassesViewModel
 import com.cornellappdev.uplift.ui.viewmodels.GymDetailViewModel
@@ -57,13 +58,14 @@ import kotlinx.serialization.Serializable
  */
 @Composable
 fun MainNavigationWrapper(
-    gymDetailViewModel: GymDetailViewModel = viewModel(),
-    classDetailViewModel: ClassDetailViewModel = viewModel(),
-    classesViewModel: ClassesViewModel = viewModel(),
-    homeViewModel: HomeViewModel = viewModel(),
-    reportViewModel: ReportViewModel = viewModel(),
+    gymDetailViewModel: GymDetailViewModel = hiltViewModel(),
+    classDetailViewModel: ClassDetailViewModel = hiltViewModel(),
+    classesViewModel: ClassesViewModel = hiltViewModel(),
+    homeViewModel: HomeViewModel = hiltViewModel(),
+    reportViewModel: ReportViewModel = hiltViewModel(),
     rootNavigationViewModel: RootNavigationViewModel = hiltViewModel()
 ) {
+
     val uiState = rootNavigationViewModel.collectUiStateValue()
     val navController = rememberNavController()
     val systemUiController: SystemUiController = rememberSystemUiController()
@@ -86,14 +88,6 @@ fun MainNavigationWrapper(
 
     systemUiController.setStatusBarColor(PRIMARY_YELLOW)
 
-//    navController.addOnDestinationChangedListener { controller, destination, arguments ->
-//        when (destination.route) {
-//            "homeMain" -> {
-//                homeViewModel.openHome()
-//            }
-//        }
-//    }
-
     LaunchedEffect(uiState.navEvent) {
         uiState.navEvent?.consumeSuspend {
             // Navigate.
@@ -108,125 +102,111 @@ fun MainNavigationWrapper(
     }
 
 
-    Scaffold(
-        bottomBar = {
-            if (gymsState is ApiResponse.Success)
-                BottomNavigation(
-                    backgroundColor = PRIMARY_YELLOW,
-                    contentColor = PRIMARY_BLACK,
-                    elevation = 1.dp
-                ) {
-                    val navBackStackEntry by navController.currentBackStackEntryAsState()
-                    val currentDestination = navBackStackEntry?.destination
-                    items.forEach { screen ->
-                        val selected =
-                            currentDestination?.hierarchy?.any { it.route == screen.route::class.qualifiedName } == true
-                        BottomNavigationItem(
-                            icon = {
-                                Icon(
-                                    painter = painterResource(id = if (selected) screen.painterIds.second else screen.painterIds.first),
-                                    contentDescription = null
-                                )
-                            },
-                            label = {
-                                Text(
-                                    text = screen.titleText,
-                                    fontFamily = montserratFamily,
-                                    fontSize = 14.sp,
-                                    fontWeight = if (selected) FontWeight(700) else FontWeight(500),
-                                    lineHeight = 17.07.sp,
-                                    textAlign = TextAlign.Center,
-                                    overflow = TextOverflow.Visible,
-                                    softWrap = false
-                                )
-                            },
-                            selected = selected,
-                            onClick = {
-                                navController.navigate(screen.route) {
-                                    // Pop up to the start destination of the graph to
-                                    // avoid building up a large stack of destinations
-                                    // on the back stack as users select items
-                                    popUpTo(navController.graph.findStartDestination().id) {
-                                        saveState = true
-                                    }
-                                    // Avoid multiple copies of the same destination when
-                                    // reselecting the same item
-                                    launchSingleTop = true
-                                    // Restore state when reselecting a previously selected item
-                                    restoreState = true
-                                }
-                            }
-                        )
+    Scaffold(bottomBar = {
+        if (gymsState is ApiResponse.Success) BottomNavigation(
+            backgroundColor = PRIMARY_YELLOW, contentColor = PRIMARY_BLACK, elevation = 1.dp
+        ) {
+            val navBackStackEntry by navController.currentBackStackEntryAsState()
+            val currentDestination = navBackStackEntry?.destination
+            items.forEach { screen ->
+                val selected =
+                    currentDestination?.hierarchy?.any {
+                        it.route == screen.route::class.qualifiedName
+                    } == true
+                BottomNavigationItem(icon = {
+                    Icon(
+                        painter = painterResource(
+                            id = if (selected) screen.painterIds.second else screen.painterIds.first
+                        ),
+                        contentDescription = null
+                    )
+                }, label = {
+                    Text(
+                        text = screen.titleText,
+                        fontFamily = montserratFamily,
+                        fontSize = 14.sp,
+                        fontWeight = if (selected) FontWeight(700)
+                        else FontWeight(500),
+                        lineHeight = 17.07.sp,
+                        textAlign = TextAlign.Center,
+                        overflow = TextOverflow.Visible,
+                        softWrap = false
+                    )
+                }, selected = selected, onClick = {
+                    navController.navigate(screen.route) {
+                        // Pop up to the start destination of the graph to
+                        // avoid building up a large stack of destinations
+                        // on the back stack as users select items
+                        popUpTo(navController.graph.findStartDestination().id) {
+                            saveState = true
+                        }
+                        // Avoid multiple copies of the same destination when
+                        // reselecting the same item
+                        launchSingleTop = true
+                        // Restore state when reselecting a previously selected item
+                        restoreState = true
                     }
-                }
+                })
+            }
         }
-    ) {
+    }) {
         NavHost(
             navController = navController,
             startDestination = UpliftRootRoute.Home,
             modifier = Modifier.padding(it)
         ) {
-//            navigation(startDestination = "homeMain", route = "home") {
-                composable<UpliftRootRoute.Home> {
-//                    ReportIssueScreen(
-//                        onSubmit = reportViewModel::createReport,
-//                        onBack = { navController.popBackStack() }
-//                    )
-                    HomeScreen(
-                        homeViewModel = homeViewModel,
-                        navController = navController,
-                        classDetailViewModel = classDetailViewModel,
-                        gymDetailViewModel = gymDetailViewModel,
-                        loadingShimmer = shimmer
-                    )
+            composable<UpliftRootRoute.Home> {
+                HomeScreen(
+                    homeViewModel = homeViewModel,
+                    navController = navController,
+                    classDetailViewModel = classDetailViewModel,
+                    gymDetailViewModel = gymDetailViewModel,
+                    loadingShimmer = shimmer
+                )
+            }
+            composable<UpliftRootRoute.GymDetail> {
+                GymDetailScreen(
+                    gymDetailViewModel = gymDetailViewModel,
+                    navController = navController,
+                    classDetailViewModel = classDetailViewModel
+                ) {
+                    navController.popBackGym(gymDetailViewModel)
                 }
-                composable<UpliftRootRoute.GymDetail> {
-                    GymDetailScreen(
-                        gymDetailViewModel = gymDetailViewModel,
-                        navController = navController,
-                        classDetailViewModel = classDetailViewModel
-                    ) {
-                        navController.popBackGym(gymDetailViewModel)
-                    }
+            }
+            // TODO: I split these across multiple screens to make it so the user sticks to
+            //  the side of the app they were originally on.
+            //  However, I think this might cause a bug if you have classes open on BOTH
+            //  sides of the app then pop back. I think both will end up popping back.
+            //  I can't test RN cuz backend is down, so test this and see. If it's broken,
+            //  change it to just use one "classDetail" route on the class half.
+            composable<UpliftRootRoute.ClassDetail> {
+                ClassDetailScreen(
+                    classDetailViewModel = classDetailViewModel, navController = navController
+                ) {
+                    navController.popBackClass(classDetailViewModel)
                 }
-                // TODO: I split these across multiple screens to make it so the user sticks to
-                //  the side of the app they were originally on.
-                //  However, I think this might cause a bug if you have classes open on BOTH
-                //  sides of the app then pop back. I think both will end up popping back.
-                //  I can't test RN cuz backend is down, so test this and see. If it's broken,
-                //  change it to just use one "classDetail" route on the class half.
-                composable<UpliftRootRoute.ClassDetail> {
-                    ClassDetailScreen(
-                        classDetailViewModel = classDetailViewModel,
-                        navController = navController
-                    ) {
-                        navController.popBackClass(classDetailViewModel)
-                    }
-                }
-//            }
-//            navigation(startDestination = "classesMain", route = "classes") {
-                composable<UpliftRootRoute.Classes> {
-                    ClassScreen(
-                        classDetailViewModel = classDetailViewModel,
-                        navController = navController,
-                        classesViewModel = classesViewModel
-                    )
-                }
-//                composable(route = "classDetailClasses") {
-//                    ClassDetailScreen(
-//                        classDetailViewModel = classDetailViewModel,
-//                        navController = navController
-//                    ) {
-//                        navController.popBackClass(classDetailViewModel)
-//                    }
-//                }
-//            }
-//            navigation(startDestination = "sportsMain", route = "sports") {
-                composable<UpliftRootRoute.Sports> {}
-//            }
-//            navigation(startDestination = "favoritesMain", route = "favorites") {
-                composable<UpliftRootRoute.Favorites> {}
-//            }
+            }
+            composable<UpliftRootRoute.Classes> {
+                ClassScreen(
+                    classDetailViewModel = classDetailViewModel,
+                    navController = navController,
+                    classesViewModel = classesViewModel
+                )
+            }
+            composable<UpliftRootRoute.ReportIssue> {
+                ReportIssueScreen(
+                    onSubmit = reportViewModel::createReport,
+                    onBack = { navController.popBackStack() }
+                )
+            }
+            composable<UpliftRootRoute.ReportSuccess> {
+                ReportSubmittedScreen(
+                    onSubmitAnother = reportViewModel::navigateToReport,
+                    onReturnHome = reportViewModel::navigateToHome
+                )
+            }
+            composable<UpliftRootRoute.Sports> {}
+            composable<UpliftRootRoute.Favorites> {}
         }
     }
 }
@@ -256,4 +236,7 @@ sealed class UpliftRootRoute {
 
     @Serializable
     data object ReportIssue : UpliftRootRoute()
+
+    @Serializable
+    data object ReportSuccess : UpliftRootRoute()
 }

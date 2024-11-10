@@ -7,8 +7,8 @@ import com.cornellappdev.uplift.ClassListQuery
 import com.cornellappdev.uplift.GymListQuery
 import com.cornellappdev.uplift.models.UpliftClass
 import com.cornellappdev.uplift.models.UpliftGym
-import com.cornellappdev.uplift.networking.UpliftApiRepository.classesApiFlow
-import com.cornellappdev.uplift.networking.UpliftApiRepository.gymApiFlow
+//import com.cornellappdev.uplift.networking.UpliftApiRepository.classesApiFlow
+//import com.cornellappdev.uplift.networking.UpliftApiRepository.gymApiFlow
 import com.cornellappdev.uplift.util.defaultGymUrl
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -27,11 +27,13 @@ import kotlinx.coroutines.launch
  *
  * See [gymApiFlow] and [classesApiFlow].
  */
-object UpliftApiRepository {
-    private val apolloClient = ApolloClient.Builder()
-                    .serverUrl(BuildConfig.PROD_API_URL)
-//        .serverUrl(BuildConfig.API_URL)
-        .build()
+class UpliftApiRepository(
+    private val apolloClient: ApolloClient
+) {
+//    private val apolloClient = ApolloClient.Builder()
+//                    .serverUrl(BuildConfig.PROD_API_URL)
+////        .serverUrl(BuildConfig.API_URL)
+//        .build()
 
     private val gymQuery = apolloClient.query(GymListQuery())
     private val classQuery = apolloClient.query(ClassListQuery())

@@ -71,14 +71,16 @@ fun HomeScreen(
                 gymsList = gymsList,
                 navController = navController,
                 showCapacities = showCapacities,
-                titleText = titleText
-            ) {
-                homeViewModel.toggleCapacities()
-            }
+                titleText = titleText,
+                onToggleCapacities = homeViewModel::toggleCapacities,
+                reload = homeViewModel::reload,
+            )
         }
         // Some error
         else if (gState == ApiResponse.Error || cState == ApiResponse.Error) {
-            MainError()
+            MainError(
+                reload = homeViewModel::reload
+            )
         }
         // At least one is still loading.
         else {

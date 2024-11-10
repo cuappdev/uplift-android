@@ -23,13 +23,16 @@ class ReportViewModel @Inject constructor(
         description: String,
         userId: Int
     ) {
-        reportClient.createReport(
+        val reportSuccess = reportClient.createReport(
             createdAt = LocalDateTime.now().toString(),
             description = description,
             gymId = mapGymToId(gym),
             issue = formatIssue(issue),
             userId = userId
         )
+        if (reportSuccess) {
+            rootNavigationRepository.navigate(UpliftRootRoute.ReportSuccess)
+        }
     }
 
     private fun mapGymToId(gym: String): Int {
@@ -51,12 +54,12 @@ class ReportViewModel @Inject constructor(
         }
     }
 
-    fun navigateBack() {
-        rootNavigationRepository.popBackStack()
-    }
-
     fun navigateToHome() {
         rootNavigationRepository.navigate(UpliftRootRoute.Home)
+    }
+
+    fun navigateToReport() {
+        rootNavigationRepository.navigate(UpliftRootRoute.ReportIssue)
     }
 
 }
