@@ -4,6 +4,10 @@ plugins {
     id "com.apollographql.apollo3" version "3.8.2"
 }
 
+def secretsPropertiesFile = rootProject.file('secrets.properties')
+def secretsProperties = new Properties()
+secretsProperties.load(new FileInputStream(secretsPropertiesFile))
+
 android {
     namespace 'com.cornellappdev.uplift'
     compileSdk 35
@@ -12,8 +16,8 @@ android {
         applicationId "com.cornellappdev.uplift"
         minSdk 28
         targetSdk 35
-        versionCode 10
-        versionName "1.4"
+        versionCode 12
+        versionName "1.4-backend-fix"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -22,9 +26,14 @@ android {
     }
 
     buildTypes {
+        debug {
+            buildConfigField("String", "BACKEND_URL", secretsProperties['DEV_ENDPOINT'])
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.debug
+            buildConfigField("String", "BACKEND_URL", secretsProperties['PROD_ENDPOINT'])
         }
     }
     compileOptions {
@@ -37,6 +46,7 @@ android {
     }
     buildFeatures {
         compose true
+        buildConfig true
     }
     composeOptions {
         kotlinCompilerExtensionVersion '1.5.3'
