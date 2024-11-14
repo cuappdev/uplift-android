@@ -30,7 +30,6 @@ import kotlinx.coroutines.launch
 object UpliftApiRepository {
     private val apolloClient = ApolloClient.Builder()
         .serverUrl(BuildConfig.BACKEND_URL)
-        .apply { Log.d("helpme", "server url: ${BuildConfig.BACKEND_URL}") }
         .build()
 
     private val gymQuery = apolloClient.query(GymListQuery())
