@@ -1,4 +1,4 @@
-package com.cornellappdev.uplift.domain
+package com.cornellappdev.uplift.domain.clients
 
 /**
  * A client for interacting with the report API.

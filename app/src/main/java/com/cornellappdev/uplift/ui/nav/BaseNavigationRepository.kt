@@ -1,4 +1,4 @@
-package com.cornellappdev.uplift.nav
+package com.cornellappdev.uplift.ui.nav
 
 import com.cornellappdev.uplift.util.UIEvent
 import kotlinx.coroutines.flow.MutableStateFlow

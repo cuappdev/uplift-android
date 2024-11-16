@@ -4,10 +4,10 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import com.cornellappdev.uplift.models.TimeOfDay
-import com.cornellappdev.uplift.models.UpliftClass
-import com.cornellappdev.uplift.networking.ApiResponse
-import com.cornellappdev.uplift.networking.UpliftApiRepository
+import com.cornellappdev.uplift.data.models.TimeOfDay
+import com.cornellappdev.uplift.data.models.UpliftClass
+import com.cornellappdev.uplift.data.models.ApiResponse
+import com.cornellappdev.uplift.data.repositories.UpliftApiRepository
 import com.cornellappdev.uplift.util.getSystemTime
 import com.cornellappdev.uplift.util.sameDayAs
 import com.cornellappdev.uplift.util.startTimeComparator

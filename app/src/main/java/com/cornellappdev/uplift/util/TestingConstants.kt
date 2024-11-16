@@ -2,17 +2,17 @@ package com.cornellappdev.uplift.util
 
 import androidx.compose.runtime.mutableStateListOf
 import com.cornellappdev.uplift.R
-import com.cornellappdev.uplift.models.BowlingInfo
-import com.cornellappdev.uplift.models.EquipmentGrouping
-import com.cornellappdev.uplift.models.PopularTimes
-import com.cornellappdev.uplift.models.Sport
-import com.cornellappdev.uplift.models.SwimmingInfo
-import com.cornellappdev.uplift.models.SwimmingTime
-import com.cornellappdev.uplift.models.TimeInterval
-import com.cornellappdev.uplift.models.TimeOfDay
-import com.cornellappdev.uplift.models.UpliftCapacity
-import com.cornellappdev.uplift.models.UpliftClass
-import com.cornellappdev.uplift.models.UpliftGym
+import com.cornellappdev.uplift.data.models.BowlingInfo
+import com.cornellappdev.uplift.data.models.EquipmentGrouping
+import com.cornellappdev.uplift.data.models.PopularTimes
+import com.cornellappdev.uplift.data.models.Sport
+import com.cornellappdev.uplift.data.models.SwimmingInfo
+import com.cornellappdev.uplift.data.models.SwimmingTime
+import com.cornellappdev.uplift.data.models.TimeInterval
+import com.cornellappdev.uplift.data.models.TimeOfDay
+import com.cornellappdev.uplift.data.models.UpliftCapacity
+import com.cornellappdev.uplift.data.models.UpliftClass
+import com.cornellappdev.uplift.data.models.UpliftGym
 import java.util.Calendar
 import java.util.GregorianCalendar
 

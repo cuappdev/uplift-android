@@ -2,9 +2,9 @@ package com.cornellappdev.uplift.di
 
 import com.apollographql.apollo3.ApolloClient
 import com.cornellappdev.uplift.BuildConfig
-import com.cornellappdev.uplift.data.ApolloReportClient
-import com.cornellappdev.uplift.domain.ReportClient
-import com.cornellappdev.uplift.networking.UpliftApiRepository
+import com.cornellappdev.uplift.data.clients.ApolloReportClient
+import com.cornellappdev.uplift.domain.clients.ReportClient
+import com.cornellappdev.uplift.data.repositories.UpliftApiRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -31,11 +31,4 @@ object AppModule {
         return ApolloReportClient(apolloClient)
     }
 
-    @Provides
-    @Singleton
-    fun provideUpliftApiRepository(
-        apolloClient: ApolloClient
-    ): UpliftApiRepository {
-        return UpliftApiRepository(apolloClient)
-    }
 }

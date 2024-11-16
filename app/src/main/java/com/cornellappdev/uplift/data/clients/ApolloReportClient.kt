@@ -1,9 +1,9 @@
-package com.cornellappdev.uplift.data
+package com.cornellappdev.uplift.data.clients
 
 import android.util.Log
 import com.apollographql.apollo3.ApolloClient
 import com.cornellappdev.uplift.CreateReportMutation
-import com.cornellappdev.uplift.domain.ReportClient
+import com.cornellappdev.uplift.domain.clients.ReportClient
 
 /**
  * A client for interacting with the report API.

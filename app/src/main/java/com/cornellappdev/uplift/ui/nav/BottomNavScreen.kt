@@ -1,4 +1,4 @@
-package com.cornellappdev.uplift.nav
+package com.cornellappdev.uplift.ui.nav
 
 import com.cornellappdev.uplift.R
 import com.cornellappdev.uplift.ui.UpliftRootRoute
@@ -16,19 +16,19 @@ sealed class BottomNavScreens<T>(
         painterIds = Pair(R.drawable.ic_dumbbell_inactive, R.drawable.ic_dumbbell_active),
         titleText = "Home"
     )
-
+    @Serializable
     data object Classes : BottomNavScreens<UpliftRootRoute.Classes>(
         route = UpliftRootRoute.Classes,
         painterIds = Pair(R.drawable.ic_classes_inactive, R.drawable.ic_classes_active),
         titleText = "Classes"
     )
-
+    @Serializable
     data object Sports : BottomNavScreens<UpliftRootRoute.Sports>(
         route = UpliftRootRoute.Sports,
         painterIds = Pair(R.drawable.ic_sports_inactive, R.drawable.ic_sports_inactive),
         titleText = "Sports"
     )
-
+    @Serializable
     data object Favorites : BottomNavScreens<UpliftRootRoute.Favorites>(
         route = UpliftRootRoute.Favorites,
         painterIds = Pair(R.drawable.ic_favorites_inactive, R.drawable.ic_favorites_inactive),

@@ -1,4 +1,4 @@
-package com.cornellappdev.uplift.models
+package com.cornellappdev.uplift.data.models
 
 import com.cornellappdev.uplift.type.AccessibilityType
 import com.cornellappdev.uplift.type.EquipmentType

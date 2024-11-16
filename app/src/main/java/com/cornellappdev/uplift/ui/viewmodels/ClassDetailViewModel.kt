@@ -1,9 +1,9 @@
 package com.cornellappdev.uplift.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
-import com.cornellappdev.uplift.models.UpliftClass
-import com.cornellappdev.uplift.networking.ApiResponse
-import com.cornellappdev.uplift.networking.UpliftApiRepository
+import com.cornellappdev.uplift.data.models.UpliftClass
+import com.cornellappdev.uplift.data.models.ApiResponse
+import com.cornellappdev.uplift.data.repositories.UpliftApiRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

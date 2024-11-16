@@ -24,7 +24,7 @@ import com.cornellappdev.uplift.ui.components.general.UpliftTopBarWithBack
 import com.cornellappdev.uplift.ui.components.reporting.ReportDescription
 import com.cornellappdev.uplift.ui.components.reporting.ReportDropdown
 import kotlinx.coroutines.launch
-import kotlin.reflect.KSuspendFunction4
+import kotlin.reflect.KSuspendFunction3
 import com.cornellappdev.uplift.ui.components.general.UpliftButton
 
 /**
@@ -33,7 +33,7 @@ import com.cornellappdev.uplift.ui.components.general.UpliftButton
  */
 @Composable
 fun ReportIssueScreen(
-    onSubmit: KSuspendFunction4<String, String, String, Int, Unit>,
+    onSubmit: KSuspendFunction3<String, String, String, Unit>,
     /* TODO: Replace onBack with corresponding navigation function call */
     onBack: () -> Unit
 ) {
@@ -122,7 +122,6 @@ fun ReportIssueScreen(
                                     selectedIssue,
                                     selectedGym,
                                     description,
-                                    1
                                 )
                                 enabled = true
                             }
@@ -144,7 +143,7 @@ fun ReportIssueScreen(
 @Preview(showBackground = true)
 @Composable
 private fun ReportIssueScreenPreview() {
-    suspend fun onSubmit(issue: String, gym: String, description: String, userId: Int) {
+    suspend fun onSubmit(issue: String, gym: String, description: String) {
 
     }
     ReportIssueScreen(

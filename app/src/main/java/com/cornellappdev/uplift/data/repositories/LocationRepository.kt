@@ -1,4 +1,4 @@
-package com.cornellappdev.uplift.models
+package com.cornellappdev.uplift.data.repositories
 
 import android.Manifest
 import android.content.Context

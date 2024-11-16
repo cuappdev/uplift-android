@@ -1,6 +1,6 @@
 package com.cornellappdev.uplift.ui.viewmodels
 
-import com.cornellappdev.uplift.nav.RootNavigationRepository
+import com.cornellappdev.uplift.ui.nav.RootNavigationRepository
 import com.cornellappdev.uplift.ui.UpliftRootRoute
 import com.cornellappdev.uplift.util.UIEvent
 import dagger.hilt.android.lifecycle.HiltViewModel

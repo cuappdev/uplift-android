@@ -1,4 +1,4 @@
-package com.cornellappdev.uplift.networking
+package com.cornellappdev.uplift.data.repositories
 
 import android.content.Context
 import androidx.compose.runtime.MutableState
@@ -8,6 +8,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.core.graphics.drawable.toBitmap
 import coil.imageLoader
 import coil.request.ImageRequest
+import com.cornellappdev.uplift.data.models.ApiResponse
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

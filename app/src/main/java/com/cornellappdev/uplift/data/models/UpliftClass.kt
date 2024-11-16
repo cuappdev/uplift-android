@@ -1,4 +1,4 @@
-package com.cornellappdev.uplift.models
+package com.cornellappdev.uplift.data.models
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State

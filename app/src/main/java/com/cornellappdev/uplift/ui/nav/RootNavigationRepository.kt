@@ -1,4 +1,4 @@
-package com.cornellappdev.uplift.nav
+package com.cornellappdev.uplift.ui.nav
 
 import com.cornellappdev.uplift.ui.UpliftRootRoute
 import javax.inject.Inject

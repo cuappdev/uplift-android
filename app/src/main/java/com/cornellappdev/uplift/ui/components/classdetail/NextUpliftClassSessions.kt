@@ -16,7 +16,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.cornellappdev.uplift.models.UpliftClass
+import com.cornellappdev.uplift.data.models.UpliftClass
 import com.cornellappdev.uplift.ui.components.ClassInfoCard
 import com.cornellappdev.uplift.ui.viewmodels.ClassDetailViewModel
 import com.cornellappdev.uplift.util.PRIMARY_BLACK

@@ -49,11 +49,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.cornellappdev.uplift.R
-import com.cornellappdev.uplift.models.UpliftCapacity
-import com.cornellappdev.uplift.models.UpliftClass
-import com.cornellappdev.uplift.models.UpliftGym
-import com.cornellappdev.uplift.nav.navigateToGym
-import com.cornellappdev.uplift.networking.UpliftApiRepository
+import com.cornellappdev.uplift.data.models.UpliftCapacity
+import com.cornellappdev.uplift.data.models.UpliftClass
+import com.cornellappdev.uplift.data.models.UpliftGym
+import com.cornellappdev.uplift.ui.nav.navigateToGym
 import com.cornellappdev.uplift.ui.components.general.UpliftTopBar
 import com.cornellappdev.uplift.ui.components.home.GymCapacity
 import com.cornellappdev.uplift.ui.components.home.HomeCard

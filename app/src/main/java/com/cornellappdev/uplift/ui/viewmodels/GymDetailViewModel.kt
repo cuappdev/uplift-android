@@ -1,10 +1,10 @@
 package com.cornellappdev.uplift.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
-import com.cornellappdev.uplift.models.UpliftClass
-import com.cornellappdev.uplift.models.UpliftGym
-import com.cornellappdev.uplift.networking.ApiResponse
-import com.cornellappdev.uplift.networking.UpliftApiRepository
+import com.cornellappdev.uplift.data.models.UpliftClass
+import com.cornellappdev.uplift.data.models.UpliftGym
+import com.cornellappdev.uplift.data.models.ApiResponse
+import com.cornellappdev.uplift.data.repositories.UpliftApiRepository
 import com.cornellappdev.uplift.util.getSystemTime
 import com.cornellappdev.uplift.util.sameDayAs
 import com.cornellappdev.uplift.util.startTimeComparator

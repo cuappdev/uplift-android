@@ -1,23 +1,23 @@
-package com.cornellappdev.uplift.networking
+package com.cornellappdev.uplift.data.adapters
 
 
 import com.cornellappdev.uplift.ClassListQuery
 import com.cornellappdev.uplift.GymListQuery
 import com.cornellappdev.uplift.fragment.GymFields
 import com.cornellappdev.uplift.fragment.OpenHoursFields
-import com.cornellappdev.uplift.models.BowlingInfo
-import com.cornellappdev.uplift.models.CourtFacility
-import com.cornellappdev.uplift.models.CourtTime
-import com.cornellappdev.uplift.models.EquipmentField
-import com.cornellappdev.uplift.models.EquipmentGrouping
-import com.cornellappdev.uplift.models.PopularTimes
-import com.cornellappdev.uplift.models.SwimmingInfo
-import com.cornellappdev.uplift.models.SwimmingTime
-import com.cornellappdev.uplift.models.TimeInterval
-import com.cornellappdev.uplift.models.TimeOfDay
-import com.cornellappdev.uplift.models.UpliftCapacity
-import com.cornellappdev.uplift.models.UpliftClass
-import com.cornellappdev.uplift.models.UpliftGym
+import com.cornellappdev.uplift.data.models.BowlingInfo
+import com.cornellappdev.uplift.data.models.CourtFacility
+import com.cornellappdev.uplift.data.models.CourtTime
+import com.cornellappdev.uplift.data.models.EquipmentField
+import com.cornellappdev.uplift.data.models.EquipmentGrouping
+import com.cornellappdev.uplift.data.models.PopularTimes
+import com.cornellappdev.uplift.data.models.SwimmingInfo
+import com.cornellappdev.uplift.data.models.SwimmingTime
+import com.cornellappdev.uplift.data.models.TimeInterval
+import com.cornellappdev.uplift.data.models.TimeOfDay
+import com.cornellappdev.uplift.data.models.UpliftCapacity
+import com.cornellappdev.uplift.data.models.UpliftClass
+import com.cornellappdev.uplift.data.models.UpliftGym
 import com.cornellappdev.uplift.type.EquipmentType
 import com.cornellappdev.uplift.util.asTimeOfDay
 import com.cornellappdev.uplift.util.defaultClassUrl

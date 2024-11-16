@@ -8,8 +8,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.cornellappdev.uplift.models.LocationRepository
-import com.cornellappdev.uplift.networking.ApiResponse
+import com.cornellappdev.uplift.data.repositories.LocationRepository
+import com.cornellappdev.uplift.data.models.ApiResponse
 import com.cornellappdev.uplift.ui.screens.subscreens.MainError
 import com.cornellappdev.uplift.ui.screens.subscreens.MainLoaded
 import com.cornellappdev.uplift.ui.screens.subscreens.MainLoading
@@ -20,7 +20,7 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.valentinilk.shimmer.Shimmer
 import kotlinx.coroutines.delay
-import android.util.Log
+
 /**
  * The home page of Uplift.
  */

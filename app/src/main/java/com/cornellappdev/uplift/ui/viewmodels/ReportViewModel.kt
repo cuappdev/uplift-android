@@ -1,8 +1,8 @@
 package com.cornellappdev.uplift.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
-import com.cornellappdev.uplift.domain.ReportClient
-import com.cornellappdev.uplift.nav.RootNavigationRepository
+import com.cornellappdev.uplift.domain.clients.ReportClient
+import com.cornellappdev.uplift.ui.nav.RootNavigationRepository
 import com.cornellappdev.uplift.ui.UpliftRootRoute
 import com.cornellappdev.uplift.util.HELEN_NEWMAN_ID
 import com.cornellappdev.uplift.util.MORRISON_ID
@@ -21,14 +21,13 @@ class ReportViewModel @Inject constructor(
         issue: String,
         gym: String,
         description: String,
-        userId: Int
     ) {
         val reportSuccess = reportClient.createReport(
             createdAt = LocalDateTime.now().toString(),
             description = description,
             gymId = mapGymToId(gym),
             issue = formatIssue(issue),
-            userId = userId
+            userId = 1  /* TODO Replace with getting userID from DataStore*/
         )
         if (reportSuccess) {
             rootNavigationRepository.navigate(UpliftRootRoute.ReportSuccess)

@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import com.cornellappdev.uplift.R
-import com.cornellappdev.uplift.models.UpliftClass
+import com.cornellappdev.uplift.data.models.UpliftClass
 import com.cornellappdev.uplift.util.PRIMARY_BLACK
 import com.cornellappdev.uplift.util.montserratFamily
 

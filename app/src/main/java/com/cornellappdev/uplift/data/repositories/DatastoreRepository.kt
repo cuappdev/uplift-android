@@ -1,4 +1,4 @@
-package com.cornellappdev.uplift.models
+package com.cornellappdev.uplift.data.repositories
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences

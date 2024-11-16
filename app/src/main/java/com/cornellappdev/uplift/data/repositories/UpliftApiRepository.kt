@@ -1,14 +1,14 @@
-package com.cornellappdev.uplift.networking
+package com.cornellappdev.uplift.data.repositories
 
 import android.util.Log
 import com.apollographql.apollo3.ApolloClient
-import com.cornellappdev.uplift.BuildConfig
 import com.cornellappdev.uplift.ClassListQuery
 import com.cornellappdev.uplift.GymListQuery
-import com.cornellappdev.uplift.models.UpliftClass
-import com.cornellappdev.uplift.models.UpliftGym
-//import com.cornellappdev.uplift.networking.UpliftApiRepository.classesApiFlow
-//import com.cornellappdev.uplift.networking.UpliftApiRepository.gymApiFlow
+import com.cornellappdev.uplift.data.models.UpliftClass
+import com.cornellappdev.uplift.data.models.UpliftGym
+import com.cornellappdev.uplift.data.models.ApiResponse
+import com.cornellappdev.uplift.data.adapters.toUpliftClass
+import com.cornellappdev.uplift.data.adapters.toUpliftGyms
 import com.cornellappdev.uplift.util.defaultGymUrl
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -21,19 +21,18 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import javax.inject.Inject
+import javax.inject.Singleton
 
 /**
  * A repository dealing with all API backend connection in Uplift.
  *
  * See [gymApiFlow] and [classesApiFlow].
  */
-class UpliftApiRepository(
+@Singleton
+class UpliftApiRepository @Inject constructor(
     private val apolloClient: ApolloClient
 ) {
-//    private val apolloClient = ApolloClient.Builder()
-//                    .serverUrl(BuildConfig.PROD_API_URL)
-////        .serverUrl(BuildConfig.API_URL)
-//        .build()
 
     private val gymQuery = apolloClient.query(GymListQuery())
     private val classQuery = apolloClient.query(ClassListQuery())
