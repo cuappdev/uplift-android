@@ -35,6 +35,7 @@ import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -265,7 +266,7 @@ fun MainLoaded(
                                                 .widthIn(min = 143.dp)
                                                 .clickable(
                                                     indication = null,
-                                                    interactionSource = MutableInteractionSource()
+                                                    interactionSource = remember { MutableInteractionSource() }
                                                 ) {
                                                     navController.navigateToGym(
                                                         gymDetailViewModel = gymDetailViewModel,
