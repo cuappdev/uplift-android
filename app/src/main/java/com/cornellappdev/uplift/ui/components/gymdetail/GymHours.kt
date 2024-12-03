@@ -29,12 +29,17 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cornellappdev.uplift.R
 import com.cornellappdev.uplift.models.TimeInterval
+import com.cornellappdev.uplift.util.ACCENT_CLOSED
+import com.cornellappdev.uplift.util.ACCENT_OPEN
 import com.cornellappdev.uplift.util.PRIMARY_BLACK
 import com.cornellappdev.uplift.util.montserratFamily
 
@@ -44,7 +49,7 @@ import com.cornellappdev.uplift.util.montserratFamily
  * week.
  */
 @Composable
-fun GymHours(hours: List<List<TimeInterval>?>, today: Int) {
+fun GymHours(hours: List<List<TimeInterval>?>, today: Int, open: Boolean) {
     var collapsed by remember { mutableStateOf(true) }
     val rotationAnimation by animateFloatAsState(
         targetValue = if (collapsed) 0f else 90f,
@@ -63,18 +68,33 @@ fun GymHours(hours: List<List<TimeInterval>?>, today: Int) {
             .fillMaxWidth()
             .animateContentSize()
             .background(Color.White),
-        horizontalAlignment = Alignment.CenterHorizontally,
+        horizontalAlignment = Alignment.Start,
     ) {
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(24.dp))
         Text(
-            text = "HOURS",
-            fontFamily = montserratFamily,
-            fontSize = 16.sp,
-            fontWeight = FontWeight(700),
-            lineHeight = 19.5.sp,
-            modifier = Modifier.fillMaxWidth(),
-            textAlign = TextAlign.Center,
-            color = PRIMARY_BLACK
+            buildAnnotatedString {
+                withStyle(
+                    style = SpanStyle(
+                        fontFamily = montserratFamily,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = PRIMARY_BLACK
+                    )
+                ) {
+                    append("Hours  ·  ")
+                }
+                withStyle(
+                    style = SpanStyle(
+                        fontFamily = montserratFamily,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = if (open) ACCENT_OPEN else ACCENT_CLOSED
+                    )
+                ) {
+                    append(if (open) "Open" else "Closed")
+                }
+
+            }
         )
         Spacer(modifier = Modifier.height(12.dp))
 
@@ -87,7 +107,7 @@ fun GymHours(hours: List<List<TimeInterval>?>, today: Int) {
                 ) {
                     collapsed = !collapsed
                 },
-            horizontalArrangement = Arrangement.Center,
+            horizontalArrangement = Arrangement.Start,
             verticalAlignment = Alignment.Top
         ) {
             Icon(
@@ -99,7 +119,7 @@ fun GymHours(hours: List<List<TimeInterval>?>, today: Int) {
             Spacer(modifier = Modifier.width(8.dp))
             Column(
                 modifier = Modifier,
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.Start
             ) {
                 if (hours[today] == null) {
                     Text(
@@ -142,7 +162,7 @@ fun GymHours(hours: List<List<TimeInterval>?>, today: Int) {
                         .alpha(animationProgress)
                         .fillMaxWidth()
                         .offset(y = ((1 - animationProgress) * -15f).dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                    horizontalAlignment = Alignment.Start
                 ) {
                     val day = (today + i) % 7
                     Spacer(modifier = Modifier.height(8.dp))
@@ -159,7 +179,7 @@ fun GymHours(hours: List<List<TimeInterval>?>, today: Int) {
                     )
                 }
             }
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(4.dp))
     }
 }
 

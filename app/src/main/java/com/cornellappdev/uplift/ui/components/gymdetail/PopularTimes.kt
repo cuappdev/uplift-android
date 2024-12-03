@@ -6,11 +6,13 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -32,9 +34,11 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cornellappdev.uplift.models.PopularTimes
+import com.cornellappdev.uplift.models.TimeOfDay
 import com.cornellappdev.uplift.util.GRAY01
 import com.cornellappdev.uplift.util.GRAY03
 import com.cornellappdev.uplift.util.GRAY04
@@ -56,13 +60,13 @@ fun PopularTimesSection(popularTimes: PopularTimes) {
         animationSpec = tween(durationMillis = 1000)
     )
 
-    LaunchedEffect(true) {
-        startAnimation = true
-    }
-
     val barHeight = 90f
     var selectedPopularTime by remember { mutableStateOf(-1) }
     var lastSelectedPopularTime by remember { mutableStateOf(-1) }
+
+    LaunchedEffect(true) {
+        startAnimation = true
+    }
 
     val animatedOpacity by animateFloatAsState(
         targetValue = if (selectedPopularTime < 0) 0f else 1f
@@ -93,15 +97,14 @@ fun PopularTimesSection(popularTimes: PopularTimes) {
     ) {
         // Title
         Text(
-            text = "POPULAR TIMES",
+            text = "Popular Times",
             fontFamily = montserratFamily,
             fontSize = 16.sp,
             fontWeight = FontWeight(700),
-            lineHeight = 19.5.sp,
+            lineHeight = 20.sp,
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 32.dp),
-            textAlign = TextAlign.Center,
+                .fillMaxWidth(),
+            textAlign = TextAlign.Start,
             color = PRIMARY_BLACK
         )
 
@@ -221,4 +224,26 @@ fun PopularTimesSection(popularTimes: PopularTimes) {
         )
         Spacer(modifier = Modifier.height(26.dp))
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PopularTimesSectionPreview() {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ){
+        PopularTimesSection(
+            popularTimes = PopularTimes(
+                busyList = listOf(20, 30, 40, 50, 50, 45, 35, 40, 50, 70, 80, 90, 95, 85, 70, 65),
+                startTime = TimeOfDay(
+                    hour = 6,
+                    minute = 0,
+                    isAM = true
+                )
+            )
+        )
+    }
+
 }

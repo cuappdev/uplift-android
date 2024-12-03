@@ -126,6 +126,6 @@ data class UpliftCapacity(
             minute = updated.get(Calendar.MINUTE),
             isAM = updated.get(Calendar.AM_PM) == Calendar.AM
         )
-        return "Updated: $timeOfDay"
+        return "$timeOfDay".replace(" ", "")
     }
 }

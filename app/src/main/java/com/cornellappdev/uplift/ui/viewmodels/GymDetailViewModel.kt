@@ -72,4 +72,8 @@ class GymDetailViewModel : ViewModel() {
         if (stack.isNotEmpty())
             _gymFlow.value = stack.peek()
     }
+
+    fun reload() {
+        UpliftApiRepository.reload()
+    }
 }

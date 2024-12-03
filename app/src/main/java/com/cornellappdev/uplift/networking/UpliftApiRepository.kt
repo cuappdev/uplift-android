@@ -28,8 +28,8 @@ import kotlinx.coroutines.launch
  */
 object UpliftApiRepository {
     private val apolloClient = ApolloClient.Builder()
-//        .serverUrl("https://uplift-backend.cornellappdev.com/graphql")
-        .serverUrl("https://uplift-dev.cornellappdev.com/graphql")
+        .serverUrl("https://uplift-backend.cornellappdev.com/graphql")
+//        .serverUrl("https://uplift-dev.cornellappdev.com/graphql")
         .build()
 
     private val gymQuery = apolloClient.query(GymListQuery())

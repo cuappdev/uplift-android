@@ -157,7 +157,6 @@ fun MainNavigationWrapper(
                     GymDetailScreen(
                         gymDetailViewModel = gymDetailViewModel,
                         navController = navController,
-                        classDetailViewModel = classDetailViewModel
                     ) {
                         navController.popBackGym(gymDetailViewModel)
                     }

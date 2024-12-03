@@ -54,48 +54,35 @@ fun GymFacilitySection(gym: UpliftGym, today: Int) {
             .fillMaxWidth()
             .background(Color.White)
     ) {
-        Spacer(modifier = Modifier.height(24.dp))
-        Text(
-            text = "FACILITIES",
-            fontFamily = montserratFamily,
-            fontSize = 16.sp,
-            fontWeight = FontWeight(700),
-            lineHeight = 19.5.sp,
-            modifier = Modifier.fillMaxWidth(),
-            textAlign = TextAlign.Center,
-            color = PRIMARY_BLACK
-        )
-        Spacer(modifier = Modifier.height(24.dp))
-        // Equipment Tab
-        if (gym.equipmentGroupings.isNotEmpty())
-            FacilityTab(
-                painterResource(id = R.drawable.ic_dumbbell),
-                "EQUIPMENT",
-                openedFacility != 1,
-                onClick = {
-                    openedFacility = if (openedFacility == 1) -1 else 1
-                },
-                open = OpenType.NOT_APPLICABLE
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 12.dp, top = 12.dp)
-                        .horizontalScroll(
-                            rememberScrollState()
-                        )
-                ) {
-                    Spacer(modifier = Modifier.width(24.dp))
-
-                    for (group in gym.equipmentGroupings) {
-                        GymEquipmentGroup(group = group)
-                        Spacer(modifier = Modifier.width(10.dp))
-                    }
-                    Spacer(modifier = Modifier.width(14.dp))
-                }
-            }
-
-        LineSpacer(paddingStart = 24.dp, paddingEnd = 24.dp)
+//        // Equipment Tab
+//        if (gym.equipmentGroupings.isNotEmpty())
+//            FacilityTab(
+//                painterResource(id = R.drawable.ic_dumbbell),
+//                "EQUIPMENT",
+//                openedFacility != 1,
+//                onClick = {
+//                    openedFacility = if (openedFacility == 1) -1 else 1
+//                },
+//                open = OpenType.NOT_APPLICABLE
+//            ) {
+//                Row(
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .padding(bottom = 12.dp, top = 12.dp)
+//                        .horizontalScroll(
+//                            rememberScrollState()
+//                        )
+//                ) {
+//                    Spacer(modifier = Modifier.width(24.dp))
+//
+//                    for (group in gym.equipmentGroupings) {
+//                        GymEquipmentGroup(group = group)
+//                        Spacer(modifier = Modifier.width(10.dp))
+//                    }
+//                    Spacer(modifier = Modifier.width(14.dp))
+//                }
+//            }
+//
 
         // TODO: Change to court-by-court design.
         gym.courtInfo.forEachIndexed { i, court ->
