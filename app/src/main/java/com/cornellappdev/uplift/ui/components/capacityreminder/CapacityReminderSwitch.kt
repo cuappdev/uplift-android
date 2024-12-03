@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.cornellappdev.uplift.ui.components.general.ReminderSwitch
 import com.cornellappdev.uplift.util.GRAY04
 import com.cornellappdev.uplift.util.PRIMARY_YELLOW
 import com.cornellappdev.uplift.util.montserratFamily
@@ -45,27 +46,6 @@ fun CapacityReminderSwitch(
             fontSize = 14.sp,
             color = GRAY04
         )
-        Switch(
-            checked = checked,
-            onCheckedChange = {
-                onCheckedChange(it)
-            },
-            colors = SwitchDefaults.colors(
-                checkedTrackColor = PRIMARY_YELLOW,
-                uncheckedThumbColor = Color.White,
-                uncheckedTrackColor = Color(0xffE0E0E0),
-                uncheckedBorderColor = Color(0xffE0E0E0),
-            ),
-            thumbContent = {
-                Surface(
-                    shape = CircleShape,
-                    color = Color.White,
-                    modifier = Modifier
-                        .size(40.dp)
-                        .padding(0.dp),
-                    shadowElevation = 4.dp
-                ) {}
-            }
-        )
+        ReminderSwitch(checked = checked, onCheckedChange = onCheckedChange)
     }
 }

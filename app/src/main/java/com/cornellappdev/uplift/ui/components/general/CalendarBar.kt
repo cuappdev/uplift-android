@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cornellappdev.uplift.util.GRAY01
 import com.cornellappdev.uplift.util.GRAY02
+import com.cornellappdev.uplift.util.GRAY07
 import com.cornellappdev.uplift.util.PRIMARY_BLACK
 import com.cornellappdev.uplift.util.PRIMARY_YELLOW
 import com.cornellappdev.uplift.util.calendarDayOfWeekToString
@@ -74,6 +75,7 @@ fun CalendarBar(
 @Composable
 fun DayOfWeekBar(
     selectedDays: Set<String> = emptySet(),
+    isWorkoutReminder: Boolean = false,
     onDaySelected: (Set<String>) -> Unit
 ) {
     val daysOfWeek = listOf("M", "T", "W", "Th", "F", "Sa", "Su")
@@ -89,6 +91,7 @@ fun DayOfWeekBar(
             DayOfWeekSelection(
                 day = day,
                 selected = selectedDays.contains(day),
+                isWorkoutReminder = isWorkoutReminder,
                 onSelect = {
                     val newSelectedDays = if (selectedDays.contains(day)) {
                         selectedDays.minus(day)
@@ -124,7 +127,7 @@ private fun CalendarBarSelection(
             .height(58.dp)
             .width(screenWidth / 7f)
             .clickable(
-                interactionSource = MutableInteractionSource(),
+                interactionSource = remember { MutableInteractionSource()},
                 indication = null,
                 onClick = onSelect
             ), horizontalAlignment = Alignment.CenterHorizontally
@@ -186,13 +189,14 @@ private fun CalendarBarSelection(
 fun DayOfWeekSelection(
     day: String,
     selected: Boolean = false,
+    isWorkoutReminder: Boolean = false,
     onSelect: () -> Unit
 ) {
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
-    val size = animateFloatAsState(if (selected) 24f else 0f, label = "size")
+    val size = animateFloatAsState(if (selected) 28f else 0f, label = "size")
     Column(
         modifier = Modifier
-            .height(58.dp)
+            .height(28.dp)
             .width(screenWidth / 10f)
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
@@ -200,11 +204,20 @@ fun DayOfWeekSelection(
                 onClick = onSelect
             ), horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Box(modifier = Modifier.size(24.dp)) {
+        Box(modifier = Modifier.size(28.dp)) {
+            if (isWorkoutReminder) {
+                Surface(
+                    shape = CircleShape,
+                    color = if (selected) Color.Transparent else GRAY07, // Gray when not selected
+                    modifier = Modifier
+                        .size(28.dp) // Ensure the size is fixed
+                        .align(Alignment.Center)
+                ) {}
+            }
+            // Render the yellow background for selected state
             Surface(
                 shape = CircleShape,
-                color = if (selected) PRIMARY_YELLOW
-                else Color.Transparent,
+                color = if (selected) PRIMARY_YELLOW else Color.Transparent,
                 modifier = Modifier
                     .size(size.value.dp)
                     .align(Alignment.Center)

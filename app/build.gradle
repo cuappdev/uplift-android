@@ -21,6 +21,10 @@ if (secretsPropertiesFile.exists()) {
     throw new FileNotFoundException("Missing secrets.properties file. Please add it to the root directory.")
 }
 
+def secretsPropertiesFile = rootProject.file('secrets.properties')
+def secretsProperties = new Properties()
+secretsProperties.load(new FileInputStream(secretsPropertiesFile))
+
 android {
     namespace 'com.cornellappdev.uplift'
     compileSdk 35
@@ -29,8 +33,8 @@ android {
         applicationId "com.cornellappdev.uplift"
         minSdk 28
         targetSdk 35
-        versionCode 10
-        versionName "1.4"
+        versionCode 12
+        versionName "1.4-backend-fix"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -39,6 +43,9 @@ android {
     }
 
     buildTypes {
+        debug {
+            buildConfigField("String", "BACKEND_URL", secretsProperties['DEV_ENDPOINT'])
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
@@ -51,6 +58,8 @@ android {
                     "String",
                     "GOOGLE_AUTH_CLIENT_ID", "\"${secrets.getProperty("GOOGLE_AUTH_CLIENT_ID_LOCAL")}\""
             )
+            signingConfig signingConfigs.debug
+            buildConfigField("String", "BACKEND_URL", secretsProperties['PROD_ENDPOINT'])
         }
     }
     compileOptions {

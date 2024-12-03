@@ -86,7 +86,10 @@ fun PopularTimesSection(popularTimes: PopularTimes) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(interactionSource = MutableInteractionSource(), indication = null) {
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null
+            ) {
                 deselect()
             }
             .background(Color.White)
@@ -170,7 +173,7 @@ fun PopularTimesSection(popularTimes: PopularTimes) {
                         .padding(horizontal = 1.dp)
                         .padding(bottom = 1.dp)
                         .clickable(
-                            interactionSource = MutableInteractionSource(),
+                            interactionSource = remember { MutableInteractionSource() },
                             indication = null
                         ) {
                             if (selectedPopularTime == i) deselect()
