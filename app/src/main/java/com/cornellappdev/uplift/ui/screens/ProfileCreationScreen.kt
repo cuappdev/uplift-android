@@ -1,6 +1,5 @@
 package com.cornellappdev.uplift.ui.screens
 
-import android.widget.ImageButton
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -15,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -26,7 +26,6 @@ import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -38,10 +37,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Outline
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -59,7 +55,7 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 /**
  * The profile creation page during the Uplift onboarding process.
  */
-@OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileCreationScreen(
     navController: NavHostController,
@@ -76,20 +72,25 @@ fun ProfileCreationScreen(
     systemUiController.isNavigationBarVisible = false // Navigation bar
     systemUiController.isSystemBarsVisible = false
 
-    Scaffold(topBar = {
-        TopAppBar(
-            title = {
-                Text(
-                    text = "Complete your profile.",
-                    modifier = Modifier.padding(vertical = 4.dp),
-                    fontSize = 24.sp,
-                    fontFamily = montserratFamily,
-                    fontWeight = FontWeight.Bold
-                )
-            },
-            modifier = Modifier.shadow(elevation = 20.dp, ambientColor = GRAY01)
-        )
-    }) { innerPadding ->
+    Scaffold(
+        containerColor = Color.White,
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        text = "Complete your profile.",
+                        modifier = Modifier.padding(vertical = 4.dp),
+                        fontSize = 24.sp,
+                        fontFamily = montserratFamily,
+                        fontWeight = FontWeight.Bold
+                    )
+                },
+                modifier = Modifier
+                    .shadow(elevation = 20.dp, ambientColor = GRAY01)
+                    .statusBarsPadding()
+
+            )
+        }) { innerPadding ->
         val checkedState = remember { mutableStateOf(false) }
         val checkedState2 = remember { mutableStateOf(false) }
         val checkedState3 = remember { mutableStateOf(false) }
@@ -133,21 +134,21 @@ fun ProfileCreationScreen(
 
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 InfoCheckboxRow(
-                    checkedState,
-                    checkboxColors,
-                    "I agree with EULA terms and agreements"
+                    checkedState = checkedState,
+                    checkboxColors = checkboxColors,
+                    message = "I agree with EULA terms and agreements"
                 )
 
                 InfoCheckboxRow(
-                    checkedState2,
-                    checkboxColors,
-                    "I allow Uplift to access data on my gym usage"
+                    checkedState = checkedState2,
+                    checkboxColors = checkboxColors,
+                    message = "I allow Uplift to access data on my gym usage"
                 )
 
                 InfoCheckboxRow(
-                    checkedState3,
-                    checkboxColors,
-                    "I allow Uplift to access my location"
+                    checkedState = checkedState3,
+                    checkboxColors = checkboxColors,
+                    message = "I allow Uplift to access my location"
                 )
 
             }
