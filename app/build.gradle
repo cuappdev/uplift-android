@@ -1,7 +1,24 @@
+
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id "com.apollographql.apollo3" version "3.8.2"
+    id "org.jetbrains.kotlin.plugin.compose" version "2.0.10"
+    id 'com.google.gms.google-services'
+    id 'com.google.dagger.hilt.android'
+    id 'kotlin-kapt'
+    id 'org.jetbrains.kotlin.plugin.serialization'
+}
+
+import java.util.Properties
+
+def secretsPropertiesFile = rootProject.file("secrets.properties")
+def secrets = new Properties()
+
+if (secretsPropertiesFile.exists()) {
+    secrets.load(new FileInputStream(secretsPropertiesFile))
+} else {
+    throw new FileNotFoundException("Missing secrets.properties file. Please add it to the root directory.")
 }
 
 android {
@@ -25,6 +42,15 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField(
+                    "String",
+                    "GOOGLE_AUTH_CLIENT_ID", "\"${secrets.getProperty("GOOGLE_AUTH_CLIENT_ID")}\"")
+        }
+        debug {
+            buildConfigField(
+                    "String",
+                    "GOOGLE_AUTH_CLIENT_ID", "\"${secrets.getProperty("GOOGLE_AUTH_CLIENT_ID_LOCAL")}\""
+            )
         }
     }
     compileOptions {
@@ -37,6 +63,7 @@ android {
     }
     buildFeatures {
         compose true
+        buildConfig true
     }
     composeOptions {
         kotlinCompilerExtensionVersion '1.5.3'
@@ -49,6 +76,11 @@ android {
 }
 
 dependencies {
+    implementation 'com.google.dagger:hilt-android:2.51.1'
+    implementation 'com.google.android.gms:play-services-location:21.3.0'
+    kapt 'com.google.dagger:hilt-compiler:2.51.1'
+    kapt 'androidx.hilt:hilt-compiler:1.2.0'
+    implementation 'androidx.hilt:hilt-navigation-compose:1.2.0'
     implementation 'androidx.datastore:datastore-preferences:1.0.0-alpha08'
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.3.1'
@@ -59,6 +91,10 @@ dependencies {
     implementation 'androidx.compose.material3:material3-android:1.3.0'
     implementation 'androidx.core:core-ktx:+'
     implementation 'androidx.compose.material3:material3-android:1.3.0'
+    implementation 'com.google.android.gms:play-services-auth:20.5.0'
+    implementation 'com.google.firebase:firebase-auth-ktx:23.1.0'
+    implementation 'com.google.firebase:firebase-firestore-ktx:25.1.1'
+    implementation 'com.google.firebase:firebase-messaging-ktx:24.0.3'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
@@ -72,8 +108,8 @@ dependencies {
     implementation "com.google.accompanist:accompanist-permissions:0.28.0"
     implementation "com.apollographql.apollo3:apollo-runtime:3.8.2"
     implementation 'com.valentinilk.shimmer:compose-shimmer:1.0.5'
-    implementation 'com.google.android.gms:play-services-location:21.0.1'
     implementation 'androidx.core:core-splashscreen:1.0.1'
+    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3"
 }
 
 apollo {

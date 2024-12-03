@@ -38,6 +38,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cornellappdev.uplift.R
+import com.cornellappdev.uplift.ui.viewmodels.LoginViewModel
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.cornellappdev.uplift.networking.UpliftAuthRepository
 import com.cornellappdev.uplift.util.GRAY01
 import com.cornellappdev.uplift.util.GRAY02
 import com.cornellappdev.uplift.util.GRAY04
@@ -51,12 +54,16 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun SignInPromptScreen() {
+fun SignInPromptScreen(
+    loginViewModel: LoginViewModel = hiltViewModel()
+) {
     val systemUiController: SystemUiController = rememberSystemUiController()
 
     systemUiController.isStatusBarVisible = false
     systemUiController.isNavigationBarVisible = false // Navigation bar
     systemUiController.isSystemBarsVisible = false
+
+    val resultLauncher = loginViewModel.makeSignInLauncher()
 
     Box() {
         Canvas(modifier = Modifier.fillMaxSize()) {
@@ -102,7 +109,10 @@ fun SignInPromptScreen() {
             UpliftUsesCardList()
 
             Spacer(modifier = Modifier.height(125.dp))
-            SigninButton({})
+            SigninButton(onClick = {
+                resultLauncher.launch(loginViewModel.getSignInClient().signInIntent)
+
+            })
 
 
         }
