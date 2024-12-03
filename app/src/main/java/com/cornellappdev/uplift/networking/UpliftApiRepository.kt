@@ -35,6 +35,7 @@ object UpliftApiRepository {
     private val gymQuery = apolloClient.query(GymListQuery())
     private val classQuery = apolloClient.query(ClassListQuery())
 
+
     private val _gymApiFlow: MutableStateFlow<ApiResponse<List<UpliftGym>>> =
         MutableStateFlow(ApiResponse.Loading)
 
