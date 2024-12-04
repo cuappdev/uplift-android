@@ -2,6 +2,7 @@ package com.cornellappdev.uplift.data.repositories
 
 import android.util.Log
 import com.apollographql.apollo3.ApolloClient
+import com.cornellappdev.uplift.BuildConfig
 import com.cornellappdev.uplift.ClassListQuery
 import com.cornellappdev.uplift.GymListQuery
 import com.cornellappdev.uplift.data.models.UpliftClass
@@ -33,7 +34,6 @@ import javax.inject.Singleton
 class UpliftApiRepository @Inject constructor(
     private val apolloClient: ApolloClient
 ) {
-
     private val gymQuery = apolloClient.query(GymListQuery())
     private val classQuery = apolloClient.query(ClassListQuery())
 
