@@ -1,23 +1,26 @@
-buildscript {
-    Properties properties = new Properties()
-    def propertiesFile = rootProject.file('secrets.properties')
-    if (propertiesFile.exists()) {
-        properties.load(propertiesFile.newDataInputStream())
-    }
-    def devApiUrl = System.getenv('DEV_API_URL')
-    def prodApiUrl = System.getenv('PROD_API_URL')
-    rootProject.ext.dev_api_url = devApiUrl ?: properties.getProperty('DEV_API_URL')
-    rootProject.ext.prod_api_url = prodApiUrl ?: properties.getProperty('PROD_API_URL')
-}
+//buildscript {
+//    Properties properties = new Properties()
+//    def propertiesFile = rootProject.file('secrets.properties')
+//    if (propertiesFile.exists()) {
+//        properties.load(propertiesFile.newDataInputStream())
+//    }
+//    def devApiUrl = System.getenv('DEV_API_URL')
+//    def prodApiUrl = System.getenv('PROD_API_URL')
+//    rootProject.ext.dev_api_url = devApiUrl ?: properties.getProperty('DEV_API_URL')
+//    rootProject.ext.prod_api_url = prodApiUrl ?: properties.getProperty('PROD_API_URL')
+//}
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id "com.apollographql.apollo3" version "3.8.2"
-    id("kotlin-kapt")
+    id("com.google.devtools.ksp") // Use KSP instead of kapt for now to avoid kapt stub build error
     id("com.google.dagger.hilt.android")
     id 'org.jetbrains.kotlin.plugin.serialization' version '2.0.20'
-
+    id("org.jetbrains.kotlin.plugin.compose") version "2.0.0"
 }
+def secretsPropertiesFile = rootProject.file('secrets.properties')
+def secretsProperties = new Properties()
+secretsProperties.load(new FileInputStream(secretsPropertiesFile))
 
 android {
     namespace 'com.cornellappdev.uplift'
@@ -39,15 +42,13 @@ android {
     }
 
     buildTypes {
+        debug {
+            buildConfigField("String", "BACKEND_URL", secretsProperties['DEV_ENDPOINT'])
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            buildConfigField("String","API_URL", "\"${rootProject.ext.prod_api_url}\"")
-        }
-
-        debug {
-            buildConfigField("String","API_URL", "\"${rootProject.ext.dev_api_url}\"")
-            buildConfigField("String","PROD_API_URL", "\"${rootProject.ext.prod_api_url}\"")
+            buildConfigField("String", "BACKEND_URL", secretsProperties['PROD_ENDPOINT'])
         }
     }
     compileOptions {
@@ -73,44 +74,46 @@ android {
 }
 
 dependencies {
-    implementation 'androidx.datastore:datastore-preferences:1.0.0-alpha08'
-    implementation 'androidx.core:core-ktx:1.7.0'
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.3.1'
-    implementation 'androidx.activity:activity-compose:1.3.1'
+    implementation 'androidx.datastore:datastore-preferences:1.1.1'
+    implementation 'androidx.core:core-ktx:1.15.0'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.8.7'
+    implementation 'androidx.activity:activity-compose:1.9.3'
     implementation "androidx.compose.ui:ui:$compose_ui_version"
     implementation "androidx.compose.ui:ui-tooling-preview:$compose_ui_version"
     implementation 'androidx.compose.material:material:1.7.5'
     implementation 'androidx.compose.material3:material3-android:1.3.1'
-    implementation 'androidx.core:core-ktx:+'
+    implementation 'androidx.core:core-ktx:1.15.0'
     testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    androidTestImplementation 'androidx.test.ext:junit:1.2.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_ui_version"
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_ui_version"
     debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_ui_version"
     implementation "io.coil-kt:coil-compose:2.2.2"
     def nav_version = "2.5.3"
 //    implementation "androidx.navigation:navigation-compose:$nav_version"
-    implementation "androidx.navigation:navigation-compose:2.8.3"
+    implementation "androidx.navigation:navigation-compose:2.8.4"
     implementation "com.google.accompanist:accompanist-systemuicontroller:0.28.0"
-    implementation "com.google.accompanist:accompanist-permissions:0.28.0"
+    implementation "com.google.accompanist:accompanist-permissions:0.34.0"
     implementation "com.apollographql.apollo3:apollo-runtime:3.8.2"
     implementation 'com.valentinilk.shimmer:compose-shimmer:1.0.5'
-    implementation 'com.google.android.gms:play-services-location:21.0.1'
+    implementation 'com.google.android.gms:play-services-location:21.3.0'
     implementation 'androidx.core:core-splashscreen:1.0.1'
     // Dagger Hilt
     implementation("com.google.dagger:hilt-android:2.51.1")
-    kapt("com.google.dagger:hilt-android-compiler:2.51.1")
-    kapt("androidx.hilt:hilt-compiler:1.2.0")
+    ksp("com.google.dagger:hilt-compiler:2.51.1")
+//    kapt("com.google.dagger:hilt-android-compiler:2.51.1")
+//    kapt("androidx.hilt:hilt-compiler:1.2.0")
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
 
-    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1"
+    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3"
 
 }
 
-kapt {
-    correctErrorTypes = true
-}
+//kapt {
+//    correctErrorTypes = true
+//    useBuildCache = false
+//}
 
 apollo {
     service("service") {

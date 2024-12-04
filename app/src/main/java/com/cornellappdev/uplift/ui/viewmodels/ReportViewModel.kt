@@ -27,8 +27,9 @@ class ReportViewModel @Inject constructor(
             description = description,
             gymId = mapGymToId(gym),
             issue = formatIssue(issue),
-            userId = 1  /* TODO Replace with getting userID from DataStore*/
+            userId = 10  /* TODO Replace with getting userID from DataStore*/
         )
+        //Consider adding error handling for the case when reportSuccess is not true, maybe a toast?
         if (reportSuccess) {
             rootNavigationRepository.navigate(UpliftRootRoute.ReportSuccess)
         }

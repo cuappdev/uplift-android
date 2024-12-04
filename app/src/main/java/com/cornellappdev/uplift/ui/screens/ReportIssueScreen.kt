@@ -24,8 +24,8 @@ import com.cornellappdev.uplift.ui.components.general.UpliftTopBarWithBack
 import com.cornellappdev.uplift.ui.components.reporting.ReportDescription
 import com.cornellappdev.uplift.ui.components.reporting.ReportDropdown
 import kotlinx.coroutines.launch
-import kotlin.reflect.KSuspendFunction3
 import com.cornellappdev.uplift.ui.components.general.UpliftButton
+import kotlin.reflect.KSuspendFunction3
 
 /**
  * ReportIssueScreen is a composable that displays the report issue screen where users can report
@@ -42,7 +42,6 @@ fun ReportIssueScreen(
     var description by remember { mutableStateOf("") }
     var errorStateIssue by remember { mutableStateOf(false) }
     var errorStateGym by remember { mutableStateOf(false) }
-    /* TODO: Handle enabled logic for submit button when report is sent to backend*/
     var enabled by remember { mutableStateOf(true) }
     val scope = rememberCoroutineScope()
     Scaffold(topBar = {
@@ -116,7 +115,6 @@ fun ReportIssueScreen(
                         errorStateGym = selectedGym == "Choose an option ..."
                         if (!errorStateIssue && !errorStateGym) {
                             enabled = false
-                            // UserId is hardcoded to 1 for now
                             scope.launch {
                                 onSubmit(
                                     selectedIssue,
