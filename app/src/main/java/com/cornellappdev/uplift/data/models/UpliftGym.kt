@@ -1,10 +1,11 @@
-package com.cornellappdev.uplift.models
+package com.cornellappdev.uplift.data.models
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.cornellappdev.uplift.datastoreRepository
+import com.cornellappdev.uplift.data.repositories.LocationRepository
 import com.cornellappdev.uplift.fragment.GymFields
 import com.cornellappdev.uplift.util.getDistanceBetween
 import java.util.Calendar

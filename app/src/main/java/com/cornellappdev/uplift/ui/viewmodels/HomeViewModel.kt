@@ -4,13 +4,14 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import com.cornellappdev.uplift.models.TimeOfDay
-import com.cornellappdev.uplift.models.UpliftClass
-import com.cornellappdev.uplift.networking.ApiResponse
-import com.cornellappdev.uplift.networking.UpliftApiRepository
+import com.cornellappdev.uplift.data.models.TimeOfDay
+import com.cornellappdev.uplift.data.models.UpliftClass
+import com.cornellappdev.uplift.data.models.ApiResponse
+import com.cornellappdev.uplift.data.repositories.UpliftApiRepository
 import com.cornellappdev.uplift.util.getSystemTime
 import com.cornellappdev.uplift.util.sameDayAs
 import com.cornellappdev.uplift.util.startTimeComparator
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,9 +20,13 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import java.util.GregorianCalendar
+import javax.inject.Inject
 
 /** A [HomeViewModel] is a view model for HomeScreen. */
-class HomeViewModel : ViewModel() {
+@HiltViewModel
+class HomeViewModel @Inject constructor(
+    private val upliftApiRepository: UpliftApiRepository
+) : ViewModel() {
 
     private val _titleFlow: MutableStateFlow<String> = MutableStateFlow(getHomeTitleText())
 
@@ -29,7 +34,7 @@ class HomeViewModel : ViewModel() {
     val titleFlow = _titleFlow.asStateFlow()
 
     /** Emits lists of all the [UpliftClass]es that should be shown in the today's classes section. */
-    val classesFlow = UpliftApiRepository.classesApiFlow.map { apiResponse ->
+    val classesFlow = upliftApiRepository.classesApiFlow.map { apiResponse ->
         when (apiResponse) {
             ApiResponse.Loading -> ApiResponse.Loading
             ApiResponse.Error -> ApiResponse.Error
@@ -46,7 +51,7 @@ class HomeViewModel : ViewModel() {
     )
 
     /** Emits lists of gyms that should be shown in the 'Gyms' section. */
-    val gymFlow = UpliftApiRepository.gymApiFlow.map { apiResponse ->
+    val gymFlow = upliftApiRepository.gymApiFlow.map { apiResponse ->
         when (apiResponse) {
             ApiResponse.Loading -> ApiResponse.Loading
             ApiResponse.Error -> ApiResponse.Error
@@ -69,6 +74,11 @@ class HomeViewModel : ViewModel() {
     /** Call before opening home to set all the proper display information for the home page. */
     fun openHome() {
         _titleFlow.value = getHomeTitleText()
+    }
+
+    /** Call UpliftApiRepository to reload the data. */
+    fun reload() {
+        upliftApiRepository.reload()
     }
 
     /** Returns the title text the top bar should display for the home page. */

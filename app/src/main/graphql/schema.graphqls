@@ -9,7 +9,22 @@ type Query {
   """
   getUsersByGiveawayId(id: Int): [User]
 
+  """
+  Get the days a user worked out for the current week.
+  """
+  getWeeklyWorkoutDays(id: Int): [String]
+
+  """
+  Get all of a user's workouts by ID.
+  """
+  getWorkoutsById(id: Int): [Workout]
+
   activities: [Activity]
+
+  """
+  Get all reports.
+  """
+  getAllReports: [Report]
 }
 
 type Gym {
@@ -34,6 +49,8 @@ type Gym {
   hours: [OpenHours]
 
   classes: [ClassInstance]
+
+  reports: [Report]
 }
 
 """
@@ -82,9 +99,9 @@ type Price {
 
   activityId: Int!
 
-  name: String!
-
   cost: Float!
+
+  name: String!
 
   rate: String
 
@@ -169,7 +186,9 @@ type Equipment {
 
   name: String!
 
-  equipmentType: EquipmentType!
+  muscleGroups: [MuscleGroup]!
+
+  cleanName: String!
 
   facilityId: Int!
 
@@ -181,20 +200,30 @@ type Equipment {
 """
 An enumeration.
 """
-enum EquipmentType {
-  CARDIO
+enum MuscleGroup {
+  ABDOMINALS
 
-  RACKS_AND_BENCHES
+  CHEST
 
-  SELECTORIZED
+  BACK
 
-  MULTI_CABLE
+  SHOULDERS
 
-  FREE_WEIGHTS
+  BICEPS
+
+  TRICEPS
+
+  HAMSTRINGS
+
+  QUADS
+
+  GLUTES
+
+  CALVES
 
   MISCELLANEOUS
 
-  PLATE_LOADED
+  CARDIO
 }
 
 """
@@ -276,14 +305,72 @@ type Class {
   classInstances: [ClassInstance]
 }
 
+type Report {
+  id: ID!
+
+  createdAt: DateTime!
+
+  description: String!
+
+  gymId: Int!
+
+  issue: ReportType!
+
+  userId: Int!
+
+  gym: Gym
+
+  user: User
+}
+
+"""
+An enumeration.
+"""
+enum ReportType {
+  INACCURATE_EQUIPMENT
+
+  INCORRECT_HOURS
+
+  INACCURATE_DESCRIPTION
+
+  WAIT_TIMES_NOT_UPDATED
+
+  OTHER
+}
+
 type User {
   id: ID!
 
-  instagram: String
+  email: String
 
   netId: String!
 
+  name: String!
+
+  workoutGoal: [DayOfWeekEnum]
+
   giveaways: [Giveaway]
+
+  reports: [Report]
+}
+
+"""
+An enumeration.
+"""
+enum DayOfWeekEnum {
+  MONDAY
+
+  TUESDAY
+
+  WEDNESDAY
+
+  THURSDAY
+
+  FRIDAY
+
+  SATURDAY
+
+  SUNDAY
 }
 
 type Giveaway {
@@ -294,33 +381,44 @@ type Giveaway {
   users: [User]
 }
 
+type Workout {
+  id: ID!
+
+  workoutTime: DateTime!
+
+  userId: Int!
+}
+
 type Mutation {
   """
   Creates a new giveaway.
   """
-  createGiveaway(name: String!): CreateGiveaway
+  createGiveaway(name: String!): Giveaway
 
   """
   Creates a new user.
   """
-  createUser(instagram: String, netId: String!): CreateUser
+  createUser(email: String!, name: String!, netId: String!): User
 
   """
   Enters a user into a giveaway.
   """
-  enterGiveaway(giveawayId: Int!, userNetId: String!): EnterGiveaway
-}
+  enterGiveaway(giveawayId: Int!, userNetId: String!): GiveawayInstance
 
-type CreateGiveaway {
-  giveaway: Giveaway
-}
+  """
+  Set a user's workout goals.
+  """
+  setWorkoutGoals("The ID of the user." userId: Int!, "The new workout goal for the user in terms of days of the week." workoutGoal: [String]!): User
 
-type CreateUser {
-  user: User
-}
+  """
+  Log a user's workout.
+  """
+  logWorkout(userId: Int!, workoutTime: DateTime!): Workout
 
-type EnterGiveaway {
-  giveawayInstance: GiveawayInstance
+  """
+  Creates a new report.
+  """
+  createReport(createdAt: DateTime!, description: String!, gymId: Int!, issue: String!, userId: Int!): CreateReport
 }
 
 type GiveawayInstance {
@@ -331,6 +429,10 @@ type GiveawayInstance {
   giveawayId: Int!
 
   numEntries: Int!
+}
+
+type CreateReport {
+  report: Report
 }
 
 """

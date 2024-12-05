@@ -1,4 +1,4 @@
-package com.cornellappdev.uplift.networking
+package com.cornellappdev.uplift.data.models
 
 /**
  * Represents the state of an ApiResponse fetching data of type [T].

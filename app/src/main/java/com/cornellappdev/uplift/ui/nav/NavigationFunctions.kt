@@ -1,8 +1,9 @@
-package com.cornellappdev.uplift.nav
+package com.cornellappdev.uplift.ui.nav
 
 import androidx.navigation.NavHostController
-import com.cornellappdev.uplift.models.UpliftClass
-import com.cornellappdev.uplift.models.UpliftGym
+import com.cornellappdev.uplift.data.models.UpliftClass
+import com.cornellappdev.uplift.data.models.UpliftGym
+import com.cornellappdev.uplift.ui.UpliftRootRoute
 import com.cornellappdev.uplift.ui.viewmodels.ClassDetailViewModel
 import com.cornellappdev.uplift.ui.viewmodels.GymDetailViewModel
 
@@ -12,12 +13,12 @@ fun NavHostController.navigateToClass(
 ) {
     // Opens the new class.
     classDetailViewModel.openClass(thisClass)
-
-    if (currentDestination?.route.toString() == "classesMain") {
-        navigate("classDetailClasses")
-    } else {
-        navigate("classDetailHome")
-    }
+    navigate(UpliftRootRoute.ClassDetail)
+//    if (currentDestination?.route.toString() == "classesMain") {
+//        navigate("classDetailClasses")
+//    } else {
+//        navigate("classDetailHome")
+//    }
 }
 
 fun NavHostController.navigateToGym(
@@ -26,7 +27,7 @@ fun NavHostController.navigateToGym(
 ) {
     // Opens the new gym.
     gymDetailViewModel.openGym(gym)
-    navigate("gymDetail")
+    navigate(UpliftRootRoute.GymDetail)
 }
 
 fun NavHostController.popBackClass(
