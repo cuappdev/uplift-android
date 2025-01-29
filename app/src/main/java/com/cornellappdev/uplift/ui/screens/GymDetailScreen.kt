@@ -11,7 +11,16 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -23,6 +32,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,8 +51,8 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.cornellappdev.uplift.R
-import com.cornellappdev.uplift.networking.ApiResponse
-import com.cornellappdev.uplift.networking.CoilRepository
+import com.cornellappdev.uplift.data.models.ApiResponse
+import com.cornellappdev.uplift.data.repositories.CoilRepository
 import com.cornellappdev.uplift.ui.components.GymFacilitySection
 import com.cornellappdev.uplift.ui.components.GymHours
 import com.cornellappdev.uplift.ui.components.PopularTimesSection
@@ -52,7 +62,14 @@ import com.cornellappdev.uplift.ui.components.gymdetail.GymCapacitiesSection
 import com.cornellappdev.uplift.ui.components.gymdetail.GymTodaysClasses
 import com.cornellappdev.uplift.ui.viewmodels.ClassDetailViewModel
 import com.cornellappdev.uplift.ui.viewmodels.GymDetailViewModel
-import com.cornellappdev.uplift.util.*
+import com.cornellappdev.uplift.util.ACCENT_CLOSED
+import com.cornellappdev.uplift.util.ACCENT_OPEN
+import com.cornellappdev.uplift.util.GRAY01
+import com.cornellappdev.uplift.util.GRAY03
+import com.cornellappdev.uplift.util.colorInterp
+import com.cornellappdev.uplift.util.isOpen
+import com.cornellappdev.uplift.util.montserratFamily
+import com.cornellappdev.uplift.util.todayIndex
 
 /**
  * A screen displaying all the information about a selected gym.
@@ -155,7 +172,7 @@ fun GymDetailScreen(
                     .padding(top = 47.dp, start = 22.dp)
                     .clip(RoundedCornerShape(4.dp))
                     .clickable(
-                        interactionSource = MutableInteractionSource(),
+                        interactionSource = remember { MutableInteractionSource() },
                         indication = null,
                         onClick = onBack
                     ),
@@ -209,7 +226,7 @@ fun GymDetailScreen(
                                 .align(Alignment.TopCenter)
                                 .offset(y = 25.dp)
                         )
-                    }else{
+                    } else {
                         Text(
                             text = "OPEN",
                             fontWeight = FontWeight(700),

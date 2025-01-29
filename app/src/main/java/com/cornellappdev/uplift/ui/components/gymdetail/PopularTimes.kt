@@ -34,7 +34,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.cornellappdev.uplift.models.PopularTimes
+import com.cornellappdev.uplift.data.models.PopularTimes
 import com.cornellappdev.uplift.util.GRAY01
 import com.cornellappdev.uplift.util.GRAY03
 import com.cornellappdev.uplift.util.GRAY04
@@ -86,7 +86,10 @@ fun PopularTimesSection(popularTimes: PopularTimes) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(interactionSource = MutableInteractionSource(), indication = null) {
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null
+            ) {
                 deselect()
             }
             .background(Color.White)
@@ -170,7 +173,7 @@ fun PopularTimesSection(popularTimes: PopularTimes) {
                         .padding(horizontal = 1.dp)
                         .padding(bottom = 1.dp)
                         .clickable(
-                            interactionSource = MutableInteractionSource(),
+                            interactionSource = remember { MutableInteractionSource() },
                             indication = null
                         ) {
                             if (selectedPopularTime == i) deselect()

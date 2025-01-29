@@ -30,6 +30,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -46,9 +47,9 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.cornellappdev.uplift.R
-import com.cornellappdev.uplift.models.UpliftClass
-import com.cornellappdev.uplift.networking.ApiResponse
-import com.cornellappdev.uplift.networking.CoilRepository
+import com.cornellappdev.uplift.data.models.UpliftClass
+import com.cornellappdev.uplift.data.models.ApiResponse
+import com.cornellappdev.uplift.data.repositories.CoilRepository
 import com.cornellappdev.uplift.ui.components.classdetail.ClassDateAndTime
 import com.cornellappdev.uplift.ui.components.classdetail.ClassDescription
 import com.cornellappdev.uplift.ui.components.classdetail.ClassFunction
@@ -152,7 +153,7 @@ fun ClassDetailScreen(
                     )
                     .padding(top = 47.dp, start = 22.dp)
                     .clickable(
-                        interactionSource = MutableInteractionSource(),
+                        interactionSource = remember { MutableInteractionSource() },
                         indication = null,
                         onClick = onBack
                     ),

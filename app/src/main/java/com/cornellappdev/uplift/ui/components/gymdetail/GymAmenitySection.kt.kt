@@ -38,9 +38,9 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImagePainter.State.Empty.painter
 import com.cornellappdev.uplift.R
 import com.cornellappdev.uplift.fragment.GymFields
-import com.cornellappdev.uplift.models.EquipmentGrouping
-import com.cornellappdev.uplift.models.UpliftGym
-import com.cornellappdev.uplift.nav.navigateToClass
+import com.cornellappdev.uplift.data.models.EquipmentGrouping
+import com.cornellappdev.uplift.data.models.UpliftGym
+import com.cornellappdev.uplift.ui.nav.navigateToClass
 import com.cornellappdev.uplift.util.GRAY01
 import com.cornellappdev.uplift.util.PRIMARY_BLACK
 import com.cornellappdev.uplift.util.montserratFamily

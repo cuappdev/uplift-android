@@ -1,13 +1,14 @@
 package com.cornellappdev.uplift.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
-import com.cornellappdev.uplift.models.UpliftClass
-import com.cornellappdev.uplift.models.UpliftGym
-import com.cornellappdev.uplift.networking.ApiResponse
-import com.cornellappdev.uplift.networking.UpliftApiRepository
+import com.cornellappdev.uplift.data.models.UpliftClass
+import com.cornellappdev.uplift.data.models.UpliftGym
+import com.cornellappdev.uplift.data.models.ApiResponse
+import com.cornellappdev.uplift.data.repositories.UpliftApiRepository
 import com.cornellappdev.uplift.util.getSystemTime
 import com.cornellappdev.uplift.util.sameDayAs
 import com.cornellappdev.uplift.util.startTimeComparator
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -19,9 +20,13 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import java.util.GregorianCalendar
 import java.util.Stack
+import javax.inject.Inject
 
 /** A [GymDetailViewModel] is a view model for GymDetailScreen. */
-class GymDetailViewModel : ViewModel() {
+@HiltViewModel
+class GymDetailViewModel @Inject constructor(
+    private val upliftApiRepository: UpliftApiRepository
+) : ViewModel() {
     /**
      * A Stack containing all the previous gyms seen, including the current gym.
      */
@@ -39,7 +44,7 @@ class GymDetailViewModel : ViewModel() {
      * A [Flow] detailing the [UpliftClass]es that should be displayed in the "Today's Classes" section.
      */
     val todaysClassesFlow =
-        UpliftApiRepository.classesApiFlow.combine(gymFlow) { apiResponse, gym ->
+        upliftApiRepository.classesApiFlow.combine(gymFlow) { apiResponse, gym ->
             when (apiResponse) {
                 ApiResponse.Loading -> listOf()
                 ApiResponse.Error -> listOf()

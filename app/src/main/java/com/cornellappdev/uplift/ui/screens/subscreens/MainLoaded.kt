@@ -35,6 +35,7 @@ import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -49,11 +50,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.cornellappdev.uplift.R
-import com.cornellappdev.uplift.models.UpliftCapacity
-import com.cornellappdev.uplift.models.UpliftClass
-import com.cornellappdev.uplift.models.UpliftGym
-import com.cornellappdev.uplift.nav.navigateToGym
-import com.cornellappdev.uplift.networking.UpliftApiRepository
+import com.cornellappdev.uplift.data.models.UpliftCapacity
+import com.cornellappdev.uplift.data.models.UpliftClass
+import com.cornellappdev.uplift.data.models.UpliftGym
+import com.cornellappdev.uplift.ui.nav.navigateToGym
 import com.cornellappdev.uplift.ui.components.general.UpliftTopBar
 import com.cornellappdev.uplift.ui.components.home.GymCapacity
 import com.cornellappdev.uplift.ui.components.home.HomeCard
@@ -87,6 +87,7 @@ fun MainLoaded(
     showCapacities: Boolean,
     titleText: String,
     onToggleCapacities: () -> Unit,
+    reload: () -> Unit
 ) {
     val gymComparator = { gym1: UpliftGym, gym2: UpliftGym ->
         if (isOpen(gym1.hours[todayIndex()]) && !isOpen(gym2.hours[todayIndex()])) {
@@ -136,7 +137,7 @@ fun MainLoaded(
     val refresh =
         rememberPullRefreshState(
             refreshing = false,
-            onRefresh = { UpliftApiRepository.reload() },
+            onRefresh = reload,
             refreshThreshold = 120.dp
         )
 
@@ -265,7 +266,7 @@ fun MainLoaded(
                                                 .widthIn(min = 143.dp)
                                                 .clickable(
                                                     indication = null,
-                                                    interactionSource = MutableInteractionSource()
+                                                    interactionSource = remember { MutableInteractionSource() }
                                                 ) {
                                                     navController.navigateToGym(
                                                         gymDetailViewModel = gymDetailViewModel,
