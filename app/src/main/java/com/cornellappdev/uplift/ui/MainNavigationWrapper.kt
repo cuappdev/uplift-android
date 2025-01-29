@@ -33,6 +33,8 @@ import com.cornellappdev.uplift.ui.screens.ClassDetailScreen
 import com.cornellappdev.uplift.ui.screens.ClassScreen
 import com.cornellappdev.uplift.ui.screens.GymDetailScreen
 import com.cornellappdev.uplift.ui.screens.HomeScreen
+import com.cornellappdev.uplift.ui.screens.ProfileCreationScreen
+import com.cornellappdev.uplift.ui.screens.SignInPromptScreen
 import com.cornellappdev.uplift.ui.screens.ReportIssueScreen
 import com.cornellappdev.uplift.ui.screens.ReportSubmittedScreen
 import com.cornellappdev.uplift.ui.viewmodels.ClassDetailViewModel
@@ -92,7 +94,6 @@ fun MainNavigationWrapper(
             navController.navigate(it)
         }
     }
-
     LaunchedEffect(uiState.popBackStack) {
         uiState.popBackStack?.consumeSuspend {
             navController.popBackStack()
@@ -197,6 +198,12 @@ fun MainNavigationWrapper(
                     onBack = { navController.popBackStack() }
                 )
             }
+            composable<UpliftRootRoute.Onboarding> {
+              SignInPromptScreen(navController = navController)
+            }
+            composable<UpliftRootRoute.ProfileCreation> {
+              ProfileCreationScreen(navController = navController)
+            }
             composable<UpliftRootRoute.ReportSuccess> {
                 ReportSubmittedScreen(
                     onSubmitAnother = reportViewModel::navigateToReport,
@@ -216,6 +223,12 @@ sealed class UpliftRootRoute {
 
     @Serializable
     data object GymDetail : UpliftRootRoute()
+    
+    @Serializable
+    data object Onboarding : UpliftRootRoute()
+    
+    @Serializable
+    data object ProfileCreation : UpliftRootRoute()
 
     @Serializable
     data object Classes : UpliftRootRoute()
