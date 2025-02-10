@@ -6,40 +6,45 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.cornellappdev.uplift.R
-import com.cornellappdev.uplift.fragment.GymFields
-import com.cornellappdev.uplift.models.PopularTimes
-import com.cornellappdev.uplift.models.TimeOfDay
-import com.cornellappdev.uplift.models.UpliftGym
+import com.cornellappdev.uplift.data.models.gymdetail.EquipmentGrouping
+import com.cornellappdev.uplift.data.models.gymdetail.GymEquipmentGroupInfo
+import com.cornellappdev.uplift.data.models.gymdetail.PopularTimes
+import com.cornellappdev.uplift.data.models.gymdetail.TimeOfDay
+import com.cornellappdev.uplift.data.models.UpliftGym
+import com.cornellappdev.uplift.type.MuscleGroup
 import com.cornellappdev.uplift.ui.components.GymHours
 import com.cornellappdev.uplift.ui.components.PopularTimesSection
 import com.cornellappdev.uplift.util.GRAY01
-import com.cornellappdev.uplift.util.PRIMARY_BLACK
 import com.cornellappdev.uplift.util.isOpen
-import com.cornellappdev.uplift.util.montserratFamily
 import com.cornellappdev.uplift.util.todayIndex
+import kotlin.reflect.KFunction1
 
+/**
+ * FitnessCenterContent is a composable that displays the content of a fitness center.
+ * @param gym the gym to display
+ * @param getEquipmentGroupInfoList the function to get the equipment group info list
+ */
 @Composable
 fun FitnessCenterContent(
-    gym: UpliftGym?
+    gym: UpliftGym?,
+    getEquipmentGroupInfoList: KFunction1<HashMap<MuscleGroup, EquipmentGrouping>,
+            List<GymEquipmentGroupInfo>>
 ) {
     val day = todayIndex()
+    val equipmentGroupInfoList = getEquipmentGroupInfoList(gym!!.equipmentGroupings)
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
             .background(color = Color.White)
             .padding(horizontal = 24.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         GymHours(
-            gym!!.hours, day, isOpen(gym.hours[day])
+            gym.hours, day, isOpen(gym.hours[day])
         )
         SectionDivider()
         PopularTimesSection(
@@ -53,15 +58,19 @@ fun FitnessCenterContent(
             )
         )
         SectionDivider()
-        GymAmenitySection(gym.amenities)
-        SectionDivider()
-        GymEquipmentSection()
+        if (gym.amenities?.isNotEmpty() == true) {
+            GymAmenitySection(gym.amenities)
+            SectionDivider()
+        }
+        GymEquipmentSection(
+            gymEquipmentGroupInfoList = equipmentGroupInfoList
+        )
     }
 
 }
 
 @Composable
-private fun SectionDivider() {
+fun SectionDivider() {
     HorizontalDivider(
         color = GRAY01,
         thickness = 1.dp,

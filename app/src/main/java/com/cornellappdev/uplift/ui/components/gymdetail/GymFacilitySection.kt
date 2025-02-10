@@ -4,7 +4,6 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,10 +11,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -32,8 +29,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cornellappdev.uplift.R
-import com.cornellappdev.uplift.models.OpenType
-import com.cornellappdev.uplift.models.UpliftGym
+import com.cornellappdev.uplift.data.models.gymdetail.OpenType
+import com.cornellappdev.uplift.data.models.UpliftGym
 import com.cornellappdev.uplift.ui.screens.LineSpacer
 import com.cornellappdev.uplift.util.ACCENT_CLOSED
 import com.cornellappdev.uplift.util.ACCENT_OPEN
@@ -54,36 +51,6 @@ fun GymFacilitySection(gym: UpliftGym, today: Int) {
             .fillMaxWidth()
             .background(Color.White)
     ) {
-//        // Equipment Tab
-//        if (gym.equipmentGroupings.isNotEmpty())
-//            FacilityTab(
-//                painterResource(id = R.drawable.ic_dumbbell),
-//                "EQUIPMENT",
-//                openedFacility != 1,
-//                onClick = {
-//                    openedFacility = if (openedFacility == 1) -1 else 1
-//                },
-//                open = OpenType.NOT_APPLICABLE
-//            ) {
-//                Row(
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .padding(bottom = 12.dp, top = 12.dp)
-//                        .horizontalScroll(
-//                            rememberScrollState()
-//                        )
-//                ) {
-//                    Spacer(modifier = Modifier.width(24.dp))
-//
-//                    for (group in gym.equipmentGroupings) {
-//                        GymEquipmentGroup(group = group)
-//                        Spacer(modifier = Modifier.width(10.dp))
-//                    }
-//                    Spacer(modifier = Modifier.width(14.dp))
-//                }
-//            }
-//
-
         // TODO: Change to court-by-court design.
         gym.courtInfo.forEachIndexed { i, court ->
             FacilityTab(

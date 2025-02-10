@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,7 +23,9 @@ import androidx.compose.ui.unit.dp
 import com.cornellappdev.uplift.ui.components.general.UpliftTopBarWithBack
 import com.cornellappdev.uplift.ui.components.reporting.ReportDescription
 import com.cornellappdev.uplift.ui.components.reporting.ReportDropdown
+import kotlinx.coroutines.launch
 import com.cornellappdev.uplift.ui.components.general.UpliftButton
+import kotlin.reflect.KSuspendFunction3
 
 /**
  * ReportIssueScreen is a composable that displays the report issue screen where users can report
@@ -30,8 +33,7 @@ import com.cornellappdev.uplift.ui.components.general.UpliftButton
  */
 @Composable
 fun ReportIssueScreen(
-    /* TODO: Replace onSubmit with corresponding VM function call */
-    onSubmit: (issue: String, gym: String, description: String) -> Unit,
+    onSubmit: KSuspendFunction3<String, String, String, Unit>,
     /* TODO: Replace onBack with corresponding navigation function call */
     onBack: () -> Unit
 ) {
@@ -40,9 +42,8 @@ fun ReportIssueScreen(
     var description by remember { mutableStateOf("") }
     var errorStateIssue by remember { mutableStateOf(false) }
     var errorStateGym by remember { mutableStateOf(false) }
-    /* TODO: Handle enabled logic for submit button when report is sent to backend*/
     var enabled by remember { mutableStateOf(true) }
-
+    val scope = rememberCoroutineScope()
     Scaffold(topBar = {
         UpliftTopBarWithBack(
             title = "Report an issue",
@@ -113,7 +114,16 @@ fun ReportIssueScreen(
                         errorStateIssue = selectedIssue == "Choose an option ..."
                         errorStateGym = selectedGym == "Choose an option ..."
                         if (!errorStateIssue && !errorStateGym) {
-                            onSubmit(selectedIssue, selectedGym, description)
+                            enabled = false
+                            scope.launch {
+                                onSubmit(
+                                    selectedIssue,
+                                    selectedGym,
+                                    description,
+                                )
+                                enabled = true
+                            }
+
                         }
                     },
                     enabled = enabled,
@@ -131,8 +141,11 @@ fun ReportIssueScreen(
 @Preview(showBackground = true)
 @Composable
 private fun ReportIssueScreenPreview() {
+    suspend fun onSubmit(issue: String, gym: String, description: String) {
+
+    }
     ReportIssueScreen(
-        onSubmit = { _, _, _ -> },
+        onSubmit = ::onSubmit,
         onBack = { }
     )
 }

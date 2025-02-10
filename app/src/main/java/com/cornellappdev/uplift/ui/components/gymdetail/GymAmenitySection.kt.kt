@@ -25,6 +25,7 @@ import com.cornellappdev.uplift.util.montserratFamily
 
 /**
  * Displays all of the Amenities that are included at the specific gym
+ * @param amenities the list of amenities that the gym has (see [GymFields.Amenity])
  */
 @Composable
 fun GymAmenitySection(amenities: List<GymFields.Amenity?>?) {
@@ -65,6 +66,7 @@ fun GymAmenitySection(amenities: List<GymFields.Amenity?>?) {
  * A single amenity composable content
  *
  * @param painter The icon which this facility tab should display.
+ * @param name The name of the facility tab.
  */
 @Composable
 fun AmenityElement(painter: Painter, name: String) {

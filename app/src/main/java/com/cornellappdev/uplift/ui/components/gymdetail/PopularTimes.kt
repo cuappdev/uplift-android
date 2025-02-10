@@ -24,6 +24,8 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -37,8 +39,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.cornellappdev.uplift.models.PopularTimes
-import com.cornellappdev.uplift.models.TimeOfDay
+import com.cornellappdev.uplift.data.models.gymdetail.PopularTimes
+import com.cornellappdev.uplift.data.models.gymdetail.TimeOfDay
 import com.cornellappdev.uplift.util.GRAY01
 import com.cornellappdev.uplift.util.GRAY03
 import com.cornellappdev.uplift.util.GRAY04
@@ -61,8 +63,8 @@ fun PopularTimesSection(popularTimes: PopularTimes) {
     )
 
     val barHeight = 90f
-    var selectedPopularTime by remember { mutableStateOf(-1) }
-    var lastSelectedPopularTime by remember { mutableStateOf(-1) }
+    var selectedPopularTime by remember { mutableIntStateOf(-1) }
+    var lastSelectedPopularTime by remember { mutableIntStateOf(-1) }
 
     LaunchedEffect(true) {
         startAnimation = true
@@ -78,7 +80,7 @@ fun PopularTimesSection(popularTimes: PopularTimes) {
                 .coerceIn(.001f, .999f),
         tween(100, easing = CubicBezierEasing(0f, 0.0f, 0.2f, 1.0f))
     )
-    var lastLeftRatio by remember { mutableStateOf(.5f) }
+    var lastLeftRatio by remember { mutableFloatStateOf(.5f) }
     val animatedLeftRatio =
         if (selectedPopularTime >= 0) animatedLeftRatioState.value else lastLeftRatio
 
@@ -90,7 +92,7 @@ fun PopularTimesSection(popularTimes: PopularTimes) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(interactionSource = MutableInteractionSource(), indication = null) {
+            .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null) {
                 deselect()
             }
             .background(Color.White)
@@ -161,7 +163,7 @@ fun PopularTimesSection(popularTimes: PopularTimes) {
         Row(
             verticalAlignment = Alignment.Bottom,
             modifier = Modifier
-                .height(100.dp)
+                .height(80.dp)
 
         ) {
             for ((i, popularTime) in popularTimes.busyList.withIndex()) {

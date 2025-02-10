@@ -16,8 +16,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -37,7 +37,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cornellappdev.uplift.R
-import com.cornellappdev.uplift.models.TimeInterval
+import com.cornellappdev.uplift.data.models.gymdetail.TimeInterval
 import com.cornellappdev.uplift.util.ACCENT_CLOSED
 import com.cornellappdev.uplift.util.ACCENT_OPEN
 import com.cornellappdev.uplift.util.PRIMARY_BLACK
@@ -47,6 +47,9 @@ import com.cornellappdev.uplift.util.montserratFamily
  * An expandable component that displays the hours for the given gym throughout the week.
  * Displays only today's hours by default, but can be tapped to display the hours for the upcoming
  * week.
+ * @param hours a list of lists of [TimeInterval]s that denote the hours for each day of the week.
+ * @param today the index of the current day of the week (0 = Monday, 1 = Tuesday, ..., 6 = Sunday)
+ * @param open a boolean that denotes whether the gym is open or closed today.
  */
 @Composable
 fun GymHours(hours: List<List<TimeInterval>?>, today: Int, open: Boolean) {
@@ -168,13 +171,13 @@ fun GymHours(hours: List<List<TimeInterval>?>, today: Int, open: Boolean) {
                     Spacer(modifier = Modifier.height(8.dp))
                     HoursOfWeek(
                         when (day) {
-                            0 -> "M"
-                            1 -> "Tu"
-                            2 -> "W"
-                            3 -> "Th"
-                            4 -> "Fr"
-                            5 -> "Sa"
-                            else -> "Su"
+                            0 -> "Mon"
+                            1 -> "Tue"
+                            2 -> "Wed"
+                            3 -> "Thu"
+                            4 -> "Fri"
+                            5 -> "Sat"
+                            else -> "Sun"
                         }, hours[day]
                     )
                 }
@@ -202,8 +205,9 @@ fun HoursOfWeek(day: String, hours: List<TimeInterval>?) {
             fontSize = 16.sp,
             fontWeight = FontWeight(500),
             lineHeight = 19.5.sp,
-            textAlign = TextAlign.Right,
-            color = PRIMARY_BLACK
+            textAlign = TextAlign.Left,
+            color = PRIMARY_BLACK,
+            modifier = Modifier.width(38.dp),
         )
         Spacer(modifier = Modifier.width(8.dp))
         Column(
@@ -228,7 +232,7 @@ fun HoursOfWeek(day: String, hours: List<TimeInterval>?) {
                         fontSize = 16.sp,
                         fontWeight = FontWeight(400),
                         lineHeight = 19.5.sp,
-                        textAlign = TextAlign.Center,
+                        textAlign = TextAlign.Left,
                         color = PRIMARY_BLACK
                     )
                 }

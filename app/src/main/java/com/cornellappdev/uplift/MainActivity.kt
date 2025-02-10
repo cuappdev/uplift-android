@@ -7,16 +7,17 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.datastore.preferences.preferencesDataStore
-import com.cornellappdev.uplift.models.DatastoreRepository
+import com.cornellappdev.uplift.data.repositories.DatastoreRepository
 import com.cornellappdev.uplift.ui.MainNavigationWrapper
-import com.cornellappdev.uplift.ui.screens.ProfileCreationScreen
 import com.cornellappdev.uplift.ui.theme.UpliftTheme
 import com.cornellappdev.uplift.util.LockScreenOrientation
 import com.cornellappdev.uplift.util.PREFERENCES_NAME
+import dagger.hilt.android.AndroidEntryPoint
 
 // Singleton
 lateinit var datastoreRepository: DatastoreRepository
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     val Context.dataStore by preferencesDataStore(
         name = PREFERENCES_NAME

@@ -127,7 +127,7 @@ private fun CalendarBarSelection(
             .height(58.dp)
             .width(screenWidth / 7f)
             .clickable(
-                interactionSource = MutableInteractionSource(),
+                interactionSource = remember { MutableInteractionSource()},
                 indication = null,
                 onClick = onSelect
             ), horizontalAlignment = Alignment.CenterHorizontally

@@ -39,9 +39,8 @@ import com.cornellappdev.uplift.util.montserratFamily
  */
 @Composable
 fun ReportSubmittedScreen(
-    /* TODO Replace with viewmodel calls */
-    onSubmitAnother: () -> Unit = {},
-    onReturnHome: () -> Unit = {}
+    onSubmitAnother: () -> Unit,
+    onReturnHome: () -> Unit
 ) {
     Scaffold(topBar = {
         UpliftTopBarWithBack(
@@ -51,7 +50,9 @@ fun ReportSubmittedScreen(
     }) { padding ->
         Column(
             modifier = Modifier
-                .padding(padding)
+                .padding(
+                    top = padding.calculateTopPadding(),
+                )
                 .fillMaxSize()
                 .background(Color.White),
             verticalArrangement = Arrangement.spacedBy(
@@ -163,5 +164,8 @@ private fun SubmittedMessageColumn() {
 @Preview(showBackground = true)
 @Composable
 private fun ReportSubmittedScreenPreview() {
-    ReportSubmittedScreen()
+    ReportSubmittedScreen(
+        onSubmitAnother = {},
+        onReturnHome = {}
+    )
 }

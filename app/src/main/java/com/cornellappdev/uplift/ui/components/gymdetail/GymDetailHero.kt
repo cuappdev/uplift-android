@@ -7,7 +7,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -22,9 +21,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Icon
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -39,15 +38,14 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cornellappdev.uplift.R
-import com.cornellappdev.uplift.models.UpliftCapacity
-import com.cornellappdev.uplift.models.UpliftGym
-import com.cornellappdev.uplift.networking.ApiResponse
+import com.cornellappdev.uplift.data.models.ApiResponse
+import com.cornellappdev.uplift.data.models.UpliftCapacity
+import com.cornellappdev.uplift.data.models.UpliftGym
 import com.cornellappdev.uplift.ui.components.general.FavoriteButton
 import com.cornellappdev.uplift.util.ACCENT_CLOSED
 import com.cornellappdev.uplift.util.ACCENT_OPEN
@@ -59,6 +57,18 @@ import com.cornellappdev.uplift.util.colorInterp
 import com.cornellappdev.uplift.util.isOpen
 import com.cornellappdev.uplift.util.montserratFamily
 
+/**
+ * The Gym Detail's Hero section.
+ * @param scrollState the scroll state of the parent scrollable
+ * @param bitmapState the state of the gym image
+ * @param screenHeightPx the height of the screen
+ * @param progress the progress of the scroll
+ * @param onBack the callback for the back button
+ * @param gym the gym object
+ * @param day the current day
+ * @param capacity the gym's capacity (see [UpliftCapacity])
+ * @param onRefresh the callback for the refresh button
+ */
 @Composable
 fun GymDetailHero(
     scrollState: ScrollState,
@@ -84,17 +94,9 @@ fun GymDetailHero(
         if (!isOpen(gym.hours[day])) {
             ACCENT_CLOSED
         } else if (fraction > orangeCutoff)
-            colorInterp(
-                (fraction - orangeCutoff) / (1 - orangeCutoff),
-                ACCENT_ORANGE,
-                ACCENT_CLOSED
-            )
+            ACCENT_ORANGE
         else
-            colorInterp(
-                fraction / orangeCutoff,
-                ACCENT_OPEN,
-                ACCENT_ORANGE
-            )
+            ACCENT_OPEN
 
     // When the composable launches, animate the fraction to the capacity fraction.
     LaunchedEffect(animatedFraction) {
@@ -122,7 +124,7 @@ fun GymDetailHero(
                 .padding(top = 47.dp, start = 22.dp)
                 .clip(RoundedCornerShape(4.dp))
                 .clickable(
-                    interactionSource = MutableInteractionSource(),
+                    interactionSource = remember { MutableInteractionSource() },
                     indication = null,
                     onClick = onBack
                 ),
@@ -136,14 +138,14 @@ fun GymDetailHero(
                 .padding(top = 47.dp, end = 21.dp)
         ) {
             FavoriteButton(
-                filled = (gym != null && gym!!.isFavorite())
-            ) { gym?.toggleFavorite() }
+                filled = (gym.isFavorite())
+            ) { gym.toggleFavorite() }
         }
 
         // Gym Name
         Text(
             modifier = Modifier.align(Alignment.Center),
-            text = gym?.name?.uppercase() ?: "",
+            text = gym.name.uppercase() ?: "",
             fontWeight = FontWeight(700),
             fontSize = 36.sp,
             lineHeight = 44.sp,
@@ -171,6 +173,13 @@ fun GymDetailHero(
     }
 }
 
+/**
+ * The Gym's image.
+ * @param bitmapState the state of the gym image
+ * @param scrollState the scroll state of the parent scrollable
+ * @param screenHeightPx the height of the screen
+ * @param progress the progress of the scroll
+ */
 @Composable
 private fun GymImage(
     bitmapState: MutableState<ApiResponse<ImageBitmap>>,
@@ -214,6 +223,14 @@ private fun GymImage(
     }
 }
 
+/**
+ * The Gym's capacity circle.
+ * @param animatedFraction the animated fraction of the capacity
+ * @param color the color of the circle
+ * @param capacity the gym's capacity (see [UpliftCapacity])
+ * @param open whether the gym is open
+ * @param onRefresh the callback for the refresh button
+ */
 @Composable
 private fun CapacityCircle(
     animatedFraction: Animatable<Float, AnimationVector1D>,

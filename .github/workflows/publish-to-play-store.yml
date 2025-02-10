@@ -21,6 +21,18 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: wrapper
+          cache-read-only: false
+
+      - name: Create secrets.properties
+        run: |
+          echo "${{ secrets.SECRETS_PROPERTIES }}" > secrets.properties
+
+      # TODO: Add google services json
+
       - name: Build with Gradle
         id: build
         run: ./gradlew build
