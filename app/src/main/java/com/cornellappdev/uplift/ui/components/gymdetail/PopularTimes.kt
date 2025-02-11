@@ -158,7 +158,7 @@ fun PopularTimesSection(popularTimes: PopularTimes) {
         modifier = Modifier
             .fillMaxWidth()
             .background(Color.White)
-            .padding(horizontal = 18.dp)
+            .padding(horizontal = 8.dp)
     ) {
         Row(
             verticalAlignment = Alignment.Bottom,

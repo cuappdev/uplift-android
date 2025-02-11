@@ -207,7 +207,7 @@ fun HoursOfWeek(day: String, hours: List<TimeInterval>?) {
             lineHeight = 19.5.sp,
             textAlign = TextAlign.Left,
             color = PRIMARY_BLACK,
-            modifier = Modifier.width(38.dp),
+            modifier = Modifier.width(40.dp),
         )
         Spacer(modifier = Modifier.width(8.dp))
         Column(

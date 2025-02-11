@@ -19,11 +19,11 @@ val majorToSubGroupMap = mapOf(
  * A map from major muscle group to an image id.
  */
 val majorMuscleToImageId = mapOf(
-    ("Chest" to R.drawable.ic_miscellaneous_equip),
-    ("Back" to R.drawable.ic_miscellaneous_equip),
-    ("Shoulders" to R.drawable.ic_miscellaneous_equip),
-    ("Arms" to R.drawable.ic_miscellaneous_equip),
-    ("Legs" to R.drawable.ic_miscellaneous_equip),
-    ("Abdominals" to R.drawable.ic_miscellaneous_equip),
+    ("Chest" to R.drawable.ic_chest),
+    ("Back" to R.drawable.ic_back),
+    ("Shoulders" to R.drawable.ic_shoulders),
+    ("Arms" to R.drawable.ic_arms),
+    ("Legs" to R.drawable.ic_legs),
+    ("Abdominals" to R.drawable.ic_abdominals),
     ("Miscellaneous" to R.drawable.ic_miscellaneous_equip)
 )

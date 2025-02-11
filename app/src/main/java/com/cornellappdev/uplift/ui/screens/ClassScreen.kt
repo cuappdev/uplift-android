@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.Text
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
@@ -35,8 +35,6 @@ import com.cornellappdev.uplift.util.calendarDayOfWeekToString
 import com.cornellappdev.uplift.util.montserratFamily
 import kotlinx.coroutines.launch
 import java.util.Calendar
-
-// TODO: Looks weird on dark mode. Manually add white backgrounds.
 
 /**
  * The main screen for the "Classes" section of the app.
@@ -93,8 +91,9 @@ fun ClassScreen(
             LazyColumn(
                 state = classesScrollState,
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .fillMaxSize()
                     .zIndex(-1f)
+                    .background(Color.White)
             ) {
                 stickyHeader {
                     Column(
