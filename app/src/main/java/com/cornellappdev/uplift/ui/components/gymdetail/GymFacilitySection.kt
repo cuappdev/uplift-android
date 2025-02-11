@@ -1,4 +1,4 @@
-package com.cornellappdev.uplift.ui.components
+package com.cornellappdev.uplift.ui.components.gymdetail
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
@@ -31,6 +31,9 @@ import androidx.compose.ui.unit.sp
 import com.cornellappdev.uplift.R
 import com.cornellappdev.uplift.data.models.gymdetail.OpenType
 import com.cornellappdev.uplift.data.models.UpliftGym
+import com.cornellappdev.uplift.ui.components.GymBowlingSection
+import com.cornellappdev.uplift.ui.components.GymCourtSection
+import com.cornellappdev.uplift.ui.components.GymSwimmingSection
 import com.cornellappdev.uplift.ui.screens.LineSpacer
 import com.cornellappdev.uplift.util.ACCENT_CLOSED
 import com.cornellappdev.uplift.util.ACCENT_OPEN

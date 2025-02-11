@@ -18,14 +18,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.cornellappdev.uplift.data.repositories.CoilRepository
-import com.cornellappdev.uplift.ui.components.GymFacilitySection
-import com.cornellappdev.uplift.ui.components.GymHours
-import com.cornellappdev.uplift.ui.components.PopularTimesSection
+import com.cornellappdev.uplift.ui.components.gymdetail.GymFacilitySection
+import com.cornellappdev.uplift.ui.components.gymdetail.GymHours
+import com.cornellappdev.uplift.ui.components.gymdetail.PopularTimesSection
 import com.cornellappdev.uplift.ui.components.gymdetail.GymAmenitySection
 import com.cornellappdev.uplift.ui.components.gymdetail.GymCapacitiesSection
 import com.cornellappdev.uplift.ui.components.gymdetail.GymDetailHero

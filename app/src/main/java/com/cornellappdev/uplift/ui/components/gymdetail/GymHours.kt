@@ -1,4 +1,4 @@
-package com.cornellappdev.uplift.ui.components
+package com.cornellappdev.uplift.ui.components.gymdetail
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.LinearEasing

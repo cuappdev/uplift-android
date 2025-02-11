@@ -16,8 +16,6 @@ import com.cornellappdev.uplift.data.models.gymdetail.PopularTimes
 import com.cornellappdev.uplift.data.models.gymdetail.TimeOfDay
 import com.cornellappdev.uplift.data.models.UpliftGym
 import com.cornellappdev.uplift.type.MuscleGroup
-import com.cornellappdev.uplift.ui.components.GymHours
-import com.cornellappdev.uplift.ui.components.PopularTimesSection
 import com.cornellappdev.uplift.util.GRAY01
 import com.cornellappdev.uplift.util.isOpen
 import com.cornellappdev.uplift.util.todayIndex
@@ -49,7 +47,7 @@ fun FitnessCenterContent(
         SectionDivider()
         PopularTimesSection(
             popularTimes = PopularTimes(
-                busyList = listOf(20, 30, 40, 50, 50, 45, 35, 40, 50, 70, 80, 90, 95, 85, 70, 65, 20, 10),
+                busyList = listOf(20, 30, 40, 50, 50, 45, 35, 40, 50, 70, 80, 90, 95, 85, 70, 65, 20),
                 startTime = TimeOfDay(
                     hour = 6,
                     minute = 0,

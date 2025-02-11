@@ -99,7 +99,6 @@ fun SubMuscleGroupDropdown(
     Column(
         modifier = Modifier
             .fillMaxWidth(),
-//            .padding(start = 32.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         ExpandableRow(

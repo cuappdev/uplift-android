@@ -32,7 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.cornellappdev.uplift.data.repositories.CoilRepository
-import com.cornellappdev.uplift.ui.components.GymFacilitySection
+import com.cornellappdev.uplift.ui.components.gymdetail.GymFacilitySection
 import com.cornellappdev.uplift.ui.components.gymdetail.FitnessCenterContent
 import com.cornellappdev.uplift.ui.components.gymdetail.GymDetailHero
 import com.cornellappdev.uplift.ui.viewmodels.GymDetailViewModel

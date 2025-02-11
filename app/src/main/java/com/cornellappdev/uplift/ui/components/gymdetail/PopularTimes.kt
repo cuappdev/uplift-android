@@ -1,4 +1,4 @@
-package com.cornellappdev.uplift.ui.components
+package com.cornellappdev.uplift.ui.components.gymdetail
 
 import androidx.compose.animation.core.CubicBezierEasing
 import androidx.compose.animation.core.animateFloatAsState
@@ -19,8 +19,8 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -92,7 +92,10 @@ fun PopularTimesSection(popularTimes: PopularTimes) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null) {
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null
+            ) {
                 deselect()
             }
             .background(Color.White)
@@ -158,7 +161,6 @@ fun PopularTimesSection(popularTimes: PopularTimes) {
         modifier = Modifier
             .fillMaxWidth()
             .background(Color.White)
-            .padding(horizontal = 8.dp)
     ) {
         Row(
             verticalAlignment = Alignment.Bottom,
@@ -175,7 +177,7 @@ fun PopularTimesSection(popularTimes: PopularTimes) {
                         .padding(horizontal = 1.dp)
                         .padding(bottom = 1.dp)
                         .clickable(
-                            interactionSource = MutableInteractionSource(),
+                            interactionSource = remember { MutableInteractionSource() },
                             indication = null
                         ) {
                             if (selectedPopularTime == i) deselect()
@@ -215,6 +217,19 @@ fun PopularTimesSection(popularTimes: PopularTimes) {
                                 .background(GRAY01)
                                 .align(Alignment.BottomEnd)
                         )
+                    if (i % 3 == 0) {
+                        val time = popularTimes.startTime.getTimeLater(deltaMinutes = 0, deltaHours = i)
+                        Text(
+                            text = "${if (time.hour == 0) 12 else time.hour}${if (time.isAM) "a" else "p"}",
+                            fontFamily = montserratFamily,
+                            fontSize = 9.5.sp,
+                            fontWeight = FontWeight(600),
+                            color = PRIMARY_BLACK,
+                            modifier = Modifier
+                                .align(Alignment.BottomCenter)
+                                .offset(y = 24.dp)
+                        )
+                    }
                 }
             }
         }
@@ -235,10 +250,10 @@ fun PopularTimesSectionPreview() {
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
-    ){
+    ) {
         PopularTimesSection(
             popularTimes = PopularTimes(
-                busyList = listOf(20, 30, 40, 50, 50, 45, 35, 40, 50, 70, 80, 90, 95, 85, 70, 65),
+                busyList = listOf(20, 30, 40, 50, 50, 45, 35, 40, 50, 70, 80, 90, 95, 85, 70, 65, 20),
                 startTime = TimeOfDay(
                     hour = 6,
                     minute = 0,
