@@ -135,13 +135,15 @@ fun EquipmentColumn(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(6.dp)
             ) {
-                Text(
-                    text = equipment.quantity.toString(),
-                    modifier = Modifier.width(24.dp),
-                    fontFamily = montserratFamily,
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Medium
-                )
+                if (equipment.quantity > 0) {
+                    Text(
+                        text = equipment.quantity.toString(),
+                        modifier = Modifier.width(24.dp),
+                        fontFamily = montserratFamily,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Medium
+                    )
+                }
                 Text(
                     text = equipment.name,
                     fontFamily = montserratFamily,

@@ -68,6 +68,23 @@ fun PopularTimesSection(popularTimes: PopularTimes) {
 
     LaunchedEffect(true) {
         startAnimation = true
+        // Get the current time
+        val currentTime = java.util.Calendar.getInstance()
+        val currentHour = currentTime.get(java.util.Calendar.HOUR_OF_DAY)
+        val currentMinute = currentTime.get(java.util.Calendar.MINUTE)
+
+        // Calculate the index of the bar that corresponds to the current time
+        val startTime = popularTimes.startTime
+        val startHour = if (startTime.isAM) startTime.hour else startTime.hour + 12
+        val totalStartMinutes = startHour * 60 + startTime.minute
+        val totalCurrentMinutes = currentHour * 60 + currentMinute
+        val index = (totalCurrentMinutes - totalStartMinutes) / 60
+
+        // Set the selectedPopularTime to this index if it's within the range
+        if (index in popularTimes.busyList.indices) {
+            selectedPopularTime = index
+            lastSelectedPopularTime = index
+        }
     }
 
     val animatedOpacity by animateFloatAsState(
@@ -218,7 +235,8 @@ fun PopularTimesSection(popularTimes: PopularTimes) {
                                 .align(Alignment.BottomEnd)
                         )
                     if (i % 3 == 0) {
-                        val time = popularTimes.startTime.getTimeLater(deltaMinutes = 0, deltaHours = i)
+                        val time =
+                            popularTimes.startTime.getTimeLater(deltaMinutes = 0, deltaHours = i)
                         Text(
                             text = "${if (time.hour == 0) 12 else time.hour}${if (time.isAM) "a" else "p"}",
                             fontFamily = montserratFamily,
@@ -253,7 +271,25 @@ fun PopularTimesSectionPreview() {
     ) {
         PopularTimesSection(
             popularTimes = PopularTimes(
-                busyList = listOf(20, 30, 40, 50, 50, 45, 35, 40, 50, 70, 80, 90, 95, 85, 70, 65, 20),
+                busyList = listOf(
+                    20,
+                    30,
+                    40,
+                    50,
+                    50,
+                    45,
+                    35,
+                    40,
+                    50,
+                    70,
+                    80,
+                    90,
+                    95,
+                    85,
+                    70,
+                    65,
+                    20
+                ),
                 startTime = TimeOfDay(
                     hour = 6,
                     minute = 0,
