@@ -18,10 +18,16 @@ import com.cornellappdev.uplift.data.models.gymdetail.TimeOfDay
 import com.cornellappdev.uplift.data.models.UpliftCapacity
 import com.cornellappdev.uplift.data.models.UpliftClass
 import com.cornellappdev.uplift.data.models.UpliftGym
+import com.cornellappdev.uplift.data.models.gymdetail.EquipmentCategory
+import com.cornellappdev.uplift.data.models.gymdetail.EquipmentInfo
+import com.cornellappdev.uplift.data.models.gymdetail.GymEquipmentGroupInfo
 import com.cornellappdev.uplift.type.MuscleGroup
 import com.cornellappdev.uplift.util.asTimeOfDay
 import com.cornellappdev.uplift.util.defaultClassUrl
 import com.cornellappdev.uplift.util.defaultGymUrl
+import com.cornellappdev.uplift.util.gymdetail.defaultMuscleIconId
+import com.cornellappdev.uplift.util.gymdetail.majorMuscleToImageId
+import com.cornellappdev.uplift.util.gymdetail.majorToSubGroupMap
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -230,13 +236,38 @@ fun pullCapacity(
     )
 }
 
+/**
+ * Returns a list of [GymEquipmentGroupInfo]s based on the [equipmentGroupingMap].
+ * @param equipmentGroupingMap a map of [MuscleGroup] to [EquipmentGrouping]
+ * see [EquipmentCategory] for more info about the type of subGroupEquipmentsPairList
+ * @return a list of [GymEquipmentGroupInfo]s
+ */
+private fun getEquipmentGroupInfoList(
+    equipmentGroupingMap: HashMap<MuscleGroup, EquipmentGrouping>,
+): List<GymEquipmentGroupInfo> {
+    return majorToSubGroupMap.map { (majorGroup, subGroups) ->
+        val subGroupEquipmentsPairList = subGroups.map { subGroup ->
+            val equipmentList =
+                equipmentGroupingMap[MuscleGroup.valueOf(subGroup.uppercase())]?.equipmentList
+            val equipmentInfoList =
+                equipmentList?.map { EquipmentInfo(it.name, it.quantity) } ?: emptyList()
+            EquipmentCategory(subGroup, equipmentInfoList)
+        }
+        GymEquipmentGroupInfo(
+            majorGroup,
+            majorMuscleToImageId[majorGroup] ?: defaultMuscleIconId,
+            subGroupEquipmentsPairList
+        )
+    }
+}
+
 /** Returns the equipment groupings for the given fitness facility. */
-fun pullEquipmentGroupings(
+fun mapFacilityToEquipmentGroupInfoList(
     facilityIn: GymFields.Facility?
-): HashMap<MuscleGroup, EquipmentGrouping> {
+): List<GymEquipmentGroupInfo> {
     // TODO: Change to parse equipment grouping info when backend adds that.
 
-    val equipments = facilityIn?.facilityFields?.equipment ?: return HashMap()
+    val equipments = facilityIn?.facilityFields?.equipment ?: return listOf()
 
     val equipmentGroups = HashMap<MuscleGroup, EquipmentGrouping>()
     /* TODO: Update Equipment Logic to match new schema */
@@ -249,14 +280,14 @@ fun pullEquipmentGroupings(
                 name = equipment.equipmentFields.name,
                 facilityId = equipment.equipmentFields.facilityId,
                 quantity = equipment.equipmentFields.quantity ?: 0,
-                muscleGroups = muscleGroups,
+                muscleGroups = muscleGroups as List<MuscleGroup>,
                 cleanName = equipment.equipmentFields.cleanName
             )
             muscleGroups.forEach { muscleGroup ->
                 if (equipmentGroups.containsKey(muscleGroup)) {
                     equipmentGroups[muscleGroup]?.equipmentList?.add(equipmentField)
                 } else {
-                    equipmentGroups[muscleGroup!!] = EquipmentGrouping(
+                    equipmentGroups[muscleGroup] = EquipmentGrouping(
                         equipmentType = muscleGroup,
                         equipmentList = ArrayList()
                     )
@@ -266,7 +297,7 @@ fun pullEquipmentGroupings(
         }
     }
 
-    return equipmentGroups
+    return getEquipmentGroupInfoList(equipmentGroups)
 }
 
 /**
@@ -355,7 +386,7 @@ fun GymListQuery.GetAllGym.toUpliftGyms(): List<UpliftGym> {
                 ?.replace("toni-morrison-outside", "toni_morrison_outside")
                 ?: defaultGymUrl,
             hours = pullHours(facility.facilityFields.hours?.map { it?.openHoursFields }).toTimeInterval(),
-            equipmentGroupings = pullEquipmentGroupings(facility),
+            equipmentGroupings = mapFacilityToEquipmentGroupInfoList(facility),
             miscellaneous = pullMiscellaneous(),
             bowlingInfo = bowlingFacility.pullBowling(),
             swimmingInfo = poolFacility.pullSwimmingInfo(),

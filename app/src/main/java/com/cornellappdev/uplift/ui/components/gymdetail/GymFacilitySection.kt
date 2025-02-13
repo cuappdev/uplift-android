@@ -153,7 +153,7 @@ fun GymFacilitySection(gym: UpliftGym, today: Int) {
  * @param painter The icon which this facility tab should display.
  */
 @Composable
-fun FacilityTab(
+private fun FacilityTab(
     painter: Painter,
     title: String,
     collapsed: Boolean,

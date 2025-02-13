@@ -15,6 +15,8 @@ val majorToSubGroupMap = mapOf(
     ("Miscellaneous" to listOf("Cardio", "Miscellaneous"))
 )
 
+val defaultMuscleIconId = R.drawable.ic_miscellaneous_equip
+
 /**
  * A map from major muscle group to an image id.
  */
@@ -25,5 +27,15 @@ val majorMuscleToImageId = mapOf(
     ("Arms" to R.drawable.ic_arms),
     ("Legs" to R.drawable.ic_legs),
     ("Abdominals" to R.drawable.ic_abdominals),
-    ("Miscellaneous" to R.drawable.ic_miscellaneous_equip)
+    ("Miscellaneous" to defaultMuscleIconId),
+)
+
+/**
+ * A map from gym amenity to a pair of an image id and a string.
+ */
+val amenityMap = mapOf(
+    "SHOWERS" to Pair(R.drawable.ic_shower, "Showers"),
+    "LOCKERS" to Pair(R.drawable.ic_lock, "Lockers"),
+    "PARKING" to Pair(R.drawable.ic_parking, "Parking"),
+    "ELEVATORS" to Pair(R.drawable.ic_elevator, "Elevators/Lifts")
 )

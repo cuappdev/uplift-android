@@ -18,9 +18,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.cornellappdev.uplift.R
 import com.cornellappdev.uplift.fragment.GymFields
 import com.cornellappdev.uplift.util.PRIMARY_BLACK
+import com.cornellappdev.uplift.util.gymdetail.amenityMap
 import com.cornellappdev.uplift.util.montserratFamily
 
 /**
@@ -42,15 +42,9 @@ fun GymAmenitySection(amenities: List<GymFields.Amenity?>?) {
         Column(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            val amenityMap = mapOf(
-                "SHOWERS" to Pair(R.drawable.ic_shower, "Showers"),
-                "LOCKERS" to Pair(R.drawable.ic_lock, "Lockers"),
-                "PARKING" to Pair(R.drawable.ic_parking, "Parking"),
-                "ELEVATORS" to Pair(R.drawable.ic_elevator, "Elevators/Lifts")
-            )
-            for (amenity in amenities!!) {
+            for (amenity in amenities.orEmpty()) {
                 if (amenity != null && amenity.type.rawValue in amenityMap) {
-                    val (drawableId, amenityName) = amenityMap[amenity.type.rawValue]!!
+                    val (drawableId, amenityName) = amenityMap[amenity.type.rawValue] ?: continue
                     AmenityElement(
                         painter = painterResource(id = drawableId),
                         name = amenityName

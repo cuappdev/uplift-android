@@ -6,7 +6,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.cornellappdev.uplift.data.models.gymdetail.BowlingInfo
 import com.cornellappdev.uplift.data.models.gymdetail.CourtFacility
-import com.cornellappdev.uplift.data.models.gymdetail.EquipmentGrouping
+import com.cornellappdev.uplift.data.models.gymdetail.GymEquipmentGroupInfo
 import com.cornellappdev.uplift.data.models.gymdetail.PopularTimes
 import com.cornellappdev.uplift.data.models.gymdetail.SwimmingInfo
 import com.cornellappdev.uplift.data.models.gymdetail.TimeInterval
@@ -14,7 +14,6 @@ import com.cornellappdev.uplift.data.models.gymdetail.TimeOfDay
 import com.cornellappdev.uplift.datastoreRepository
 import com.cornellappdev.uplift.data.repositories.LocationRepository
 import com.cornellappdev.uplift.fragment.GymFields
-import com.cornellappdev.uplift.type.MuscleGroup
 import com.cornellappdev.uplift.util.getDistanceBetween
 import java.util.Calendar
 import kotlin.math.roundToInt
@@ -51,7 +50,7 @@ data class UpliftGym(
      */
     val popularTimes: List<PopularTimes>,
 
-    val equipmentGroupings: HashMap<MuscleGroup, EquipmentGrouping>,
+    val equipmentGroupings: List<GymEquipmentGroupInfo>,
 
     /** A list of courts at this fitness center. */
     val courtInfo: List<CourtFacility>,
@@ -127,7 +126,7 @@ data class UpliftCapacity(
 
     /**
      * Returns a string representing the time at which this capacity was last updated.
-     * Of the form `"Updated: HH:MM AM"`
+     * Of the form `"HH:MM AM"`
      */
     fun updatedString(): String {
         val timeOfDay = TimeOfDay(

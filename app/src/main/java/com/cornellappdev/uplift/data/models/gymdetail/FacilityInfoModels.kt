@@ -52,7 +52,7 @@ data class EquipmentField(
     val name: String,
     val facilityId: Int,
     val quantity: Int,
-    val muscleGroups: List<MuscleGroup?>,
+    val muscleGroups: List<MuscleGroup>,
     val cleanName: String
 )
 
@@ -61,7 +61,7 @@ data class EquipmentField(
  * they carry. */
 data class EquipmentGrouping(
 
-    val equipmentType: MuscleGroup?,
+    val equipmentType: MuscleGroup,
     val equipmentList: ArrayList<EquipmentField>
 
 )

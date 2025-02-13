@@ -193,7 +193,7 @@ fun GymHours(hours: List<List<TimeInterval>?>, today: Int, open: Boolean) {
  * @param hours a list of [TimeInterval]s that denote the hours for the day.
  */
 @Composable
-fun HoursOfWeek(day: String, hours: List<TimeInterval>?) {
+private fun HoursOfWeek(day: String, hours: List<TimeInterval>?) {
     Row(
         modifier = Modifier,
         horizontalArrangement = Arrangement.Center,

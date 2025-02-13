@@ -1,11 +1,6 @@
 package com.cornellappdev.uplift.ui.components.gymdetail
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkVertically
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -31,8 +26,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cornellappdev.uplift.R
-import com.cornellappdev.uplift.data.models.gymdetail.Category
+import com.cornellappdev.uplift.data.models.gymdetail.EquipmentCategory
 import com.cornellappdev.uplift.data.models.gymdetail.EquipmentInfo
+import com.cornellappdev.uplift.ui.components.general.AnimatedVisibilityContent
 import com.cornellappdev.uplift.util.PRIMARY_BLACK
 import com.cornellappdev.uplift.util.montserratFamily
 
@@ -40,14 +36,14 @@ import com.cornellappdev.uplift.util.montserratFamily
  * GymEquipmentGroup is a composable that displays a grouping of gym equipment.
  * @param muscleGroupName the name of the muscle group
  * @param muscleImageId the image id of the muscle group
- * @param categories a list of categories of equipment (see [Category]) mainly for sub-muscle groups
+ * @param categories a list of categories of equipment (see [EquipmentCategory]) mainly for sub-muscle groups
  * @sample GymEquipmentGroupPreview
  */
 @Composable
 fun GymEquipmentGroup(
     muscleGroupName: String,
-    muscleImageId: Int,
-    categories: List<Category>
+    @DrawableRes muscleImageId: Int,
+    categories: List<EquipmentCategory>
 ) {
     var expanded by remember { mutableStateOf(false) }
 
@@ -90,7 +86,7 @@ fun GymEquipmentGroup(
  * @param equipmentList a list of equipment info for the sub-muscle group (see [EquipmentInfo])
  */
 @Composable
-fun SubMuscleGroupDropdown(
+private fun SubMuscleGroupDropdown(
     subMuscleGroupName: String,
     equipmentList: List<EquipmentInfo>
 ) {
@@ -116,11 +112,11 @@ fun SubMuscleGroupDropdown(
 }
 
 /**
- * EquipmentColumn is a composable that displays a column of equipment.
+ * EquipmentColumn is a composable that displays a list of quantity equipment pairs.
  * @param equipmentList a list of equipment info (see [EquipmentInfo])
  */
 @Composable
-fun EquipmentColumn(
+private fun EquipmentColumn(
     equipmentList: List<EquipmentInfo>
 ) {
     Column(
@@ -156,26 +152,7 @@ fun EquipmentColumn(
 }
 
 /**
- * AnimatedVisibilityContent is a composable that animates the visibility of its content.
- * @param visible whether the content is visible
- * @param content the content to be displayed
- */
-@Composable
-fun AnimatedVisibilityContent(
-    visible: Boolean,
-    content: @Composable () -> Unit
-) {
-    AnimatedVisibility(
-        visible = visible,
-        enter = expandVertically(animationSpec = tween(300)) + fadeIn(),
-        exit = shrinkVertically(animationSpec = tween(300)) + fadeOut()
-    ) {
-        content()
-    }
-}
-
-/**
- * ExpandableRow is a composable that displays a row that can be expanded.
+ * ExpandableRow is a composable used to display a dropdown for a muscle group or sub-muscle group.
  * @param text the text to be displayed
  * @param iconId the icon id to be displayed
  * @param expanded whether the row is expanded
@@ -184,7 +161,7 @@ fun AnimatedVisibilityContent(
  * @param fontWeight the font weight
  */
 @Composable
-fun ExpandableRow(
+private fun ExpandableRow(
     text: String,
     iconId: Int? = null,
     expanded: Boolean,
@@ -232,7 +209,7 @@ fun ExpandableRow(
 
 @Preview(showBackground = true)
 @Composable
-fun GymEquipmentGroupPreview() {
+private fun GymEquipmentGroupPreview() {
     val equipmentList1 = listOf(
         EquipmentInfo("Bench", 10),
         EquipmentInfo("Dumbbells", 20),
@@ -244,8 +221,8 @@ fun GymEquipmentGroupPreview() {
         EquipmentInfo("Squat Rack", 5),
     )
     val categories = listOf(
-        Category("Chest", equipmentList1),
-        Category("Back", equipmentList2)
+        EquipmentCategory("Chest", equipmentList1),
+        EquipmentCategory("Back", equipmentList2)
     )
     Column(
         modifier = Modifier.fillMaxSize(),

@@ -81,27 +81,27 @@ fun GymDetailHero(
     capacity: UpliftCapacity?,
     onRefresh: () -> Unit = {}
 ) {
-    val grayedOut = !isOpen(gym!!.hours[day]) || capacity == null
+    val isGrayedOut = !isOpen(gym!!.hours[day]) || capacity == null
 
-    val fraction = if (!grayedOut) {
+    val capacityFraction = if (!isGrayedOut) {
         (capacity!!.percent.toFloat()) / 2
     } else if (!isOpen(gym.hours[day])) 0.5f
     else 0f
 
-    val animatedFraction = remember { Animatable(0f) }
+    val animatedCapacityFraction = remember { Animatable(0f) }
     val orangeCutoff = .325f
     val color =
         if (!isOpen(gym.hours[day])) {
             ACCENT_CLOSED
-        } else if (fraction > orangeCutoff)
+        } else if (capacityFraction > orangeCutoff)
             ACCENT_ORANGE
         else
             ACCENT_OPEN
 
     // When the composable launches, animate the fraction to the capacity fraction.
-    LaunchedEffect(animatedFraction) {
-        animatedFraction.animateTo(
-            fraction,
+    LaunchedEffect(animatedCapacityFraction) {
+        animatedCapacityFraction.animateTo(
+            capacityFraction,
             animationSpec = tween(durationMillis = 750)
         )
     }
@@ -145,7 +145,7 @@ fun GymDetailHero(
         // Gym Name
         Text(
             modifier = Modifier.align(Alignment.Center),
-            text = gym.name.uppercase() ?: "",
+            text = gym.name.uppercase(),
             fontWeight = FontWeight(700),
             fontSize = 36.sp,
             lineHeight = 44.sp,
@@ -166,7 +166,7 @@ fun GymDetailHero(
                 },
             color = Color.Transparent
         ) {
-            CapacityCircle(animatedFraction, color, capacity, isOpen(gym.hours[day]), onRefresh)
+            CapacityCircle(animatedCapacityFraction, color, capacity, isOpen(gym.hours[day]), onRefresh)
         }
 
 

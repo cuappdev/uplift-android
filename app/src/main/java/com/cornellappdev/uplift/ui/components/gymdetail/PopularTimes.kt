@@ -66,7 +66,7 @@ fun PopularTimesSection(popularTimes: PopularTimes) {
     var selectedPopularTime by remember { mutableIntStateOf(-1) }
     var lastSelectedPopularTime by remember { mutableIntStateOf(-1) }
 
-    LaunchedEffect(true) {
+    LaunchedEffect(Unit) {
         startAnimation = true
         // Get the current time
         val currentTime = java.util.Calendar.getInstance()
@@ -261,6 +261,10 @@ fun PopularTimesSection(popularTimes: PopularTimes) {
     }
 }
 
+/**
+ * Preview for [PopularTimesSection].
+ * Make sure to click "Start Interactive Mode" when previewing to see bars
+ */
 @Preview(showBackground = true)
 @Composable
 fun PopularTimesSectionPreview() {

@@ -4,15 +4,8 @@ import androidx.lifecycle.ViewModel
 import com.cornellappdev.uplift.data.models.UpliftClass
 import com.cornellappdev.uplift.data.models.UpliftGym
 import com.cornellappdev.uplift.data.models.ApiResponse
-import com.cornellappdev.uplift.data.models.gymdetail.Category
-import com.cornellappdev.uplift.data.models.gymdetail.EquipmentGrouping
-import com.cornellappdev.uplift.data.models.gymdetail.EquipmentInfo
-import com.cornellappdev.uplift.data.models.gymdetail.GymEquipmentGroupInfo
 import com.cornellappdev.uplift.data.repositories.UpliftApiRepository
-import com.cornellappdev.uplift.type.MuscleGroup
 import com.cornellappdev.uplift.util.getSystemTime
-import com.cornellappdev.uplift.util.gymdetail.majorMuscleToImageId
-import com.cornellappdev.uplift.util.gymdetail.majorToSubGroupMap
 import com.cornellappdev.uplift.util.sameDayAs
 import com.cornellappdev.uplift.util.startTimeComparator
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -69,30 +62,16 @@ class GymDetailViewModel @Inject constructor(
             listOf()
         )
 
-    /**
-     * Returns a list of [GymEquipmentGroupInfo]s based on the [equipmentGroupingMap].
-     * @param equipmentGroupingMap a map of [MuscleGroup] to [EquipmentGrouping]
-     * @return a list of [GymEquipmentGroupInfo]s
-     */
-    fun getEquipmentGroupInfoList(
-        equipmentGroupingMap: HashMap<MuscleGroup, EquipmentGrouping>,
-    ): List<GymEquipmentGroupInfo> {
-        return majorToSubGroupMap.map { (majorGroup, subGroups) ->
-            val categories = subGroups.map { subGroup ->
-                val equipmentList =
-                    equipmentGroupingMap[MuscleGroup.valueOf(subGroup.uppercase())]?.equipmentList
-                val equipmentInfoList =
-                    equipmentList?.map { EquipmentInfo(it.name, it.quantity) } ?: emptyList()
-                Category(subGroup, equipmentInfoList)
-            }
-            GymEquipmentGroupInfo(
-                majorGroup,
-                majorMuscleToImageId[majorGroup]!!,
-                categories
-            )
-        }
+    fun gymIsNotNull(): Boolean {
+        return gymFlow.value != null
     }
 
+    fun hasOneFacility(gym: UpliftGym): Boolean {
+        return gym.courtInfo.isNotEmpty()
+                || gym.swimmingInfo != null
+                || gym.bowlingInfo != null
+                || gym.miscellaneous.isNotEmpty()
+    }
 
     /**
      * Sets the current gym being displayed to [gym].

@@ -303,7 +303,7 @@ val testMorrison = UpliftGym(
         )
     },
     courtInfo = listOf(),
-    equipmentGroupings = hashMapOf(),
+    equipmentGroupings = listOf(),
     swimmingInfo = listOf(
         SwimmingInfo(swimmingTimes = exampleSwimmingList1),
         null,

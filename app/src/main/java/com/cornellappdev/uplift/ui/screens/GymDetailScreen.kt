@@ -49,14 +49,11 @@ fun GymDetailScreen(
     onBack: () -> Unit
 ) {
     val gym by gymDetailViewModel.gymFlow.collectAsState()
+    if (!gymDetailViewModel.gymIsNotNull()) return
+
     val day = todayIndex()
 
-    val hasOneFacility =
-        gym != null
-                && gym!!.courtInfo.isNotEmpty()
-                || gym!!.swimmingInfo != null
-                || gym!!.bowlingInfo != null
-                || gym!!.miscellaneous.isNotEmpty()
+    val hasOneFacility = gym?.let { gymDetailViewModel.hasOneFacility(it) } ?: false
 
 
     //tabs
@@ -105,7 +102,7 @@ fun GymDetailScreen(
             onBack,
             gym,
             day,
-            gym!!.upliftCapacity,
+            gym?.upliftCapacity,
             gymDetailViewModel::reload
         )
 
@@ -116,16 +113,23 @@ fun GymDetailScreen(
 
 
         GymTabRow(tabIndex, tabs, onTabChange = { tabIndex = it })
-        when (tabIndex) {
-            0 -> FitnessCenterContent(
-                gym = gym,
-                getEquipmentGroupInfoList = gymDetailViewModel::getEquipmentGroupInfoList
-            )
 
-            1 -> GymFacilitySection(
-                gym = gym!!,
-                today = day
-            )
+        when (tabIndex) {
+            0 -> gym?.let {
+                gym?.equipmentGroupings?.let { equipmentGroupInfoList ->
+                    FitnessCenterContent(
+                        gym = it,
+                        equipmentGroupInfoList = equipmentGroupInfoList,
+                    )
+                } ?: Unit
+            } ?: Unit
+
+            1 -> gym?.let {
+                GymFacilitySection(
+                    gym = it,
+                    today = day
+                )
+            } ?: Unit
         }
 
 
