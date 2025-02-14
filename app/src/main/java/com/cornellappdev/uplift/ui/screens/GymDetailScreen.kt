@@ -115,6 +115,7 @@ fun GymDetailScreen(
         GymTabRow(tabIndex, tabs, onTabChange = { tabIndex = it })
 
         when (tabIndex) {
+            // TODO() -> Add Error Handling for null case
             0 -> gym?.let {
                 gym?.equipmentGroupings?.let { equipmentGroupInfoList ->
                     FitnessCenterContent(
