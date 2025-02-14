@@ -62,17 +62,6 @@ class GymDetailViewModel @Inject constructor(
             listOf()
         )
 
-    fun gymIsNotNull(): Boolean {
-        return gymFlow.value != null
-    }
-
-    fun hasOneFacility(gym: UpliftGym): Boolean {
-        return gym.courtInfo.isNotEmpty()
-                || gym.swimmingInfo != null
-                || gym.bowlingInfo != null
-                || gym.miscellaneous.isNotEmpty()
-    }
-
     /**
      * Sets the current gym being displayed to [gym].
      */

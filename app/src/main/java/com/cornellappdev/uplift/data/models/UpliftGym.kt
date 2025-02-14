@@ -75,6 +75,7 @@ data class UpliftGym(
     val latitude: Double,
     val longitude: Double,
     val amenities: List<GymFields.Amenity?>?,
+    val hasOneFacility: Boolean
 ) {
     /**
      * Returns a boolean indicating whether this gym is favorited or not. Safe for recomposition.

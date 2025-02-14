@@ -42,15 +42,14 @@ fun GymAmenitySection(amenities: List<GymFields.Amenity?>?) {
         Column(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            for (amenity in amenities.orEmpty()) {
-                if (amenity != null && amenity.type.rawValue in amenityMap) {
-                    val (drawableId, amenityName) = amenityMap[amenity.type.rawValue] ?: continue
+            amenities.orEmpty().filterNotNull().filter { it.type.rawValue in amenityMap }
+                .map { amenity ->
+                    val (drawableId, amenityName) = amenityMap[amenity.type.rawValue] ?: return@map
                     AmenityElement(
                         painter = painterResource(id = drawableId),
                         name = amenityName
                     )
                 }
-            }
         }
     }
 }

@@ -265,12 +265,9 @@ private fun getEquipmentGroupInfoList(
 fun mapFacilityToEquipmentGroupInfoList(
     facilityIn: GymFields.Facility?
 ): List<GymEquipmentGroupInfo> {
-    // TODO: Change to parse equipment grouping info when backend adds that.
-
     val equipments = facilityIn?.facilityFields?.equipment ?: return listOf()
 
     val equipmentGroups = HashMap<MuscleGroup, EquipmentGrouping>()
-    /* TODO: Update Equipment Logic to match new schema */
     equipments.forEach { equipment ->
         if (equipment != null) {
             val muscleGroups = equipment.equipmentFields.muscleGroups
@@ -280,13 +277,13 @@ fun mapFacilityToEquipmentGroupInfoList(
                 name = equipment.equipmentFields.name,
                 facilityId = equipment.equipmentFields.facilityId,
                 quantity = equipment.equipmentFields.quantity ?: 0,
-                muscleGroups = muscleGroups as List<MuscleGroup>,
+                muscleGroups = muscleGroups.filterNotNull(),
                 cleanName = equipment.equipmentFields.cleanName
             )
             muscleGroups.forEach { muscleGroup ->
                 if (equipmentGroups.containsKey(muscleGroup)) {
                     equipmentGroups[muscleGroup]?.equipmentList?.add(equipmentField)
-                } else {
+                } else if (muscleGroup != null) {
                     equipmentGroups[muscleGroup] = EquipmentGrouping(
                         equipmentType = muscleGroup,
                         equipmentList = ArrayList()
@@ -375,6 +372,17 @@ fun GymListQuery.GetAllGym.toUpliftGyms(): List<UpliftGym> {
         facility.facilityFields.facilityType.toString() == "POOL"
     }
 
+    val courtInfo = pullGymnasiumInfo()
+
+    val swimmingInfo = poolFacility.pullSwimmingInfo()
+
+    val bowlingInfo = bowlingFacility.pullBowling()
+
+    val miscellaneousInfo = pullMiscellaneous()
+
+    val hasOneFacility =
+        courtInfo.isNotEmpty() || swimmingInfo != null || bowlingInfo != null || miscellaneousInfo.isNotEmpty()
+
     val gyms = fitnessFacilities.map { facility ->
         UpliftGym(
             name = facility.pullName(gymFields.name),
@@ -387,14 +395,15 @@ fun GymListQuery.GetAllGym.toUpliftGyms(): List<UpliftGym> {
                 ?: defaultGymUrl,
             hours = pullHours(facility.facilityFields.hours?.map { it?.openHoursFields }).toTimeInterval(),
             equipmentGroupings = mapFacilityToEquipmentGroupInfoList(facility),
-            miscellaneous = pullMiscellaneous(),
-            bowlingInfo = bowlingFacility.pullBowling(),
-            swimmingInfo = poolFacility.pullSwimmingInfo(),
-            courtInfo = pullGymnasiumInfo(),
+            miscellaneous = miscellaneousInfo,
+            bowlingInfo = bowlingInfo,
+            swimmingInfo = swimmingInfo,
+            courtInfo = courtInfo,
             upliftCapacity = pullCapacity(facility),
             latitude = gymFields.latitude,
             longitude = gymFields.longitude,
-            amenities = gymFields.amenities
+            amenities = gymFields.amenities,
+            hasOneFacility = hasOneFacility
         )
     }
 

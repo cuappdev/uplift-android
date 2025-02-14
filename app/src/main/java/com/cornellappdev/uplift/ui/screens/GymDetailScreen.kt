@@ -49,11 +49,11 @@ fun GymDetailScreen(
     onBack: () -> Unit
 ) {
     val gym by gymDetailViewModel.gymFlow.collectAsState()
-    if (!gymDetailViewModel.gymIsNotNull()) return
+    if (gym == null) return
 
     val day = todayIndex()
 
-    val hasOneFacility = gym?.let { gymDetailViewModel.hasOneFacility(it) } ?: false
+    val hasOneFacility = gym?.hasOneFacility ?: false
 
 
     //tabs
@@ -122,8 +122,8 @@ fun GymDetailScreen(
                         gym = it,
                         equipmentGroupInfoList = equipmentGroupInfoList,
                     )
-                } ?: Unit
-            } ?: Unit
+                }
+            }
 
             1 -> gym?.let {
                 GymFacilitySection(
