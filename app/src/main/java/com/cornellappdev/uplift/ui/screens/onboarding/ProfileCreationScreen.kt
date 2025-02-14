@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -40,6 +41,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.cornellappdev.uplift.R
 import com.cornellappdev.uplift.util.GRAY01
 import com.cornellappdev.uplift.util.GRAY02
@@ -53,31 +55,42 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 /**
  * The profile creation page during the Uplift onboarding process.
  */
-@OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileCreationScreen() {
+fun ProfileCreationScreen(
+    navController: NavHostController,
+) {
     val systemUiController: SystemUiController = rememberSystemUiController()
     val checkboxColors: CheckboxColors =
-        CheckboxDefaults.colors(checkedColor = PRIMARY_YELLOW, checkmarkColor = Color.Black, uncheckedColor = GRAY03)
+        CheckboxDefaults.colors(
+            checkedColor = PRIMARY_YELLOW,
+            checkmarkColor = Color.Black,
+            uncheckedColor = GRAY03
+        )
 
     systemUiController.isStatusBarVisible = false
     systemUiController.isNavigationBarVisible = false // Navigation bar
     systemUiController.isSystemBarsVisible = false
 
-    Scaffold(topBar = {
-        TopAppBar(
-            title = {
-                Text(
-                    text = "Complete your profile.",
-                    modifier = Modifier.padding(vertical = 4.dp),
-                    fontSize = 24.sp,
-                    fontFamily = montserratFamily,
-                    fontWeight = FontWeight.Bold
-                )
-            },
-            modifier = Modifier.shadow(elevation = 20.dp, ambientColor = GRAY01)
-        )
-    }) { innerPadding ->
+    Scaffold(
+        containerColor = Color.White,
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        text = "Complete your profile.",
+                        modifier = Modifier.padding(vertical = 4.dp),
+                        fontSize = 24.sp,
+                        fontFamily = montserratFamily,
+                        fontWeight = FontWeight.Bold
+                    )
+                },
+                modifier = Modifier
+                    .shadow(elevation = 20.dp, ambientColor = GRAY01)
+                    .statusBarsPadding()
+
+            )
+        }) { innerPadding ->
         val checkedState = remember { mutableStateOf(false) }
         val checkedState2 = remember { mutableStateOf(false) }
         val checkedState3 = remember { mutableStateOf(false) }
@@ -120,23 +133,35 @@ fun ProfileCreationScreen() {
             Spacer(modifier = Modifier.height(25.dp))
 
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                InfoCheckboxRow(checkedState, checkboxColors, "I agree with EULA terms and agreements")
+                InfoCheckboxRow(
+                    checkedState = checkedState,
+                    checkboxColors = checkboxColors,
+                    message = "I agree with EULA terms and agreements"
+                )
 
-                InfoCheckboxRow(checkedState2, checkboxColors, "I allow Uplift to access data on my gym usage")
+                InfoCheckboxRow(
+                    checkedState = checkedState2,
+                    checkboxColors = checkboxColors,
+                    message = "I allow Uplift to access data on my gym usage"
+                )
 
-                InfoCheckboxRow(checkedState3, checkboxColors, "I allow Uplift to access my location")
+                InfoCheckboxRow(
+                    checkedState = checkedState3,
+                    checkboxColors = checkboxColors,
+                    message = "I allow Uplift to access my location"
+                )
 
             }
 
 
-                Spacer(modifier = Modifier.height(155.dp))
+            Spacer(modifier = Modifier.height(155.dp))
 
-            val animatedOpacity: Float by animateFloatAsState(if(allchecked) 1f else 0f)
+            val animatedOpacity: Float by animateFloatAsState(if (allchecked) 1f else 0f)
             val opacityModifier: Modifier = Modifier.alpha(animatedOpacity)
             ReadyToUplift(opacityModifier)
 
             Button(
-                {},
+                { navController.navigate(route = "home") },
                 enabled = allchecked,
                 colors = ButtonDefaults.buttonColors(
                     backgroundColor = PRIMARY_YELLOW,
@@ -146,12 +171,14 @@ fun ProfileCreationScreen() {
                 shape = RoundedCornerShape(38.dp),
                 modifier = Modifier.size(height = 44.dp, width = 144.dp)
             ) {
+
                 Text(
                     text = "Next",
                     fontSize = 16.sp,
                     fontFamily = montserratFamily,
                     fontWeight = FontWeight.Bold
                 )
+
             }
 
         }
