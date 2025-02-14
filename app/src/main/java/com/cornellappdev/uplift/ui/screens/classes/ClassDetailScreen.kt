@@ -1,4 +1,4 @@
-package com.cornellappdev.uplift.ui.screens
+package com.cornellappdev.uplift.ui.screens.classes
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.Crossfade
@@ -56,6 +56,7 @@ import com.cornellappdev.uplift.ui.components.classdetail.ClassFunction
 import com.cornellappdev.uplift.ui.components.classdetail.ClassPreparation
 import com.cornellappdev.uplift.ui.components.classdetail.NextUpliftClassSessions
 import com.cornellappdev.uplift.ui.components.general.FavoriteButton
+import com.cornellappdev.uplift.ui.screens.LineSpacer
 import com.cornellappdev.uplift.ui.viewmodels.ClassDetailViewModel
 import com.cornellappdev.uplift.util.GRAY01
 import com.cornellappdev.uplift.util.GRAY03
@@ -144,21 +145,6 @@ fun ClassDetailScreen(
                         )
                 }
             }
-            Icon(
-                painter = painterResource(id = R.drawable.ic_back_arrow),
-                contentDescription = null,
-                modifier = Modifier
-                    .align(
-                        Alignment.TopStart
-                    )
-                    .padding(top = 47.dp, start = 22.dp)
-                    .clickable(
-                        interactionSource = remember { MutableInteractionSource() },
-                        indication = null,
-                        onClick = onBack
-                    ),
-                tint = Color.White
-            )
 
             Box(
                 modifier = Modifier

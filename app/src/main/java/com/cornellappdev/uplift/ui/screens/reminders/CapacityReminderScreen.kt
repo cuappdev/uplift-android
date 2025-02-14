@@ -1,4 +1,4 @@
-package com.cornellappdev.uplift.ui.screens
+package com.cornellappdev.uplift.ui.screens.reminders
 
 import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedVisibility

@@ -113,24 +113,6 @@ fun GymDetailHero(
     {
         GymImage(bitmapState, scrollState, screenHeightPx, progress)
 
-        // Back Button
-        Icon(
-            painter = painterResource(id = R.drawable.ic_back_arrow),
-            contentDescription = null,
-            modifier = Modifier
-                .align(
-                    Alignment.TopStart
-                )
-                .padding(top = 47.dp, start = 22.dp)
-                .clip(RoundedCornerShape(4.dp))
-                .clickable(
-                    interactionSource = remember { MutableInteractionSource() },
-                    indication = null,
-                    onClick = onBack
-                ),
-            tint = Color.White
-        )
-
         // Favorite Button
         Box(
             modifier = Modifier

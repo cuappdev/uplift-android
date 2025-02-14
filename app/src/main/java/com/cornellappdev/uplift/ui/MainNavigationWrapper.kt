@@ -29,12 +29,12 @@ import com.cornellappdev.uplift.ui.nav.BottomNavScreens
 import com.cornellappdev.uplift.ui.nav.popBackClass
 import com.cornellappdev.uplift.ui.nav.popBackGym
 import com.cornellappdev.uplift.data.models.ApiResponse
-import com.cornellappdev.uplift.ui.screens.ClassDetailScreen
-import com.cornellappdev.uplift.ui.screens.ClassScreen
+import com.cornellappdev.uplift.ui.screens.classes.ClassDetailScreen
+import com.cornellappdev.uplift.ui.screens.classes.ClassScreen
 import com.cornellappdev.uplift.ui.screens.GymDetailScreen
 import com.cornellappdev.uplift.ui.screens.HomeScreen
-import com.cornellappdev.uplift.ui.screens.ReportIssueScreen
-import com.cornellappdev.uplift.ui.screens.ReportSubmittedScreen
+import com.cornellappdev.uplift.ui.screens.report.ReportIssueScreen
+import com.cornellappdev.uplift.ui.screens.report.ReportSubmittedScreen
 import com.cornellappdev.uplift.ui.viewmodels.ClassDetailViewModel
 import com.cornellappdev.uplift.ui.viewmodels.ClassesViewModel
 import com.cornellappdev.uplift.ui.viewmodels.GymDetailViewModel

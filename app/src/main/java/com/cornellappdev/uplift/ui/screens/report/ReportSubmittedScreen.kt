@@ -1,4 +1,4 @@
-package com.cornellappdev.uplift.ui.screens
+package com.cornellappdev.uplift.ui.screens.report
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
