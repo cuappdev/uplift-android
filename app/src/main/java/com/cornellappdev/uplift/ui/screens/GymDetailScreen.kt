@@ -53,12 +53,9 @@ fun GymDetailScreen(
 
     val day = todayIndex()
 
-    val hasOneFacility = gym?.hasOneFacility ?: false
-
-
     //tabs
     var tabIndex by remember { mutableIntStateOf(0) }
-    val tabs = if (hasOneFacility) {
+    val tabs = if (gym?.hasOneFacility == true) {
         listOf("Fitness Center", "Facilities")
     } else {
         listOf("Fitness Center")

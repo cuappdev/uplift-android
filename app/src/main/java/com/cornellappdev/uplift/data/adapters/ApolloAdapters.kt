@@ -280,10 +280,10 @@ fun mapFacilityToEquipmentGroupInfoList(
                 muscleGroups = muscleGroups.filterNotNull(),
                 cleanName = equipment.equipmentFields.cleanName
             )
-            muscleGroups.forEach { muscleGroup ->
+            muscleGroups.filterNotNull().forEach { muscleGroup ->
                 if (equipmentGroups.containsKey(muscleGroup)) {
                     equipmentGroups[muscleGroup]?.equipmentList?.add(equipmentField)
-                } else if (muscleGroup != null) {
+                } else {
                     equipmentGroups[muscleGroup] = EquipmentGrouping(
                         equipmentType = muscleGroup,
                         equipmentList = ArrayList()
