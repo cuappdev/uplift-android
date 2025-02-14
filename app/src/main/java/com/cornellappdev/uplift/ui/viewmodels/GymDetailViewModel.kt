@@ -54,6 +54,7 @@ class GymDetailViewModel @Inject constructor(
                                 && it.date.sameDayAs(GregorianCalendar())
                                 && it.time.end.compareTo(getSystemTime()) >= 0
                     }.sortedWith(startTimeComparator)
+
             }
         }.stateIn(
             CoroutineScope(Dispatchers.Main),
@@ -76,5 +77,9 @@ class GymDetailViewModel @Inject constructor(
         stack.pop()
         if (stack.isNotEmpty())
             _gymFlow.value = stack.peek()
+    }
+
+    fun reload() {
+        upliftApiRepository.reload()
     }
 }

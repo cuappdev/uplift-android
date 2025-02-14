@@ -5,23 +5,29 @@ import com.cornellappdev.uplift.ClassListQuery
 import com.cornellappdev.uplift.GymListQuery
 import com.cornellappdev.uplift.fragment.GymFields
 import com.cornellappdev.uplift.fragment.OpenHoursFields
-import com.cornellappdev.uplift.data.models.BowlingInfo
-import com.cornellappdev.uplift.data.models.CourtFacility
-import com.cornellappdev.uplift.data.models.CourtTime
-import com.cornellappdev.uplift.data.models.EquipmentField
-import com.cornellappdev.uplift.data.models.EquipmentGrouping
-import com.cornellappdev.uplift.data.models.PopularTimes
-import com.cornellappdev.uplift.data.models.SwimmingInfo
-import com.cornellappdev.uplift.data.models.SwimmingTime
-import com.cornellappdev.uplift.data.models.TimeInterval
-import com.cornellappdev.uplift.data.models.TimeOfDay
+import com.cornellappdev.uplift.data.models.gymdetail.BowlingInfo
+import com.cornellappdev.uplift.data.models.gymdetail.CourtFacility
+import com.cornellappdev.uplift.data.models.gymdetail.CourtTime
+import com.cornellappdev.uplift.data.models.gymdetail.EquipmentField
+import com.cornellappdev.uplift.data.models.gymdetail.EquipmentGrouping
+import com.cornellappdev.uplift.data.models.gymdetail.PopularTimes
+import com.cornellappdev.uplift.data.models.gymdetail.SwimmingInfo
+import com.cornellappdev.uplift.data.models.gymdetail.SwimmingTime
+import com.cornellappdev.uplift.data.models.gymdetail.TimeInterval
+import com.cornellappdev.uplift.data.models.gymdetail.TimeOfDay
 import com.cornellappdev.uplift.data.models.UpliftCapacity
 import com.cornellappdev.uplift.data.models.UpliftClass
 import com.cornellappdev.uplift.data.models.UpliftGym
+import com.cornellappdev.uplift.data.models.gymdetail.EquipmentCategory
+import com.cornellappdev.uplift.data.models.gymdetail.EquipmentInfo
+import com.cornellappdev.uplift.data.models.gymdetail.GymEquipmentGroupInfo
 import com.cornellappdev.uplift.type.MuscleGroup
 import com.cornellappdev.uplift.util.asTimeOfDay
 import com.cornellappdev.uplift.util.defaultClassUrl
 import com.cornellappdev.uplift.util.defaultGymUrl
+import com.cornellappdev.uplift.util.gymdetail.defaultMuscleIconId
+import com.cornellappdev.uplift.util.gymdetail.majorMuscleToImageId
+import com.cornellappdev.uplift.util.gymdetail.majorToSubGroupMap
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -30,7 +36,7 @@ import java.util.Locale
 /**
  * Returns the popular times list representation for this gym query.
  */
-fun GymListQuery.GetAllGym.pullPopularTimes(
+fun pullPopularTimes(
     facilityIn: GymFields.Facility?
 ): List<PopularTimes> {
     // TODO: Change to pull actual popular times info when backend adds that.
@@ -76,7 +82,7 @@ fun GymListQuery.GetAllGym.pullGymnasiumInfo(): List<CourtFacility> {
 /**
  * Returns the miscellaneous details for this gym query.
  */
-fun GymListQuery.GetAllGym.pullMiscellaneous(): List<String> {
+fun pullMiscellaneous(): List<String> {
     // TODO: Change to pull actual miscellaneous info when backend adds that.
     return listOf()
 }
@@ -205,7 +211,7 @@ fun pullHours(
 /**
  * Returns the capacity at the given gym query.
  */
-fun GymListQuery.GetAllGym.pullCapacity(
+fun pullCapacity(
     facilityIn: GymFields.Facility?
 ): UpliftCapacity? {
     // If fitness facility doesn't exist (...it always should...), return.
@@ -230,43 +236,65 @@ fun GymListQuery.GetAllGym.pullCapacity(
     )
 }
 
+/**
+ * Returns a list of [GymEquipmentGroupInfo]s based on the [equipmentGroupingMap].
+ * @param equipmentGroupingMap a map of [MuscleGroup] to [EquipmentGrouping]
+ * see [EquipmentCategory] for more info about the type of subGroupEquipmentsPairList
+ * @return a list of [GymEquipmentGroupInfo]s
+ */
+private fun getEquipmentGroupInfoList(
+    equipmentGroupingMap: HashMap<MuscleGroup, EquipmentGrouping>,
+): List<GymEquipmentGroupInfo> {
+    return majorToSubGroupMap.map { (majorGroup, subGroups) ->
+        val subGroupEquipmentsPairList = subGroups.map { subGroup ->
+            val equipmentList =
+                equipmentGroupingMap[MuscleGroup.valueOf(subGroup.uppercase())]?.equipmentList
+            val equipmentInfoList =
+                equipmentList?.map { EquipmentInfo(it.name, it.quantity) } ?: emptyList()
+            EquipmentCategory(subGroup, equipmentInfoList)
+        }
+        GymEquipmentGroupInfo(
+            majorGroup,
+            majorMuscleToImageId[majorGroup] ?: defaultMuscleIconId,
+            subGroupEquipmentsPairList
+        )
+    }
+}
+
 /** Returns the equipment groupings for the given fitness facility. */
-fun GymListQuery.GetAllGym.pullEquipmentGroupings(
+fun mapFacilityToEquipmentGroupInfoList(
     facilityIn: GymFields.Facility?
-): List<EquipmentGrouping> {
-    // TODO: Change to parse equipment grouping info when backend adds that.
-
-    val facility = facilityIn ?: return listOf()
-
-
-    val equipments = facilityIn.facilityFields.equipment ?: return listOf()
+): List<GymEquipmentGroupInfo> {
+    val equipments = facilityIn?.facilityFields?.equipment ?: return listOf()
 
     val equipmentGroups = HashMap<MuscleGroup, EquipmentGrouping>()
-    /* TODO: Update Equipment Logic to match new schema */
-//    equipments.forEach { equipment ->
-//        if (equipment != null) {
-//            val equipType = equipment.equipmentFields.equipmentType
-//            val equipmentF = EquipmentField(
-//                id = equipment.equipmentFields.id,
-//                accessibility = equipment.equipmentFields.accessibility,
-//                name = equipment.equipmentFields.name,
-//                facilityId = equipment.equipmentFields.facilityId,
-//                quantity = equipment.equipmentFields.quantity ?: 0,
-//            )
-//
-//            if (equipmentGroups.containsKey(equipType)) {
-//                equipmentGroups[equipType]?.equipmentList?.add(equipmentF)
-//            } else {
-//                equipmentGroups[equipType] = EquipmentGrouping(
-//                    equipmentType = equipType,
-//                    equipmentList = ArrayList<EquipmentField>()
-//                )
-//                equipmentGroups[equipType]?.equipmentList?.add(equipmentF)
-//            }
-//        }
-//    }
+    equipments.forEach { equipment ->
+        if (equipment != null) {
+            val muscleGroups = equipment.equipmentFields.muscleGroups
+            val equipmentField = EquipmentField(
+                id = equipment.equipmentFields.id,
+                accessibility = equipment.equipmentFields.accessibility,
+                name = equipment.equipmentFields.name,
+                facilityId = equipment.equipmentFields.facilityId,
+                quantity = equipment.equipmentFields.quantity ?: 0,
+                muscleGroups = muscleGroups.filterNotNull(),
+                cleanName = equipment.equipmentFields.cleanName
+            )
+            muscleGroups.filterNotNull().forEach { muscleGroup ->
+                if (equipmentGroups.containsKey(muscleGroup)) {
+                    equipmentGroups[muscleGroup]?.equipmentList?.add(equipmentField)
+                } else {
+                    equipmentGroups[muscleGroup] = EquipmentGrouping(
+                        equipmentType = muscleGroup,
+                        equipmentList = ArrayList()
+                    )
+                    equipmentGroups[muscleGroup]?.equipmentList?.add(equipmentField)
+                }
+            }
+        }
+    }
 
-    return equipmentGroups.values.toList()
+    return getEquipmentGroupInfoList(equipmentGroups)
 }
 
 /**
@@ -296,6 +324,7 @@ fun parseCalendar(dateString: String): Calendar {
 
     return cal
 }
+
 fun ClassListQuery.Class.toUpliftClass(imageUrl: String = defaultClassUrl): UpliftClass? {
     try {
         val start = parseCalendar(startTime.toString())
@@ -343,6 +372,17 @@ fun GymListQuery.GetAllGym.toUpliftGyms(): List<UpliftGym> {
         facility.facilityFields.facilityType.toString() == "POOL"
     }
 
+    val courtInfo = pullGymnasiumInfo()
+
+    val swimmingInfo = poolFacility.pullSwimmingInfo()
+
+    val bowlingInfo = bowlingFacility.pullBowling()
+
+    val miscellaneousInfo = pullMiscellaneous()
+
+    val hasOneFacility =
+        courtInfo.isNotEmpty() || swimmingInfo != null || bowlingInfo != null || miscellaneousInfo.isNotEmpty()
+
     val gyms = fitnessFacilities.map { facility ->
         UpliftGym(
             name = facility.pullName(gymFields.name),
@@ -354,15 +394,16 @@ fun GymListQuery.GetAllGym.toUpliftGyms(): List<UpliftGym> {
                 ?.replace("toni-morrison-outside", "toni_morrison_outside")
                 ?: defaultGymUrl,
             hours = pullHours(facility.facilityFields.hours?.map { it?.openHoursFields }).toTimeInterval(),
-            equipmentGroupings = pullEquipmentGroupings(facility),
-            miscellaneous = pullMiscellaneous(),
-            bowlingInfo = bowlingFacility.pullBowling(),
-            swimmingInfo = poolFacility.pullSwimmingInfo(),
-            courtInfo = pullGymnasiumInfo(),
+            equipmentGroupings = mapFacilityToEquipmentGroupInfoList(facility),
+            miscellaneous = miscellaneousInfo,
+            bowlingInfo = bowlingInfo,
+            swimmingInfo = swimmingInfo,
+            courtInfo = courtInfo,
             upliftCapacity = pullCapacity(facility),
             latitude = gymFields.latitude,
             longitude = gymFields.longitude,
-            amenities = gymFields.amenities
+            amenities = gymFields.amenities,
+            hasOneFacility = hasOneFacility
         )
     }
 

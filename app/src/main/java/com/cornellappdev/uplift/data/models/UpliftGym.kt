@@ -4,6 +4,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import com.cornellappdev.uplift.data.models.gymdetail.BowlingInfo
+import com.cornellappdev.uplift.data.models.gymdetail.CourtFacility
+import com.cornellappdev.uplift.data.models.gymdetail.GymEquipmentGroupInfo
+import com.cornellappdev.uplift.data.models.gymdetail.PopularTimes
+import com.cornellappdev.uplift.data.models.gymdetail.SwimmingInfo
+import com.cornellappdev.uplift.data.models.gymdetail.TimeInterval
+import com.cornellappdev.uplift.data.models.gymdetail.TimeOfDay
 import com.cornellappdev.uplift.datastoreRepository
 import com.cornellappdev.uplift.data.repositories.LocationRepository
 import com.cornellappdev.uplift.fragment.GymFields
@@ -43,7 +50,7 @@ data class UpliftGym(
      */
     val popularTimes: List<PopularTimes>,
 
-    val equipmentGroupings: List<EquipmentGrouping>,
+    val equipmentGroupings: List<GymEquipmentGroupInfo>,
 
     /** A list of courts at this fitness center. */
     val courtInfo: List<CourtFacility>,
@@ -68,6 +75,7 @@ data class UpliftGym(
     val latitude: Double,
     val longitude: Double,
     val amenities: List<GymFields.Amenity?>?,
+    val hasOneFacility: Boolean
 ) {
     /**
      * Returns a boolean indicating whether this gym is favorited or not. Safe for recomposition.
@@ -119,7 +127,7 @@ data class UpliftCapacity(
 
     /**
      * Returns a string representing the time at which this capacity was last updated.
-     * Of the form `"Updated: HH:MM AM"`
+     * Of the form `"HH:MM AM"`
      */
     fun updatedString(): String {
         val timeOfDay = TimeOfDay(
@@ -127,6 +135,6 @@ data class UpliftCapacity(
             minute = updated.get(Calendar.MINUTE),
             isAM = updated.get(Calendar.AM_PM) == Calendar.AM
         )
-        return "Updated: $timeOfDay"
+        return "$timeOfDay".replace(" ", "")
     }
 }

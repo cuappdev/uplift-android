@@ -1,4 +1,4 @@
-package com.cornellappdev.uplift.data.models
+package com.cornellappdev.uplift.data.models.gymdetail
 
 import com.cornellappdev.uplift.type.AccessibilityType
 import com.cornellappdev.uplift.type.MuscleGroup
@@ -45,20 +45,17 @@ data class BowlingInfo(
     val shoeRental: String
 )
 
-/* TODO: Update Equipment Field to match new schema */
-/** An [EquipmentField] is all of the equipment that exist at a gym facility */
+/** An [EquipmentField] is the representation for an equipment and all of its fields */
 data class EquipmentField(
-    /** The title of this equipment grouping. (e.g. "Cardio Machines") */
-    val id : String,
+    val id: String,
     val accessibility: AccessibilityType?,
     val name: String,
     val facilityId: Int,
     val quantity: Int,
     val muscleGroups: List<MuscleGroup>,
-    val cleanName : String
+    val cleanName: String
 )
 
-/* TODO: Update EquipmentGrouping to match new schema */
 /** An [EquipmentGrouping] is a grouping of one or more pieces of gym equipment under a particular
  * category. [UpliftGym] objects may have multiple [EquipmentGrouping]s to specify all the equipment
  * they carry. */

@@ -6,9 +6,10 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Text
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -30,7 +31,7 @@ import com.cornellappdev.uplift.util.montserratFamily
  */
 @Composable
 fun GymSwimmingSection(today: Int, gym: UpliftGym) {
-    var selectedDay by remember { mutableStateOf(today) }
+    var selectedDay by remember { mutableIntStateOf(today) }
     val swimmingInfo = gym.swimmingInfo?.get(selectedDay)
 
     DayOfWeekSelector(today = today) { day ->

@@ -2,7 +2,6 @@ package com.cornellappdev.uplift.data.repositories
 
 import android.util.Log
 import com.apollographql.apollo3.ApolloClient
-import com.cornellappdev.uplift.BuildConfig
 import com.cornellappdev.uplift.ClassListQuery
 import com.cornellappdev.uplift.GymListQuery
 import com.cornellappdev.uplift.data.models.UpliftClass

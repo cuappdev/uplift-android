@@ -166,8 +166,6 @@ fun MainNavigationWrapper(
             composable<UpliftRootRoute.GymDetail> {
                 GymDetailScreen(
                     gymDetailViewModel = gymDetailViewModel,
-                    navController = navController,
-                    classDetailViewModel = classDetailViewModel
                 ) {
                     navController.popBackGym(gymDetailViewModel)
                 }

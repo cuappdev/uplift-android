@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Text
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,12 +21,13 @@ import com.cornellappdev.uplift.util.montserratFamily
 
 /**
  * The Gym Detail's Capacity section.
+ * @param closed whether the gym is closed
+ * @param capacity the gym's capacity (see [UpliftCapacity])
  */
 @Composable
 fun GymCapacitiesSection(closed: Boolean, capacity: UpliftCapacity?) {
     Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
         Spacer(modifier = Modifier.height(14.dp))
-        // Title
         Text(
             text = "CAPACITY",
             fontFamily = montserratFamily,
