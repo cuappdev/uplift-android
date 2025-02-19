@@ -2,14 +2,21 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id "com.apollographql.apollo3" version "3.8.2"
+    id 'com.google.gms.google-services'
+    id 'kotlin-kapt'
     id("com.google.devtools.ksp") // Use KSP instead of kapt for now to avoid kapt stub build error
     id("com.google.dagger.hilt.android")
     id 'org.jetbrains.kotlin.plugin.serialization' version '2.0.20'
-    id("org.jetbrains.kotlin.plugin.compose") version "2.0.0"
+    id("org.jetbrains.kotlin.plugin.compose") version "2.0.10"
 }
 def secretsPropertiesFile = rootProject.file('secrets.properties')
 def secretsProperties = new Properties()
 secretsProperties.load(new FileInputStream(secretsPropertiesFile))
+//if (secretsPropertiesFile.exists()) {
+//    secrets.load(new FileInputStream(secretsPropertiesFile))
+//} else {
+//    throw new FileNotFoundException("Missing secrets.properties file. Please add it to the root directory.")
+//}
 
 android {
     namespace 'com.cornellappdev.uplift'
@@ -31,14 +38,19 @@ android {
     }
 
     buildTypes {
-        debug {
-            buildConfigField("String", "BACKEND_URL", secretsProperties['DEV_ENDPOINT'])
-        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.debug
+            buildConfigField("String", "GOOGLE_AUTH_CLIENT_ID", secretsProperties["GOOGLE_AUTH_CLIENT_ID"])
             buildConfigField("String", "BACKEND_URL", secretsProperties['PROD_ENDPOINT'])
+        }
+        debug {
+            buildConfigField("String", "BACKEND_URL", secretsProperties['DEV_ENDPOINT'])
+            buildConfigField(
+                    "String",
+                    "GOOGLE_AUTH_CLIENT_ID", secretsProperties["GOOGLE_AUTH_CLIENT_ID_LOCAL"]
+            )
+            signingConfig signingConfigs.debug
         }
     }
     compileOptions {
@@ -64,21 +76,28 @@ android {
 }
 
 dependencies {
+    implementation 'com.google.android.gms:play-services-location:21.3.0'
     implementation 'androidx.datastore:datastore-preferences:1.1.2'
+    implementation 'androidx.activity:activity-compose:1.10.0'
+    implementation "androidx.compose.ui:ui:$compose_ui_version"
+    implementation "androidx.compose.ui:ui-tooling-preview:$compose_ui_version"
+    implementation 'com.google.android.gms:play-services-auth:21.3.0'
+    implementation 'com.google.firebase:firebase-auth-ktx:23.2.0'
+    implementation 'com.google.firebase:firebase-firestore-ktx:25.1.2'
+    implementation 'com.google.firebase:firebase-messaging-ktx:24.1.0'
     implementation 'androidx.core:core-ktx:1.15.0'
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.8.7'
     implementation 'androidx.activity:activity-compose:1.10.0'
     implementation "androidx.compose.ui:ui:$compose_ui_version"
     implementation "androidx.compose.ui:ui-tooling-preview:$compose_ui_version"
     implementation 'androidx.compose.material:material:1.7.8'
-    implementation 'androidx.compose.material3:material3-android:1.3.1'
-    implementation 'androidx.core:core-ktx:1.15.0'
+    implementation('androidx.compose.material3:material3-android:1.3.1')
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.2.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_ui_version"
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_ui_version"
-    debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_ui_version"
+    debugImplementation "androidx.compose.ui:ui-test-manifest:1.7.8"
     implementation "io.coil-kt:coil-compose:2.2.2"
     implementation "androidx.navigation:navigation-compose:2.8.7"
     implementation "com.google.accompanist:accompanist-systemuicontroller:0.28.0"
@@ -93,7 +112,6 @@ dependencies {
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
 
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3"
-
 }
 
 apollo {

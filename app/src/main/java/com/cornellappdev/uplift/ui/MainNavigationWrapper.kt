@@ -100,7 +100,7 @@ fun MainNavigationWrapper(
         }
     }
 
-
+    //TODO() : Once Google Sign In is fully implemented, make sure BottomNavBar not visible until user signs in
     Scaffold(bottomBar = {
         if (gymsState is ApiResponse.Success) BottomNavigation(
             backgroundColor = PRIMARY_YELLOW, contentColor = PRIMARY_BLACK, elevation = 1.dp
@@ -151,7 +151,7 @@ fun MainNavigationWrapper(
     }) {
         NavHost(
             navController = navController,
-            startDestination = UpliftRootRoute.Home,
+            startDestination = UpliftRootRoute.Onboarding,
             modifier = Modifier.padding(it)
         ) {
             composable<UpliftRootRoute.Home> {
@@ -197,10 +197,10 @@ fun MainNavigationWrapper(
                 )
             }
             composable<UpliftRootRoute.Onboarding> {
-              SignInPromptScreen(navController = navController)
+                SignInPromptScreen()
             }
             composable<UpliftRootRoute.ProfileCreation> {
-              ProfileCreationScreen(navController = navController)
+                ProfileCreationScreen(navController = navController)
             }
             composable<UpliftRootRoute.ReportSuccess> {
                 ReportSubmittedScreen(
@@ -221,10 +221,10 @@ sealed class UpliftRootRoute {
 
     @Serializable
     data object GymDetail : UpliftRootRoute()
-    
+
     @Serializable
     data object Onboarding : UpliftRootRoute()
-    
+
     @Serializable
     data object ProfileCreation : UpliftRootRoute()
 
