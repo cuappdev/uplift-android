@@ -1,7 +1,5 @@
 package com.cornellappdev.uplift.ui.screens
 
-import android.graphics.drawable.ShapeDrawable
-import android.graphics.drawable.VectorDrawable
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -11,28 +9,23 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
-import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CardElevation
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -40,19 +33,14 @@ import androidx.compose.ui.unit.sp
 import com.cornellappdev.uplift.R
 import com.cornellappdev.uplift.ui.viewmodels.LoginViewModel
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.cornellappdev.uplift.networking.UpliftAuthRepository
 import com.cornellappdev.uplift.util.GRAY01
-import com.cornellappdev.uplift.util.GRAY02
 import com.cornellappdev.uplift.util.GRAY04
 import com.cornellappdev.uplift.util.LIGHT_YELLOW
 import com.cornellappdev.uplift.util.PRIMARY_YELLOW
-import com.cornellappdev.uplift.util.PRIMARY_YELLOW_BACKGROUND
 import com.cornellappdev.uplift.util.montserratFamily
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.systemuicontroller.SystemUiController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
-@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun SignInPromptScreen(
     loginViewModel: LoginViewModel = hiltViewModel()
@@ -109,23 +97,26 @@ fun SignInPromptScreen(
             UpliftUsesCardList()
 
             Spacer(modifier = Modifier.height(125.dp))
-            SigninButton(onClick = {
-                resultLauncher.launch(loginViewModel.getSignInClient().signInIntent)
+            SignInButton(
+                onClick = {
+                    resultLauncher.launch(loginViewModel.getSignInClient().signInIntent)
 
-            })
-
-
+                },
+                nextOnClick = {}
+            )
         }
     }
 }
 
 @Composable
-private fun SigninButton(onClick: () -> Unit) {
+private fun SignInButton(onClick: () -> Unit, nextOnClick: () -> Unit) {
     Button(
         onClick = onClick,
         elevation = ButtonDefaults.elevation(5.dp),
         colors = ButtonDefaults.buttonColors(backgroundColor = PRIMARY_YELLOW)
     ) {
+        //TODO - this should trigger the sign in call to backend; for now it moves on to profile
+        // creation as if the sign in was successful
         Text(
             "Log in",
             fontSize = 16.sp,
@@ -135,13 +126,17 @@ private fun SigninButton(onClick: () -> Unit) {
     }
 
     Spacer(modifier = Modifier.height(12.dp))
-    Text(
-        "Skip",
-        fontSize = 14.sp,
-        fontFamily = montserratFamily,
-        fontWeight = FontWeight.Normal,
-        color = GRAY04
-    )
+    TextButton(
+        onClick = nextOnClick
+    ) {
+        Text(
+            "Skip",
+            fontSize = 14.sp,
+            fontFamily = montserratFamily,
+            fontWeight = FontWeight.Normal,
+            color = GRAY04
+        )
+    }
 }
 
 @Composable

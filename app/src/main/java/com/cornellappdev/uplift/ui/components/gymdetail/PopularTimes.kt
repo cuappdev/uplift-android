@@ -1,4 +1,4 @@
-package com.cornellappdev.uplift.ui.components
+package com.cornellappdev.uplift.ui.components.gymdetail
 
 import androidx.compose.animation.core.CubicBezierEasing
 import androidx.compose.animation.core.animateFloatAsState
@@ -6,22 +6,26 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -32,9 +36,11 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.cornellappdev.uplift.models.PopularTimes
+import com.cornellappdev.uplift.data.models.gymdetail.PopularTimes
+import com.cornellappdev.uplift.data.models.gymdetail.TimeOfDay
 import com.cornellappdev.uplift.util.GRAY01
 import com.cornellappdev.uplift.util.GRAY03
 import com.cornellappdev.uplift.util.GRAY04
@@ -56,13 +62,30 @@ fun PopularTimesSection(popularTimes: PopularTimes) {
         animationSpec = tween(durationMillis = 1000)
     )
 
-    LaunchedEffect(true) {
-        startAnimation = true
-    }
-
     val barHeight = 90f
-    var selectedPopularTime by remember { mutableStateOf(-1) }
-    var lastSelectedPopularTime by remember { mutableStateOf(-1) }
+    var selectedPopularTime by remember { mutableIntStateOf(-1) }
+    var lastSelectedPopularTime by remember { mutableIntStateOf(-1) }
+
+    LaunchedEffect(Unit) {
+        startAnimation = true
+        // Get the current time
+        val currentTime = java.util.Calendar.getInstance()
+        val currentHour = currentTime.get(java.util.Calendar.HOUR_OF_DAY)
+        val currentMinute = currentTime.get(java.util.Calendar.MINUTE)
+
+        // Calculate the index of the bar that corresponds to the current time
+        val startTime = popularTimes.startTime
+        val startHour = if (startTime.isAM) startTime.hour else startTime.hour + 12
+        val totalStartMinutes = startHour * 60 + startTime.minute
+        val totalCurrentMinutes = currentHour * 60 + currentMinute
+        val index = (totalCurrentMinutes - totalStartMinutes) / 60
+
+        // Set the selectedPopularTime to this index if it's within the range
+        if (index in popularTimes.busyList.indices) {
+            selectedPopularTime = index
+            lastSelectedPopularTime = index
+        }
+    }
 
     val animatedOpacity by animateFloatAsState(
         targetValue = if (selectedPopularTime < 0) 0f else 1f
@@ -74,7 +97,7 @@ fun PopularTimesSection(popularTimes: PopularTimes) {
                 .coerceIn(.001f, .999f),
         tween(100, easing = CubicBezierEasing(0f, 0.0f, 0.2f, 1.0f))
     )
-    var lastLeftRatio by remember { mutableStateOf(.5f) }
+    var lastLeftRatio by remember { mutableFloatStateOf(.5f) }
     val animatedLeftRatio =
         if (selectedPopularTime >= 0) animatedLeftRatioState.value else lastLeftRatio
 
@@ -96,15 +119,14 @@ fun PopularTimesSection(popularTimes: PopularTimes) {
     ) {
         // Title
         Text(
-            text = "POPULAR TIMES",
+            text = "Popular Times",
             fontFamily = montserratFamily,
             fontSize = 16.sp,
             fontWeight = FontWeight(700),
-            lineHeight = 19.5.sp,
+            lineHeight = 20.sp,
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 32.dp),
-            textAlign = TextAlign.Center,
+                .fillMaxWidth(),
+            textAlign = TextAlign.Start,
             color = PRIMARY_BLACK
         )
 
@@ -156,12 +178,11 @@ fun PopularTimesSection(popularTimes: PopularTimes) {
         modifier = Modifier
             .fillMaxWidth()
             .background(Color.White)
-            .padding(horizontal = 18.dp)
     ) {
         Row(
             verticalAlignment = Alignment.Bottom,
             modifier = Modifier
-                .height(100.dp)
+                .height(80.dp)
 
         ) {
             for ((i, popularTime) in popularTimes.busyList.withIndex()) {
@@ -213,6 +234,20 @@ fun PopularTimesSection(popularTimes: PopularTimes) {
                                 .background(GRAY01)
                                 .align(Alignment.BottomEnd)
                         )
+                    if (i % 3 == 0) {
+                        val time =
+                            popularTimes.startTime.getTimeLater(deltaMinutes = 0, deltaHours = i)
+                        Text(
+                            text = "${if (time.hour == 0) 12 else time.hour}${if (time.isAM) "a" else "p"}",
+                            fontFamily = montserratFamily,
+                            fontSize = 9.5.sp,
+                            fontWeight = FontWeight(600),
+                            color = PRIMARY_BLACK,
+                            modifier = Modifier
+                                .align(Alignment.BottomCenter)
+                                .offset(y = 24.dp)
+                        )
+                    }
                 }
             }
         }
@@ -224,4 +259,48 @@ fun PopularTimesSection(popularTimes: PopularTimes) {
         )
         Spacer(modifier = Modifier.height(26.dp))
     }
+}
+
+/**
+ * Preview for [PopularTimesSection].
+ * Make sure to click "Start Interactive Mode" when previewing to see bars
+ */
+@Preview(showBackground = true)
+@Composable
+fun PopularTimesSectionPreview() {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        PopularTimesSection(
+            popularTimes = PopularTimes(
+                busyList = listOf(
+                    20,
+                    30,
+                    40,
+                    50,
+                    50,
+                    45,
+                    35,
+                    40,
+                    50,
+                    70,
+                    80,
+                    90,
+                    95,
+                    85,
+                    70,
+                    65,
+                    20
+                ),
+                startTime = TimeOfDay(
+                    hour = 6,
+                    minute = 0,
+                    isAM = true
+                )
+            )
+        )
+    }
+
 }

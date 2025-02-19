@@ -10,8 +10,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -25,8 +25,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cornellappdev.uplift.R
-import com.cornellappdev.uplift.models.CourtFacility
-import com.cornellappdev.uplift.models.TimeInterval
+import com.cornellappdev.uplift.data.models.gymdetail.CourtFacility
+import com.cornellappdev.uplift.data.models.gymdetail.TimeInterval
 import com.cornellappdev.uplift.ui.components.gymdetail.TimeFlag
 import com.cornellappdev.uplift.util.ACCENT_CLOSED
 import com.cornellappdev.uplift.util.PRIMARY_BLACK

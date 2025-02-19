@@ -2,17 +2,16 @@ package com.cornellappdev.uplift.util
 
 import androidx.compose.runtime.mutableStateListOf
 import com.cornellappdev.uplift.R
-import com.cornellappdev.uplift.models.BowlingInfo
-import com.cornellappdev.uplift.models.EquipmentGrouping
-import com.cornellappdev.uplift.models.PopularTimes
-import com.cornellappdev.uplift.models.Sport
-import com.cornellappdev.uplift.models.SwimmingInfo
-import com.cornellappdev.uplift.models.SwimmingTime
-import com.cornellappdev.uplift.models.TimeInterval
-import com.cornellappdev.uplift.models.TimeOfDay
-import com.cornellappdev.uplift.models.UpliftCapacity
-import com.cornellappdev.uplift.models.UpliftClass
-import com.cornellappdev.uplift.models.UpliftGym
+import com.cornellappdev.uplift.data.models.gymdetail.BowlingInfo
+import com.cornellappdev.uplift.data.models.gymdetail.PopularTimes
+import com.cornellappdev.uplift.data.models.gymdetail.Sport
+import com.cornellappdev.uplift.data.models.gymdetail.SwimmingInfo
+import com.cornellappdev.uplift.data.models.gymdetail.SwimmingTime
+import com.cornellappdev.uplift.data.models.gymdetail.TimeInterval
+import com.cornellappdev.uplift.data.models.gymdetail.TimeOfDay
+import com.cornellappdev.uplift.data.models.UpliftCapacity
+import com.cornellappdev.uplift.data.models.UpliftClass
+import com.cornellappdev.uplift.data.models.UpliftGym
 import java.util.Calendar
 import java.util.GregorianCalendar
 
@@ -304,33 +303,7 @@ val testMorrison = UpliftGym(
         )
     },
     courtInfo = listOf(),
-    equipmentGroupings = listOf(
-//        EquipmentGrouping(
-//            "Cardio Machines",
-//            listOf(
-//                Pair("Precor treadmills", 10),
-//                Pair("Elliptical trainers", 12),
-//                Pair("AMTs", 4),
-//                Pair("Expresso bikes", 5),
-//                Pair("Recumbent and upright bikes", 3),
-//            )
-//        ),
-//        EquipmentGrouping(
-//            "Precor Selectorized Machines",
-//            listOf(
-//                Pair("Leg Press", 10),
-//                Pair("Seated Calf Raises", 12),
-//                Pair("Seated Leg Curl", 4),
-//                Pair("Leg Extensions", 5),
-//                Pair("Inner/Outer ttwtf is this", 3),
-//                Pair("Glute Extensions", 3),
-//                Pair("Converging Sus Machine", 3),
-//                Pair("Converging Chin Definer", 3),
-//                Pair("Dip/Chin Assistance", 3),
-//                Pair("Rear Deltoid Pulldowns", 3),
-//            )
-//        )
-    ),
+    equipmentGroupings = listOf(),
     swimmingInfo = listOf(
         SwimmingInfo(swimmingTimes = exampleSwimmingList1),
         null,
@@ -354,7 +327,8 @@ val testMorrison = UpliftGym(
     latitude = 5.0,
     longitude = 5.0,
     facilityId = "3",
-    amenities = listOf()
+    amenities = listOf(),
+    hasOneFacility = false
 )
 
 val sports: List<Sport> = listOf(

@@ -20,6 +20,11 @@ type Query {
   getWorkoutsById(id: Int): [Workout]
 
   activities: [Activity]
+
+  """
+  Get all reports.
+  """
+  getAllReports: [Report]
 }
 
 type Gym {
@@ -156,7 +161,9 @@ type Equipment {
 
   name: String!
 
-  equipmentType: EquipmentType!
+  muscleGroups: [MuscleGroup]!
+
+  cleanName: String!
 
   facilityId: Int!
 
@@ -168,20 +175,30 @@ type Equipment {
 """
 An enumeration.
 """
-enum EquipmentType {
-  CARDIO
+enum MuscleGroup {
+  ABDOMINALS
 
-  RACKS_AND_BENCHES
+  CHEST
 
-  SELECTORIZED
+  BACK
 
-  MULTI_CABLE
+  SHOULDERS
 
-  FREE_WEIGHTS
+  BICEPS
+
+  TRICEPS
+
+  HAMSTRINGS
+
+  QUADS
+
+  GLUTES
+
+  CALVES
 
   MISCELLANEOUS
 
-  PLATE_LOADED
+  CARDIO
 }
 
 """
@@ -299,7 +316,7 @@ enum ReportType {
 type User {
   id: ID!
 
-  email: String!
+  email: String
 
   netId: String!
 

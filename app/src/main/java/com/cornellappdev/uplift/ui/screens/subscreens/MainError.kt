@@ -19,13 +19,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cornellappdev.uplift.R
-import com.cornellappdev.uplift.networking.UpliftApiRepository
 import com.cornellappdev.uplift.util.PRIMARY_BLACK
 import com.cornellappdev.uplift.util.PRIMARY_YELLOW
 import com.cornellappdev.uplift.util.montserratFamily
 
 @Composable
-fun MainError() {
+fun MainError(
+    reload: () -> Unit
+) {
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
@@ -59,7 +60,7 @@ fun MainError() {
 
         Button(
             shape = RoundedCornerShape(24.dp),
-            onClick = { UpliftApiRepository.reload() },
+            onClick = reload,
             colors = ButtonDefaults.buttonColors(backgroundColor = PRIMARY_YELLOW),
             elevation = ButtonDefaults.elevation(0.dp)
         ) {

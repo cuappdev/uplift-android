@@ -8,10 +8,10 @@ import androidx.activity.result.ActivityResult
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.cornellappdev.uplift.networking.FireStoreRepository
-import com.cornellappdev.uplift.networking.FirebaseAuthRepository
-import com.cornellappdev.uplift.networking.GoogleAuthRepository
-import com.cornellappdev.uplift.networking.UpliftAuthRepository
+import com.cornellappdev.uplift.data.repositories.FireStoreRepository
+import com.cornellappdev.uplift.data.repositories.FirebaseAuthRepository
+import com.cornellappdev.uplift.data.repositories.GoogleAuthRepository
+import com.cornellappdev.uplift.data.repositories.UpliftAuthRepository
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import dagger.hilt.android.lifecycle.HiltViewModel
