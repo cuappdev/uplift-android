@@ -149,9 +149,11 @@ fun MainNavigationWrapper(
             }
         }
     }) {
+        // TODO 1: Change back to home if releasing features before google sign in is finished.
+        // TODO 2: Change to Onboarding after google sign in is finished
         NavHost(
             navController = navController,
-            startDestination = UpliftRootRoute.Onboarding,
+            startDestination = UpliftRootRoute.Home,
             modifier = Modifier.padding(it)
         ) {
             composable<UpliftRootRoute.Home> {
