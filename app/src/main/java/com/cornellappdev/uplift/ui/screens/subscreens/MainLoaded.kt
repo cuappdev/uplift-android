@@ -57,8 +57,8 @@ import com.cornellappdev.uplift.ui.nav.navigateToGym
 import com.cornellappdev.uplift.ui.components.general.UpliftTopBar
 import com.cornellappdev.uplift.ui.components.home.GymCapacity
 import com.cornellappdev.uplift.ui.components.home.HomeCard
-import com.cornellappdev.uplift.ui.viewmodels.ClassDetailViewModel
-import com.cornellappdev.uplift.ui.viewmodels.GymDetailViewModel
+import com.cornellappdev.uplift.ui.viewmodels.classes.ClassDetailViewModel
+import com.cornellappdev.uplift.ui.viewmodels.gyms.GymDetailViewModel
 import com.cornellappdev.uplift.util.ACCENT_ORANGE
 import com.cornellappdev.uplift.util.GRAY00
 import com.cornellappdev.uplift.util.GRAY01

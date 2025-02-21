@@ -29,20 +29,21 @@ import com.cornellappdev.uplift.ui.nav.BottomNavScreens
 import com.cornellappdev.uplift.ui.nav.popBackClass
 import com.cornellappdev.uplift.ui.nav.popBackGym
 import com.cornellappdev.uplift.data.models.ApiResponse
-import com.cornellappdev.uplift.ui.screens.ClassDetailScreen
-import com.cornellappdev.uplift.ui.screens.ClassScreen
-import com.cornellappdev.uplift.ui.screens.GymDetailScreen
-import com.cornellappdev.uplift.ui.screens.HomeScreen
-import com.cornellappdev.uplift.ui.screens.ProfileCreationScreen
-import com.cornellappdev.uplift.ui.screens.SignInPromptScreen
-import com.cornellappdev.uplift.ui.screens.ReportIssueScreen
-import com.cornellappdev.uplift.ui.screens.ReportSubmittedScreen
-import com.cornellappdev.uplift.ui.viewmodels.ClassDetailViewModel
-import com.cornellappdev.uplift.ui.viewmodels.ClassesViewModel
-import com.cornellappdev.uplift.ui.viewmodels.GymDetailViewModel
-import com.cornellappdev.uplift.ui.viewmodels.HomeViewModel
-import com.cornellappdev.uplift.ui.viewmodels.ReportViewModel
-import com.cornellappdev.uplift.ui.viewmodels.RootNavigationViewModel
+import com.cornellappdev.uplift.ui.screens.classes.ClassDetailScreen
+import com.cornellappdev.uplift.ui.screens.classes.ClassScreen
+import com.cornellappdev.uplift.ui.screens.gyms.GymDetailScreen
+import com.cornellappdev.uplift.ui.screens.gyms.HomeScreen
+import com.cornellappdev.uplift.ui.screens.onboarding.ProfileCreationScreen
+import com.cornellappdev.uplift.ui.screens.onboarding.SignInPromptScreen
+import com.cornellappdev.uplift.ui.screens.report.ReportIssueScreen
+import com.cornellappdev.uplift.ui.screens.report.ReportSubmittedScreen
+import com.cornellappdev.uplift.ui.viewmodels.classes.ClassDetailViewModel
+import com.cornellappdev.uplift.ui.viewmodels.classes.ClassesViewModel
+import com.cornellappdev.uplift.ui.viewmodels.gyms.GymDetailViewModel
+import com.cornellappdev.uplift.ui.viewmodels.gyms.HomeViewModel
+import com.cornellappdev.uplift.ui.viewmodels.auth.LoginViewModel
+import com.cornellappdev.uplift.ui.viewmodels.report.ReportViewModel
+import com.cornellappdev.uplift.ui.viewmodels.nav.RootNavigationViewModel
 import com.cornellappdev.uplift.util.PRIMARY_BLACK
 import com.cornellappdev.uplift.util.PRIMARY_YELLOW
 import com.cornellappdev.uplift.util.montserratFamily
@@ -63,7 +64,8 @@ fun MainNavigationWrapper(
     classesViewModel: ClassesViewModel = hiltViewModel(),
     homeViewModel: HomeViewModel = hiltViewModel(),
     reportViewModel: ReportViewModel = hiltViewModel(),
-    rootNavigationViewModel: RootNavigationViewModel = hiltViewModel()
+    rootNavigationViewModel: RootNavigationViewModel = hiltViewModel(),
+    loginViewModel: LoginViewModel = hiltViewModel()
 ) {
 
     val uiState = rootNavigationViewModel.collectUiStateValue()
@@ -153,7 +155,7 @@ fun MainNavigationWrapper(
         // TODO 2: Change to Onboarding after google sign in is finished
         NavHost(
             navController = navController,
-            startDestination = UpliftRootRoute.Home,
+            startDestination = UpliftRootRoute.Onboarding,
             modifier = Modifier.padding(it)
         ) {
             composable<UpliftRootRoute.Home> {
@@ -199,7 +201,7 @@ fun MainNavigationWrapper(
                 )
             }
             composable<UpliftRootRoute.Onboarding> {
-                SignInPromptScreen()
+                SignInPromptScreen(loginViewModel, loginViewModel::navigateToHome)
             }
             composable<UpliftRootRoute.ProfileCreation> {
                 ProfileCreationScreen(navController = navController)

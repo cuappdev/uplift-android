@@ -1,4 +1,4 @@
-package com.cornellappdev.uplift.ui.screens
+package com.cornellappdev.uplift.ui.screens.gyms
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.RepeatMode
@@ -35,7 +35,7 @@ import com.cornellappdev.uplift.data.repositories.CoilRepository
 import com.cornellappdev.uplift.ui.components.gymdetail.GymFacilitySection
 import com.cornellappdev.uplift.ui.components.gymdetail.FitnessCenterContent
 import com.cornellappdev.uplift.ui.components.gymdetail.GymDetailHero
-import com.cornellappdev.uplift.ui.viewmodels.GymDetailViewModel
+import com.cornellappdev.uplift.ui.viewmodels.gyms.GymDetailViewModel
 import com.cornellappdev.uplift.util.*
 
 /**

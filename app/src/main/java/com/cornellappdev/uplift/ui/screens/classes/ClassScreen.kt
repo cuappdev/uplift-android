@@ -1,4 +1,4 @@
-package com.cornellappdev.uplift.ui.screens
+package com.cornellappdev.uplift.ui.screens.classes
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -28,8 +28,8 @@ import com.cornellappdev.uplift.ui.components.ClassInfoCard
 import com.cornellappdev.uplift.ui.components.general.CalendarBar
 import com.cornellappdev.uplift.ui.components.general.NoClasses
 import com.cornellappdev.uplift.ui.components.general.UpliftTopBar
-import com.cornellappdev.uplift.ui.viewmodels.ClassDetailViewModel
-import com.cornellappdev.uplift.ui.viewmodels.ClassesViewModel
+import com.cornellappdev.uplift.ui.viewmodels.classes.ClassDetailViewModel
+import com.cornellappdev.uplift.ui.viewmodels.classes.ClassesViewModel
 import com.cornellappdev.uplift.util.PRIMARY_BLACK
 import com.cornellappdev.uplift.util.calendarDayOfWeekToString
 import com.cornellappdev.uplift.util.montserratFamily

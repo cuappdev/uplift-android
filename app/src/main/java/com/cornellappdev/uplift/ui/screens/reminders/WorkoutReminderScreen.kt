@@ -1,4 +1,4 @@
-package com.cornellappdev.uplift.ui.screens
+package com.cornellappdev.uplift.ui.screens.reminders
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

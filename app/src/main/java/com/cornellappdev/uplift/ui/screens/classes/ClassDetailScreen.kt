@@ -1,4 +1,4 @@
-package com.cornellappdev.uplift.ui.screens
+package com.cornellappdev.uplift.ui.screens.classes
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.Crossfade
@@ -56,7 +56,8 @@ import com.cornellappdev.uplift.ui.components.classdetail.ClassFunction
 import com.cornellappdev.uplift.ui.components.classdetail.ClassPreparation
 import com.cornellappdev.uplift.ui.components.classdetail.NextUpliftClassSessions
 import com.cornellappdev.uplift.ui.components.general.FavoriteButton
-import com.cornellappdev.uplift.ui.viewmodels.ClassDetailViewModel
+import com.cornellappdev.uplift.ui.screens.gyms.LineSpacer
+import com.cornellappdev.uplift.ui.viewmodels.classes.ClassDetailViewModel
 import com.cornellappdev.uplift.util.GRAY01
 import com.cornellappdev.uplift.util.GRAY03
 import com.cornellappdev.uplift.util.PRIMARY_BLACK

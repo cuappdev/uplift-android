@@ -18,8 +18,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.cornellappdev.uplift.ui.components.ClassInfoCard
-import com.cornellappdev.uplift.ui.viewmodels.ClassDetailViewModel
-import com.cornellappdev.uplift.ui.viewmodels.GymDetailViewModel
+import com.cornellappdev.uplift.ui.viewmodels.classes.ClassDetailViewModel
+import com.cornellappdev.uplift.ui.viewmodels.gyms.GymDetailViewModel
 import com.cornellappdev.uplift.util.PRIMARY_BLACK
 import com.cornellappdev.uplift.util.montserratFamily
 

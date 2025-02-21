@@ -1,4 +1,4 @@
-package com.cornellappdev.uplift.ui.screens
+package com.cornellappdev.uplift.ui.screens.gyms
 
 import androidx.compose.animation.Crossfade
 import androidx.compose.runtime.Composable
@@ -13,9 +13,9 @@ import com.cornellappdev.uplift.data.models.ApiResponse
 import com.cornellappdev.uplift.ui.screens.subscreens.MainError
 import com.cornellappdev.uplift.ui.screens.subscreens.MainLoaded
 import com.cornellappdev.uplift.ui.screens.subscreens.MainLoading
-import com.cornellappdev.uplift.ui.viewmodels.ClassDetailViewModel
-import com.cornellappdev.uplift.ui.viewmodels.GymDetailViewModel
-import com.cornellappdev.uplift.ui.viewmodels.HomeViewModel
+import com.cornellappdev.uplift.ui.viewmodels.classes.ClassDetailViewModel
+import com.cornellappdev.uplift.ui.viewmodels.gyms.GymDetailViewModel
+import com.cornellappdev.uplift.ui.viewmodels.gyms.HomeViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.valentinilk.shimmer.Shimmer

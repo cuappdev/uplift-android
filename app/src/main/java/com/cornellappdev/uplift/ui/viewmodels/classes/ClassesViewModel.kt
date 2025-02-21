@@ -1,4 +1,4 @@
-package com.cornellappdev.uplift.ui.viewmodels
+package com.cornellappdev.uplift.ui.viewmodels.classes
 
 import androidx.lifecycle.ViewModel
 import com.cornellappdev.uplift.data.models.UpliftClass

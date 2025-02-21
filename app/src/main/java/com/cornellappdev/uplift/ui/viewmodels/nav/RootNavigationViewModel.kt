@@ -1,7 +1,8 @@
-package com.cornellappdev.uplift.ui.viewmodels
+package com.cornellappdev.uplift.ui.viewmodels.nav
 
 import com.cornellappdev.uplift.ui.nav.RootNavigationRepository
 import com.cornellappdev.uplift.ui.UpliftRootRoute
+import com.cornellappdev.uplift.ui.viewmodels.UpliftViewModel
 import com.cornellappdev.uplift.util.UIEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject

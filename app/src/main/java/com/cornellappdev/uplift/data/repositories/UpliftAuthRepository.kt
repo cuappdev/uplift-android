@@ -7,7 +7,7 @@ import javax.inject.Singleton
 
 @Singleton
 class UpliftAuthRepository @Inject constructor(
-  private val userInfoRepository: UserInfoRepository,
+  private val userInfoRepository: UserInfoRepositoryImpl,
   private val apolloClient: ApolloClient
 ) {
 

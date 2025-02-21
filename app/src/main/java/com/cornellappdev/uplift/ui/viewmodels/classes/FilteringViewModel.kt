@@ -1,4 +1,4 @@
-package com.cornellappdev.uplift.ui.viewmodels
+package com.cornellappdev.uplift.ui.viewmodels.classes
 
 import com.cornellappdev.uplift.data.models.UpliftClass
 import kotlinx.coroutines.flow.MutableStateFlow

@@ -25,7 +25,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cornellappdev.uplift.R
-import com.cornellappdev.uplift.ui.screens.Reminder
+import com.cornellappdev.uplift.ui.screens.reminders.Reminder
 import com.cornellappdev.uplift.util.PRIMARY_BLACK
 import com.cornellappdev.uplift.util.montserratFamily
 

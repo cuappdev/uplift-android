@@ -1,4 +1,4 @@
-package com.cornellappdev.uplift.ui.viewmodels
+package com.cornellappdev.uplift.ui.viewmodels.gyms
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State

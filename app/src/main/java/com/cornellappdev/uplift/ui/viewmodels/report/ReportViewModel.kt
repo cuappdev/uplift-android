@@ -1,4 +1,4 @@
-package com.cornellappdev.uplift.ui.viewmodels
+package com.cornellappdev.uplift.ui.viewmodels.report
 
 import androidx.lifecycle.ViewModel
 import com.cornellappdev.uplift.domain.clients.ReportClient

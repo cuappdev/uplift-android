@@ -1,4 +1,4 @@
-package com.cornellappdev.uplift.ui.screens
+package com.cornellappdev.uplift.ui.screens.onboarding
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
@@ -48,7 +48,6 @@ import com.cornellappdev.uplift.util.GRAY02
 import com.cornellappdev.uplift.util.GRAY03
 import com.cornellappdev.uplift.util.PRIMARY_YELLOW
 import com.cornellappdev.uplift.util.montserratFamily
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.systemuicontroller.SystemUiController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 

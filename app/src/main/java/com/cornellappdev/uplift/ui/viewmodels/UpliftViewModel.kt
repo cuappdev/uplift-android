@@ -1,9 +1,12 @@
 package com.cornellappdev.uplift.ui.viewmodels
 
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -43,6 +46,4 @@ abstract class UpliftViewModel<UiState>(initialUiState: UiState) : ViewModel() {
     protected fun getStateValue(): UiState {
         return _uiStateFlow.value
     }
-
-
 }

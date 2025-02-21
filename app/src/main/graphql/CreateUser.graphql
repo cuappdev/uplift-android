@@ -1,41 +1,40 @@
 fragment userFields on User {
-  id
-  email
-  name
-  netId
-  workoutGoal
+    id
+    email
+    name
+    netId
 }
 
 fragment workoutFields on Workout {
-  id
-  workoutTime
-  userId
+    id
+    workoutTime
+    userId
 }
 
 mutation CreateUser($email: String!, $name: String!, $netId: String!) {
-  createUser(email: $email, name: $name, netId: $netId) {
-    ...userFields
-  }
+    createUser(email: $email, name: $name, netId: $netId) {
+        ...userFields
+    }
 }
 
 query GetWeeklyWorkoutDays($id: Int!) {
-  getWeeklyWorkoutDays(id: $id)
+    getWeeklyWorkoutDays(id: $id)
 }
 
 query GetWorkoutsById($id: Int!) {
-  getWorkoutsById(id: $id) {
-    ...workoutFields
-  }
+    getWorkoutsById(id: $id) {
+        ...workoutFields
+    }
 }
 
 mutation SetWorkoutGoals($id: Int!, $workoutGoal: [String!]!) {
-  setWorkoutGoals(userId: $id, workoutGoal: $workoutGoal) {
-  	...userFields
-  }
+    setWorkoutGoals(userId: $id, workoutGoal: $workoutGoal) {
+        ...userFields
+    }
 }
 
 mutation LogWorkout($workoutTime: DateTime!, $id: Int!) {
-  logWorkout(workoutTime: $workoutTime, userId: $id) {
-    ...workoutFields
-  }
+    logWorkout(workoutTime: $workoutTime, userId: $id) {
+        ...workoutFields
+    }
 }
