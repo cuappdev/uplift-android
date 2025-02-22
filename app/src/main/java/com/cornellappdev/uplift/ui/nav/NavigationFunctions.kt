@@ -2,10 +2,10 @@ package com.cornellappdev.uplift.ui.nav
 
 import androidx.navigation.NavHostController
 import com.cornellappdev.uplift.data.models.UpliftClass
-import com.cornellappdev.uplift.data.models.UpliftGym
+import com.cornellappdev.uplift.data.models.gymdetail.UpliftGym
 import com.cornellappdev.uplift.ui.UpliftRootRoute
-import com.cornellappdev.uplift.ui.viewmodels.ClassDetailViewModel
-import com.cornellappdev.uplift.ui.viewmodels.GymDetailViewModel
+import com.cornellappdev.uplift.ui.viewmodels.classes.ClassDetailViewModel
+import com.cornellappdev.uplift.ui.viewmodels.gyms.GymDetailViewModel
 
 fun NavHostController.navigateToClass(
     classDetailViewModel: ClassDetailViewModel,

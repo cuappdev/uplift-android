@@ -1,11 +1,22 @@
 package com.cornellappdev.uplift.ui
 
+import android.annotation.SuppressLint
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
-import androidx.compose.material.Icon
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -29,19 +40,19 @@ import com.cornellappdev.uplift.ui.nav.BottomNavScreens
 import com.cornellappdev.uplift.ui.nav.popBackClass
 import com.cornellappdev.uplift.ui.nav.popBackGym
 import com.cornellappdev.uplift.data.models.ApiResponse
-import com.cornellappdev.uplift.ui.screens.ClassDetailScreen
-import com.cornellappdev.uplift.ui.screens.ClassScreen
-import com.cornellappdev.uplift.ui.screens.GymDetailScreen
-import com.cornellappdev.uplift.ui.screens.HomeScreen
-import com.cornellappdev.uplift.ui.screens.ProfileCreationScreen
-import com.cornellappdev.uplift.ui.screens.SignInPromptScreen
-import com.cornellappdev.uplift.ui.screens.ReportIssueScreen
-import com.cornellappdev.uplift.ui.screens.ReportSubmittedScreen
-import com.cornellappdev.uplift.ui.viewmodels.ClassDetailViewModel
-import com.cornellappdev.uplift.ui.viewmodels.ClassesViewModel
-import com.cornellappdev.uplift.ui.viewmodels.GymDetailViewModel
-import com.cornellappdev.uplift.ui.viewmodels.HomeViewModel
-import com.cornellappdev.uplift.ui.viewmodels.ReportViewModel
+import com.cornellappdev.uplift.ui.screens.classes.ClassDetailScreen
+import com.cornellappdev.uplift.ui.screens.classes.ClassScreen
+import com.cornellappdev.uplift.ui.screens.gyms.GymDetailScreen
+import com.cornellappdev.uplift.ui.screens.gyms.HomeScreen
+import com.cornellappdev.uplift.ui.screens.onboarding.ProfileCreationScreen
+import com.cornellappdev.uplift.ui.screens.onboarding.SignInPromptScreen
+import com.cornellappdev.uplift.ui.screens.report.ReportIssueScreen
+import com.cornellappdev.uplift.ui.screens.report.ReportSubmittedScreen
+import com.cornellappdev.uplift.ui.viewmodels.classes.ClassDetailViewModel
+import com.cornellappdev.uplift.ui.viewmodels.classes.ClassesViewModel
+import com.cornellappdev.uplift.ui.viewmodels.gyms.GymDetailViewModel
+import com.cornellappdev.uplift.ui.viewmodels.gyms.HomeViewModel
+import com.cornellappdev.uplift.ui.viewmodels.report.ReportViewModel
 import com.cornellappdev.uplift.ui.viewmodels.RootNavigationViewModel
 import com.cornellappdev.uplift.util.PRIMARY_BLACK
 import com.cornellappdev.uplift.util.PRIMARY_YELLOW
@@ -56,6 +67,7 @@ import kotlinx.serialization.Serializable
 /**
  * The main navigation controller for the app.
  */
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun MainNavigationWrapper(
     gymDetailViewModel: GymDetailViewModel = hiltViewModel(),
@@ -63,7 +75,7 @@ fun MainNavigationWrapper(
     classesViewModel: ClassesViewModel = hiltViewModel(),
     homeViewModel: HomeViewModel = hiltViewModel(),
     reportViewModel: ReportViewModel = hiltViewModel(),
-    rootNavigationViewModel: RootNavigationViewModel = hiltViewModel()
+    rootNavigationViewModel: RootNavigationViewModel = hiltViewModel(),
 ) {
 
     val uiState = rootNavigationViewModel.collectUiStateValue()
@@ -101,60 +113,62 @@ fun MainNavigationWrapper(
     }
 
     //TODO() : Once Google Sign In is fully implemented, make sure BottomNavBar not visible until user signs in
-    Scaffold(bottomBar = {
-        if (gymsState is ApiResponse.Success) BottomNavigation(
-            backgroundColor = PRIMARY_YELLOW, contentColor = PRIMARY_BLACK, elevation = 1.dp
-        ) {
-            val navBackStackEntry by navController.currentBackStackEntryAsState()
-            val currentDestination = navBackStackEntry?.destination
-            items.forEach { screen ->
-                val selected =
-                    currentDestination?.hierarchy?.any {
-                        it.route == screen.route::class.qualifiedName
-                    } == true
-                BottomNavigationItem(icon = {
-                    Icon(
-                        painter = painterResource(
-                            id = if (selected) screen.painterIds.second else screen.painterIds.first
-                        ),
-                        contentDescription = null
-                    )
-                }, label = {
-                    Text(
-                        text = screen.titleText,
-                        fontFamily = montserratFamily,
-                        fontSize = 14.sp,
-                        fontWeight = if (selected) FontWeight(700)
-                        else FontWeight(500),
-                        lineHeight = 17.07.sp,
-                        textAlign = TextAlign.Center,
-                        overflow = TextOverflow.Visible,
-                        softWrap = false
-                    )
-                }, selected = selected, onClick = {
-                    navController.navigate(screen.route) {
-                        // Pop up to the start destination of the graph to
-                        // avoid building up a large stack of destinations
-                        // on the back stack as users select items
-                        popUpTo(navController.graph.findStartDestination().id) {
-                            saveState = true
+    Scaffold(
+        bottomBar = {
+            if (gymsState is ApiResponse.Success) BottomNavigation(
+                backgroundColor = PRIMARY_YELLOW, contentColor = PRIMARY_BLACK, elevation = 1.dp
+            ) {
+                val navBackStackEntry by navController.currentBackStackEntryAsState()
+                val currentDestination = navBackStackEntry?.destination
+                items.forEach { screen ->
+                    val selected =
+                        currentDestination?.hierarchy?.any {
+                            it.route == screen.route::class.qualifiedName
+                        } == true
+                    BottomNavigationItem(icon = {
+                        Icon(
+                            painter = painterResource(
+                                id = if (selected) screen.painterIds.second else screen.painterIds.first
+                            ),
+                            contentDescription = null
+                        )
+                    }, label = {
+                        Text(
+                            text = screen.titleText,
+                            fontFamily = montserratFamily,
+                            fontSize = 14.sp,
+                            fontWeight = if (selected) FontWeight(700)
+                            else FontWeight(500),
+                            lineHeight = 17.07.sp,
+                            textAlign = TextAlign.Center,
+                            overflow = TextOverflow.Visible,
+                            softWrap = false
+                        )
+                    }, selected = selected, onClick = {
+                        navController.navigate(screen.route) {
+                            // Pop up to the start destination of the graph to
+                            // avoid building up a large stack of destinations
+                            // on the back stack as users select items
+                            popUpTo(navController.graph.findStartDestination().id) {
+                                saveState = true
+                            }
+                            // Avoid multiple copies of the same destination when
+                            // reselecting the same item
+                            launchSingleTop = true
+                            // Restore state when reselecting a previously selected item
+                            restoreState = true
                         }
-                        // Avoid multiple copies of the same destination when
-                        // reselecting the same item
-                        launchSingleTop = true
-                        // Restore state when reselecting a previously selected item
-                        restoreState = true
-                    }
-                })
+                    })
+                }
             }
-        }
-    }) {
+        },
+    ) {
         // TODO 1: Change back to home if releasing features before google sign in is finished.
         // TODO 2: Change to Onboarding after google sign in is finished
         NavHost(
             navController = navController,
             startDestination = UpliftRootRoute.Home,
-            modifier = Modifier.padding(it)
+//            modifier = Modifier.padding(it)
         ) {
             composable<UpliftRootRoute.Home> {
                 HomeScreen(
@@ -172,12 +186,6 @@ fun MainNavigationWrapper(
                     navController.popBackGym(gymDetailViewModel)
                 }
             }
-            // TODO: I split these across multiple screens to make it so the user sticks to
-            //  the side of the app they were originally on.
-            //  However, I think this might cause a bug if you have classes open on BOTH
-            //  sides of the app then pop back. I think both will end up popping back.
-            //  I can't test RN cuz backend is down, so test this and see. If it's broken,
-            //  change it to just use one "classDetail" route on the class half.
             composable<UpliftRootRoute.ClassDetail> {
                 ClassDetailScreen(
                     classDetailViewModel = classDetailViewModel, navController = navController

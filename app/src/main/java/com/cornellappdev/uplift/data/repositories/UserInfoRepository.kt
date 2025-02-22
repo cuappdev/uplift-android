@@ -8,7 +8,7 @@ import androidx.datastore.preferences.core.Preferences
 import kotlinx.coroutines.flow.map;
 import kotlinx.coroutines.flow.firstOrNull
 
-import com.cornellappdev.uplift.models.UserInfo
+import com.cornellappdev.uplift.data.models.UserInfo
 
 @Singleton
 class UserInfoRepository @Inject constructor(

@@ -30,7 +30,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cornellappdev.uplift.R
-import com.cornellappdev.uplift.data.models.UpliftGym
+import com.cornellappdev.uplift.data.models.gymdetail.UpliftGym
 import com.cornellappdev.uplift.data.models.ApiResponse
 import com.cornellappdev.uplift.data.repositories.CoilRepository
 import com.cornellappdev.uplift.ui.components.general.FavoriteButton

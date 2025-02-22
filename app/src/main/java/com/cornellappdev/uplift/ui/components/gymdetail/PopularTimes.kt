@@ -39,8 +39,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.cornellappdev.uplift.data.models.gymdetail.PopularTimes
-import com.cornellappdev.uplift.data.models.gymdetail.TimeOfDay
+import com.cornellappdev.uplift.data.models.PopularTimes
+import com.cornellappdev.uplift.data.models.TimeOfDay
 import com.cornellappdev.uplift.util.GRAY01
 import com.cornellappdev.uplift.util.GRAY03
 import com.cornellappdev.uplift.util.GRAY04
@@ -58,8 +58,7 @@ import com.cornellappdev.uplift.util.waitTimeFlavorText
 fun PopularTimesSection(popularTimes: PopularTimes) {
     var startAnimation by remember { mutableStateOf(false) }
     val animatedHeightScale by animateFloatAsState(
-        if (startAnimation) 1.0f else 0f,
-        animationSpec = tween(durationMillis = 1000)
+        if (startAnimation) 1.0f else 0f, animationSpec = tween(durationMillis = 1000)
     )
 
     val barHeight = 90f
@@ -92,10 +91,9 @@ fun PopularTimesSection(popularTimes: PopularTimes) {
     )
 
     val animatedLeftRatioState = animateFloatAsState(
-        targetValue = if (selectedPopularTime < 0) .5f else
-            (selectedPopularTime.toFloat() / (popularTimes.busyList.size - 1))
-                .coerceIn(.001f, .999f),
-        tween(100, easing = CubicBezierEasing(0f, 0.0f, 0.2f, 1.0f))
+        targetValue = if (selectedPopularTime < 0) .5f else (selectedPopularTime.toFloat() / (popularTimes.busyList.size - 1)).coerceIn(
+            .001f, .999f
+        ), tween(100, easing = CubicBezierEasing(0f, 0.0f, 0.2f, 1.0f))
     )
     var lastLeftRatio by remember { mutableFloatStateOf(.5f) }
     val animatedLeftRatio =
@@ -106,17 +104,14 @@ fun PopularTimesSection(popularTimes: PopularTimes) {
         lastLeftRatio = animatedLeftRatio
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null
-            ) {
-                deselect()
-            }
-            .background(Color.White)
-    ) {
+    Column(modifier = Modifier
+        .fillMaxWidth()
+        .clickable(
+            interactionSource = remember { MutableInteractionSource() }, indication = null
+        ) {
+            deselect()
+        }
+        .background(Color.White)) {
         // Title
         Text(
             text = "Popular Times",
@@ -124,8 +119,7 @@ fun PopularTimesSection(popularTimes: PopularTimes) {
             fontSize = 16.sp,
             fontWeight = FontWeight(700),
             lineHeight = 20.sp,
-            modifier = Modifier
-                .fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
             textAlign = TextAlign.Start,
             color = PRIMARY_BLACK
         )
@@ -137,12 +131,10 @@ fun PopularTimesSection(popularTimes: PopularTimes) {
                 .padding(horizontal = 18.dp)
                 .padding(bottom = 8.dp, top = 20.dp)
                 .alpha(animatedOpacity)
-                .scale(scaleX = 1f, scaleY = animatedOpacity),
-            verticalAlignment = Alignment.Bottom
+                .scale(scaleX = 1f, scaleY = animatedOpacity), verticalAlignment = Alignment.Bottom
         ) {
             val time = popularTimes.startTime.getTimeLater(
-                deltaMinutes = 0,
-                deltaHours = lastSelectedPopularTime
+                deltaMinutes = 0, deltaHours = lastSelectedPopularTime
             )
 
             Spacer(modifier = Modifier.weight(animatedLeftRatio))
@@ -157,9 +149,9 @@ fun PopularTimesSection(popularTimes: PopularTimes) {
             )
             Text(
                 text = waitTimeFlavorText(
-                    popularTimes.busyList[lastSelectedPopularTime.coerceAtLeast(
+                    if (popularTimes.busyList.isNotEmpty()) popularTimes.busyList[lastSelectedPopularTime.coerceAtLeast(
                         0
-                    )]
+                    )] else 0
                 ),
                 fontFamily = montserratFamily,
                 fontSize = 12.sp,
@@ -180,30 +172,26 @@ fun PopularTimesSection(popularTimes: PopularTimes) {
             .background(Color.White)
     ) {
         Row(
-            verticalAlignment = Alignment.Bottom,
-            modifier = Modifier
-                .height(80.dp)
+            verticalAlignment = Alignment.Bottom, modifier = Modifier.height(80.dp)
 
         ) {
             for ((i, popularTime) in popularTimes.busyList.withIndex()) {
                 val thisBarHeight = (popularTime * animatedHeightScale * (barHeight / 100f))
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxHeight()
-                        .padding(horizontal = 1.dp)
-                        .padding(bottom = 1.dp)
-                        .clickable(
-                            interactionSource = remember { MutableInteractionSource() },
-                            indication = null
-                        ) {
-                            if (selectedPopularTime == i) deselect()
-                            else {
-                                selectedPopularTime = i
-                                lastSelectedPopularTime = i
-                            }
+                Box(modifier = Modifier
+                    .weight(1f)
+                    .fillMaxHeight()
+                    .padding(horizontal = 1.dp)
+                    .padding(bottom = 1.dp)
+                    .clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null
+                    ) {
+                        if (selectedPopularTime == i) deselect()
+                        else {
+                            selectedPopularTime = i
+                            lastSelectedPopularTime = i
                         }
-                ) {
+                    }) {
                     // The yellow bar.
                     Surface(
                         modifier = Modifier
@@ -214,26 +202,24 @@ fun PopularTimesSection(popularTimes: PopularTimes) {
                         color = if (selectedPopularTime == i) PRIMARY_YELLOW else LIGHT_YELLOW
                     ) {}
                     // The gray line above a bar when it's selected.
-                    if (selectedPopularTime == i)
-                        Spacer(
-                            modifier = Modifier
-                                .width(1.dp)
-                                .background(GRAY03)
-                                .height((100 - thisBarHeight).dp)
-                                .offset(y = (-0).dp)
-                                .align(Alignment.TopCenter)
-                                .alpha(animatedOpacity)
-                        )
+                    if (selectedPopularTime == i) Spacer(
+                        modifier = Modifier
+                            .width(1.dp)
+                            .background(GRAY03)
+                            .height((100 - thisBarHeight).dp)
+                            .offset(y = (-0).dp)
+                            .align(Alignment.TopCenter)
+                            .alpha(animatedOpacity)
+                    )
                     // The little knob at the bottom as part of the number line.
-                    if (popularTime != popularTimes.busyList.last())
-                        Spacer(
-                            modifier = Modifier
-                                .width(1.dp)
-                                .height(4.dp)
-                                .offset(2.dp, 4.dp)
-                                .background(GRAY01)
-                                .align(Alignment.BottomEnd)
-                        )
+                    if (popularTime != popularTimes.busyList.last()) Spacer(
+                        modifier = Modifier
+                            .width(1.dp)
+                            .height(4.dp)
+                            .offset(2.dp, 4.dp)
+                            .background(GRAY01)
+                            .align(Alignment.BottomEnd)
+                    )
                     if (i % 3 == 0) {
                         val time =
                             popularTimes.startTime.getTimeLater(deltaMinutes = 0, deltaHours = i)
@@ -276,28 +262,9 @@ fun PopularTimesSectionPreview() {
         PopularTimesSection(
             popularTimes = PopularTimes(
                 busyList = listOf(
-                    20,
-                    30,
-                    40,
-                    50,
-                    50,
-                    45,
-                    35,
-                    40,
-                    50,
-                    70,
-                    80,
-                    90,
-                    95,
-                    85,
-                    70,
-                    65,
-                    20
-                ),
-                startTime = TimeOfDay(
-                    hour = 6,
-                    minute = 0,
-                    isAM = true
+                    20, 30, 40, 50, 50, 45, 35, 40, 50, 70, 80, 90, 95, 85, 70, 65, 20
+                ), startTime = TimeOfDay(
+                    hour = 6, minute = 0, isAM = true
                 )
             )
         )

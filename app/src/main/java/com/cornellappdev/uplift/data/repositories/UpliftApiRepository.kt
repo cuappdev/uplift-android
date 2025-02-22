@@ -5,7 +5,7 @@ import com.apollographql.apollo3.ApolloClient
 import com.cornellappdev.uplift.ClassListQuery
 import com.cornellappdev.uplift.GymListQuery
 import com.cornellappdev.uplift.data.models.UpliftClass
-import com.cornellappdev.uplift.data.models.UpliftGym
+import com.cornellappdev.uplift.data.models.gymdetail.UpliftGym
 import com.cornellappdev.uplift.data.models.ApiResponse
 import com.cornellappdev.uplift.data.adapters.toUpliftClass
 import com.cornellappdev.uplift.data.adapters.toUpliftGyms

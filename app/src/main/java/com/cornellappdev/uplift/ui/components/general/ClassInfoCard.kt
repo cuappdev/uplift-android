@@ -24,7 +24,7 @@ import androidx.navigation.NavHostController
 import com.cornellappdev.uplift.R
 import com.cornellappdev.uplift.data.models.UpliftClass
 import com.cornellappdev.uplift.ui.nav.navigateToClass
-import com.cornellappdev.uplift.ui.viewmodels.ClassDetailViewModel
+import com.cornellappdev.uplift.ui.viewmodels.classes.ClassDetailViewModel
 import com.cornellappdev.uplift.util.*
 import java.util.*
 

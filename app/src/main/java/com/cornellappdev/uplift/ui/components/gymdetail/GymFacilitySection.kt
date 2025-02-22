@@ -29,12 +29,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cornellappdev.uplift.R
-import com.cornellappdev.uplift.data.models.gymdetail.OpenType
-import com.cornellappdev.uplift.data.models.UpliftGym
+import com.cornellappdev.uplift.data.models.OpenType
+import com.cornellappdev.uplift.data.models.gymdetail.UpliftGym
 import com.cornellappdev.uplift.ui.components.GymBowlingSection
 import com.cornellappdev.uplift.ui.components.GymCourtSection
 import com.cornellappdev.uplift.ui.components.GymSwimmingSection
-import com.cornellappdev.uplift.ui.screens.LineSpacer
+import com.cornellappdev.uplift.ui.screens.gyms.LineSpacer
 import com.cornellappdev.uplift.util.ACCENT_CLOSED
 import com.cornellappdev.uplift.util.ACCENT_OPEN
 import com.cornellappdev.uplift.util.PRIMARY_BLACK

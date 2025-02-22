@@ -1,5 +1,6 @@
 package com.cornellappdev.uplift.data.models.gymdetail
 
+import com.cornellappdev.uplift.data.models.TimeInterval
 import com.cornellappdev.uplift.type.AccessibilityType
 import com.cornellappdev.uplift.type.MuscleGroup
 import kotlin.collections.ArrayList

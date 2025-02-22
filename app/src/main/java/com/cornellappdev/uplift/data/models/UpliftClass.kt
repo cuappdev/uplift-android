@@ -6,7 +6,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
-import com.cornellappdev.uplift.data.models.gymdetail.TimeInterval
 import com.cornellappdev.uplift.datastoreRepository
 import com.cornellappdev.uplift.util.calendarDayOfWeekToString
 import com.cornellappdev.uplift.util.calendarDayToString
