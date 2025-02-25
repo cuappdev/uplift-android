@@ -1,4 +1,4 @@
-package com.cornellappdev.uplift.ui.screens.subscreens
+package com.cornellappdev.uplift.ui.screens.gyms.subscreens
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
@@ -145,7 +145,7 @@ fun MainLoaded(
         modifier = Modifier
             .background(Color.White)
             .fillMaxSize()
-            .padding(top = 24.dp)
+            .padding(top = 32.dp)
             .pullRefresh(refresh)
     ) {
         LazyColumn(

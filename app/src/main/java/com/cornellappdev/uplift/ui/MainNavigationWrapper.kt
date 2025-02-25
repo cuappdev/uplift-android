@@ -1,17 +1,8 @@
 package com.cornellappdev.uplift.ui
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.WindowInsetsSides
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.only
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.systemBars
-import androidx.compose.foundation.layout.systemBarsPadding
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material3.Icon
@@ -53,7 +44,7 @@ import com.cornellappdev.uplift.ui.viewmodels.classes.ClassesViewModel
 import com.cornellappdev.uplift.ui.viewmodels.gyms.GymDetailViewModel
 import com.cornellappdev.uplift.ui.viewmodels.gyms.HomeViewModel
 import com.cornellappdev.uplift.ui.viewmodels.report.ReportViewModel
-import com.cornellappdev.uplift.ui.viewmodels.RootNavigationViewModel
+import com.cornellappdev.uplift.ui.viewmodels.nav.RootNavigationViewModel
 import com.cornellappdev.uplift.util.PRIMARY_BLACK
 import com.cornellappdev.uplift.util.PRIMARY_YELLOW
 import com.cornellappdev.uplift.util.montserratFamily
@@ -98,7 +89,7 @@ fun MainNavigationWrapper(
         // TODO: Add new items when activities and profile are implemented.
     )
 
-    systemUiController.setStatusBarColor(PRIMARY_YELLOW)
+    systemUiController.setStatusBarColor(Color.Transparent, darkIcons = true)
 
     LaunchedEffect(uiState.navEvent) {
         uiState.navEvent?.consumeSuspend {
@@ -116,7 +107,8 @@ fun MainNavigationWrapper(
     Scaffold(
         bottomBar = {
             if (gymsState is ApiResponse.Success) BottomNavigation(
-                backgroundColor = PRIMARY_YELLOW, contentColor = PRIMARY_BLACK, elevation = 1.dp
+                backgroundColor = PRIMARY_YELLOW, contentColor = PRIMARY_BLACK, elevation = 1.dp,
+                modifier = Modifier.height(82.dp)
             ) {
                 val navBackStackEntry by navController.currentBackStackEntryAsState()
                 val currentDestination = navBackStackEntry?.destination
@@ -168,7 +160,7 @@ fun MainNavigationWrapper(
         NavHost(
             navController = navController,
             startDestination = UpliftRootRoute.Home,
-//            modifier = Modifier.padding(it)
+            modifier = Modifier.padding(bottom = it.calculateBottomPadding())
         ) {
             composable<UpliftRootRoute.Home> {
                 HomeScreen(

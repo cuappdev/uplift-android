@@ -44,25 +44,6 @@ fun FitnessCenterContent(
         PopularTimesSection(
             popularTimes = PopularTimes(
                 busyList = averageCapacitiesList,
-//                busyList = listOf(
-//                    20,
-//                    30,
-//                    40,
-//                    50,
-//                    50,
-//                    45,
-//                    35,
-//                    40,
-//                    50,
-//                    70,
-//                    80,
-//                    90,
-//                    95,
-//                    85,
-//                    70,
-//                    65,
-//                    20
-//                ),
                 startTime = TimeOfDay(
                     hour = 6,
                     minute = 0,

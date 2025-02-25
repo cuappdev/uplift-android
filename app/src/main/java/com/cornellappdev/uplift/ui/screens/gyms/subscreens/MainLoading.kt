@@ -1,4 +1,4 @@
-package com.cornellappdev.uplift.ui.screens.subscreens
+package com.cornellappdev.uplift.ui.screens.gyms.subscreens
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
