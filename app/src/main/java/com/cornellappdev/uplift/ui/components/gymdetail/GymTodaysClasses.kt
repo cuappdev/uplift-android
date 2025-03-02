@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -34,7 +33,8 @@ fun GymTodaysClasses(
     navController: NavHostController
 ) {
     // Gets Today's Classes from [UpliftApiRepository].
-    val todaysClasses = gymDetailViewModel.todaysClassesFlow.collectAsState()
+    val gymDetailUiState = gymDetailViewModel.collectUiStateValue()
+    val todayClasses = gymDetailUiState.todayClasses
 
     Column(
         modifier = Modifier
@@ -53,7 +53,7 @@ fun GymTodaysClasses(
             textAlign = TextAlign.Center,
             color = PRIMARY_BLACK
         )
-        for (aClass in todaysClasses.value) {
+        for (aClass in todayClasses) {
             ClassInfoCard(
                 thisClass = aClass,
                 classDetailViewModel = classDetailViewModel,
@@ -61,7 +61,7 @@ fun GymTodaysClasses(
             )
             Spacer(modifier = Modifier.height(12.dp))
         }
-        if (todaysClasses.value.isEmpty()) {
+        if (todayClasses.isEmpty()) {
             Text(
                 text = "We are done for today.\nPlease check again tomorrow!",
                 fontFamily = montserratFamily,
