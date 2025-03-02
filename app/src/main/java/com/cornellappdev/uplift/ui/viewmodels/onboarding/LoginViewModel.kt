@@ -60,7 +60,6 @@ class LoginViewModel @Inject constructor(
         }) {
             userInfoRepository.signInWithGoogle(idToken)
             val user = userInfoRepository.getFirebaseUser()
-            val name = user?.displayName ?: ""
             val email = user?.email ?: ""
             val netId = email.substring(0, email.indexOf('@'))
             when {
@@ -80,16 +79,6 @@ class LoginViewModel @Inject constructor(
                 }
             }
         }
-    }
-
-    private suspend fun createUser(email: String, name: String): Boolean {
-        if (!email.endsWith("@cornell.edu")) {
-            userInfoRepository.signOut()
-            return false
-        }
-        val netId = email.substring(0, email.indexOf('@'))
-        return userInfoRepository.createUser(email, name, netId)
-
     }
 
     fun onSkip() {

@@ -18,8 +18,6 @@ import com.cornellappdev.uplift.ui.viewmodels.gyms.GymDetailViewModel
 import com.cornellappdev.uplift.ui.viewmodels.gyms.HomeViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
-import com.google.accompanist.systemuicontroller.SystemUiController
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.valentinilk.shimmer.Shimmer
 import kotlinx.coroutines.delay
 
@@ -39,10 +37,6 @@ fun HomeScreen(
     val classesState = homeViewModel.classesFlow.collectAsState().value
     val gymsState = homeViewModel.gymFlow.collectAsState().value
     val showCapacities by homeViewModel.showCapacities
-    val systemUiController: SystemUiController = rememberSystemUiController()
-
-    systemUiController.isStatusBarVisible = true
-    systemUiController.isSystemBarsVisible = true
 
     val context = LocalContext.current
 

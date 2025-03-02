@@ -81,7 +81,6 @@ fun MainNavigationWrapper(
     val loginUiState = loginViewModel.collectUiStateValue()
     val isUserSignedIn = loginUiState.isUserSignedIn
     val hasSkipped = loginUiState.hasSkipped
-    var startDestination: UpliftRootRoute by remember { mutableStateOf(UpliftRootRoute.Onboarding) }
 
     val yourShimmerTheme = defaultShimmerTheme.copy(
         shaderColors = listOf(
@@ -114,7 +113,7 @@ fun MainNavigationWrapper(
 
     LaunchedEffect(isUserSignedIn, hasSkipped) {
         if (isUserSignedIn || hasSkipped) {
-            startDestination = UpliftRootRoute.Home
+            navController.navigate(UpliftRootRoute.Home)
         }
     }
 
@@ -183,7 +182,7 @@ fun MainNavigationWrapper(
         // TODO 2: Change to Onboarding after google sign in is finished
         NavHost(
             navController = navController,
-            startDestination = startDestination,
+            startDestination = UpliftRootRoute.Onboarding,
             modifier = Modifier.padding(it)
         ) {
             composable<UpliftRootRoute.Home> {
