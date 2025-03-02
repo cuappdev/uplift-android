@@ -1,8 +1,9 @@
-package com.cornellappdev.uplift.data.repositories
+package com.cornellappdev.uplift.di
 
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.google.firebase.auth.FirebaseAuth
@@ -20,10 +21,11 @@ object PreferencesKeys {
     val USERNAME = stringPreferencesKey("username")
     val NETID = stringPreferencesKey("netId")
     val EMAIL = stringPreferencesKey("email")
+    val SKIP = booleanPreferencesKey("skip")
 }
 
 @Module
-@InstallIn(SingletonComponent::class) // This ensures it's a singleton across the app
+@InstallIn(SingletonComponent::class)
 object LoginStoreModule {
 
     @Provides

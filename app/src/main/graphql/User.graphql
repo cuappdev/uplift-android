@@ -27,6 +27,12 @@ query GetWorkoutsById($id: Int!) {
     }
 }
 
+query getUserByNetId($netId: String!) {
+    getUserByNetId(netId: $netId) {
+        ...userFields
+    }
+}
+
 mutation SetWorkoutGoals($id: Int!, $workoutGoal: [String!]!) {
     setWorkoutGoals(userId: $id, workoutGoal: $workoutGoal) {
         ...userFields

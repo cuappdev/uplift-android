@@ -12,11 +12,6 @@ plugins {
 def secretsPropertiesFile = rootProject.file('secrets.properties')
 def secretsProperties = new Properties()
 secretsProperties.load(new FileInputStream(secretsPropertiesFile))
-//if (secretsPropertiesFile.exists()) {
-//    secrets.load(new FileInputStream(secretsPropertiesFile))
-//} else {
-//    throw new FileNotFoundException("Missing secrets.properties file. Please add it to the root directory.")
-//}
 
 android {
     namespace 'com.cornellappdev.uplift'

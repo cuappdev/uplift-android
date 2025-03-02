@@ -8,11 +8,14 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.Preferences
 import com.apollographql.apollo3.ApolloClient
 import com.cornellappdev.uplift.CreateUserMutation
+import com.cornellappdev.uplift.GetUserByNetIdQuery
 import kotlinx.coroutines.flow.map;
 import kotlinx.coroutines.flow.firstOrNull
 import com.cornellappdev.uplift.data.models.UserInfo
+import com.cornellappdev.uplift.di.PreferencesKeys
 import com.cornellappdev.uplift.domain.repositories.UserInfoRepository
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import kotlinx.coroutines.tasks.await
 
@@ -39,27 +42,41 @@ class UserInfoRepositoryImpl @Inject constructor(
             }
 
             else -> {
-                // TODO(Add store method for id as well)
+                storeId(response.data?.createUser?.userFields?.let { storeId(it.id) }.toString())
                 storeNetId(netId)
                 storeUsername(name)
                 storeEmail(email)
+                storeSkip(false)
                 Log.d("UserInfoRepositoryImpl", "User created successfully" + response.data)
                 true
             }
         }
     }
 
-    override suspend fun getUserInfo(): UserInfo {
+    override suspend fun getUserByNetId(netId: String): UserInfo {
+        val response = apolloClient.query(
+            GetUserByNetIdQuery(
+                netId = netId
+            )
+        ).execute()
         return UserInfo(
-            id = getUserId() ?: "",
-            name = getUsername() ?: "",
-            email = getEmail() ?: "",
-            netId = getNetId() ?: "",
+            id = response.data?.getUserByNetId?.get(0)?.userFields?.id ?: "",
+            name = response.data?.getUserByNetId?.get(0)?.userFields?.name ?: "",
+            email = response.data?.getUserByNetId?.get(0)?.userFields?.email ?: "",
+            netId = response.data?.getUserByNetId?.get(0)?.userFields?.netId ?: "",
         )
     }
 
-    override suspend fun hasUser(): Boolean {
-        return firebaseAuth.currentUser != null && getNetId() != null
+    override fun hasFirebaseUser(): Boolean {
+        return firebaseAuth.currentUser != null
+    }
+
+    override suspend fun getFirebaseUser(): FirebaseUser? {
+        return firebaseAuth.currentUser
+    }
+
+    override suspend fun hasUser(netId: String): Boolean {
+        return hasFirebaseUser() && getUserByNetId(netId).id.isNotEmpty()
     }
 
     override suspend fun signInWithGoogle(idToken: String) {
@@ -67,8 +84,17 @@ class UserInfoRepositoryImpl @Inject constructor(
         firebaseAuth.signInWithCredential(firebaseCredential).await()
     }
 
-    override suspend fun signOut() {
+    override fun signOut() {
         firebaseAuth.signOut()
+    }
+
+    override suspend fun getUserInfoFromDataStore(): UserInfo {
+        return UserInfo(
+            id = getUserIdFromDataStore(),
+            name = getUserNameFromDataStore(),
+            email = getEmailFromDataStore(),
+            netId = getNetIdFromDataStore(),
+        )
     }
 
     private suspend fun storeId(id: String) {
@@ -95,28 +121,40 @@ class UserInfoRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getUserId(): String? {
+    override suspend fun storeSkip(skip: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[PreferencesKeys.SKIP] = skip
+        }
+    }
+
+    override suspend fun getSkipFromDataStore(): Boolean {
+        return dataStore.data.map { preferences ->
+            preferences[PreferencesKeys.SKIP]
+        }.firstOrNull() ?: false
+    }
+
+    override suspend fun getUserIdFromDataStore(): String {
         return dataStore.data.map { preferences ->
             preferences[PreferencesKeys.ID]
-        }.firstOrNull()
+        }.firstOrNull() ?: ""
     }
 
-    override suspend fun getUsername(): String? {
+    override suspend fun getUserNameFromDataStore(): String {
         return dataStore.data.map { preferences ->
             preferences[PreferencesKeys.USERNAME]
-        }.firstOrNull()
+        }.firstOrNull() ?: ""
     }
 
-    override suspend fun getNetId(): String? {
+    override suspend fun getNetIdFromDataStore(): String {
         return dataStore.data.map { preferences ->
             preferences[PreferencesKeys.NETID]
-        }.firstOrNull()
+        }.firstOrNull() ?: ""
     }
 
-    override suspend fun getEmail(): String? {
+    override suspend fun getEmailFromDataStore(): String {
         return dataStore.data.map { preferences ->
             preferences[PreferencesKeys.EMAIL]
-        }.firstOrNull()
+        }.firstOrNull() ?: ""
     }
 
 }

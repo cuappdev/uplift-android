@@ -1,5 +1,6 @@
 package com.cornellappdev.uplift.ui
 
+import android.util.Log
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
@@ -10,6 +11,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -41,9 +45,10 @@ import com.cornellappdev.uplift.ui.viewmodels.classes.ClassDetailViewModel
 import com.cornellappdev.uplift.ui.viewmodels.classes.ClassesViewModel
 import com.cornellappdev.uplift.ui.viewmodels.gyms.GymDetailViewModel
 import com.cornellappdev.uplift.ui.viewmodels.gyms.HomeViewModel
-import com.cornellappdev.uplift.ui.viewmodels.auth.LoginViewModel
+import com.cornellappdev.uplift.ui.viewmodels.onboarding.LoginViewModel
 import com.cornellappdev.uplift.ui.viewmodels.report.ReportViewModel
 import com.cornellappdev.uplift.ui.viewmodels.nav.RootNavigationViewModel
+import com.cornellappdev.uplift.ui.viewmodels.onboarding.ProfileCreationViewModel
 import com.cornellappdev.uplift.util.PRIMARY_BLACK
 import com.cornellappdev.uplift.util.PRIMARY_YELLOW
 import com.cornellappdev.uplift.util.montserratFamily
@@ -65,13 +70,18 @@ fun MainNavigationWrapper(
     homeViewModel: HomeViewModel = hiltViewModel(),
     reportViewModel: ReportViewModel = hiltViewModel(),
     rootNavigationViewModel: RootNavigationViewModel = hiltViewModel(),
-    loginViewModel: LoginViewModel = hiltViewModel()
+    loginViewModel: LoginViewModel = hiltViewModel(),
+    profileCreationViewModel: ProfileCreationViewModel = hiltViewModel()
 ) {
 
-    val uiState = rootNavigationViewModel.collectUiStateValue()
+    val rootNavigationUiState = rootNavigationViewModel.collectUiStateValue()
     val navController = rememberNavController()
     val systemUiController: SystemUiController = rememberSystemUiController()
     val gymsState = homeViewModel.gymFlow.collectAsState().value
+    val loginUiState = loginViewModel.collectUiStateValue()
+    val isUserSignedIn = loginUiState.isUserSignedIn
+    val hasSkipped = loginUiState.hasSkipped
+    var startDestination: UpliftRootRoute by remember { mutableStateOf(UpliftRootRoute.Onboarding) }
 
     val yourShimmerTheme = defaultShimmerTheme.copy(
         shaderColors = listOf(
@@ -90,64 +100,82 @@ fun MainNavigationWrapper(
 
     systemUiController.setStatusBarColor(PRIMARY_YELLOW)
 
-    LaunchedEffect(uiState.navEvent) {
-        uiState.navEvent?.consumeSuspend {
+    LaunchedEffect(rootNavigationUiState.navEvent) {
+        rootNavigationUiState.navEvent?.consumeSuspend {
             // Navigate.
             navController.navigate(it)
         }
     }
-    LaunchedEffect(uiState.popBackStack) {
-        uiState.popBackStack?.consumeSuspend {
+    LaunchedEffect(rootNavigationUiState.popBackStack) {
+        rootNavigationUiState.popBackStack?.consumeSuspend {
             navController.popBackStack()
         }
     }
 
+    LaunchedEffect(isUserSignedIn, hasSkipped) {
+        if (isUserSignedIn || hasSkipped) {
+            startDestination = UpliftRootRoute.Home
+        }
+    }
+
+    @Composable
+    fun isRoute(route: UpliftRootRoute): Boolean {
+        val navBackStackEntry by navController.currentBackStackEntryAsState()
+        val currentDestination = navBackStackEntry?.destination
+        return currentDestination?.route == route::class.qualifiedName
+    }
+
     //TODO() : Once Google Sign In is fully implemented, make sure BottomNavBar not visible until user signs in
     Scaffold(bottomBar = {
-        if (gymsState is ApiResponse.Success) BottomNavigation(
-            backgroundColor = PRIMARY_YELLOW, contentColor = PRIMARY_BLACK, elevation = 1.dp
+        if (!isRoute(UpliftRootRoute.Onboarding)
+            && !isRoute(UpliftRootRoute.ProfileCreation)
+            && gymsState is ApiResponse.Success
         ) {
-            val navBackStackEntry by navController.currentBackStackEntryAsState()
-            val currentDestination = navBackStackEntry?.destination
-            items.forEach { screen ->
-                val selected =
-                    currentDestination?.hierarchy?.any {
-                        it.route == screen.route::class.qualifiedName
-                    } == true
-                BottomNavigationItem(icon = {
-                    Icon(
-                        painter = painterResource(
-                            id = if (selected) screen.painterIds.second else screen.painterIds.first
-                        ),
-                        contentDescription = null
-                    )
-                }, label = {
-                    Text(
-                        text = screen.titleText,
-                        fontFamily = montserratFamily,
-                        fontSize = 14.sp,
-                        fontWeight = if (selected) FontWeight(700)
-                        else FontWeight(500),
-                        lineHeight = 17.07.sp,
-                        textAlign = TextAlign.Center,
-                        overflow = TextOverflow.Visible,
-                        softWrap = false
-                    )
-                }, selected = selected, onClick = {
-                    navController.navigate(screen.route) {
-                        // Pop up to the start destination of the graph to
-                        // avoid building up a large stack of destinations
-                        // on the back stack as users select items
-                        popUpTo(navController.graph.findStartDestination().id) {
-                            saveState = true
+            BottomNavigation(
+                backgroundColor = PRIMARY_YELLOW, contentColor = PRIMARY_BLACK, elevation = 1.dp
+            ) {
+                val navBackStackEntry by navController.currentBackStackEntryAsState()
+                val currentDestination = navBackStackEntry?.destination
+                items.forEach { screen ->
+                    val selected =
+                        currentDestination?.hierarchy?.any {
+                            it.route == screen.route::class.qualifiedName
+                        } == true
+                    BottomNavigationItem(icon = {
+                        Icon(
+                            painter = painterResource(
+                                id = if (selected) screen.painterIds.second else screen.painterIds.first
+                            ),
+                            contentDescription = null
+                        )
+                    }, label = {
+                        Text(
+                            text = screen.titleText,
+                            fontFamily = montserratFamily,
+                            fontSize = 14.sp,
+                            fontWeight = if (selected) FontWeight(700)
+                            else FontWeight(500),
+                            lineHeight = 17.07.sp,
+                            textAlign = TextAlign.Center,
+                            overflow = TextOverflow.Visible,
+                            softWrap = false
+                        )
+                    }, selected = selected, onClick = {
+                        navController.navigate(screen.route) {
+                            // Pop up to the start destination of the graph to
+                            // avoid building up a large stack of destinations
+                            // on the back stack as users select items
+                            popUpTo(navController.graph.findStartDestination().id) {
+                                saveState = true
+                            }
+                            // Avoid multiple copies of the same destination when
+                            // reselecting the same item
+                            launchSingleTop = true
+                            // Restore state when reselecting a previously selected item
+                            restoreState = true
                         }
-                        // Avoid multiple copies of the same destination when
-                        // reselecting the same item
-                        launchSingleTop = true
-                        // Restore state when reselecting a previously selected item
-                        restoreState = true
-                    }
-                })
+                    })
+                }
             }
         }
     }) {
@@ -155,7 +183,7 @@ fun MainNavigationWrapper(
         // TODO 2: Change to Onboarding after google sign in is finished
         NavHost(
             navController = navController,
-            startDestination = UpliftRootRoute.Onboarding,
+            startDestination = startDestination,
             modifier = Modifier.padding(it)
         ) {
             composable<UpliftRootRoute.Home> {
@@ -174,12 +202,6 @@ fun MainNavigationWrapper(
                     navController.popBackGym(gymDetailViewModel)
                 }
             }
-            // TODO: I split these across multiple screens to make it so the user sticks to
-            //  the side of the app they were originally on.
-            //  However, I think this might cause a bug if you have classes open on BOTH
-            //  sides of the app then pop back. I think both will end up popping back.
-            //  I can't test RN cuz backend is down, so test this and see. If it's broken,
-            //  change it to just use one "classDetail" route on the class half.
             composable<UpliftRootRoute.ClassDetail> {
                 ClassDetailScreen(
                     classDetailViewModel = classDetailViewModel, navController = navController
@@ -201,10 +223,15 @@ fun MainNavigationWrapper(
                 )
             }
             composable<UpliftRootRoute.Onboarding> {
-                SignInPromptScreen(loginViewModel, loginViewModel::navigateToHome)
+                SignInPromptScreen(
+                    loginViewModel::onSignInWithGoogle,
+                    loginViewModel::onSkip,
+                )
             }
             composable<UpliftRootRoute.ProfileCreation> {
-                ProfileCreationScreen(navController = navController)
+                ProfileCreationScreen(
+                    profileCreationViewModel,
+                )
             }
             composable<UpliftRootRoute.ReportSuccess> {
                 ReportSubmittedScreen(

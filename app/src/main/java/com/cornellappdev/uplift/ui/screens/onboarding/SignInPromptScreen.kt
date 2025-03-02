@@ -28,28 +28,19 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.credentials.Credential
 import com.cornellappdev.uplift.R
 import com.cornellappdev.uplift.ui.components.onboarding.auth.LogInButton
-import com.cornellappdev.uplift.ui.viewmodels.auth.LoginViewModel
 import com.cornellappdev.uplift.util.GRAY01
 import com.cornellappdev.uplift.util.GRAY04
 import com.cornellappdev.uplift.util.LIGHT_YELLOW
 import com.cornellappdev.uplift.util.montserratFamily
-import com.google.accompanist.systemuicontroller.SystemUiController
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 @Composable
 fun SignInPromptScreen(
-    loginViewModel: LoginViewModel,
-    onSkip: () -> Unit
+    onSignIn: (Credential) -> Unit,
+    onSkip: () -> Unit,
 ) {
-    val systemUiController: SystemUiController = rememberSystemUiController()
-
-    systemUiController.isStatusBarVisible = false
-    systemUiController.isNavigationBarVisible = false // Navigation bar
-    systemUiController.isSystemBarsVisible = false
-
-    val resultLauncher = loginViewModel.makeSignInLauncher()
 
     Box() {
         Canvas(modifier = Modifier.fillMaxSize()) {
@@ -97,7 +88,7 @@ fun SignInPromptScreen(
             Spacer(modifier = Modifier.height(125.dp))
 
             LogInButton { credential ->
-
+                onSignIn(credential)
             }
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -139,7 +130,7 @@ private fun UpliftUsesCardList() {
         )
         UpliftUsesCard(
             R.drawable.capacities,
-            "Reserve gym capacities"
+            "View workout history"
         )
     }
 }

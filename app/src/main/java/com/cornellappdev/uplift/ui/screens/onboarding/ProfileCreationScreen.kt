@@ -2,21 +2,15 @@ package com.cornellappdev.uplift.ui.screens.onboarding
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
@@ -27,11 +21,13 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -39,17 +35,21 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
 import com.cornellappdev.uplift.R
+import com.cornellappdev.uplift.ui.components.onboarding.PhotoPicker
+import com.cornellappdev.uplift.ui.viewmodels.onboarding.ProfileCreationViewModel
 import com.cornellappdev.uplift.util.GRAY01
 import com.cornellappdev.uplift.util.GRAY02
 import com.cornellappdev.uplift.util.GRAY03
 import com.cornellappdev.uplift.util.PRIMARY_YELLOW
 import com.cornellappdev.uplift.util.montserratFamily
-import com.google.accompanist.systemuicontroller.SystemUiController
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
+import kotlin.reflect.KSuspendFunction0
 
 /**
  * The profile creation page during the Uplift onboarding process.
@@ -57,9 +57,8 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileCreationScreen(
-    navController: NavHostController,
+    profileCreationViewModel: ProfileCreationViewModel
 ) {
-    val systemUiController: SystemUiController = rememberSystemUiController()
     val checkboxColors: CheckboxColors =
         CheckboxDefaults.colors(
             checkedColor = PRIMARY_YELLOW,
@@ -67,9 +66,21 @@ fun ProfileCreationScreen(
             uncheckedColor = GRAY03
         )
 
-    systemUiController.isStatusBarVisible = false
-    systemUiController.isNavigationBarVisible = false // Navigation bar
-    systemUiController.isSystemBarsVisible = false
+    val profileCreationUiState = profileCreationViewModel.collectUiStateValue()
+    val name = profileCreationUiState.name
+    val coroutineScope = rememberCoroutineScope()
+
+    val eulaAgreeCheckedState = remember { mutableStateOf(false) }
+    val gymDataAccessCheckedState = remember { mutableStateOf(false) }
+    val locationAccessCheckedState = remember { mutableStateOf(false) }
+    val allChecked =
+        eulaAgreeCheckedState.value && gymDataAccessCheckedState.value && locationAccessCheckedState.value
+
+    val animatedOpacity: Float by animateFloatAsState(
+        if (allChecked) 1f else 0f,
+        label = "Uplift Text Opacity"
+    )
+    val opacityModifier: Modifier = Modifier.alpha(animatedOpacity)
 
     Scaffold(
         containerColor = Color.White,
@@ -78,22 +89,22 @@ fun ProfileCreationScreen(
                 title = {
                     Text(
                         text = "Complete your profile.",
-                        modifier = Modifier.padding(vertical = 4.dp),
+                        modifier = Modifier.padding(top = 20.dp),
                         fontSize = 24.sp,
                         fontFamily = montserratFamily,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Left
                     )
                 },
                 modifier = Modifier
-                    .shadow(elevation = 20.dp, ambientColor = GRAY01)
-                    .statusBarsPadding()
+                    .height(120.dp)
+                    .shadow(elevation = 20.dp, ambientColor = GRAY01),
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = Color.White,
+                )
 
             )
         }) { innerPadding ->
-        val checkedState = remember { mutableStateOf(false) }
-        val checkedState2 = remember { mutableStateOf(false) }
-        val checkedState3 = remember { mutableStateOf(false) }
-        val allchecked = checkedState.value && checkedState2.value && checkedState3.value
 
         Column(
             modifier = Modifier
@@ -102,85 +113,93 @@ fun ProfileCreationScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Spacer(modifier = Modifier.height(46.dp))
-            //TODO - this Box placeholder will be replaced with a component to choose photo
-            Box(
-                modifier = Modifier
-                    .size(155.dp)
-                    .shadow(
-                        elevation = 20.dp,
-                        shape = CircleShape,
-                        ambientColor = GRAY01,
-                        spotColor = GRAY03
-                    )
-                    .background(color = GRAY01, shape = CircleShape)
-                    .border(width = 8.dp, color = Color.White, shape = CircleShape),
-                contentAlignment = Alignment.Center
-            ) {
-                Image(
-                    painter = painterResource(R.drawable.camera),
-                    contentDescription = "",
-                    modifier = Modifier.offset(y = 5.dp)
-                )
-            }
+
+            PhotoPicker { profileCreationViewModel.onPhotoSelected(it) }
+
             Text(
-                text = "First name Last name",
+                text = name,
                 modifier = Modifier.padding(vertical = 24.dp),
                 fontSize = 24.sp,
                 fontFamily = montserratFamily,
                 fontWeight = FontWeight.Bold
             )
+
             Spacer(modifier = Modifier.height(25.dp))
 
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                InfoCheckboxRow(
-                    checkedState = checkedState,
-                    checkboxColors = checkboxColors,
-                    message = "I agree with EULA terms and agreements"
-                )
-
-                InfoCheckboxRow(
-                    checkedState = checkedState2,
-                    checkboxColors = checkboxColors,
-                    message = "I allow Uplift to access data on my gym usage"
-                )
-
-                InfoCheckboxRow(
-                    checkedState = checkedState3,
-                    checkboxColors = checkboxColors,
-                    message = "I allow Uplift to access my location"
-                )
-
-            }
-
+            CheckBoxesSection(
+                eulaAgreeCheckedState,
+                checkboxColors,
+                gymDataAccessCheckedState,
+                locationAccessCheckedState
+            )
 
             Spacer(modifier = Modifier.height(155.dp))
 
-            val animatedOpacity: Float by animateFloatAsState(if (allchecked) 1f else 0f)
-            val opacityModifier: Modifier = Modifier.alpha(animatedOpacity)
             ReadyToUplift(opacityModifier)
-
-            Button(
-                { navController.navigate(route = "home") },
-                enabled = allchecked,
-                colors = ButtonDefaults.buttonColors(
-                    backgroundColor = PRIMARY_YELLOW,
-                    disabledBackgroundColor = GRAY02,
-                    contentColor = Color.Black
-                ),
-                shape = RoundedCornerShape(38.dp),
-                modifier = Modifier.size(height = 44.dp, width = 144.dp)
-            ) {
-
-                Text(
-                    text = "Next",
-                    fontSize = 16.sp,
-                    fontFamily = montserratFamily,
-                    fontWeight = FontWeight.Bold
-                )
-
-            }
+            NextButton(coroutineScope, profileCreationViewModel::createUser, allChecked)
 
         }
+    }
+}
+
+@Composable
+private fun CheckBoxesSection(
+    checkedState: MutableState<Boolean>,
+    checkboxColors: CheckboxColors,
+    checkedState2: MutableState<Boolean>,
+    checkedState3: MutableState<Boolean>
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        InfoCheckboxRow(
+            checkedState = checkedState,
+            checkboxColors = checkboxColors,
+            message = "I agree with EULA terms and agreements"
+        )
+
+        InfoCheckboxRow(
+            checkedState = checkedState2,
+            checkboxColors = checkboxColors,
+            message = "I allow Uplift to access data on my gym usage"
+        )
+
+        InfoCheckboxRow(
+            checkedState = checkedState3,
+            checkboxColors = checkboxColors,
+            message = "I allow Uplift to access my location"
+        )
+
+    }
+}
+
+@Composable
+private fun NextButton(
+    coroutineScope: CoroutineScope,
+    onClick: KSuspendFunction0<Unit>,
+    allChecked: Boolean
+) {
+    Button(
+        {
+            coroutineScope.launch {
+                onClick()
+            }
+        },
+        enabled = allChecked,
+        colors = ButtonDefaults.buttonColors(
+            backgroundColor = PRIMARY_YELLOW,
+            disabledBackgroundColor = GRAY02,
+            contentColor = Color.Black
+        ),
+        shape = RoundedCornerShape(38.dp),
+        modifier = Modifier.size(height = 44.dp, width = 144.dp)
+    ) {
+
+        Text(
+            text = if (allChecked) "Get started" else "Next",
+            fontSize = 16.sp,
+            fontFamily = montserratFamily,
+            fontWeight = FontWeight.Bold
+        )
+
     }
 }
 
@@ -241,4 +260,10 @@ private fun InfoCheckboxRow(
             fontWeight = FontWeight.Normal
         )
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ProfileCreationScreenPreview() {
+//    ProfileCreationScreen()
 }
