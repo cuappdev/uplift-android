@@ -3,17 +3,17 @@ package com.cornellappdev.uplift.ui.screens.gyms
 import androidx.compose.animation.Crossfade
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.cornellappdev.uplift.data.repositories.LocationRepository
-import com.cornellappdev.uplift.data.models.ApiResponse
 import com.cornellappdev.uplift.ui.screens.gyms.subscreens.MainError
 import com.cornellappdev.uplift.ui.screens.gyms.subscreens.MainLoaded
 import com.cornellappdev.uplift.ui.screens.gyms.subscreens.MainLoading
-import com.cornellappdev.uplift.ui.viewmodels.classes.ClassDetailViewModel
 import com.cornellappdev.uplift.ui.viewmodels.gyms.GymDetailViewModel
 import com.cornellappdev.uplift.ui.viewmodels.gyms.HomeViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -29,14 +29,15 @@ import kotlinx.coroutines.delay
 fun HomeScreen(
     homeViewModel: HomeViewModel = viewModel(),
     navController: NavHostController,
-    classDetailViewModel: ClassDetailViewModel = viewModel(),
     gymDetailViewModel: GymDetailViewModel,
     loadingShimmer: Shimmer
 ) {
-    val titleText = homeViewModel.titleFlow.collectAsState().value
-    val classesState = homeViewModel.classesFlow.collectAsState().value
-    val gymsState = homeViewModel.gymFlow.collectAsState().value
-    val showCapacities by homeViewModel.showCapacities
+    val homeUiState = homeViewModel.collectUiStateValue()
+    val titleText = homeUiState.title
+    val gymsState = homeUiState.gyms
+    val gymsLoading = homeUiState.gymsLoading
+    val gymsError = homeUiState.gymsError
+    var showCapacities by remember { mutableStateOf(false) }
 
     val context = LocalContext.current
 
@@ -56,35 +57,19 @@ fun HomeScreen(
         LocationRepository.instantiate(context)
     }
 
-    Crossfade(targetState = Pair(gymsState, classesState), label = "Main") { state ->
-        val gState = state.first
-        val cState = state.second
-
-        // Loaded!
-        if (gState is ApiResponse.Success && cState is ApiResponse.Success) {
-            val gymsList = gState.data
-            val classesList = cState.data
-            MainLoaded(
+    Crossfade(targetState = gymsState, label = "Main") {
+        when {
+            gymsLoading -> MainLoading(loadingShimmer)
+            gymsError -> MainError(reload = homeViewModel::reload)
+            gymsState.isNotEmpty() -> MainLoaded(
                 gymDetailViewModel = gymDetailViewModel,
-                classDetailViewModel = classDetailViewModel,
-                upliftClasses = classesList,
-                gymsList = gymsList,
+                gymsList = gymsState,
                 navController = navController,
                 showCapacities = showCapacities,
                 titleText = titleText,
-                onToggleCapacities = homeViewModel::toggleCapacities,
+                onToggleCapacities = { showCapacities = !showCapacities },
                 reload = homeViewModel::reload,
             )
-        }
-        // Some error
-        else if (gState == ApiResponse.Error || cState == ApiResponse.Error) {
-            MainError(
-                reload = homeViewModel::reload
-            )
-        }
-        // At least one is still loading.
-        else {
-            MainLoading(loadingShimmer)
         }
     }
 }

@@ -77,7 +77,8 @@ fun MainNavigationWrapper(
     val rootNavigationUiState = rootNavigationViewModel.collectUiStateValue()
     val navController = rememberNavController()
     val systemUiController: SystemUiController = rememberSystemUiController()
-    val gymsState = homeViewModel.gymFlow.collectAsState().value
+    val homeUiState = homeViewModel.collectUiStateValue()
+    val gymsState = homeUiState.gyms
     val loginUiState = loginViewModel.collectUiStateValue()
     val isUserSignedIn = loginUiState.isUserSignedIn
     val hasSkipped = loginUiState.hasSkipped
@@ -128,7 +129,7 @@ fun MainNavigationWrapper(
     Scaffold(bottomBar = {
         if (!isRoute(UpliftRootRoute.Onboarding)
             && !isRoute(UpliftRootRoute.ProfileCreation)
-            && gymsState is ApiResponse.Success
+            && gymsState.isNotEmpty()
         ) {
             BottomNavigation(
                 backgroundColor = PRIMARY_YELLOW, contentColor = PRIMARY_BLACK, elevation = 1.dp
@@ -189,7 +190,6 @@ fun MainNavigationWrapper(
                 HomeScreen(
                     homeViewModel = homeViewModel,
                     navController = navController,
-                    classDetailViewModel = classDetailViewModel,
                     gymDetailViewModel = gymDetailViewModel,
                     loadingShimmer = shimmer
                 )

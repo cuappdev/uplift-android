@@ -80,8 +80,6 @@ import kotlin.math.roundToInt
 @Composable
 fun MainLoaded(
     gymDetailViewModel: GymDetailViewModel,
-    classDetailViewModel: ClassDetailViewModel,
-    upliftClasses: List<UpliftClass>,
     gymsList: List<UpliftGym>,
     navController: NavHostController,
     showCapacities: Boolean,
@@ -315,44 +313,6 @@ fun MainLoaded(
                     }
                 }
             }
-
-            // TODAY'S CLASSES TODO: uncomment when classes are added back.
-//            item {
-//                Text(
-//                    text = "TODAY'S CLASSES",
-//                    fontFamily = montserratFamily,
-//                    fontSize = 14.sp,
-//                    fontWeight = FontWeight(700),
-//                    lineHeight = 17.07.sp,
-//                    textAlign = TextAlign.Center,
-//                    color = GRAY04,
-//                    modifier = Modifier.padding(start = 16.dp)
-//                )
-//
-//                if (upliftClasses.isEmpty()) {
-//                    Box(
-//                        modifier = Modifier
-//                            .fillMaxWidth()
-//                            .padding(top = 12.dp, bottom = 24.dp),
-//                        contentAlignment = Alignment.Center
-//                    ) {
-//                        NoClasses()
-//                    }
-//                } else LazyRow(
-//                    state = rememberLazyListState(), contentPadding = PaddingValues(
-//                        horizontal = 16.dp
-//                    ), modifier = Modifier.padding(top = 12.dp, bottom = 24.dp)
-//                ) {
-//                    items(items = upliftClasses) { upliftClass ->
-//                        BriefClassInfoCard(
-//                            thisClass = upliftClass,
-//                            navController = navController,
-//                            classDetailViewModel = classDetailViewModel
-//                        )
-//                        Spacer(Modifier.width(16.dp))
-//                    }
-//                }
-//            }
 
             // Gyms
             item {

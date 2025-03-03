@@ -3,7 +3,6 @@ package com.cornellappdev.uplift.ui.viewmodels.onboarding
 import android.util.Log
 import androidx.credentials.Credential
 import androidx.credentials.CustomCredential
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cornellappdev.uplift.domain.repositories.UserInfoRepository
 import com.cornellappdev.uplift.ui.UpliftRootRoute
@@ -13,8 +12,6 @@ import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential.Companion.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -31,18 +28,19 @@ class LoginViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
+            var userExists = false
+            val hasSkipped = userInfoRepository.getSkipFromDataStore()
             if (userInfoRepository.hasFirebaseUser()){
                 val user = userInfoRepository.getFirebaseUser()
                 val email = user?.email ?: ""
                 val netId = email.substring(0, email.indexOf('@'))
-                val userExists = userInfoRepository.hasUser(netId)
-                applyMutation {
-                    copy(isUserSignedIn = userExists)
-                }
+                userExists = userInfoRepository.hasUser(netId)
             }
-            val hasSkipped = userInfoRepository.getSkipFromDataStore()
             applyMutation {
-                copy(hasSkipped = hasSkipped)
+                copy(
+                    isUserSignedIn = userExists,
+                    hasSkipped = hasSkipped
+                )
             }
         }
     }
