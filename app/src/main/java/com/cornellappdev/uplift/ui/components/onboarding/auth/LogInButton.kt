@@ -2,30 +2,24 @@ package com.cornellappdev.uplift.ui.components.onboarding.auth
 
 import android.content.Context
 import android.util.Log
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.credentials.Credential
 import androidx.credentials.CredentialManager
 import androidx.credentials.GetCredentialRequest
 import androidx.credentials.exceptions.NoCredentialException
-import com.cornellappdev.uplift.util.PRIMARY_YELLOW
-import com.cornellappdev.uplift.util.montserratFamily
 import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption
 import com.cornellappdev.uplift.BuildConfig
+import com.cornellappdev.uplift.ui.components.general.UpliftButton
 import kotlinx.coroutines.launch
 
 @Composable
 fun LogInButton(onRequestResult: (Credential) -> Unit) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
-    Button(
+    UpliftButton(
         onClick = {
             coroutineScope.launch {
                 launchCredentialManagerButtonUI(
@@ -34,18 +28,15 @@ fun LogInButton(onRequestResult: (Credential) -> Unit) {
                 )
             }
         },
-        elevation = ButtonDefaults.elevation(5.dp),
-        colors = ButtonDefaults.buttonColors(backgroundColor = PRIMARY_YELLOW)
-    ) {
-        Text(
-            "Log in",
-            fontSize = 16.sp,
-            fontFamily = montserratFamily,
-            fontWeight = FontWeight.Bold
-        )
-    }
+        text = "Log in",
+        width = 144.dp,
+        height = 44.dp,
+        fontSize = 16f,
+        elevation = 2.dp
+    )
 }
 
+// TODO: Try to move parts that don't require Context to viewmodel
 private suspend fun launchCredentialManagerButtonUI(
     context: Context,
     onRequestResult: (Credential) -> Unit

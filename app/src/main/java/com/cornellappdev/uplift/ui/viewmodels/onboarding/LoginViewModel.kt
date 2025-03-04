@@ -1,13 +1,19 @@
 package com.cornellappdev.uplift.ui.viewmodels.onboarding
 
+import android.content.Context
 import android.util.Log
 import androidx.credentials.Credential
+import androidx.credentials.CredentialManager
 import androidx.credentials.CustomCredential
+import androidx.credentials.GetCredentialRequest
+import androidx.credentials.exceptions.NoCredentialException
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.cornellappdev.uplift.BuildConfig
 import com.cornellappdev.uplift.domain.repositories.UserInfoRepository
 import com.cornellappdev.uplift.ui.UpliftRootRoute
 import com.cornellappdev.uplift.ui.nav.RootNavigationRepository
+import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential.Companion.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -83,5 +89,30 @@ class LoginViewModel @Inject constructor(
 
     private fun navigateToProfileCreation() {
         rootNavigationRepository.navigate(UpliftRootRoute.ProfileCreation)
+    }
+
+    private suspend fun launchCredentialManagerButtonUI(
+        context: Context,
+        onRequestResult: (Credential) -> Unit
+    ) {
+        try {
+            val signInWithGoogleOption = GetSignInWithGoogleOption
+                .Builder(serverClientId = BuildConfig.GOOGLE_AUTH_CLIENT_ID)
+                .build()
+            val request = GetCredentialRequest.Builder()
+                .addCredentialOption(signInWithGoogleOption)
+                .build()
+            val result = CredentialManager.create(context).getCredential(
+                request = request,
+                context = context
+            )
+            onRequestResult(result.credential)
+        } catch (e: NoCredentialException) {
+            // TODO: Handle no credential found with toast or snackbar
+            Log.e("CredentialManager", "No accounts error", e)
+        } catch (e: Exception) {
+            Log.e("CredentialManager", e.message.orEmpty(), e)
+        }
+
     }
 }
