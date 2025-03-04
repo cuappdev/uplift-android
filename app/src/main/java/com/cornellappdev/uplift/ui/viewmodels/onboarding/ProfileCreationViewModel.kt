@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class ProfileCreationUiState(
-    val name: String,
+    val name: String = "",
     val imageUri: Uri? = null
 )
 

@@ -26,6 +26,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.credentials.Credential
@@ -54,7 +55,7 @@ fun SignInPromptScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxSize()
         ) {
-            Spacer(modifier = Modifier.height(88.dp))
+            Spacer(modifier = Modifier.weight(0.1f))
 
             Image(
                 painter = painterResource(id = R.drawable.ic_main_logo),
@@ -63,7 +64,7 @@ fun SignInPromptScreen(
                     .height(130.dp)
                     .width(115.dp)
             )
-            Spacer(modifier = Modifier.height(60.dp))
+            Spacer(modifier = Modifier.weight(0.07f))
 
             Text(
                 text = "Find what uplifts you.",
@@ -72,7 +73,7 @@ fun SignInPromptScreen(
                 fontWeight = FontWeight.Bold
             )
 
-            Spacer(modifier = Modifier.height(80.dp))
+            Spacer(modifier = Modifier.weight(0.1f))
 
             Text(
                 "Log in to:",
@@ -81,19 +82,21 @@ fun SignInPromptScreen(
                 fontWeight = FontWeight.Bold
             )
 
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.weight(0.03f))
 
             UpliftUsesCardList()
 
-            Spacer(modifier = Modifier.height(125.dp))
+            Spacer(modifier = Modifier.weight(0.16f))
 
             LogInButton { credential ->
                 onSignIn(credential)
             }
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.weight(0.02f))
 
             SkipButton(onSkip)
+
+            Spacer(modifier = Modifier.weight(0.06f))
         }
     }
 }
@@ -166,4 +169,10 @@ private fun UpliftUsesCard(
             )
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun SignInPromptScreenPreview() {
+    SignInPromptScreen({}, {})
 }
