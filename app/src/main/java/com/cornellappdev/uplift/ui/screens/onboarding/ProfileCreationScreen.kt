@@ -40,6 +40,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.cornellappdev.uplift.R
 import com.cornellappdev.uplift.ui.components.onboarding.PhotoPicker
 import com.cornellappdev.uplift.ui.viewmodels.onboarding.ProfileCreationViewModel
@@ -56,7 +57,24 @@ import kotlinx.coroutines.launch
  */
 @Composable
 fun ProfileCreationScreen(
-    profileCreationViewModel: ProfileCreationViewModel
+    profileCreationViewModel: ProfileCreationViewModel = hiltViewModel()
+) {
+    val profileCreationUiState = profileCreationViewModel.collectUiStateValue()
+    val name = profileCreationUiState.name
+
+    ProfileCreationScreenContent(
+        profileCreationViewModel::onPhotoSelected,
+        profileCreationViewModel::createUser,
+        name
+    )
+}
+
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+private fun ProfileCreationScreenContent(
+    onPhotoSelected: (Uri) -> Unit,
+    createUser: () -> Unit,
+    name: String,
 ) {
     val checkboxColors: CheckboxColors =
         CheckboxDefaults.colors(
@@ -64,9 +82,6 @@ fun ProfileCreationScreen(
             checkmarkColor = Color.Black,
             uncheckedColor = GRAY03
         )
-
-    val profileCreationUiState = profileCreationViewModel.collectUiStateValue()
-    val name = profileCreationUiState.name
     val coroutineScope = rememberCoroutineScope()
 
     val eulaAgreeCheckedState = remember { mutableStateOf(false) }
@@ -80,35 +95,6 @@ fun ProfileCreationScreen(
         label = "Uplift Text Opacity"
     )
     val opacityModifier: Modifier = Modifier.alpha(animatedOpacity)
-
-    ProfileCreationScreenContent(
-        profileCreationViewModel::onPhotoSelected,
-        profileCreationViewModel::createUser,
-        name,
-        eulaAgreeCheckedState,
-        checkboxColors,
-        gymDataAccessCheckedState,
-        locationAccessCheckedState,
-        opacityModifier,
-        coroutineScope,
-        allChecked
-    )
-}
-
-@Composable
-@OptIn(ExperimentalMaterial3Api::class)
-private fun ProfileCreationScreenContent(
-    onPhotoSelected: (Uri) -> Unit,
-    createUser: () -> Unit,
-    name: String,
-    eulaAgreeCheckedState: MutableState<Boolean>,
-    checkboxColors: CheckboxColors,
-    gymDataAccessCheckedState: MutableState<Boolean>,
-    locationAccessCheckedState: MutableState<Boolean>,
-    opacityModifier: Modifier,
-    coroutineScope: CoroutineScope,
-    allChecked: Boolean
-) {
     Scaffold(
         containerColor = Color.White,
         topBar = {
@@ -294,20 +280,9 @@ private fun InfoCheckboxRow(
 @Preview(showBackground = true)
 @Composable
 private fun ProfileCreationScreenPreview() {
-    val eulaAgreeCheckedState = remember { mutableStateOf(false) }
-    val gymDataAccessCheckedState = remember { mutableStateOf(false) }
-    val locationAccessCheckedState = remember { mutableStateOf(false) }
-
     ProfileCreationScreenContent(
         onPhotoSelected = {},
         createUser = {},
         name = "John Doe",
-        eulaAgreeCheckedState = eulaAgreeCheckedState,
-        checkboxColors = CheckboxDefaults.colors(),
-        gymDataAccessCheckedState = gymDataAccessCheckedState,
-        locationAccessCheckedState = locationAccessCheckedState,
-        opacityModifier = Modifier.alpha(1f),
-        coroutineScope = rememberCoroutineScope(),
-        allChecked = false
     )
 }

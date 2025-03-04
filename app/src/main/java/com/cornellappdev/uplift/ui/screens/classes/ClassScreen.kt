@@ -20,6 +20,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.cornellappdev.uplift.data.models.UpliftClass
@@ -43,7 +44,7 @@ import java.util.Calendar
 @Composable
 fun ClassScreen(
     classDetailViewModel: ClassDetailViewModel = viewModel(),
-    classesViewModel: ClassesViewModel,
+    classesViewModel: ClassesViewModel = hiltViewModel(),
     navController: NavHostController
 ) {
     val classesResponse = classesViewModel.classesFlow.collectAsState()

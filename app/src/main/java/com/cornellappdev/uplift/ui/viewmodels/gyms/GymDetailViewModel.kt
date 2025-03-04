@@ -5,6 +5,7 @@ import com.cornellappdev.uplift.data.models.UpliftClass
 import com.cornellappdev.uplift.data.models.UpliftGym
 import com.cornellappdev.uplift.data.models.ApiResponse
 import com.cornellappdev.uplift.data.repositories.UpliftApiRepository
+import com.cornellappdev.uplift.ui.nav.RootNavigationRepository
 import com.cornellappdev.uplift.util.getSystemTime
 import com.cornellappdev.uplift.util.sameDayAs
 import com.cornellappdev.uplift.util.startTimeComparator
@@ -25,7 +26,8 @@ import javax.inject.Inject
 /** A [GymDetailViewModel] is a view model for GymDetailScreen. */
 @HiltViewModel
 class GymDetailViewModel @Inject constructor(
-    private val upliftApiRepository: UpliftApiRepository
+    private val upliftApiRepository: UpliftApiRepository,
+    private val rootNavigationRepository: RootNavigationRepository
 ) : ViewModel() {
     /**
      * A Stack containing all the previous gyms seen, including the current gym.

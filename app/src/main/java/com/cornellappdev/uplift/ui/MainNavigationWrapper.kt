@@ -31,8 +31,8 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.cornellappdev.uplift.ui.nav.BottomNavScreens
 import com.cornellappdev.uplift.ui.nav.popBackClass
-import com.cornellappdev.uplift.ui.nav.popBackGym
 import com.cornellappdev.uplift.data.models.ApiResponse
+import com.cornellappdev.uplift.ui.nav.popBackGym
 import com.cornellappdev.uplift.ui.screens.classes.ClassDetailScreen
 import com.cornellappdev.uplift.ui.screens.classes.ClassScreen
 import com.cornellappdev.uplift.ui.screens.gyms.GymDetailScreen
@@ -42,13 +42,8 @@ import com.cornellappdev.uplift.ui.screens.onboarding.SignInPromptScreen
 import com.cornellappdev.uplift.ui.screens.report.ReportIssueScreen
 import com.cornellappdev.uplift.ui.screens.report.ReportSubmittedScreen
 import com.cornellappdev.uplift.ui.viewmodels.classes.ClassDetailViewModel
-import com.cornellappdev.uplift.ui.viewmodels.classes.ClassesViewModel
 import com.cornellappdev.uplift.ui.viewmodels.gyms.GymDetailViewModel
-import com.cornellappdev.uplift.ui.viewmodels.gyms.HomeViewModel
-import com.cornellappdev.uplift.ui.viewmodels.onboarding.LoginViewModel
-import com.cornellappdev.uplift.ui.viewmodels.report.ReportViewModel
 import com.cornellappdev.uplift.ui.viewmodels.nav.RootNavigationViewModel
-import com.cornellappdev.uplift.ui.viewmodels.onboarding.ProfileCreationViewModel
 import com.cornellappdev.uplift.util.PRIMARY_BLACK
 import com.cornellappdev.uplift.util.PRIMARY_YELLOW
 import com.cornellappdev.uplift.util.montserratFamily
@@ -64,24 +59,16 @@ import kotlinx.serialization.Serializable
  */
 @Composable
 fun MainNavigationWrapper(
+    // Note: For future view models, please add them to the screen they are used in instead of here.
+    // TODO: Remove HomeScreen and ClassScreen dependencies on gymDetailViewModel and classDetailViewModel and then remove them from here.
     gymDetailViewModel: GymDetailViewModel = hiltViewModel(),
     classDetailViewModel: ClassDetailViewModel = hiltViewModel(),
-    classesViewModel: ClassesViewModel = hiltViewModel(),
-    homeViewModel: HomeViewModel = hiltViewModel(),
-    reportViewModel: ReportViewModel = hiltViewModel(),
     rootNavigationViewModel: RootNavigationViewModel = hiltViewModel(),
-    loginViewModel: LoginViewModel = hiltViewModel(),
-    profileCreationViewModel: ProfileCreationViewModel = hiltViewModel()
 ) {
 
     val rootNavigationUiState = rootNavigationViewModel.collectUiStateValue()
     val navController = rememberNavController()
     val systemUiController: SystemUiController = rememberSystemUiController()
-    val homeUiState = homeViewModel.collectUiStateValue()
-    val gymsState = homeUiState.gyms
-    val loginUiState = loginViewModel.collectUiStateValue()
-    val isUserSignedIn = loginUiState.isUserSignedIn
-    val hasSkipped = loginUiState.hasSkipped
 
     val yourShimmerTheme = defaultShimmerTheme.copy(
         shaderColors = listOf(
@@ -102,19 +89,12 @@ fun MainNavigationWrapper(
 
     LaunchedEffect(rootNavigationUiState.navEvent) {
         rootNavigationUiState.navEvent?.consumeSuspend {
-            // Navigate.
             navController.navigate(it)
         }
     }
     LaunchedEffect(rootNavigationUiState.popBackStack) {
         rootNavigationUiState.popBackStack?.consumeSuspend {
             navController.popBackStack()
-        }
-    }
-
-    LaunchedEffect(isUserSignedIn, hasSkipped) {
-        if (isUserSignedIn || hasSkipped) {
-            navController.navigate(UpliftRootRoute.Home)
         }
     }
 
@@ -125,11 +105,9 @@ fun MainNavigationWrapper(
         return currentDestination?.route == route::class.qualifiedName
     }
 
-    //TODO() : Once Google Sign In is fully implemented, make sure BottomNavBar not visible until user signs in
     Scaffold(bottomBar = {
         if (!isRoute(UpliftRootRoute.Onboarding)
             && !isRoute(UpliftRootRoute.ProfileCreation)
-            && gymsState.isNotEmpty()
         ) {
             BottomNavigation(
                 backgroundColor = PRIMARY_YELLOW, contentColor = PRIMARY_BLACK, elevation = 1.dp
@@ -188,7 +166,6 @@ fun MainNavigationWrapper(
         ) {
             composable<UpliftRootRoute.Home> {
                 HomeScreen(
-                    homeViewModel = homeViewModel,
                     navController = navController,
                     gymDetailViewModel = gymDetailViewModel,
                     loadingShimmer = shimmer
@@ -212,31 +189,21 @@ fun MainNavigationWrapper(
                 ClassScreen(
                     classDetailViewModel = classDetailViewModel,
                     navController = navController,
-                    classesViewModel = classesViewModel
                 )
             }
             composable<UpliftRootRoute.ReportIssue> {
                 ReportIssueScreen(
-                    onSubmit = reportViewModel::createReport,
                     onBack = { navController.popBackStack() }
                 )
             }
+            composable<UpliftRootRoute.ReportSuccess> {
+                ReportSubmittedScreen()
+            }
             composable<UpliftRootRoute.Onboarding> {
-                SignInPromptScreen(
-                    loginViewModel::onSignInWithGoogle,
-                    loginViewModel::onSkip,
-                )
+                SignInPromptScreen()
             }
             composable<UpliftRootRoute.ProfileCreation> {
-                ProfileCreationScreen(
-                    profileCreationViewModel,
-                )
-            }
-            composable<UpliftRootRoute.ReportSuccess> {
-                ReportSubmittedScreen(
-                    onSubmitAnother = reportViewModel::navigateToReport,
-                    onReturnHome = reportViewModel::navigateToHome
-                )
+                ProfileCreationScreen()
             }
             composable<UpliftRootRoute.Sports> {}
             composable<UpliftRootRoute.Favorites> {}

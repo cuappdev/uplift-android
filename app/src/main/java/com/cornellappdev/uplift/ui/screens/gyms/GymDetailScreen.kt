@@ -30,6 +30,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.cornellappdev.uplift.data.repositories.CoilRepository
 import com.cornellappdev.uplift.ui.components.gymdetail.GymFacilitySection
@@ -45,7 +46,7 @@ import com.cornellappdev.uplift.util.*
  */
 @Composable
 fun GymDetailScreen(
-    gymDetailViewModel: GymDetailViewModel = viewModel(),
+    gymDetailViewModel: GymDetailViewModel,
     onBack: () -> Unit
 ) {
     val gym by gymDetailViewModel.gymFlow.collectAsState()

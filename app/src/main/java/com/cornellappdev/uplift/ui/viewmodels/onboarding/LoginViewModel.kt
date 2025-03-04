@@ -5,11 +5,9 @@ import androidx.credentials.Credential
 import androidx.credentials.CustomCredential
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.cornellappdev.uplift.domain.repositories.UserInfoRepository
 import com.cornellappdev.uplift.ui.UpliftRootRoute
 import com.cornellappdev.uplift.ui.nav.RootNavigationRepository
-import com.cornellappdev.uplift.ui.viewmodels.UpliftViewModel
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential.Companion.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL
 import dagger.hilt.android.lifecycle.HiltViewModel

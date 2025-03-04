@@ -27,8 +27,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.cornellappdev.uplift.R
 import com.cornellappdev.uplift.ui.components.general.UpliftTopBarWithBack
+import com.cornellappdev.uplift.ui.viewmodels.report.ReportViewModel
 import com.cornellappdev.uplift.util.GRAY01
 import com.cornellappdev.uplift.util.GRAY04
 import com.cornellappdev.uplift.util.GRAY05
@@ -39,8 +41,7 @@ import com.cornellappdev.uplift.util.montserratFamily
  */
 @Composable
 fun ReportSubmittedScreen(
-    onSubmitAnother: () -> Unit,
-    onReturnHome: () -> Unit
+    reportViewModel: ReportViewModel = hiltViewModel(),
 ) {
     Scaffold(topBar = {
         UpliftTopBarWithBack(
@@ -62,7 +63,7 @@ fun ReportSubmittedScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             SubmittedMessageColumn()
-            ButtonsColumn(onSubmitAnother, onReturnHome)
+            ButtonsColumn(reportViewModel::navigateToReport, reportViewModel::navigateToHome)
         }
     }
 
@@ -164,8 +165,5 @@ private fun SubmittedMessageColumn() {
 @Preview(showBackground = true)
 @Composable
 private fun ReportSubmittedScreenPreview() {
-    ReportSubmittedScreen(
-        onSubmitAnother = {},
-        onReturnHome = {}
-    )
+    ReportSubmittedScreen()
 }

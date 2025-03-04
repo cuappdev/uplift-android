@@ -30,6 +30,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.credentials.Credential
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.cornellappdev.uplift.R
 import com.cornellappdev.uplift.ui.components.onboarding.auth.LogInButton
@@ -49,6 +50,17 @@ fun SignInPromptScreen(
         }
     }
 
+    SignInPromptScreenContent(
+        loginViewModel::onSignInWithGoogle,
+        loginViewModel::onSkip
+    )
+}
+
+@Composable
+private fun SignInPromptScreenContent(
+    onSignInWithGoogle: (credential: Credential) -> Unit,
+    onSkip: () -> Unit
+) {
     Box() {
         Canvas(modifier = Modifier.fillMaxSize()) {
             drawCircle(
@@ -95,12 +107,12 @@ fun SignInPromptScreen(
             Spacer(modifier = Modifier.weight(0.16f))
 
             LogInButton { credential ->
-                loginViewModel.onSignInWithGoogle(credential)
+                onSignInWithGoogle(credential)
             }
 
             Spacer(modifier = Modifier.weight(0.02f))
 
-            SkipButton(onClick = loginViewModel::onSkip)
+            SkipButton(onClick = onSkip)
 
             Spacer(modifier = Modifier.weight(0.06f))
         }
@@ -180,5 +192,5 @@ private fun UpliftUsesCard(
 @Preview(showBackground = true)
 @Composable
 fun SignInPromptScreenPreview() {
-    SignInPromptScreen()
+    SignInPromptScreenContent({}, {})
 }

@@ -14,11 +14,6 @@ fun NavHostController.navigateToClass(
     // Opens the new class.
     classDetailViewModel.openClass(thisClass)
     navigate(UpliftRootRoute.ClassDetail)
-//    if (currentDestination?.route.toString() == "classesMain") {
-//        navigate("classDetailClasses")
-//    } else {
-//        navigate("classDetailHome")
-//    }
 }
 
 fun NavHostController.navigateToGym(
