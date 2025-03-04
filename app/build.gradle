@@ -43,7 +43,7 @@ android {
             buildConfigField("String", "BACKEND_URL", secretsProperties['DEV_ENDPOINT'])
             buildConfigField(
                     "String",
-                    "GOOGLE_AUTH_CLIENT_ID", secretsProperties["GOOGLE_AUTH_CLIENT_ID_LOCAL"]
+                    "GOOGLE_AUTH_CLIENT_ID", secretsProperties["GOOGLE_AUTH_CLIENT_ID"]
             )
             signingConfig signingConfigs.debug
         }
