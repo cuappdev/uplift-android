@@ -136,7 +136,7 @@ private fun OnboardingButtons(onNext: () -> Unit, onSkip: () -> Unit) {
     ) {
         UpliftButton(
             onClick = onNext,
-            title = "Next",
+            text = "Next",
             fontSize = 16f,
             width = 144.dp,
             height = 44.dp

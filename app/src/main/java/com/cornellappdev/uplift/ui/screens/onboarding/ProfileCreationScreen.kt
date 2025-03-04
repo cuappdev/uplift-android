@@ -28,7 +28,6 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -42,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.cornellappdev.uplift.R
+import com.cornellappdev.uplift.ui.components.general.UpliftButton
 import com.cornellappdev.uplift.ui.components.onboarding.PhotoPicker
 import com.cornellappdev.uplift.ui.viewmodels.onboarding.ProfileCreationViewModel
 import com.cornellappdev.uplift.util.GRAY01
@@ -49,8 +49,6 @@ import com.cornellappdev.uplift.util.GRAY02
 import com.cornellappdev.uplift.util.GRAY03
 import com.cornellappdev.uplift.util.PRIMARY_YELLOW
 import com.cornellappdev.uplift.util.montserratFamily
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 
 /**
  * The profile creation page during the Uplift onboarding process.
@@ -58,10 +56,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun ProfileCreationScreen(
     profileCreationViewModel: ProfileCreationViewModel = hiltViewModel()
-) {
-    val profileCreationUiState = profileCreationViewModel.collectUiStateValue()
-    val name = profileCreationUiState.name
-
+) = with(profileCreationViewModel.collectUiStateValue()) {
     ProfileCreationScreenContent(
         profileCreationViewModel::onPhotoSelected,
         profileCreationViewModel::createUser,
@@ -82,7 +77,6 @@ private fun ProfileCreationScreenContent(
             checkmarkColor = Color.Black,
             uncheckedColor = GRAY03
         )
-    val coroutineScope = rememberCoroutineScope()
 
     val eulaAgreeCheckedState = remember { mutableStateOf(false) }
     val gymDataAccessCheckedState = remember { mutableStateOf(false) }
@@ -149,7 +143,19 @@ private fun ProfileCreationScreenContent(
             Spacer(modifier = Modifier.weight(0.17f))
 
             ReadyToUplift(opacityModifier)
-            NextButton(coroutineScope, createUser, allChecked)
+
+            UpliftButton(
+                onClick = createUser,
+                enabled = allChecked,
+                text = if (allChecked) "Get started" else "Next",
+                width = 144.dp,
+                height = 44.dp,
+                fontSize = 16f,
+                containerColor = PRIMARY_YELLOW,
+                disabledContainerColor = GRAY02,
+                contentColor = Color.Black,
+                elevation = 2.dp
+            )
 
             Spacer(modifier = Modifier.weight(0.09f))
 
@@ -181,38 +187,6 @@ private fun CheckBoxesSection(
             checkedState = checkedState3,
             checkboxColors = checkboxColors,
             message = "I allow Uplift to access my location"
-        )
-
-    }
-}
-
-@Composable
-private fun NextButton(
-    coroutineScope: CoroutineScope,
-    onClick: () -> Unit,
-    allChecked: Boolean
-) {
-    Button(
-        {
-            coroutineScope.launch {
-                onClick()
-            }
-        },
-        enabled = allChecked,
-        colors = ButtonDefaults.buttonColors(
-            backgroundColor = PRIMARY_YELLOW,
-            disabledBackgroundColor = GRAY02,
-            contentColor = Color.Black
-        ),
-        shape = RoundedCornerShape(38.dp),
-        modifier = Modifier.size(height = 44.dp, width = 144.dp)
-    ) {
-
-        Text(
-            text = if (allChecked) "Get started" else "Next",
-            fontSize = 16.sp,
-            fontFamily = montserratFamily,
-            fontWeight = FontWeight.Bold
         )
 
     }

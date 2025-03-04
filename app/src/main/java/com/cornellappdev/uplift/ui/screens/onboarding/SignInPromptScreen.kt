@@ -61,7 +61,6 @@ private fun SignInPromptScreenContent(
     onSignInWithGoogle: (credential: Credential) -> Unit,
     onSkip: () -> Unit
 ) {
-    Box() {
         Canvas(modifier = Modifier.fillMaxSize()) {
             drawCircle(
                 color = LIGHT_YELLOW,
@@ -116,7 +115,6 @@ private fun SignInPromptScreenContent(
 
             Spacer(modifier = Modifier.weight(0.06f))
         }
-    }
 }
 
 @Composable

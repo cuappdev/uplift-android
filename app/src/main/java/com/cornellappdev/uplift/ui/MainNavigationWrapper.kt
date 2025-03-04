@@ -87,6 +87,7 @@ fun MainNavigationWrapper(
 
     systemUiController.setStatusBarColor(PRIMARY_YELLOW)
 
+    //TODO: Try to consolidate launched effects into one with consumeIn function that takes in coroutine scope
     LaunchedEffect(rootNavigationUiState.navEvent) {
         rootNavigationUiState.navEvent?.consumeSuspend {
             navController.navigate(it)

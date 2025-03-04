@@ -53,17 +53,18 @@ class UserInfoRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getUserByNetId(netId: String): UserInfo {
+    override suspend fun getUserByNetId(netId: String): UserInfo? {
         val response = apolloClient.query(
             GetUserByNetIdQuery(
                 netId = netId
             )
         ).execute()
+        val user = response.data?.getUserByNetId?.get(0)?.userFields ?: return null
         return UserInfo(
-            id = response.data?.getUserByNetId?.get(0)?.userFields?.id ?: "",
-            name = response.data?.getUserByNetId?.get(0)?.userFields?.name ?: "",
-            email = response.data?.getUserByNetId?.get(0)?.userFields?.email ?: "",
-            netId = response.data?.getUserByNetId?.get(0)?.userFields?.netId ?: "",
+            id = user.id,
+            name = user.name,
+            email = user.email ?: "",
+            netId = user.netId,
         )
     }
 
@@ -76,7 +77,7 @@ class UserInfoRepositoryImpl @Inject constructor(
     }
 
     override suspend fun hasUser(netId: String): Boolean {
-        return hasFirebaseUser() && getUserByNetId(netId).id.isNotEmpty()
+        return hasFirebaseUser() && getUserByNetId(netId) != null
     }
 
     override suspend fun signInWithGoogle(idToken: String) {
@@ -86,15 +87,6 @@ class UserInfoRepositoryImpl @Inject constructor(
 
     override fun signOut() {
         firebaseAuth.signOut()
-    }
-
-    override suspend fun getUserInfoFromDataStore(): UserInfo {
-        return UserInfo(
-            id = getUserIdFromDataStore(),
-            name = getUserNameFromDataStore(),
-            email = getEmailFromDataStore(),
-            netId = getNetIdFromDataStore(),
-        )
     }
 
     private suspend fun storeId(id: String) {
@@ -127,34 +119,35 @@ class UserInfoRepositoryImpl @Inject constructor(
         }
     }
 
+
     override suspend fun getSkipFromDataStore(): Boolean {
         return dataStore.data.map { preferences ->
             preferences[PreferencesKeys.SKIP]
         }.firstOrNull() ?: false
     }
 
-    override suspend fun getUserIdFromDataStore(): String {
+    override suspend fun getUserIdFromDataStore(): String? {
         return dataStore.data.map { preferences ->
             preferences[PreferencesKeys.ID]
-        }.firstOrNull() ?: ""
+        }.firstOrNull()
     }
 
-    override suspend fun getUserNameFromDataStore(): String {
+    override suspend fun getUserNameFromDataStore(): String? {
         return dataStore.data.map { preferences ->
             preferences[PreferencesKeys.USERNAME]
-        }.firstOrNull() ?: ""
+        }.firstOrNull()
     }
 
-    override suspend fun getNetIdFromDataStore(): String {
+    override suspend fun getNetIdFromDataStore(): String? {
         return dataStore.data.map { preferences ->
             preferences[PreferencesKeys.NETID]
-        }.firstOrNull() ?: ""
+        }.firstOrNull()
     }
 
-    override suspend fun getEmailFromDataStore(): String {
+    override suspend fun getEmailFromDataStore(): String? {
         return dataStore.data.map { preferences ->
             preferences[PreferencesKeys.EMAIL]
-        }.firstOrNull() ?: ""
+        }.firstOrNull()
     }
 
 }

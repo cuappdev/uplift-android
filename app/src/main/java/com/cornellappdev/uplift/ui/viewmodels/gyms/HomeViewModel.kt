@@ -1,6 +1,7 @@
 package com.cornellappdev.uplift.ui.viewmodels.gyms
 
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.cornellappdev.uplift.data.models.gymdetail.TimeOfDay
 import com.cornellappdev.uplift.data.models.ApiResponse
 import com.cornellappdev.uplift.data.models.UpliftGym
@@ -28,11 +29,11 @@ class HomeViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            fetchGyms()
+            observeGyms()
         }
     }
 
-    private suspend fun fetchGyms(): List<UpliftGym> {
+    private fun observeGyms() = viewModelScope.launch {
         applyMutation { copy(gymsLoading = true) }
         val title = getHomeTitle()
         upliftApiRepository.gymApiFlow.collect { apiResponse ->
