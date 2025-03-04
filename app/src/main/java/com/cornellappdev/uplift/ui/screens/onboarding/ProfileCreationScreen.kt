@@ -1,5 +1,6 @@
 package com.cornellappdev.uplift.ui.screens.onboarding
 
+import android.net.Uri
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -39,6 +40,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.cornellappdev.uplift.R
 import com.cornellappdev.uplift.ui.components.onboarding.PhotoPicker
 import com.cornellappdev.uplift.ui.viewmodels.onboarding.ProfileCreationViewModel
@@ -82,6 +84,34 @@ fun ProfileCreationScreen(
     )
     val opacityModifier: Modifier = Modifier.alpha(animatedOpacity)
 
+    ProfileCreationScreenContent(
+        profileCreationViewModel::onPhotoSelected,
+        profileCreationViewModel::createUser,
+        name,
+        eulaAgreeCheckedState,
+        checkboxColors,
+        gymDataAccessCheckedState,
+        locationAccessCheckedState,
+        opacityModifier,
+        coroutineScope,
+        allChecked
+    )
+}
+
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+private fun ProfileCreationScreenContent(
+    onPhotoSelected: (Uri) -> Unit,
+    createUser: () -> Unit,
+    name: String,
+    eulaAgreeCheckedState: MutableState<Boolean>,
+    checkboxColors: CheckboxColors,
+    gymDataAccessCheckedState: MutableState<Boolean>,
+    locationAccessCheckedState: MutableState<Boolean>,
+    opacityModifier: Modifier,
+    coroutineScope: CoroutineScope,
+    allChecked: Boolean
+) {
     Scaffold(
         containerColor = Color.White,
         topBar = {
@@ -112,9 +142,9 @@ fun ProfileCreationScreen(
                 .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.height(46.dp))
+            Spacer(modifier = Modifier.weight(0.05f))
 
-            PhotoPicker { profileCreationViewModel.onPhotoSelected(it) }
+            PhotoPicker { onPhotoSelected(it) }
 
             Text(
                 text = name,
@@ -124,7 +154,7 @@ fun ProfileCreationScreen(
                 fontWeight = FontWeight.Bold
             )
 
-            Spacer(modifier = Modifier.height(25.dp))
+            Spacer(modifier = Modifier.weight(0.03f))
 
             CheckBoxesSection(
                 eulaAgreeCheckedState,
@@ -133,10 +163,12 @@ fun ProfileCreationScreen(
                 locationAccessCheckedState
             )
 
-            Spacer(modifier = Modifier.height(155.dp))
+            Spacer(modifier = Modifier.weight(0.17f))
 
             ReadyToUplift(opacityModifier)
-            NextButton(coroutineScope, profileCreationViewModel::createUser, allChecked)
+            NextButton(coroutineScope, createUser, allChecked)
+
+            Spacer(modifier = Modifier.weight(0.09f))
 
         }
     }
@@ -174,7 +206,7 @@ private fun CheckBoxesSection(
 @Composable
 private fun NextButton(
     coroutineScope: CoroutineScope,
-    onClick: KSuspendFunction0<Unit>,
+    onClick: () -> Unit,
     allChecked: Boolean
 ) {
     Button(
@@ -265,5 +297,20 @@ private fun InfoCheckboxRow(
 @Preview(showBackground = true)
 @Composable
 private fun ProfileCreationScreenPreview() {
-//    ProfileCreationScreen()
+    val eulaAgreeCheckedState = remember { mutableStateOf(false) }
+    val gymDataAccessCheckedState = remember { mutableStateOf(false) }
+    val locationAccessCheckedState = remember { mutableStateOf(false) }
+
+    ProfileCreationScreenContent(
+        onPhotoSelected = {},
+        createUser = {},
+        name = "John Doe",
+        eulaAgreeCheckedState = eulaAgreeCheckedState,
+        checkboxColors = CheckboxDefaults.colors(),
+        gymDataAccessCheckedState = gymDataAccessCheckedState,
+        locationAccessCheckedState = locationAccessCheckedState,
+        opacityModifier = Modifier.alpha(1f),
+        coroutineScope = rememberCoroutineScope(),
+        allChecked = false
+    )
 }

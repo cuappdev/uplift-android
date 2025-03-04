@@ -32,18 +32,21 @@ class ProfileCreationViewModel @Inject constructor(
         }
     }
 
-    suspend fun createUser() {
-        val user = userInfoRepository.getFirebaseUser()
-        val name = user?.displayName ?: ""
-        val email = user?.email ?: ""
-        val netId = email.substring(0, email.indexOf('@'))
-        if (userInfoRepository.createUser(email, name, netId)) {
-            navigateToHome()
-        } else {
-            //TODO: Add error handling
-            Log.e("Error", "User not created")
-            userInfoRepository.signOut()
+    fun createUser() {
+        viewModelScope.launch{
+            val user = userInfoRepository.getFirebaseUser()
+            val name = user?.displayName ?: ""
+            val email = user?.email ?: ""
+            val netId = email.substring(0, email.indexOf('@'))
+            if (userInfoRepository.createUser(email, name, netId)) {
+                navigateToHome()
+            } else {
+                //TODO: Add error handling
+                Log.e("Error", "User not created")
+                userInfoRepository.signOut()
+            }
         }
+
 
     }
 
