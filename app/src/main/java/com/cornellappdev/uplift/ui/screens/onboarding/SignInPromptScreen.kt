@@ -19,6 +19,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -29,9 +30,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.credentials.Credential
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.cornellappdev.uplift.R
 import com.cornellappdev.uplift.ui.components.onboarding.auth.LogInButton
+import com.cornellappdev.uplift.ui.viewmodels.onboarding.LoginViewModel
 import com.cornellappdev.uplift.util.GRAY01
 import com.cornellappdev.uplift.util.GRAY04
 import com.cornellappdev.uplift.util.LIGHT_YELLOW
@@ -39,9 +41,13 @@ import com.cornellappdev.uplift.util.montserratFamily
 
 @Composable
 fun SignInPromptScreen(
-    onSignIn: (Credential) -> Unit,
-    onSkip: () -> Unit,
+    loginViewModel: LoginViewModel = hiltViewModel(),
 ) {
+    LaunchedEffect(Unit) {
+        if (loginViewModel.getUserSignedIn() || loginViewModel.getSkipped()) {
+            loginViewModel.navigateToHome()
+        }
+    }
 
     Box() {
         Canvas(modifier = Modifier.fillMaxSize()) {
@@ -89,12 +95,12 @@ fun SignInPromptScreen(
             Spacer(modifier = Modifier.weight(0.16f))
 
             LogInButton { credential ->
-                onSignIn(credential)
+                loginViewModel.onSignInWithGoogle(credential)
             }
 
             Spacer(modifier = Modifier.weight(0.02f))
 
-            SkipButton(onSkip)
+            SkipButton(onClick = loginViewModel::onSkip)
 
             Spacer(modifier = Modifier.weight(0.06f))
         }
@@ -174,5 +180,5 @@ private fun UpliftUsesCard(
 @Preview(showBackground = true)
 @Composable
 fun SignInPromptScreenPreview() {
-    SignInPromptScreen({}, {})
+    SignInPromptScreen()
 }

@@ -40,7 +40,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.cornellappdev.uplift.R
 import com.cornellappdev.uplift.ui.components.onboarding.PhotoPicker
 import com.cornellappdev.uplift.ui.viewmodels.onboarding.ProfileCreationViewModel
@@ -51,12 +50,10 @@ import com.cornellappdev.uplift.util.PRIMARY_YELLOW
 import com.cornellappdev.uplift.util.montserratFamily
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import kotlin.reflect.KSuspendFunction0
 
 /**
  * The profile creation page during the Uplift onboarding process.
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileCreationScreen(
     profileCreationViewModel: ProfileCreationViewModel

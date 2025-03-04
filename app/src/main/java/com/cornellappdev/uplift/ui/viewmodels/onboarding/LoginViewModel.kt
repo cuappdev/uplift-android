@@ -3,7 +3,9 @@ package com.cornellappdev.uplift.ui.viewmodels.onboarding
 import android.util.Log
 import androidx.credentials.Credential
 import androidx.credentials.CustomCredential
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.cornellappdev.uplift.domain.repositories.UserInfoRepository
 import com.cornellappdev.uplift.ui.UpliftRootRoute
 import com.cornellappdev.uplift.ui.nav.RootNavigationRepository
@@ -15,35 +17,11 @@ import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-data class LoginUiState(
-    val isUserSignedIn: Boolean,
-    val hasSkipped: Boolean,
-)
-
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val userInfoRepository: UserInfoRepository,
     private val rootNavigationRepository: RootNavigationRepository,
-) : UpliftViewModel<LoginUiState>(LoginUiState(isUserSignedIn = false, hasSkipped = false)) {
-
-    init {
-        viewModelScope.launch {
-            var userExists = false
-            val hasSkipped = userInfoRepository.getSkipFromDataStore()
-            if (userInfoRepository.hasFirebaseUser()){
-                val user = userInfoRepository.getFirebaseUser()
-                val email = user?.email ?: ""
-                val netId = email.substring(0, email.indexOf('@'))
-                userExists = userInfoRepository.hasUser(netId)
-            }
-            applyMutation {
-                copy(
-                    isUserSignedIn = userExists,
-                    hasSkipped = hasSkipped
-                )
-            }
-        }
-    }
+) : ViewModel() {
 
     fun onSignInWithGoogle(credential: Credential) {
         if (credential !is CustomCredential || credential.type != TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
@@ -61,9 +39,9 @@ class LoginViewModel @Inject constructor(
             val email = user?.email ?: ""
             val netId = email.substring(0, email.indexOf('@'))
             when {
-                userInfoRepository.hasUser(netId) -> navigateToProfileCreation()
+                userInfoRepository.hasUser(netId) -> navigateToHome()
                 userInfoRepository.hasFirebaseUser() -> {
-                    if (!email.endsWith("@cornell.edu")){
+                    if (!email.endsWith("@cornell.edu")) {
                         //TODO: Handle error (eg. display toast)
                         userInfoRepository.signOut()
                     } else {
@@ -82,14 +60,26 @@ class LoginViewModel @Inject constructor(
     fun onSkip() {
         viewModelScope.launch {
             userInfoRepository.storeSkip(true)
-            applyMutation {
-                copy(hasSkipped = true)
-            }
             navigateToHome()
         }
     }
 
-    private fun navigateToHome() {
+    suspend fun getUserSignedIn(): Boolean {
+        var hasSignedIn = false
+        if (userInfoRepository.hasFirebaseUser()) {
+            val user = userInfoRepository.getFirebaseUser()
+            val email = user?.email ?: ""
+            val netId = email.substring(0, email.indexOf('@'))
+            hasSignedIn = userInfoRepository.hasUser(netId)
+        }
+        return hasSignedIn
+    }
+
+    suspend fun getSkipped(): Boolean {
+        return userInfoRepository.getSkipFromDataStore()
+    }
+
+    fun navigateToHome() {
         rootNavigationRepository.navigate(UpliftRootRoute.Home)
     }
 
