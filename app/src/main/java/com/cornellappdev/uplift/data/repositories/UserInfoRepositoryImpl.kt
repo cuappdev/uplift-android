@@ -27,45 +27,69 @@ class UserInfoRepositoryImpl @Inject constructor(
 ) : UserInfoRepository {
 
     override suspend fun createUser(email: String, name: String, netId: String): Boolean {
-        val response = apolloClient.mutation(
-            CreateUserMutation(
-                email = email,
-                name = name,
-                netId = netId,
-            )
-        ).execute()
-
-        return when {
-            response.hasErrors() -> {
-                Log.w("UserInfoRepositoryImpl", "Error creating user: ${response.errors}")
-                false
-            }
-
-            else -> {
-                storeId(response.data?.createUser?.userFields?.let { storeId(it.id) }.toString())
-                storeNetId(netId)
-                storeUsername(name)
-                storeEmail(email)
-                storeSkip(false)
-                Log.d("UserInfoRepositoryImpl", "User created successfully" + response.data)
-                true
-            }
+        try{
+            val response = apolloClient.mutation(
+                CreateUserMutation(
+                    email = email,
+                    name = name,
+                    netId = netId,
+                )
+            ).execute()
+            storeId(response.data?.createUser?.userFields?.let { storeId(it.id) }.toString())
+            storeNetId(netId)
+            storeUsername(name)
+            storeEmail(email)
+            storeSkip(false)
+            Log.d("UserInfoRepositoryImpl", "User created successfully" + response.data)
+            return true
+        } catch (e: Exception) {
+            Log.e("UserInfoRepositoryImpl", "Error creating user: $e")
+            return false
         }
+//        val response = apolloClient.mutation(
+//            CreateUserMutation(
+//                email = email,
+//                name = name,
+//                netId = netId,
+//            )
+//        ).execute()
+//
+//        return when {
+//            response.hasErrors() -> {
+//                Log.w("UserInfoRepositoryImpl", "Error creating user: ${response.errors}")
+//                false
+//            }
+//
+//            else -> {
+//                storeId(response.data?.createUser?.userFields?.let { storeId(it.id) }.toString())
+//                storeNetId(netId)
+//                storeUsername(name)
+//                storeEmail(email)
+//                storeSkip(false)
+//                Log.d("UserInfoRepositoryImpl", "User created successfully" + response.data)
+//                true
+//            }
+//        }
     }
 
     override suspend fun getUserByNetId(netId: String): UserInfo? {
-        val response = apolloClient.query(
-            GetUserByNetIdQuery(
-                netId = netId
+        try {
+            val response = apolloClient.query(
+                GetUserByNetIdQuery(
+                    netId = netId
+                )
+            ).execute()
+            val user = response.data?.getUserByNetId?.get(0)?.userFields ?: return null
+            return UserInfo(
+                id = user.id,
+                name = user.name,
+                email = user.email ?: "",
+                netId = user.netId,
             )
-        ).execute()
-        val user = response.data?.getUserByNetId?.get(0)?.userFields ?: return null
-        return UserInfo(
-            id = user.id,
-            name = user.name,
-            email = user.email ?: "",
-            netId = user.netId,
-        )
+        } catch (e: Exception) {
+            Log.e("UserInfoRepositoryImpl", "Error getting user by netId: $e")
+            return null
+        }
     }
 
     override fun hasFirebaseUser(): Boolean {

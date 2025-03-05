@@ -20,7 +20,7 @@ data class ProfileCreationUiState(
 class ProfileCreationViewModel @Inject constructor(
     private val userInfoRepository: UserInfoRepository,
     private val rootNavigationRepository: RootNavigationRepository,
-) : UpliftViewModel<ProfileCreationUiState>(ProfileCreationUiState(name = "")) {
+) : UpliftViewModel<ProfileCreationUiState>(ProfileCreationUiState()) {
 
     init {
         viewModelScope.launch {
@@ -32,22 +32,18 @@ class ProfileCreationViewModel @Inject constructor(
         }
     }
 
-    fun createUser() {
-        viewModelScope.launch{
-            val user = userInfoRepository.getFirebaseUser()
-            val name = user?.displayName ?: ""
-            val email = user?.email ?: ""
-            val netId = email.substring(0, email.indexOf('@'))
-            if (userInfoRepository.createUser(email, name, netId)) {
-                navigateToHome()
-            } else {
-                //TODO: Add error handling
-                Log.e("Error", "User not created")
-                userInfoRepository.signOut()
-            }
+    fun createUser() = viewModelScope.launch {
+        val user = userInfoRepository.getFirebaseUser()
+        val name = user?.displayName ?: ""
+        val email = user?.email ?: ""
+        val netId = email.substring(0, email.indexOf('@'))
+        if (userInfoRepository.createUser(email, name, netId)) {
+            navigateToHome()
+        } else {
+            //TODO: Add error handling
+            Log.e("Error", "User not created")
+            userInfoRepository.signOut()
         }
-
-
     }
 
     fun onPhotoSelected(uri: Uri) {
