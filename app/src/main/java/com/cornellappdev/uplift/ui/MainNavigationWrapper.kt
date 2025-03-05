@@ -61,6 +61,8 @@ fun MainNavigationWrapper(
 ) {
 
     val rootNavigationUiState = rootNavigationViewModel.collectUiStateValue()
+    val startDestination = rootNavigationUiState.startDestination
+
     val navController = rememberNavController()
     val systemUiController: SystemUiController = rememberSystemUiController()
 
@@ -156,7 +158,7 @@ fun MainNavigationWrapper(
         // TODO 2: Change to Onboarding after google sign in is finished
         NavHost(
             navController = navController,
-            startDestination = UpliftRootRoute.Onboarding,
+            startDestination = startDestination,
             modifier = Modifier.padding(it)
         ) {
             composable<UpliftRootRoute.Home> {
