@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cornellappdev.uplift.ui.components.general.DayOfWeekBar
 import com.cornellappdev.uplift.ui.components.general.ReminderSwitch
-import com.cornellappdev.uplift.ui.screens.Reminder
+import com.cornellappdev.uplift.ui.screens.reminders.Reminder
 import com.cornellappdev.uplift.util.GRAY04
 import com.cornellappdev.uplift.util.GRAY08
 import com.cornellappdev.uplift.util.PRIMARY_YELLOW

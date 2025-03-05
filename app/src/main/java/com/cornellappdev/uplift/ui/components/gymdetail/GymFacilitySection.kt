@@ -34,7 +34,7 @@ import com.cornellappdev.uplift.data.models.UpliftGym
 import com.cornellappdev.uplift.ui.components.GymBowlingSection
 import com.cornellappdev.uplift.ui.components.GymCourtSection
 import com.cornellappdev.uplift.ui.components.GymSwimmingSection
-import com.cornellappdev.uplift.ui.screens.LineSpacer
+import com.cornellappdev.uplift.ui.screens.gyms.LineSpacer
 import com.cornellappdev.uplift.util.ACCENT_CLOSED
 import com.cornellappdev.uplift.util.ACCENT_OPEN
 import com.cornellappdev.uplift.util.PRIMARY_BLACK

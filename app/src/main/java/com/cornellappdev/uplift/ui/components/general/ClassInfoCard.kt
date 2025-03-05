@@ -1,4 +1,4 @@
-package com.cornellappdev.uplift.ui.components
+package com.cornellappdev.uplift.ui.components.general
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
@@ -24,7 +24,6 @@ import androidx.navigation.NavHostController
 import com.cornellappdev.uplift.R
 import com.cornellappdev.uplift.data.models.UpliftClass
 import com.cornellappdev.uplift.ui.nav.navigateToClass
-import com.cornellappdev.uplift.ui.viewmodels.ClassDetailViewModel
 import com.cornellappdev.uplift.util.*
 import java.util.*
 
@@ -36,7 +35,7 @@ import java.util.*
 fun ClassInfoCard(
     thisClass: UpliftClass,
     navController: NavHostController,
-    classDetailViewModel: ClassDetailViewModel
+    openClass: (UpliftClass) -> Unit
 ) {
     val today = Calendar.getInstance()
 
@@ -49,7 +48,7 @@ fun ClassInfoCard(
         color = Color.White,
         onClick = {
             navController.navigateToClass(
-                classDetailViewModel = classDetailViewModel,
+                openClass = openClass,
                 thisClass = thisClass
             )
         },
