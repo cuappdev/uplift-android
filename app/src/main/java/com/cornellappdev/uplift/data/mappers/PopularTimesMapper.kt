@@ -6,7 +6,7 @@ import com.cornellappdev.uplift.type.DayOfWeekGraphQLEnum
 
 fun PopularTimesQuery.GetHourlyAverageCapacitiesByFacilityId.toPopularTime(): PopularTime {
     return PopularTime(
-        averagePercent = averagePercent,
+        averagePercent = averagePercent * 100,
         hourOfDay = hourOfDay,
         dayOfWeek = dayOfWeek?.let { dayOfWeekToInt(it) } ?: -1
     )
