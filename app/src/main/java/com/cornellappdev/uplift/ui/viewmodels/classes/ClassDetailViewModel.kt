@@ -28,6 +28,7 @@ class ClassDetailViewModel @Inject constructor(
      */
     private val stack: Stack<UpliftClass> = Stack()
 
+    // TODO: Modify to use UIState instead of individual Flows
     private val _classFlow: MutableStateFlow<UpliftClass?> = MutableStateFlow(null)
 
     /**

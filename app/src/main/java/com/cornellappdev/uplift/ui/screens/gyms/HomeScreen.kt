@@ -9,13 +9,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.cornellappdev.uplift.data.models.UpliftGym
 import com.cornellappdev.uplift.data.repositories.LocationRepository
 import com.cornellappdev.uplift.ui.screens.gyms.subscreens.MainError
 import com.cornellappdev.uplift.ui.screens.gyms.subscreens.MainLoaded
 import com.cornellappdev.uplift.ui.screens.gyms.subscreens.MainLoading
-import com.cornellappdev.uplift.ui.viewmodels.gyms.GymDetailViewModel
 import com.cornellappdev.uplift.ui.viewmodels.gyms.HomeViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
@@ -30,7 +29,7 @@ import kotlinx.coroutines.delay
 fun HomeScreen(
     homeViewModel: HomeViewModel = hiltViewModel(),
     navController: NavHostController,
-    gymDetailViewModel: GymDetailViewModel,
+    openGym: (UpliftGym) -> Unit,
     loadingShimmer: Shimmer
 ) {
     val homeUiState = homeViewModel.collectUiStateValue()
@@ -63,7 +62,7 @@ fun HomeScreen(
             gymsLoading -> MainLoading(loadingShimmer)
             gymsError -> MainError(reload = homeViewModel::reload)
             gymsState.isNotEmpty() -> MainLoaded(
-                gymDetailViewModel = gymDetailViewModel,
+                openGym = openGym,
                 gymsList = gymsState,
                 navController = navController,
                 showCapacities = showCapacities,

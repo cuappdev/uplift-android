@@ -17,7 +17,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.cornellappdev.uplift.data.models.UpliftClass
-import com.cornellappdev.uplift.ui.components.ClassInfoCard
+import com.cornellappdev.uplift.data.models.UpliftGym
+import com.cornellappdev.uplift.ui.components.general.ClassInfoCard
 import com.cornellappdev.uplift.ui.viewmodels.classes.ClassDetailViewModel
 import com.cornellappdev.uplift.util.PRIMARY_BLACK
 import com.cornellappdev.uplift.util.montserratFamily
@@ -28,9 +29,9 @@ import com.cornellappdev.uplift.util.montserratFamily
 @Composable
 fun NextUpliftClassSessions(
     navController: NavHostController,
-    classDetailViewModel: ClassDetailViewModel
+    nextSessions: List<UpliftClass>,
+    openClass: (UpliftClass) -> Unit
 ) {
-    val nextSessions = classDetailViewModel.nextSessionsFlow.collectAsState()
 
     // Next Sessions
     Column(
@@ -50,11 +51,11 @@ fun NextUpliftClassSessions(
             fontFamily = montserratFamily
         )
         Spacer(Modifier.height(24.dp))
-        for (nextClass: UpliftClass in nextSessions.value) {
+        for (nextClass: UpliftClass in nextSessions) {
             ClassInfoCard(
                 thisClass = nextClass,
                 navController = navController,
-                classDetailViewModel = classDetailViewModel
+                openClass = openClass
             )
             Spacer(modifier = Modifier.height(12.dp))
         }

@@ -4,37 +4,35 @@ import androidx.navigation.NavHostController
 import com.cornellappdev.uplift.data.models.UpliftClass
 import com.cornellappdev.uplift.data.models.UpliftGym
 import com.cornellappdev.uplift.ui.UpliftRootRoute
-import com.cornellappdev.uplift.ui.viewmodels.classes.ClassDetailViewModel
-import com.cornellappdev.uplift.ui.viewmodels.gyms.GymDetailViewModel
 
 fun NavHostController.navigateToClass(
-    classDetailViewModel: ClassDetailViewModel,
+    openClass: (UpliftClass) -> Unit,
     thisClass: UpliftClass
 ) {
     // Opens the new class.
-    classDetailViewModel.openClass(thisClass)
+    openClass(thisClass)
     navigate(UpliftRootRoute.ClassDetail)
 }
 
 fun NavHostController.navigateToGym(
-    gymDetailViewModel: GymDetailViewModel,
+    openGym: (UpliftGym) -> Unit,
     gym: UpliftGym
 ) {
     // Opens the new gym.
-    gymDetailViewModel.openGym(gym)
+    openGym(gym)
     navigate(UpliftRootRoute.GymDetail)
 }
 
 fun NavHostController.popBackClass(
-    classDetailViewModel: ClassDetailViewModel
+    classDetailPopBackStack: () -> Unit,
 ) {
-    classDetailViewModel.popBackStack()
+    classDetailPopBackStack()
     popBackStack()
 }
 
 fun NavHostController.popBackGym(
-    gymDetailViewModel: GymDetailViewModel
+    gymDetailsPopBackStack: () -> Unit,
 ) {
-    gymDetailViewModel.popBackStack()
+    gymDetailsPopBackStack()
     popBackStack()
 }

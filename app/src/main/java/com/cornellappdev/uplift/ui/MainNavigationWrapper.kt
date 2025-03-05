@@ -1,6 +1,5 @@
 package com.cornellappdev.uplift.ui
 
-import android.util.Log
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
@@ -9,11 +8,7 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -31,7 +26,6 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.cornellappdev.uplift.ui.nav.BottomNavScreens
 import com.cornellappdev.uplift.ui.nav.popBackClass
-import com.cornellappdev.uplift.data.models.ApiResponse
 import com.cornellappdev.uplift.ui.nav.popBackGym
 import com.cornellappdev.uplift.ui.screens.classes.ClassDetailScreen
 import com.cornellappdev.uplift.ui.screens.classes.ClassScreen
@@ -168,7 +162,7 @@ fun MainNavigationWrapper(
             composable<UpliftRootRoute.Home> {
                 HomeScreen(
                     navController = navController,
-                    gymDetailViewModel = gymDetailViewModel,
+                    openGym = gymDetailViewModel::openGym,
                     loadingShimmer = shimmer
                 )
             }
@@ -176,19 +170,19 @@ fun MainNavigationWrapper(
                 GymDetailScreen(
                     gymDetailViewModel = gymDetailViewModel,
                 ) {
-                    navController.popBackGym(gymDetailViewModel)
+                    navController.popBackGym(gymDetailViewModel::popBackStack)
                 }
             }
             composable<UpliftRootRoute.ClassDetail> {
                 ClassDetailScreen(
                     classDetailViewModel = classDetailViewModel, navController = navController
                 ) {
-                    navController.popBackClass(classDetailViewModel)
+                    navController.popBackClass(classDetailViewModel::popBackStack)
                 }
             }
             composable<UpliftRootRoute.Classes> {
                 ClassScreen(
-                    classDetailViewModel = classDetailViewModel,
+                    openClass = classDetailViewModel::openClass,
                     navController = navController,
                 )
             }

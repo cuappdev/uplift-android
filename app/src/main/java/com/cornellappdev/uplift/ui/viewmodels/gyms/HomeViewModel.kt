@@ -28,9 +28,7 @@ class HomeViewModel @Inject constructor(
 ) : UpliftViewModel<HomeUiState>(HomeUiState("", emptyList())) {
 
     init {
-        viewModelScope.launch {
-            observeGyms()
-        }
+        observeGyms()
     }
 
     private fun observeGyms() = viewModelScope.launch {
