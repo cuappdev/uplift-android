@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-class DatastoreRepository(val dataStore: DataStore<Preferences>) {
+class DatastoreRepository(private val dataStore: DataStore<Preferences>) {
     /**
      * A [StateFlow] that emits sets of gym ids. A gym is considered a favorite if it exists
      * in this flow.

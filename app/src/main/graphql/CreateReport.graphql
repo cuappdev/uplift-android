@@ -2,16 +2,14 @@ mutation CreateReport(
     $createdAt: DateTime!
     $description: String!
     $gymId: Int!
-    $issue: String!
-    $userId: Int!) {
-    createReport(createdAt: $createdAt, description: $description, gymId: $gymId, issue: $issue, userId: $userId) {
+    $issue: String!) {
+    createReport(createdAt: $createdAt, description: $description, gymId: $gymId, issue: $issue) {
         report {
             id
             createdAt
             description
             gymId
             issue
-            userId
         }
     }
 }
