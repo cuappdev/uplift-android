@@ -20,7 +20,6 @@ data class HomeUiState(
     val gymsError: Boolean = false
 )
 
-/** A [HomeViewModel] is a view model for HomeScreen. */
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val upliftApiRepository: UpliftApiRepository,

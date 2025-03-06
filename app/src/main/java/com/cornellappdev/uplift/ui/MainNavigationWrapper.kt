@@ -194,7 +194,10 @@ fun MainNavigationWrapper(
                 )
             }
             composable<UpliftRootRoute.ReportSuccess> {
-                ReportSubmittedScreen()
+                ReportSubmittedScreen(
+                    navigateToReport = { navController.navigate(UpliftRootRoute.ReportIssue) },
+                    navigateToHome = { navController.navigate(UpliftRootRoute.Home) }
+                )
             }
             composable<UpliftRootRoute.Onboarding> {
                 SignInPromptScreen()

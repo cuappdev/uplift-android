@@ -34,18 +34,21 @@ class LoginViewModel @Inject constructor(
         }) {
             userInfoRepository.signInWithGoogle(idToken)
             val user = userInfoRepository.getFirebaseUser()
-            val email = user?.email ?: ""
-            val netId = email.substring(0, email.indexOf('@'))
+            val email = user?.email.orEmpty()
+            val netId = email.substringBefore('@')
+            if (!email.endsWith("@cornell.edu") || netId.isEmpty()) {
+                //TODO: Handle error (eg. display toast)
+                userInfoRepository.signOut()
+                return@launch
+            }
             when {
-                userInfoRepository.hasUser(netId) -> navigateToHome()
-                userInfoRepository.hasFirebaseUser() -> {
-                    if (!email.endsWith("@cornell.edu")) {
-                        //TODO: Handle error (eg. display toast)
-                        userInfoRepository.signOut()
-                    } else {
-                        navigateToProfileCreation()
-                    }
-                }
+                userInfoRepository.hasUser(netId) -> rootNavigationRepository.navigate(
+                    UpliftRootRoute.Home
+                )
+
+                userInfoRepository.hasFirebaseUser() -> rootNavigationRepository.navigate(
+                    UpliftRootRoute.ProfileCreation
+                )
                 //TODO: Handle error
                 else -> {
                     Log.e("Error", "Unexpected credential")
@@ -58,30 +61,7 @@ class LoginViewModel @Inject constructor(
     fun onSkip() {
         viewModelScope.launch {
             userInfoRepository.storeSkip(true)
-            navigateToHome()
+            rootNavigationRepository.navigate(UpliftRootRoute.Home)
         }
-    }
-
-    suspend fun getUserSignedIn(): Boolean {
-        var hasSignedIn = false
-        if (userInfoRepository.hasFirebaseUser()) {
-            val user = userInfoRepository.getFirebaseUser()
-            val email = user?.email ?: ""
-            val netId = email.substring(0, email.indexOf('@'))
-            hasSignedIn = userInfoRepository.hasUser(netId)
-        }
-        return hasSignedIn
-    }
-
-    suspend fun getSkipped(): Boolean {
-        return userInfoRepository.getSkipFromDataStore()
-    }
-
-    fun navigateToHome() {
-        rootNavigationRepository.navigate(UpliftRootRoute.Home)
-    }
-
-    private fun navigateToProfileCreation() {
-        rootNavigationRepository.navigate(UpliftRootRoute.ProfileCreation)
     }
 }

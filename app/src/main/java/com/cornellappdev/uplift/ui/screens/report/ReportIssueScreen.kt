@@ -10,6 +10,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,8 +43,7 @@ fun ReportIssueScreen(
     var description by remember { mutableStateOf("") }
     var errorStateIssue by remember { mutableStateOf(false) }
     var errorStateGym by remember { mutableStateOf(false) }
-    var enabled by remember { mutableStateOf(true) }
-    val scope = rememberCoroutineScope()
+    val enabled = reportViewModel.reportButtonEnabled.collectAsState().value
     Scaffold(topBar = {
         UpliftTopBarWithBack(
             title = "Report an issue",
@@ -114,16 +114,11 @@ fun ReportIssueScreen(
                         errorStateIssue = selectedIssue == "Choose an option ..."
                         errorStateGym = selectedGym == "Choose an option ..."
                         if (!errorStateIssue && !errorStateGym) {
-                            enabled = false
-                            scope.launch {
-                                reportViewModel.createReport(
-                                    selectedIssue,
-                                    selectedGym,
-                                    description,
-                                )
-                                enabled = true
-                            }
-
+                            reportViewModel.createReport(
+                                selectedIssue,
+                                selectedGym,
+                                description,
+                            )
                         }
                     },
                     enabled = enabled,

@@ -43,12 +43,6 @@ import com.cornellappdev.uplift.util.montserratFamily
 fun SignInPromptScreen(
     loginViewModel: LoginViewModel = hiltViewModel(),
 ) {
-    LaunchedEffect(Unit) {
-        if (loginViewModel.getUserSignedIn() || loginViewModel.getSkipped()) {
-            loginViewModel.navigateToHome()
-        }
-    }
-
     SignInPromptScreenContent(
         loginViewModel::onSignInWithGoogle,
         loginViewModel::onSkip
@@ -104,9 +98,7 @@ private fun SignInPromptScreenContent(
 
             Spacer(modifier = Modifier.weight(0.16f))
 
-            LogInButton { credential ->
-                onSignInWithGoogle(credential)
-            }
+            LogInButton(onRequestResult = onSignInWithGoogle)
 
             Spacer(modifier = Modifier.weight(0.02f))
 
