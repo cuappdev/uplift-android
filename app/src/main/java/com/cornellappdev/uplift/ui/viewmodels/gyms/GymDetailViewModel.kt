@@ -1,5 +1,6 @@
 package com.cornellappdev.uplift.ui.viewmodels.gyms
 
+
 import androidx.lifecycle.viewModelScope
 import com.cornellappdev.uplift.data.models.UpliftClass
 import com.cornellappdev.uplift.data.models.gymdetail.UpliftGym
@@ -68,11 +69,12 @@ class GymDetailViewModel @Inject constructor(
             val currentDayOfWeek = LocalDateTime.now().dayOfWeek.value
             val popularTimes = popularTimesRepository.getPopularTimes(facilityId)
 
-            val todayOpenHours = openHours.getOrNull(currentDayOfWeek - 1)?.firstOrNull()
+            val todayOpenHoursFirst = openHours.getOrNull(currentDayOfWeek - 1)?.firstOrNull()
+            val todayOpenHoursLast = openHours.getOrNull(currentDayOfWeek - 1)?.lastOrNull()
             val startHour =
-                todayOpenHours?.start?.let { if (!it.isAM && it.hour != 12) it.hour + 12 else it.hour }
+                todayOpenHoursFirst?.start?.let { if (!it.isAM && it.hour != 12) it.hour + 12 else it.hour }
                     ?: 6
-            val endHour = todayOpenHours?.end?.let {
+            val endHour = todayOpenHoursLast?.end?.let {
                 var hour = if (!it.isAM && it.hour != 12) it.hour + 12 else it.hour
                 if (it.minute > 0) hour += 1
                 hour
@@ -105,11 +107,12 @@ class GymDetailViewModel @Inject constructor(
      */
     fun popBackStack() {
         stack.pop()
+        var gym = getStateValue().gym
         if (stack.isNotEmpty()) {
-            applyMutation { copy(gym = stack.peek()) }
+            gym = stack.peek()
         }
         applyMutation {
-            copy(averageCapacities = emptyList(), startTime = TimeOfDay(6, 0, true))
+            copy(gym = gym, averageCapacities = emptyList(), startTime = TimeOfDay(6, 0, true))
         }
     }
 

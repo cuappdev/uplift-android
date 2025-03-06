@@ -1,7 +1,6 @@
 package com.cornellappdev.uplift.ui.screens.onboarding
 
 import androidx.compose.runtime.Composable
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
@@ -21,7 +20,6 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 /**
  * The landing page during the Uplift onboarding process.
  */
-@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun LandingScreen() {
     val systemUiController: SystemUiController = rememberSystemUiController()

@@ -1,26 +1,24 @@
 package com.cornellappdev.uplift.ui.screens.onboarding
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Text
+import androidx.compose.material3.Text
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -28,32 +26,34 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.cornellappdev.uplift.R
-import com.cornellappdev.uplift.ui.viewmodels.onboarding.LoginViewModel
+import androidx.credentials.Credential
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.cornellappdev.uplift.R
+import com.cornellappdev.uplift.ui.components.onboarding.auth.LogInButton
+import com.cornellappdev.uplift.ui.viewmodels.onboarding.LoginViewModel
 import com.cornellappdev.uplift.util.GRAY01
 import com.cornellappdev.uplift.util.GRAY04
 import com.cornellappdev.uplift.util.LIGHT_YELLOW
-import com.cornellappdev.uplift.util.PRIMARY_YELLOW
 import com.cornellappdev.uplift.util.montserratFamily
-import com.google.accompanist.systemuicontroller.SystemUiController
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 @Composable
 fun SignInPromptScreen(
-    loginViewModel: LoginViewModel = hiltViewModel()
+    loginViewModel: LoginViewModel = hiltViewModel(),
 ) {
-    val systemUiController: SystemUiController = rememberSystemUiController()
+    SignInPromptScreenContent(
+        loginViewModel::onSignInWithGoogle,
+        loginViewModel::onSkip
+    )
+}
 
-    systemUiController.isStatusBarVisible = false
-    systemUiController.isNavigationBarVisible = false // Navigation bar
-    systemUiController.isSystemBarsVisible = false
-
-    val resultLauncher = loginViewModel.makeSignInLauncher()
-
-    Box() {
+@Composable
+private fun SignInPromptScreenContent(
+    onSignInWithGoogle: (credential: Credential) -> Unit,
+    onSkip: () -> Unit
+) {
         Canvas(modifier = Modifier.fillMaxSize()) {
             drawCircle(
                 color = LIGHT_YELLOW,
@@ -65,7 +65,7 @@ fun SignInPromptScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxSize()
         ) {
-            Spacer(modifier = Modifier.height(88.dp))
+            Spacer(modifier = Modifier.weight(0.1f))
 
             Image(
                 painter = painterResource(id = R.drawable.ic_main_logo),
@@ -74,7 +74,7 @@ fun SignInPromptScreen(
                     .height(130.dp)
                     .width(115.dp)
             )
-            Spacer(modifier = Modifier.height(60.dp))
+            Spacer(modifier = Modifier.weight(0.07f))
 
             Text(
                 text = "Find what uplifts you.",
@@ -83,7 +83,7 @@ fun SignInPromptScreen(
                 fontWeight = FontWeight.Bold
             )
 
-            Spacer(modifier = Modifier.height(80.dp))
+            Spacer(modifier = Modifier.weight(0.1f))
 
             Text(
                 "Log in to:",
@@ -92,42 +92,26 @@ fun SignInPromptScreen(
                 fontWeight = FontWeight.Bold
             )
 
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.weight(0.03f))
 
             UpliftUsesCardList()
 
-            Spacer(modifier = Modifier.height(125.dp))
-            SignInButton(
-                onClick = {
-                    resultLauncher.launch(loginViewModel.getSignInClient().signInIntent)
+            Spacer(modifier = Modifier.weight(0.16f))
 
-                },
-                nextOnClick = {}
-            )
+            LogInButton(onRequestResult = onSignInWithGoogle)
+
+            Spacer(modifier = Modifier.weight(0.02f))
+
+            SkipButton(onClick = onSkip)
+
+            Spacer(modifier = Modifier.weight(0.06f))
         }
-    }
 }
 
 @Composable
-private fun SignInButton(onClick: () -> Unit, nextOnClick: () -> Unit) {
-    Button(
-        onClick = onClick,
-        elevation = ButtonDefaults.elevation(5.dp),
-        colors = ButtonDefaults.buttonColors(backgroundColor = PRIMARY_YELLOW)
-    ) {
-        //TODO - this should trigger the sign in call to backend; for now it moves on to profile
-        // creation as if the sign in was successful
-        Text(
-            "Log in",
-            fontSize = 16.sp,
-            fontFamily = montserratFamily,
-            fontWeight = FontWeight.Bold
-        )
-    }
-
-    Spacer(modifier = Modifier.height(12.dp))
+private fun SkipButton(onClick: () -> Unit) {
     TextButton(
-        onClick = nextOnClick
+        onClick = onClick
     ) {
         Text(
             "Skip",
@@ -146,88 +130,56 @@ private fun UpliftUsesCardList() {
         verticalArrangement = Arrangement.spacedBy(12.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        ElevatedCard(
-            modifier = Modifier
-                .wrapContentHeight()
-                .width(240.dp)
-                .shadow(
-                    elevation = 20.dp,
-                    ambientColor = GRAY01,
-                    spotColor = GRAY01,
-                    shape = RoundedCornerShape(8.dp)
-                ), colors = CardDefaults.cardColors(containerColor = Color.White)
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier.padding(12.dp)
-            ) {
-                Image(painter = painterResource(R.drawable.goal), contentDescription = "")
-                Text(
-                    "Create fitness goals",
-                    fontSize = 16.sp,
-                    fontFamily = montserratFamily,
-                    fontWeight = FontWeight.Normal
-                )
-            }
-        }
-        ElevatedCard(
-            modifier = Modifier
-                .wrapContentHeight()
-                .width(240.dp)
-                .shadow(
-                    elevation = 20.dp,
-                    ambientColor = GRAY01,
-                    spotColor = GRAY01,
-                    shape = RoundedCornerShape(8.dp)
-                ), colors = CardDefaults.cardColors(containerColor = Color.White)
-        ) {
+        UpliftUsesCard(
+            R.drawable.goal,
+            "Create fitness goals"
+        )
+        UpliftUsesCard(
+            R.drawable.gym_simple,
+            "Track fitness progress"
+        )
+        UpliftUsesCard(
+            R.drawable.capacities,
+            "View workout history"
+        )
+    }
+}
 
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier.padding(12.dp)
-            ) {
-                Image(
-                    painter = painterResource(R.drawable.gym_simple),
-                    contentDescription = ""
-                )
-                Text(
-                    "Track fitness progress",
-                    fontSize = 16.sp,
-                    fontFamily = montserratFamily,
-                    fontWeight = FontWeight.Normal
-                )
-            }
-        }
-        ElevatedCard(
-            modifier = Modifier
-                .wrapContentHeight()
-                .width(240.dp)
-                .shadow(
-                    elevation = 20.dp,
-                    ambientColor = GRAY01,
-                    spotColor = GRAY01,
-                    shape = RoundedCornerShape(8.dp)
-                ), colors = CardDefaults.cardColors(containerColor = Color.White)
+@Composable
+private fun UpliftUsesCard(
+    @DrawableRes imageId: Int,
+    text: String
+
+) {
+    ElevatedCard(
+        modifier = Modifier
+            .wrapContentHeight()
+            .width(240.dp)
+            .shadow(
+                elevation = 20.dp,
+                ambientColor = GRAY01,
+                spotColor = GRAY01,
+                shape = RoundedCornerShape(8.dp)
+            ), colors = CardDefaults.cardColors(containerColor = Color.White)
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.padding(12.dp)
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier.padding(12.dp)
-            ) {
-                Image(
-                    painter = painterResource(R.drawable.history),
-                    modifier = Modifier.size(22.dp),
-                    contentDescription = ""
-                )
-                Text(
-                    "View workout history",
-                    fontSize = 16.sp,
-                    fontFamily = montserratFamily,
-                    fontWeight = FontWeight.Normal
-                )
-            }
+            Image(painter = painterResource(imageId), contentDescription = text)
+            Text(
+                text,
+                fontSize = 16.sp,
+                fontFamily = montserratFamily,
+                fontWeight = FontWeight.Normal
+            )
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun SignInPromptScreenPreview() {
+    SignInPromptScreenContent({}, {})
 }

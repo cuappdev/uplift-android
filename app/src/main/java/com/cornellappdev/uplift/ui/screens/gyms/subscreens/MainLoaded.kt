@@ -51,14 +51,11 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.cornellappdev.uplift.R
 import com.cornellappdev.uplift.data.models.gymdetail.UpliftCapacity
-import com.cornellappdev.uplift.data.models.UpliftClass
 import com.cornellappdev.uplift.data.models.gymdetail.UpliftGym
 import com.cornellappdev.uplift.ui.nav.navigateToGym
 import com.cornellappdev.uplift.ui.components.general.UpliftTopBar
 import com.cornellappdev.uplift.ui.components.home.GymCapacity
 import com.cornellappdev.uplift.ui.components.home.HomeCard
-import com.cornellappdev.uplift.ui.viewmodels.classes.ClassDetailViewModel
-import com.cornellappdev.uplift.ui.viewmodels.gyms.GymDetailViewModel
 import com.cornellappdev.uplift.util.ACCENT_ORANGE
 import com.cornellappdev.uplift.util.GRAY00
 import com.cornellappdev.uplift.util.GRAY01
@@ -79,9 +76,7 @@ import kotlin.math.roundToInt
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
 @Composable
 fun MainLoaded(
-    gymDetailViewModel: GymDetailViewModel,
-    classDetailViewModel: ClassDetailViewModel,
-    upliftClasses: List<UpliftClass>,
+    openGym: (UpliftGym) -> Unit,
     gymsList: List<UpliftGym>,
     navController: NavHostController,
     showCapacities: Boolean,
@@ -145,7 +140,7 @@ fun MainLoaded(
         modifier = Modifier
             .background(Color.White)
             .fillMaxSize()
-            .padding(top = 32.dp)
+            .padding(top = 28.dp)
             .pullRefresh(refresh)
     ) {
         LazyColumn(
@@ -271,7 +266,7 @@ fun MainLoaded(
                                                     interactionSource = remember { MutableInteractionSource() }
                                                 ) {
                                                     navController.navigateToGym(
-                                                        gymDetailViewModel = gymDetailViewModel,
+                                                        openGym,
                                                         gym = gymsWithCapacities[i * 2]
                                                     )
                                                 },
@@ -292,7 +287,7 @@ fun MainLoaded(
                                                     .widthIn(min = 143.dp)
                                                     .clickable {
                                                         navController.navigateToGym(
-                                                            gymDetailViewModel = gymDetailViewModel,
+                                                            openGym,
                                                             gym = gymsWithCapacities[i * 2 + 1]
                                                         )
                                                     },
@@ -317,44 +312,6 @@ fun MainLoaded(
                 }
             }
 
-            // TODAY'S CLASSES TODO: uncomment when classes are added back.
-//            item {
-//                Text(
-//                    text = "TODAY'S CLASSES",
-//                    fontFamily = montserratFamily,
-//                    fontSize = 14.sp,
-//                    fontWeight = FontWeight(700),
-//                    lineHeight = 17.07.sp,
-//                    textAlign = TextAlign.Center,
-//                    color = GRAY04,
-//                    modifier = Modifier.padding(start = 16.dp)
-//                )
-//
-//                if (upliftClasses.isEmpty()) {
-//                    Box(
-//                        modifier = Modifier
-//                            .fillMaxWidth()
-//                            .padding(top = 12.dp, bottom = 24.dp),
-//                        contentAlignment = Alignment.Center
-//                    ) {
-//                        NoClasses()
-//                    }
-//                } else LazyRow(
-//                    state = rememberLazyListState(), contentPadding = PaddingValues(
-//                        horizontal = 16.dp
-//                    ), modifier = Modifier.padding(top = 12.dp, bottom = 24.dp)
-//                ) {
-//                    items(items = upliftClasses) { upliftClass ->
-//                        BriefClassInfoCard(
-//                            thisClass = upliftClass,
-//                            navController = navController,
-//                            classDetailViewModel = classDetailViewModel
-//                        )
-//                        Spacer(Modifier.width(16.dp))
-//                    }
-//                }
-//            }
-
             // Gyms
             item {
                 Row(
@@ -377,10 +334,10 @@ fun MainLoaded(
 
 
             items(items = gyms, key = { gym -> gym.hashCode() }) { gym ->
-                Box(modifier = Modifier.animateItemPlacement()) {
+                Box(modifier = Modifier.animateItem(fadeInSpec = null, fadeOutSpec = null)) {
                     HomeCard(gym) {
                         navController.navigateToGym(
-                            gymDetailViewModel = gymDetailViewModel,
+                            openGym,
                             gym = gym
                         )
                     }

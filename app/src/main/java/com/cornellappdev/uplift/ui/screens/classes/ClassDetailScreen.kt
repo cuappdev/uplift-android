@@ -44,7 +44,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.cornellappdev.uplift.R
 import com.cornellappdev.uplift.data.models.UpliftClass
@@ -71,11 +70,13 @@ import com.cornellappdev.uplift.util.montserratFamily
  */
 @Composable
 fun ClassDetailScreen(
-    classDetailViewModel: ClassDetailViewModel = viewModel(),
+    classDetailViewModel: ClassDetailViewModel,
     navController: NavHostController,
     onBack: () -> Unit
 ) {
     val upliftClass by classDetailViewModel.classFlow.collectAsState()
+
+    val nextSessions by classDetailViewModel.nextSessionsFlow.collectAsState()
 
     val scrollState = rememberScrollState()
 
@@ -260,8 +261,9 @@ fun ClassDetailScreen(
 
         // Next Sessions
         NextUpliftClassSessions(
-            classDetailViewModel = classDetailViewModel,
-            navController = navController
+            navController = navController,
+            nextSessions = nextSessions,
+            openClass = classDetailViewModel::openClass
         )
     }
 }

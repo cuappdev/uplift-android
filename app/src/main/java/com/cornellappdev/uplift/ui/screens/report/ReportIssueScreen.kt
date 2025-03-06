@@ -10,6 +10,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -20,12 +21,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.cornellappdev.uplift.ui.components.general.UpliftTopBarWithBack
 import com.cornellappdev.uplift.ui.components.reporting.ReportDescription
 import com.cornellappdev.uplift.ui.components.reporting.ReportDropdown
 import kotlinx.coroutines.launch
 import com.cornellappdev.uplift.ui.components.general.UpliftButton
-import kotlin.reflect.KSuspendFunction3
+import com.cornellappdev.uplift.ui.viewmodels.report.ReportViewModel
 
 /**
  * ReportIssueScreen is a composable that displays the report issue screen where users can report
@@ -33,8 +35,7 @@ import kotlin.reflect.KSuspendFunction3
  */
 @Composable
 fun ReportIssueScreen(
-    onSubmit: KSuspendFunction3<String, String, String, Unit>,
-    /* TODO: Replace onBack with corresponding navigation function call */
+    reportViewModel: ReportViewModel = hiltViewModel(),
     onBack: () -> Unit
 ) {
     var selectedIssue by remember { mutableStateOf("Choose an option ...") }
@@ -42,8 +43,7 @@ fun ReportIssueScreen(
     var description by remember { mutableStateOf("") }
     var errorStateIssue by remember { mutableStateOf(false) }
     var errorStateGym by remember { mutableStateOf(false) }
-    var enabled by remember { mutableStateOf(true) }
-    val scope = rememberCoroutineScope()
+    val enabled = reportViewModel.reportButtonEnabled.collectAsState().value
     Scaffold(topBar = {
         UpliftTopBarWithBack(
             title = "Report an issue",
@@ -114,16 +114,11 @@ fun ReportIssueScreen(
                         errorStateIssue = selectedIssue == "Choose an option ..."
                         errorStateGym = selectedGym == "Choose an option ..."
                         if (!errorStateIssue && !errorStateGym) {
-                            enabled = false
-                            scope.launch {
-                                onSubmit(
-                                    selectedIssue,
-                                    selectedGym,
-                                    description,
-                                )
-                                enabled = true
-                            }
-
+                            reportViewModel.createReport(
+                                selectedIssue,
+                                selectedGym,
+                                description,
+                            )
                         }
                     },
                     enabled = enabled,
@@ -141,11 +136,7 @@ fun ReportIssueScreen(
 @Preview(showBackground = true)
 @Composable
 private fun ReportIssueScreenPreview() {
-    suspend fun onSubmit(issue: String, gym: String, description: String) {
-
-    }
     ReportIssueScreen(
-        onSubmit = ::onSubmit,
         onBack = { }
     )
 }

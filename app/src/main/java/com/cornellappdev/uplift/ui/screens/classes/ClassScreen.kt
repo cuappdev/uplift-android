@@ -20,15 +20,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.cornellappdev.uplift.data.models.UpliftClass
 import com.cornellappdev.uplift.data.models.ApiResponse
-import com.cornellappdev.uplift.ui.components.ClassInfoCard
+import com.cornellappdev.uplift.ui.components.general.ClassInfoCard
 import com.cornellappdev.uplift.ui.components.general.CalendarBar
 import com.cornellappdev.uplift.ui.components.general.NoClasses
 import com.cornellappdev.uplift.ui.components.general.UpliftTopBar
-import com.cornellappdev.uplift.ui.viewmodels.classes.ClassDetailViewModel
 import com.cornellappdev.uplift.ui.viewmodels.classes.ClassesViewModel
 import com.cornellappdev.uplift.util.PRIMARY_BLACK
 import com.cornellappdev.uplift.util.calendarDayOfWeekToString
@@ -42,8 +41,8 @@ import java.util.Calendar
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ClassScreen(
-    classDetailViewModel: ClassDetailViewModel = viewModel(),
-    classesViewModel: ClassesViewModel,
+    openClass: (UpliftClass) -> Unit,
+    classesViewModel: ClassesViewModel = hiltViewModel(),
     navController: NavHostController
 ) {
     val classesResponse = classesViewModel.classesFlow.collectAsState()
@@ -148,7 +147,7 @@ fun ClassScreen(
                     ClassInfoCard(
                         thisClass = myClass,
                         navController = navController,
-                        classDetailViewModel = classDetailViewModel
+                        openClass = openClass
                     )
                     Spacer(modifier = Modifier.height(12.dp))
                 }

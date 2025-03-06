@@ -12,11 +12,6 @@ plugins {
 def secretsPropertiesFile = rootProject.file('secrets.properties')
 def secretsProperties = new Properties()
 secretsProperties.load(new FileInputStream(secretsPropertiesFile))
-//if (secretsPropertiesFile.exists()) {
-//    secrets.load(new FileInputStream(secretsPropertiesFile))
-//} else {
-//    throw new FileNotFoundException("Missing secrets.properties file. Please add it to the root directory.")
-//}
 
 android {
     namespace 'com.cornellappdev.uplift'
@@ -48,7 +43,7 @@ android {
             buildConfigField("String", "BACKEND_URL", secretsProperties['DEV_ENDPOINT'])
             buildConfigField(
                     "String",
-                    "GOOGLE_AUTH_CLIENT_ID", secretsProperties["GOOGLE_AUTH_CLIENT_ID_LOCAL"]
+                    "GOOGLE_AUTH_CLIENT_ID", secretsProperties["GOOGLE_AUTH_CLIENT_ID"]
             )
             signingConfig signingConfigs.debug
         }
@@ -76,15 +71,9 @@ android {
 }
 
 dependencies {
-    implementation 'com.google.android.gms:play-services-location:21.3.0'
-    implementation 'androidx.datastore:datastore-preferences:1.1.2'
     implementation 'androidx.activity:activity-compose:1.10.0'
     implementation "androidx.compose.ui:ui:$compose_ui_version"
     implementation "androidx.compose.ui:ui-tooling-preview:$compose_ui_version"
-    implementation 'com.google.android.gms:play-services-auth:21.3.0'
-    implementation 'com.google.firebase:firebase-auth-ktx:23.2.0'
-    implementation 'com.google.firebase:firebase-firestore-ktx:25.1.2'
-    implementation 'com.google.firebase:firebase-messaging-ktx:24.1.0'
     implementation 'androidx.core:core-ktx:1.15.0'
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.8.7'
     implementation 'androidx.activity:activity-compose:1.10.0'
@@ -106,12 +95,19 @@ dependencies {
     implementation 'com.valentinilk.shimmer:compose-shimmer:1.0.5'
     implementation 'com.google.android.gms:play-services-location:21.3.0'
     implementation 'androidx.core:core-splashscreen:1.0.1'
+    implementation 'androidx.datastore:datastore-preferences:1.1.2'
     // Dagger Hilt
     implementation("com.google.dagger:hilt-android:2.51.1")
     ksp("com.google.dagger:hilt-compiler:2.51.1")
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
-
+    // Serialization
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3"
+    // Authentication + Firebase
+    implementation "androidx.credentials:credentials:<latest version>"
+    implementation "androidx.credentials:credentials-play-services-auth:<latest version>"
+    implementation "com.google.android.libraries.identity.googleid:googleid:<latest version>"
+    implementation 'com.google.android.gms:play-services-auth:21.3.0'
+    implementation 'com.google.firebase:firebase-auth-ktx:23.2.0'
 }
 
 apollo {

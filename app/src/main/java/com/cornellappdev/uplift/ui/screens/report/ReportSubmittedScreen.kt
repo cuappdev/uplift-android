@@ -39,8 +39,8 @@ import com.cornellappdev.uplift.util.montserratFamily
  */
 @Composable
 fun ReportSubmittedScreen(
-    onSubmitAnother: () -> Unit,
-    onReturnHome: () -> Unit
+    navigateToReport: () -> Unit,
+    navigateToHome: () -> Unit
 ) {
     Scaffold(topBar = {
         UpliftTopBarWithBack(
@@ -62,7 +62,7 @@ fun ReportSubmittedScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             SubmittedMessageColumn()
-            ButtonsColumn(onSubmitAnother, onReturnHome)
+            ButtonsColumn(navigateToReport, navigateToHome)
         }
     }
 
@@ -164,8 +164,5 @@ private fun SubmittedMessageColumn() {
 @Preview(showBackground = true)
 @Composable
 private fun ReportSubmittedScreenPreview() {
-    ReportSubmittedScreen(
-        onSubmitAnother = {},
-        onReturnHome = {}
-    )
+    ReportSubmittedScreen({}, {})
 }

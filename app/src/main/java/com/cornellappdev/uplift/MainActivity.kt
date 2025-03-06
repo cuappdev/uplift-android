@@ -20,7 +20,7 @@ lateinit var datastoreRepository: DatastoreRepository
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    val Context.dataStore by preferencesDataStore(
+    private val Context.dataStore by preferencesDataStore(
         name = PREFERENCES_NAME
     )
 

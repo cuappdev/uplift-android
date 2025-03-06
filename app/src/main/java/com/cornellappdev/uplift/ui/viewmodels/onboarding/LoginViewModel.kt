@@ -1,86 +1,67 @@
 package com.cornellappdev.uplift.ui.viewmodels.onboarding
 
-import android.content.Context
-import android.content.Intent
 import android.util.Log
-import androidx.activity.compose.ManagedActivityResultLauncher
-import androidx.activity.result.ActivityResult
-import androidx.compose.runtime.Composable
+import androidx.credentials.Credential
+import androidx.credentials.CustomCredential
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.cornellappdev.uplift.data.repositories.FireStoreRepository
-import com.cornellappdev.uplift.data.repositories.FirebaseAuthRepository
-import com.cornellappdev.uplift.data.repositories.GoogleAuthRepository
-import com.cornellappdev.uplift.data.repositories.UpliftAuthRepository
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.cornellappdev.uplift.domain.repositories.UserInfoRepository
+import com.cornellappdev.uplift.ui.UpliftRootRoute
+import com.cornellappdev.uplift.ui.nav.RootNavigationRepository
+import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
+import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential.Companion.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val googleAuthRepository: GoogleAuthRepository,
-    private val fireStoreRepository: FireStoreRepository,
-    private val firebaseAuthRepository: FirebaseAuthRepository,
-    private val upliftAuthRepository: UpliftAuthRepository,
-    @ApplicationContext private val context: Context
+    private val userInfoRepository: UserInfoRepository,
+    private val rootNavigationRepository: RootNavigationRepository,
 ) : ViewModel() {
-    fun navigateIfLoggedIn() {
-        if(googleAuthRepository.accountOrNull() != null) {
-            onSignInCompleted(
-                id = googleAuthRepository.accountOrNull()!!.id!!,
-                email = googleAuthRepository.accountOrNull()!!.email!!,
-            )
-        }
-    }
 
-    private fun onSignInFailed() {
-        googleAuthRepository.signOut();
-    }
-
-    private fun onSignInCompleted(id: String, email: String) {
-        if(!email.endsWith("@cornell.edu")) {
-            googleAuthRepository.signOut()
+    fun onSignInWithGoogle(credential: Credential) {
+        if (credential !is CustomCredential || credential.type != TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
+            //TODO: Handle error
+            Log.e("Error", "Unexpected credential")
             return
         }
+        val googleIdTokenCredential = GoogleIdTokenCredential.createFrom(credential.data)
+        val idToken = googleIdTokenCredential.idToken
+        viewModelScope.launch(CoroutineExceptionHandler { _, throwable ->
+            Log.e("Error", throwable.message.orEmpty(), throwable)
+        }) {
+            userInfoRepository.signInWithGoogle(idToken)
+            val user = userInfoRepository.getFirebaseUser()
+            val email = user?.email.orEmpty()
+            val netId = email.substringBefore('@')
+            if (!email.endsWith("@cornell.edu") || netId.isEmpty()) {
+                //TODO: Handle error (eg. display toast)
+                userInfoRepository.signOut()
+                return@launch
+            }
+            when {
+                userInfoRepository.hasUser(netId) -> rootNavigationRepository.navigate(
+                    UpliftRootRoute.Home
+                )
 
-        viewModelScope.launch {
-            try {
-                firebaseAuthRepository.firebaseAuthWithGoogle(id);
-
-                fireStoreRepository.getUserOnboarded(
-                    email = email,
-                    onError = { onSignInFailed()},
-                    onSuccess = { onboarded ->
-
-                    }
-                    )
-
-                val netid = email.substring(0, email.indexOf('@'))
-                val name = googleAuthRepository.accountOrNull()!!.displayName!!
-
-                val response = upliftAuthRepository.createUser(email, name, netid)
-            } catch (e: Exception) {
-                Log.e("LoginViewModel", "Error getting user: ", e);
-                onSignInFailed()
+                userInfoRepository.hasFirebaseUser() -> rootNavigationRepository.navigate(
+                    UpliftRootRoute.ProfileCreation
+                )
+                //TODO: Handle error
+                else -> {
+                    Log.e("Error", "Unexpected credential")
+                    userInfoRepository.signOut()
+                }
             }
         }
     }
 
-    @Composable
-    fun makeSignInLauncher(): ManagedActivityResultLauncher<Intent, ActivityResult> {
-        return googleAuthRepository.googleLoginLauncher(
-            onError = ::onSignInFailed,
-            onGoogleSignInCompleted = ::onSignInCompleted
-        )
-    }
-
-    fun getSignInClient(): GoogleSignInClient {
-        val gso = googleAuthRepository.googleSignInClient
-        val client = GoogleSignIn.getClient(context, gso)
-
-        return client
+    fun onSkip() {
+        viewModelScope.launch {
+            userInfoRepository.storeSkip(true)
+            rootNavigationRepository.navigate(UpliftRootRoute.Home)
+        }
     }
 }
