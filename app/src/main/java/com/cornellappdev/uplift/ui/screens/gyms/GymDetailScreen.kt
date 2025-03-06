@@ -17,7 +17,6 @@ import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults.SecondaryIndicator
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -51,7 +50,7 @@ fun GymDetailScreen(
     val gymDetailUiState = gymDetailViewModel.collectUiStateValue()
     val gym = gymDetailUiState.gym ?: return
     val averageCapacitiesList = gymDetailUiState.averageCapacities
-
+    val startTime = gymDetailUiState.startTime
     val day = todayIndex()
 
     //tabs
@@ -117,7 +116,8 @@ fun GymDetailScreen(
             0 -> FitnessCenterContent(
                 gym = gym,
                 equipmentGroupInfoList = gym.equipmentGroupings,
-                averageCapacitiesList = averageCapacitiesList
+                averageCapacitiesList = averageCapacitiesList,
+                startTime = startTime
             )
 
             1 -> GymFacilitySection(

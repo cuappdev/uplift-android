@@ -4,8 +4,9 @@ import androidx.lifecycle.viewModelScope
 import com.cornellappdev.uplift.data.models.UpliftClass
 import com.cornellappdev.uplift.data.models.gymdetail.UpliftGym
 import com.cornellappdev.uplift.data.models.ApiResponse
+import com.cornellappdev.uplift.data.models.TimeOfDay
 import com.cornellappdev.uplift.data.repositories.UpliftApiRepository
-import com.cornellappdev.uplift.domain.gym.populartimes.GetPopularTimesUseCase
+import com.cornellappdev.uplift.domain.gym.populartimes.PopularTimesRepository
 import com.cornellappdev.uplift.ui.viewmodels.UpliftViewModel
 import com.cornellappdev.uplift.util.getSystemTime
 import com.cornellappdev.uplift.util.sameDayAs
@@ -20,18 +21,18 @@ import javax.inject.Inject
 data class GymDetailUiState(
     val gym: UpliftGym? = null,
     val todayClasses: List<UpliftClass>,
-    val averageCapacities: List<Int>
+    val averageCapacities: List<Int>,
+    val startTime: TimeOfDay = TimeOfDay(6, 0, true)
 )
 
 /** A [GymDetailViewModel] is a view model for GymDetailScreen. */
 @HiltViewModel
 class GymDetailViewModel @Inject constructor(
     private val upliftApiRepository: UpliftApiRepository,
-    private val getPopularTimesUseCase: GetPopularTimesUseCase
+    private val popularTimesRepository: PopularTimesRepository
 ) : UpliftViewModel<GymDetailUiState>(
     GymDetailUiState(
-        todayClasses = emptyList(),
-        averageCapacities = emptyList()
+        todayClasses = emptyList(), averageCapacities = emptyList()
     )
 ) {
     /**
@@ -54,23 +55,39 @@ class GymDetailViewModel @Inject constructor(
 
     private fun filterAndSortClasses(classes: List<UpliftClass>, gymId: String): List<UpliftClass> {
         return classes.filter {
-            it.gymId == gymId
-                    && it.date.sameDayAs(GregorianCalendar())
-                    && it.time.end.compareTo(getSystemTime()) >= 0
+            it.gymId == gymId && it.date.sameDayAs(GregorianCalendar()) && it.time.end.compareTo(
+                getSystemTime()
+            ) >= 0
         }.sortedWith(startTimeComparator)
     }
 
     private fun setPopularTimes(facilityId: Int) {
         viewModelScope.launch {
+            val gym = getStateValue().gym ?: return@launch
+            val openHours = gym.hours
             val currentDayOfWeek = LocalDateTime.now().dayOfWeek.value
-            val popularTimes = getPopularTimesUseCase.execute(facilityId)
-            val filteredPopularTimes = popularTimes
-                .asSequence()
-                .filter { it.dayOfWeek == currentDayOfWeek && it.hourOfDay in 6..23 }
-                .sortedBy { it.hourOfDay }
-                .map { it.averagePercent.toInt() }
-                .toList()
-            applyMutation { copy(averageCapacities = filteredPopularTimes) }
+            val popularTimes = popularTimesRepository.getPopularTimes(facilityId)
+
+            val todayOpenHours = openHours.getOrNull(currentDayOfWeek - 1)?.firstOrNull()
+            val startHour =
+                todayOpenHours?.start?.let { if (!it.isAM && it.hour != 12) it.hour + 12 else it.hour }
+                    ?: 6
+            val endHour = todayOpenHours?.end?.let {
+                var hour = if (!it.isAM && it.hour != 12) it.hour + 12 else it.hour
+                if (it.minute > 0) hour += 1
+                hour
+            } ?: 23
+
+            val hourlyCapacities = MutableList(endHour - startHour + 1) { 0 }
+            popularTimes.filter { it.dayOfWeek == currentDayOfWeek }.forEach { popularTime ->
+                val hour = popularTime.hourOfDay
+                if (hour in startHour..endHour) {
+                    hourlyCapacities[hour - startHour] = popularTime.averagePercent.toInt()
+                }
+            }
+
+            val startTime = TimeOfDay(startHour % 12, 0, startHour < 12)
+            applyMutation { copy(averageCapacities = hourlyCapacities, startTime = startTime) }
         }
     }
 
@@ -88,8 +105,12 @@ class GymDetailViewModel @Inject constructor(
      */
     fun popBackStack() {
         stack.pop()
-        if (stack.isNotEmpty())
+        if (stack.isNotEmpty()) {
             applyMutation { copy(gym = stack.peek()) }
+        }
+        applyMutation {
+            copy(averageCapacities = emptyList(), startTime = TimeOfDay(6, 0, true))
+        }
     }
 
     fun reload() {

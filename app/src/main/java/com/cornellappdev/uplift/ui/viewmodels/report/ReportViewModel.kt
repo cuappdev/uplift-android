@@ -1,7 +1,7 @@
 package com.cornellappdev.uplift.ui.viewmodels.report
 
 import androidx.lifecycle.ViewModel
-import com.cornellappdev.uplift.domain.report.CreateReportUseCase
+import com.cornellappdev.uplift.domain.report.ReportRepository
 import com.cornellappdev.uplift.ui.nav.RootNavigationRepository
 import com.cornellappdev.uplift.ui.UpliftRootRoute
 import com.cornellappdev.uplift.util.HELEN_NEWMAN_ID
@@ -15,14 +15,14 @@ import javax.inject.Inject
 @HiltViewModel
 class ReportViewModel @Inject constructor(
     private val rootNavigationRepository: RootNavigationRepository,
-    private val createReportUseCase: CreateReportUseCase
+    private val reportRepository: ReportRepository
 ) : ViewModel() {
     suspend fun createReport(
         issue: String,
         gym: String,
         description: String,
     ) {
-        val reportSuccess = createReportUseCase.execute(
+        val reportSuccess = reportRepository.createReport(
             createdAt = LocalDateTime.now().toString(),
             description = description,
             gymId = mapGymToId(gym),

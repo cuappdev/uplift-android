@@ -1,14 +1,14 @@
-package com.cornellappdev.uplift.data.clients
+package com.cornellappdev.uplift.data.repositories
 
 import com.apollographql.apollo3.ApolloClient
 import com.cornellappdev.uplift.PopularTimesQuery
 import com.cornellappdev.uplift.data.mappers.toPopularTime
 import com.cornellappdev.uplift.domain.gym.populartimes.PopularTime
-import com.cornellappdev.uplift.domain.gym.populartimes.PopularTimesClient
+import com.cornellappdev.uplift.domain.gym.populartimes.PopularTimesRepository
 
-class ApolloPopularTimesClient(
+class PopularTimesRepositoryImpl(
     private val apolloClient: ApolloClient
-) : PopularTimesClient {
+) : PopularTimesRepository {
     override suspend fun getPopularTimes(facilityId: Int): List<PopularTime> {
         return apolloClient.query(
             PopularTimesQuery(facilityId)

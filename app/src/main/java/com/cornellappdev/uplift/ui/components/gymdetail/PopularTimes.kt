@@ -51,11 +51,14 @@ import com.cornellappdev.uplift.util.montserratFamily
 import com.cornellappdev.uplift.util.waitTimeFlavorText
 
 /**
- * Displays the popular times designated by [popularTimes]. Each column can be tapped on to display
+ * Displays the popular times designated by [busyList] and starting at [startTime]. Each column can be tapped on to display
  * a time and description of busyness.
  */
 @Composable
-fun PopularTimesSection(popularTimes: PopularTimes) {
+fun PopularTimesSection(
+    busyList: List<Int>,
+    startTime: TimeOfDay
+) {
     var startAnimation by remember { mutableStateOf(false) }
     val animatedHeightScale by animateFloatAsState(
         if (startAnimation) 1.0f else 0f, animationSpec = tween(durationMillis = 1000)
@@ -65,7 +68,7 @@ fun PopularTimesSection(popularTimes: PopularTimes) {
     var selectedPopularTime by remember { mutableIntStateOf(-1) }
     var lastSelectedPopularTime by remember { mutableIntStateOf(-1) }
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(busyList) {
         startAnimation = true
         // Get the current time
         val currentTime = java.util.Calendar.getInstance()
@@ -73,16 +76,18 @@ fun PopularTimesSection(popularTimes: PopularTimes) {
         val currentMinute = currentTime.get(java.util.Calendar.MINUTE)
 
         // Calculate the index of the bar that corresponds to the current time
-        val startTime = popularTimes.startTime
         val startHour = if (startTime.isAM) startTime.hour else startTime.hour + 12
         val totalStartMinutes = startHour * 60 + startTime.minute
         val totalCurrentMinutes = currentHour * 60 + currentMinute
         val index = (totalCurrentMinutes - totalStartMinutes) / 60
 
         // Set the selectedPopularTime to this index if it's within the range
-        if (index in popularTimes.busyList.indices) {
+        if (index in busyList.indices) {
             selectedPopularTime = index
             lastSelectedPopularTime = index
+        } else {
+            selectedPopularTime = -1
+            lastSelectedPopularTime = -1
         }
     }
 
@@ -91,7 +96,7 @@ fun PopularTimesSection(popularTimes: PopularTimes) {
     )
 
     val animatedLeftRatioState = animateFloatAsState(
-        targetValue = if (selectedPopularTime < 0) .5f else (selectedPopularTime.toFloat() / (popularTimes.busyList.size - 1)).coerceIn(
+        targetValue = if (selectedPopularTime < 0) .5f else (selectedPopularTime.toFloat() / (busyList.size - 1)).coerceIn(
             .001f, .999f
         ), tween(100, easing = CubicBezierEasing(0f, 0.0f, 0.2f, 1.0f))
     )
@@ -133,7 +138,7 @@ fun PopularTimesSection(popularTimes: PopularTimes) {
                 .alpha(animatedOpacity)
                 .scale(scaleX = 1f, scaleY = animatedOpacity), verticalAlignment = Alignment.Bottom
         ) {
-            val time = popularTimes.startTime.getTimeLater(
+            val time = startTime.getTimeLater(
                 deltaMinutes = 0, deltaHours = lastSelectedPopularTime
             )
 
@@ -149,7 +154,7 @@ fun PopularTimesSection(popularTimes: PopularTimes) {
             )
             Text(
                 text = waitTimeFlavorText(
-                    if (popularTimes.busyList.isNotEmpty()) popularTimes.busyList[lastSelectedPopularTime.coerceAtLeast(
+                    if (busyList.isNotEmpty()) busyList[lastSelectedPopularTime.coerceAtLeast(
                         0
                     )] else 0
                 ),
@@ -175,7 +180,7 @@ fun PopularTimesSection(popularTimes: PopularTimes) {
             verticalAlignment = Alignment.Bottom, modifier = Modifier.height(80.dp)
 
         ) {
-            for ((i, popularTime) in popularTimes.busyList.withIndex()) {
+            for ((i, popularTime) in busyList.withIndex()) {
                 val thisBarHeight = (popularTime * animatedHeightScale * (barHeight / 100f))
                 Box(modifier = Modifier
                     .weight(1f)
@@ -212,7 +217,7 @@ fun PopularTimesSection(popularTimes: PopularTimes) {
                             .alpha(animatedOpacity)
                     )
                     // The little knob at the bottom as part of the number line.
-                    if (popularTime != popularTimes.busyList.last()) Spacer(
+                    if (popularTime != busyList.last()) Spacer(
                         modifier = Modifier
                             .width(1.dp)
                             .height(4.dp)
@@ -222,7 +227,7 @@ fun PopularTimesSection(popularTimes: PopularTimes) {
                     )
                     if (i % 3 == 0) {
                         val time =
-                            popularTimes.startTime.getTimeLater(deltaMinutes = 0, deltaHours = i)
+                            startTime.getTimeLater(deltaMinutes = 0, deltaHours = i)
                         Text(
                             text = "${if (time.hour == 0) 12 else time.hour}${if (time.isAM) "a" else "p"}",
                             fontFamily = montserratFamily,
@@ -260,12 +265,10 @@ fun PopularTimesSectionPreview() {
         verticalArrangement = Arrangement.Center
     ) {
         PopularTimesSection(
-            popularTimes = PopularTimes(
-                busyList = listOf(
-                    20, 30, 40, 50, 50, 45, 35, 40, 50, 70, 80, 90, 95, 85, 70, 65, 20
-                ), startTime = TimeOfDay(
-                    hour = 6, minute = 0, isAM = true
-                )
+            busyList = listOf(
+                20, 30, 40, 50, 50, 45, 35, 40, 50, 70, 80, 90, 95, 85, 70, 65, 20
+            ), startTime = TimeOfDay(
+                hour = 6, minute = 0, isAM = true
             )
         )
     }

@@ -3,7 +3,7 @@ package com.cornellappdev.uplift.domain.report
 /**
  * A client for interacting with the report API.
  */
-interface ReportClient {
+interface ReportRepository {
     /**
      * Creates a report.
      *
