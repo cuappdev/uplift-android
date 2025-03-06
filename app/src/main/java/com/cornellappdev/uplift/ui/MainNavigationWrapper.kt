@@ -8,7 +8,6 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -28,21 +27,17 @@ import androidx.navigation.compose.rememberNavController
 import com.cornellappdev.uplift.ui.nav.BottomNavScreens
 import com.cornellappdev.uplift.ui.nav.popBackClass
 import com.cornellappdev.uplift.ui.nav.popBackGym
-import com.cornellappdev.uplift.data.models.ApiResponse
-import com.cornellappdev.uplift.ui.screens.ClassDetailScreen
-import com.cornellappdev.uplift.ui.screens.ClassScreen
-import com.cornellappdev.uplift.ui.screens.GymDetailScreen
-import com.cornellappdev.uplift.ui.screens.HomeScreen
-import com.cornellappdev.uplift.ui.screens.ProfileCreationScreen
-import com.cornellappdev.uplift.ui.screens.SignInPromptScreen
-import com.cornellappdev.uplift.ui.screens.ReportIssueScreen
-import com.cornellappdev.uplift.ui.screens.ReportSubmittedScreen
-import com.cornellappdev.uplift.ui.viewmodels.ClassDetailViewModel
-import com.cornellappdev.uplift.ui.viewmodels.ClassesViewModel
-import com.cornellappdev.uplift.ui.viewmodels.GymDetailViewModel
-import com.cornellappdev.uplift.ui.viewmodels.HomeViewModel
-import com.cornellappdev.uplift.ui.viewmodels.ReportViewModel
-import com.cornellappdev.uplift.ui.viewmodels.RootNavigationViewModel
+import com.cornellappdev.uplift.ui.screens.classes.ClassDetailScreen
+import com.cornellappdev.uplift.ui.screens.classes.ClassScreen
+import com.cornellappdev.uplift.ui.screens.gyms.GymDetailScreen
+import com.cornellappdev.uplift.ui.screens.gyms.HomeScreen
+import com.cornellappdev.uplift.ui.screens.onboarding.ProfileCreationScreen
+import com.cornellappdev.uplift.ui.screens.onboarding.SignInPromptScreen
+import com.cornellappdev.uplift.ui.screens.report.ReportIssueScreen
+import com.cornellappdev.uplift.ui.screens.report.ReportSubmittedScreen
+import com.cornellappdev.uplift.ui.viewmodels.classes.ClassDetailViewModel
+import com.cornellappdev.uplift.ui.viewmodels.gyms.GymDetailViewModel
+import com.cornellappdev.uplift.ui.viewmodels.nav.RootNavigationViewModel
 import com.cornellappdev.uplift.util.PRIMARY_BLACK
 import com.cornellappdev.uplift.util.PRIMARY_YELLOW
 import com.cornellappdev.uplift.util.montserratFamily
@@ -58,18 +53,18 @@ import kotlinx.serialization.Serializable
  */
 @Composable
 fun MainNavigationWrapper(
+    // Note: For future view models, please add them to the screen they are used in instead of here.
+    // TODO: Remove HomeScreen and ClassScreen dependencies on gymDetailViewModel and classDetailViewModel and then remove them from here.
     gymDetailViewModel: GymDetailViewModel = hiltViewModel(),
     classDetailViewModel: ClassDetailViewModel = hiltViewModel(),
-    classesViewModel: ClassesViewModel = hiltViewModel(),
-    homeViewModel: HomeViewModel = hiltViewModel(),
-    reportViewModel: ReportViewModel = hiltViewModel(),
-    rootNavigationViewModel: RootNavigationViewModel = hiltViewModel()
+    rootNavigationViewModel: RootNavigationViewModel = hiltViewModel(),
 ) {
 
-    val uiState = rootNavigationViewModel.collectUiStateValue()
+    val rootNavigationUiState = rootNavigationViewModel.collectUiStateValue()
+    val startDestination = rootNavigationUiState.startDestination
+
     val navController = rememberNavController()
     val systemUiController: SystemUiController = rememberSystemUiController()
-    val gymsState = homeViewModel.gymFlow.collectAsState().value
 
     val yourShimmerTheme = defaultShimmerTheme.copy(
         shaderColors = listOf(
@@ -88,64 +83,74 @@ fun MainNavigationWrapper(
 
     systemUiController.setStatusBarColor(PRIMARY_YELLOW)
 
-    LaunchedEffect(uiState.navEvent) {
-        uiState.navEvent?.consumeSuspend {
-            // Navigate.
+    //TODO: Try to consolidate launched effects into one with consumeIn function that takes in coroutine scope
+    LaunchedEffect(rootNavigationUiState.navEvent) {
+        rootNavigationUiState.navEvent?.consumeSuspend {
             navController.navigate(it)
         }
     }
-    LaunchedEffect(uiState.popBackStack) {
-        uiState.popBackStack?.consumeSuspend {
+    LaunchedEffect(rootNavigationUiState.popBackStack) {
+        rootNavigationUiState.popBackStack?.consumeSuspend {
             navController.popBackStack()
         }
     }
 
-    //TODO() : Once Google Sign In is fully implemented, make sure BottomNavBar not visible until user signs in
+    @Composable
+    fun isRoute(route: UpliftRootRoute): Boolean {
+        val navBackStackEntry by navController.currentBackStackEntryAsState()
+        val currentDestination = navBackStackEntry?.destination
+        return currentDestination?.route == route::class.qualifiedName
+    }
+
     Scaffold(bottomBar = {
-        if (gymsState is ApiResponse.Success) BottomNavigation(
-            backgroundColor = PRIMARY_YELLOW, contentColor = PRIMARY_BLACK, elevation = 1.dp
+        if (!isRoute(UpliftRootRoute.Onboarding)
+            && !isRoute(UpliftRootRoute.ProfileCreation)
         ) {
-            val navBackStackEntry by navController.currentBackStackEntryAsState()
-            val currentDestination = navBackStackEntry?.destination
-            items.forEach { screen ->
-                val selected =
-                    currentDestination?.hierarchy?.any {
-                        it.route == screen.route::class.qualifiedName
-                    } == true
-                BottomNavigationItem(icon = {
-                    Icon(
-                        painter = painterResource(
-                            id = if (selected) screen.painterIds.second else screen.painterIds.first
-                        ),
-                        contentDescription = null
-                    )
-                }, label = {
-                    Text(
-                        text = screen.titleText,
-                        fontFamily = montserratFamily,
-                        fontSize = 14.sp,
-                        fontWeight = if (selected) FontWeight(700)
-                        else FontWeight(500),
-                        lineHeight = 17.07.sp,
-                        textAlign = TextAlign.Center,
-                        overflow = TextOverflow.Visible,
-                        softWrap = false
-                    )
-                }, selected = selected, onClick = {
-                    navController.navigate(screen.route) {
-                        // Pop up to the start destination of the graph to
-                        // avoid building up a large stack of destinations
-                        // on the back stack as users select items
-                        popUpTo(navController.graph.findStartDestination().id) {
-                            saveState = true
+            BottomNavigation(
+                backgroundColor = PRIMARY_YELLOW, contentColor = PRIMARY_BLACK, elevation = 1.dp
+            ) {
+                val navBackStackEntry by navController.currentBackStackEntryAsState()
+                val currentDestination = navBackStackEntry?.destination
+                items.forEach { screen ->
+                    val selected =
+                        currentDestination?.hierarchy?.any {
+                            it.route == screen.route::class.qualifiedName
+                        } == true
+                    BottomNavigationItem(icon = {
+                        Icon(
+                            painter = painterResource(
+                                id = if (selected) screen.painterIds.second else screen.painterIds.first
+                            ),
+                            contentDescription = null
+                        )
+                    }, label = {
+                        Text(
+                            text = screen.titleText,
+                            fontFamily = montserratFamily,
+                            fontSize = 14.sp,
+                            fontWeight = if (selected) FontWeight(700)
+                            else FontWeight(500),
+                            lineHeight = 17.07.sp,
+                            textAlign = TextAlign.Center,
+                            overflow = TextOverflow.Visible,
+                            softWrap = false
+                        )
+                    }, selected = selected, onClick = {
+                        navController.navigate(screen.route) {
+                            // Pop up to the start destination of the graph to
+                            // avoid building up a large stack of destinations
+                            // on the back stack as users select items
+                            popUpTo(navController.graph.findStartDestination().id) {
+                                saveState = true
+                            }
+                            // Avoid multiple copies of the same destination when
+                            // reselecting the same item
+                            launchSingleTop = true
+                            // Restore state when reselecting a previously selected item
+                            restoreState = true
                         }
-                        // Avoid multiple copies of the same destination when
-                        // reselecting the same item
-                        launchSingleTop = true
-                        // Restore state when reselecting a previously selected item
-                        restoreState = true
-                    }
-                })
+                    })
+                }
             }
         }
     }) {
@@ -153,15 +158,13 @@ fun MainNavigationWrapper(
         // TODO 2: Change to Onboarding after google sign in is finished
         NavHost(
             navController = navController,
-            startDestination = UpliftRootRoute.Home,
+            startDestination = startDestination,
             modifier = Modifier.padding(it)
         ) {
             composable<UpliftRootRoute.Home> {
                 HomeScreen(
-                    homeViewModel = homeViewModel,
                     navController = navController,
-                    classDetailViewModel = classDetailViewModel,
-                    gymDetailViewModel = gymDetailViewModel,
+                    openGym = gymDetailViewModel::openGym,
                     loadingShimmer = shimmer
                 )
             }
@@ -169,46 +172,38 @@ fun MainNavigationWrapper(
                 GymDetailScreen(
                     gymDetailViewModel = gymDetailViewModel,
                 ) {
-                    navController.popBackGym(gymDetailViewModel)
+                    navController.popBackGym(gymDetailViewModel::popBackStack)
                 }
             }
-            // TODO: I split these across multiple screens to make it so the user sticks to
-            //  the side of the app they were originally on.
-            //  However, I think this might cause a bug if you have classes open on BOTH
-            //  sides of the app then pop back. I think both will end up popping back.
-            //  I can't test RN cuz backend is down, so test this and see. If it's broken,
-            //  change it to just use one "classDetail" route on the class half.
             composable<UpliftRootRoute.ClassDetail> {
                 ClassDetailScreen(
                     classDetailViewModel = classDetailViewModel, navController = navController
                 ) {
-                    navController.popBackClass(classDetailViewModel)
+                    navController.popBackClass(classDetailViewModel::popBackStack)
                 }
             }
             composable<UpliftRootRoute.Classes> {
                 ClassScreen(
-                    classDetailViewModel = classDetailViewModel,
+                    openClass = classDetailViewModel::openClass,
                     navController = navController,
-                    classesViewModel = classesViewModel
                 )
             }
             composable<UpliftRootRoute.ReportIssue> {
                 ReportIssueScreen(
-                    onSubmit = reportViewModel::createReport,
                     onBack = { navController.popBackStack() }
+                )
+            }
+            composable<UpliftRootRoute.ReportSuccess> {
+                ReportSubmittedScreen(
+                    navigateToReport = { navController.navigate(UpliftRootRoute.ReportIssue) },
+                    navigateToHome = { navController.navigate(UpliftRootRoute.Home) }
                 )
             }
             composable<UpliftRootRoute.Onboarding> {
                 SignInPromptScreen()
             }
             composable<UpliftRootRoute.ProfileCreation> {
-                ProfileCreationScreen(navController = navController)
-            }
-            composable<UpliftRootRoute.ReportSuccess> {
-                ReportSubmittedScreen(
-                    onSubmitAnother = reportViewModel::navigateToReport,
-                    onReturnHome = reportViewModel::navigateToHome
-                )
+                ProfileCreationScreen()
             }
             composable<UpliftRootRoute.Sports> {}
             composable<UpliftRootRoute.Favorites> {}

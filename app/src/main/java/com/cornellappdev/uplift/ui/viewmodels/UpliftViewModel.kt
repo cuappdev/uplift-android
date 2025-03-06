@@ -43,6 +43,4 @@ abstract class UpliftViewModel<UiState>(initialUiState: UiState) : ViewModel() {
     protected fun getStateValue(): UiState {
         return _uiStateFlow.value
     }
-
-
 }

@@ -22,7 +22,7 @@ class ApolloReportClient(
      * @return The created report.
      */
     override suspend fun createReport(
-        createdAt: String, description: String, gymId: Int, issue: String, userId: Int
+        createdAt: String, description: String, gymId: Int, issue: String
     ): Boolean {
         val response = apolloClient.mutation(
             CreateReportMutation(
@@ -30,7 +30,6 @@ class ApolloReportClient(
                 description = description,
                 gymId = gymId,
                 issue = issue,
-                userId = userId
             )
         ).execute()
 

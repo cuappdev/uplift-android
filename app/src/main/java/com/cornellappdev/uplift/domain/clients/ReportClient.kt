@@ -19,6 +19,5 @@ interface ReportClient {
         description: String,
         gymId: Int,
         issue: String,
-        userId: Int
     ) : Boolean
 }
