@@ -28,8 +28,6 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         installSplashScreen()
 
-        enableEdgeToEdge()
-
         // If statement needed to fix crash when datastore initializes twice.
         if (!::datastoreRepository.isInitialized)
             datastoreRepository = DatastoreRepository(dataStore)

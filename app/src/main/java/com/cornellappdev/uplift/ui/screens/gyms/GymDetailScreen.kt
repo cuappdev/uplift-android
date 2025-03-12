@@ -124,7 +124,7 @@ fun GymDetailScreen(
             1 -> GymFacilitySection(
                 gym = gym,
                 today = day
-            ) ?: Unit
+            )
         }
 
 

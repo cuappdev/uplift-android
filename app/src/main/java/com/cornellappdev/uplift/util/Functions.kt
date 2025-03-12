@@ -4,6 +4,7 @@ import android.location.Location
 import com.cornellappdev.uplift.data.models.TimeInterval
 import com.cornellappdev.uplift.data.models.TimeOfDay
 import com.cornellappdev.uplift.data.models.UpliftClass
+import com.cornellappdev.uplift.type.DayOfWeekGraphQLEnum
 import java.util.Calendar
 
 /**

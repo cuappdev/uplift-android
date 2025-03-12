@@ -39,7 +39,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.cornellappdev.uplift.data.models.PopularTimes
 import com.cornellappdev.uplift.data.models.TimeOfDay
 import com.cornellappdev.uplift.util.GRAY01
 import com.cornellappdev.uplift.util.GRAY03
@@ -153,11 +152,7 @@ fun PopularTimesSection(
                 color = GRAY04
             )
             Text(
-                text = waitTimeFlavorText(
-                    if (busyList.isNotEmpty()) busyList[lastSelectedPopularTime.coerceAtLeast(
-                        0
-                    )] else 0
-                ),
+                text = waitTimeFlavorText(busyList.getOrNull(lastSelectedPopularTime) ?: 0),
                 fontFamily = montserratFamily,
                 fontSize = 12.sp,
                 fontWeight = FontWeight(500),

@@ -21,6 +21,7 @@ import com.cornellappdev.uplift.data.models.gymdetail.UpliftGym
 import com.cornellappdev.uplift.data.models.gymdetail.EquipmentCategory
 import com.cornellappdev.uplift.data.models.gymdetail.EquipmentInfo
 import com.cornellappdev.uplift.data.models.gymdetail.GymEquipmentGroupInfo
+import com.cornellappdev.uplift.type.DayOfWeekGraphQLEnum
 import com.cornellappdev.uplift.type.MuscleGroup
 import com.cornellappdev.uplift.util.asTimeOfDay
 import com.cornellappdev.uplift.util.defaultClassUrl
@@ -32,6 +33,7 @@ import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
+
 
 /**
  * Returns the popular times list representation for this gym query.
@@ -408,4 +410,17 @@ fun GymListQuery.GetAllGym.toUpliftGyms(): List<UpliftGym> {
     }
 
     return gyms
+}
+
+fun DayOfWeekGraphQLEnum.toInt(): Int {
+    return when (this) {
+        DayOfWeekGraphQLEnum.MONDAY -> 1
+        DayOfWeekGraphQLEnum.TUESDAY -> 2
+        DayOfWeekGraphQLEnum.WEDNESDAY -> 3
+        DayOfWeekGraphQLEnum.THURSDAY -> 4
+        DayOfWeekGraphQLEnum.FRIDAY -> 5
+        DayOfWeekGraphQLEnum.SATURDAY -> 6
+        DayOfWeekGraphQLEnum.SUNDAY -> 7
+        DayOfWeekGraphQLEnum.UNKNOWN__ -> -1
+    }
 }

@@ -80,13 +80,14 @@ class GymDetailViewModel @Inject constructor(
                 hour
             } ?: 23
 
-            val hourlyCapacities = MutableList(endHour - startHour + 1) { 0 }
-            popularTimes.filter { it.dayOfWeek == currentDayOfWeek }.forEach { popularTime ->
-                val hour = popularTime.hourOfDay
-                if (hour in startHour..endHour) {
-                    hourlyCapacities[hour - startHour] = popularTime.averagePercent.toInt()
+            val hourlyCapacities = popularTimes
+                .filter { it.dayOfWeek == currentDayOfWeek }
+                .associateBy { it.hourOfDay }
+                .let { popularTimesMap ->
+                    (startHour..endHour).map { hour ->
+                        popularTimesMap[hour]?.averagePercent?.toInt() ?: 0
+                    }
                 }
-            }
 
             val startTime = TimeOfDay(startHour % 12, 0, startHour < 12)
             applyMutation { copy(averageCapacities = hourlyCapacities, startTime = startTime) }
