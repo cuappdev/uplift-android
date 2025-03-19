@@ -2,7 +2,7 @@ package com.cornellappdev.uplift.data.mappers
 
 import com.cornellappdev.uplift.PopularTimesQuery
 import com.cornellappdev.uplift.data.adapters.toInt
-import com.cornellappdev.uplift.domain.gym.populartimes.PopularTime
+import com.cornellappdev.uplift.data.models.gymdetail.PopularTime
 
 fun PopularTimesQuery.GetHourlyAverageCapacitiesByFacilityId.toPopularTime(): PopularTime {
     return PopularTime(

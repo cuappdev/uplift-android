@@ -1,7 +1,8 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
-    id "com.apollographql.apollo3" version "3.8.2"
+//    id "com.apollographql.apollo3" version "3.8.2"
+    id("com.apollographql.apollo") version "4.1.1"
     id 'com.google.gms.google-services'
     id 'kotlin-kapt'
     id("com.google.devtools.ksp") // Use KSP instead of kapt for now to avoid kapt stub build error
@@ -91,7 +92,8 @@ dependencies {
     implementation "androidx.navigation:navigation-compose:2.8.8"
     implementation "com.google.accompanist:accompanist-systemuicontroller:0.28.0"
     implementation "com.google.accompanist:accompanist-permissions:0.34.0"
-    implementation "com.apollographql.apollo3:apollo-runtime:3.8.2"
+//    implementation "com.apollographql.apollo3:apollo-runtime:3.8.2"
+    implementation("com.apollographql.apollo:apollo-runtime:4.1.1")
     implementation 'com.valentinilk.shimmer:compose-shimmer:1.0.5'
     implementation 'com.google.android.gms:play-services-location:21.3.0'
     implementation 'androidx.core:core-splashscreen:1.0.1'

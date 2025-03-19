@@ -1,8 +1,8 @@
 package com.cornellappdev.uplift.ui.viewmodels.report
 
 import androidx.lifecycle.ViewModel
-import com.cornellappdev.uplift.domain.report.ReportRepository
 import androidx.lifecycle.viewModelScope
+import com.cornellappdev.uplift.data.repositories.ReportRepository
 import com.cornellappdev.uplift.ui.nav.RootNavigationRepository
 import com.cornellappdev.uplift.ui.UpliftRootRoute
 import com.cornellappdev.uplift.util.HELEN_NEWMAN_ID
@@ -37,7 +37,7 @@ class ReportViewModel @Inject constructor(
                 issue = formatIssue(issue),
             )
             //TODO: Consider adding error handling for the case when reportSuccess is not true, maybe a toast?
-            if (reportSuccess) {
+            if (reportSuccess.isSuccess) {
                 rootNavigationRepository.navigate(UpliftRootRoute.ReportSuccess)
             }
             _reportButtonEnabled.value = true

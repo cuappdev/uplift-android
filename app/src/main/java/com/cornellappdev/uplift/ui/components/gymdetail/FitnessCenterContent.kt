@@ -27,7 +27,8 @@ fun FitnessCenterContent(
     gym: UpliftGym,
     equipmentGroupInfoList: List<GymEquipmentGroupInfo>,
     averageCapacitiesList: List<Int>,
-    startTime: TimeOfDay
+    startTime: TimeOfDay,
+    selectedPopularTimesIndex: Int
 ) {
     val day = todayIndex()
     Column(
@@ -44,7 +45,8 @@ fun FitnessCenterContent(
         // TODO(): Handle the empty list case for popular times
         PopularTimesSection(
             busyList = averageCapacitiesList,
-            startTime = startTime
+            startTime = startTime,
+            selectedPopularTimesIndex = selectedPopularTimesIndex,
         )
         SectionDivider()
         if (gym.amenities?.isNotEmpty() == true) {

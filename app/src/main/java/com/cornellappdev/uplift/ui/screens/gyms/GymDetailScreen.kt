@@ -52,6 +52,7 @@ fun GymDetailScreen(
     val gym = gymDetailUiState.gym ?: return
     val averageCapacitiesList = gymDetailUiState.averageCapacities
     val startTime = gymDetailUiState.startTime
+    val selectedPopularTimesIndex = gymDetailUiState.selectedPopularTimesIndex
     val day = todayIndex()
 
     //tabs
@@ -118,7 +119,8 @@ fun GymDetailScreen(
                 gym = gym,
                 equipmentGroupInfoList = gym.equipmentGroupings,
                 averageCapacitiesList = averageCapacitiesList,
-                startTime = startTime
+                startTime = startTime,
+                selectedPopularTimesIndex = selectedPopularTimesIndex
             )
 
             1 -> GymFacilitySection(

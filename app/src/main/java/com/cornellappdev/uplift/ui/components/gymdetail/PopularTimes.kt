@@ -56,7 +56,8 @@ import com.cornellappdev.uplift.util.waitTimeFlavorText
 @Composable
 fun PopularTimesSection(
     busyList: List<Int>,
-    startTime: TimeOfDay
+    startTime: TimeOfDay,
+    selectedPopularTimesIndex: Int
 ) {
     var startAnimation by remember { mutableStateOf(false) }
     val animatedHeightScale by animateFloatAsState(
@@ -64,30 +65,11 @@ fun PopularTimesSection(
     )
 
     val barHeight = 90f
-    var selectedPopularTime by remember { mutableIntStateOf(-1) }
-    var lastSelectedPopularTime by remember { mutableIntStateOf(-1) }
+    var selectedPopularTime by remember { mutableIntStateOf(selectedPopularTimesIndex) }
+    var lastSelectedPopularTime by remember { mutableIntStateOf(selectedPopularTimesIndex) }
 
-    LaunchedEffect(busyList) {
+    LaunchedEffect(Unit) {
         startAnimation = true
-        // Get the current time
-        val currentTime = java.util.Calendar.getInstance()
-        val currentHour = currentTime.get(java.util.Calendar.HOUR_OF_DAY)
-        val currentMinute = currentTime.get(java.util.Calendar.MINUTE)
-
-        // Calculate the index of the bar that corresponds to the current time
-        val startHour = if (startTime.isAM) startTime.hour else startTime.hour + 12
-        val totalStartMinutes = startHour * 60 + startTime.minute
-        val totalCurrentMinutes = currentHour * 60 + currentMinute
-        val index = (totalCurrentMinutes - totalStartMinutes) / 60
-
-        // Set the selectedPopularTime to this index if it's within the range
-        if (index in busyList.indices) {
-            selectedPopularTime = index
-            lastSelectedPopularTime = index
-        } else {
-            selectedPopularTime = -1
-            lastSelectedPopularTime = -1
-        }
     }
 
     val animatedOpacity by animateFloatAsState(
@@ -108,14 +90,15 @@ fun PopularTimesSection(
         lastLeftRatio = animatedLeftRatio
     }
 
-    Column(modifier = Modifier
-        .fillMaxWidth()
-        .clickable(
-            interactionSource = remember { MutableInteractionSource() }, indication = null
-        ) {
-            deselect()
-        }
-        .background(Color.White)) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() }, indication = null
+            ) {
+                deselect()
+            }
+            .background(Color.White)) {
         // Title
         Text(
             text = "Popular Times",
@@ -177,21 +160,22 @@ fun PopularTimesSection(
         ) {
             for ((i, popularTime) in busyList.withIndex()) {
                 val thisBarHeight = (popularTime * animatedHeightScale * (barHeight / 100f))
-                Box(modifier = Modifier
-                    .weight(1f)
-                    .fillMaxHeight()
-                    .padding(horizontal = 1.dp)
-                    .padding(bottom = 1.dp)
-                    .clickable(
-                        interactionSource = remember { MutableInteractionSource() },
-                        indication = null
-                    ) {
-                        if (selectedPopularTime == i) deselect()
-                        else {
-                            selectedPopularTime = i
-                            lastSelectedPopularTime = i
-                        }
-                    }) {
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
+                        .padding(horizontal = 1.dp)
+                        .padding(bottom = 1.dp)
+                        .clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null
+                        ) {
+                            if (selectedPopularTime == i) deselect()
+                            else {
+                                selectedPopularTime = i
+                                lastSelectedPopularTime = i
+                            }
+                        }) {
                     // The yellow bar.
                     Surface(
                         modifier = Modifier
@@ -263,8 +247,8 @@ fun PopularTimesSectionPreview() {
             busyList = listOf(
                 20, 30, 40, 50, 50, 45, 35, 40, 50, 70, 80, 90, 95, 85, 70, 65, 20
             ), startTime = TimeOfDay(
-                hour = 6, minute = 0, isAM = true
-            )
+                hour = 6, minute = 0, isAM = true,
+            ), selectedPopularTimesIndex = -1
         )
     }
 

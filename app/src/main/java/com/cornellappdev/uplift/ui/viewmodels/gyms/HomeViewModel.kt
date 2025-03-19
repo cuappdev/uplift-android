@@ -5,7 +5,7 @@ import com.cornellappdev.uplift.data.models.ApiResponse
 import com.cornellappdev.uplift.data.models.TimeOfDay
 import com.cornellappdev.uplift.data.models.gymdetail.UpliftGym
 import com.cornellappdev.uplift.data.repositories.UpliftApiRepository
-import com.cornellappdev.uplift.domain.repositories.UserInfoRepository
+import com.cornellappdev.uplift.data.repositories.UserInfoRepository
 import com.cornellappdev.uplift.ui.viewmodels.UpliftViewModel
 import com.cornellappdev.uplift.util.getSystemTime
 import dagger.hilt.android.lifecycle.HiltViewModel

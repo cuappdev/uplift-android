@@ -2,12 +2,13 @@ package com.cornellappdev.uplift.ui.viewmodels.gyms
 
 
 import androidx.lifecycle.viewModelScope
+import com.cornellappdev.uplift.data.mappers.toPopularTime
 import com.cornellappdev.uplift.data.models.UpliftClass
 import com.cornellappdev.uplift.data.models.gymdetail.UpliftGym
 import com.cornellappdev.uplift.data.models.ApiResponse
 import com.cornellappdev.uplift.data.models.TimeOfDay
+import com.cornellappdev.uplift.data.repositories.PopularTimesRepository
 import com.cornellappdev.uplift.data.repositories.UpliftApiRepository
-import com.cornellappdev.uplift.domain.gym.populartimes.PopularTimesRepository
 import com.cornellappdev.uplift.ui.viewmodels.UpliftViewModel
 import com.cornellappdev.uplift.util.getSystemTime
 import com.cornellappdev.uplift.util.sameDayAs
@@ -23,7 +24,8 @@ data class GymDetailUiState(
     val gym: UpliftGym? = null,
     val todayClasses: List<UpliftClass>,
     val averageCapacities: List<Int>,
-    val startTime: TimeOfDay = TimeOfDay(6, 0, true)
+    val startTime: TimeOfDay = TimeOfDay(6, 0, true),
+    val selectedPopularTimesIndex: Int = -1
 )
 
 /** A [GymDetailViewModel] is a view model for GymDetailScreen. */
@@ -66,8 +68,12 @@ class GymDetailViewModel @Inject constructor(
         viewModelScope.launch {
             val gym = getStateValue().gym ?: return@launch
             val openHours = gym.hours
+            // TODO: Think about moving filtering logic to domain as business logic use case
             val currentDayOfWeek = LocalDateTime.now().dayOfWeek.value
             val popularTimes = popularTimesRepository.getPopularTimes(facilityId)
+                .getOrNull()?.getHourlyAverageCapacitiesByFacilityId?.mapNotNull {
+                    it?.toPopularTime()
+                }
 
             val todayOpenHoursFirst = openHours.getOrNull(currentDayOfWeek - 1)?.firstOrNull()
             val todayOpenHoursLast = openHours.getOrNull(currentDayOfWeek - 1)?.lastOrNull()
@@ -81,17 +87,38 @@ class GymDetailViewModel @Inject constructor(
             } ?: 23
 
             val hourlyCapacities = popularTimes
-                .filter { it.dayOfWeek == currentDayOfWeek }
-                .associateBy { it.hourOfDay }
+                ?.filter { it.dayOfWeek == currentDayOfWeek }
+                ?.associateBy { it.hourOfDay }
                 .let { popularTimesMap ->
                     (startHour..endHour).map { hour ->
-                        popularTimesMap[hour]?.averagePercent?.toInt() ?: 0
+                        popularTimesMap?.get(hour)?.averagePercent?.toInt() ?: 0
                     }
                 }
 
             val startTime = TimeOfDay(startHour % 12, 0, startHour < 12)
-            applyMutation { copy(averageCapacities = hourlyCapacities, startTime = startTime) }
+            val selectedPopularTimesIndex =
+                calculateCurrentTimeIndex(startTime, hourlyCapacities.size)
+            applyMutation {
+                copy(
+                    averageCapacities = hourlyCapacities,
+                    startTime = startTime,
+                    selectedPopularTimesIndex = selectedPopularTimesIndex
+                )
+            }
         }
+    }
+
+    private fun calculateCurrentTimeIndex(startTime: TimeOfDay, capacitiesSize: Int): Int {
+        val currentTime = java.util.Calendar.getInstance()
+        val currentHour = currentTime.get(java.util.Calendar.HOUR_OF_DAY)
+        val currentMinute = currentTime.get(java.util.Calendar.MINUTE)
+
+        val startHour = if (startTime.isAM) startTime.hour else startTime.hour + 12
+        val totalStartMinutes = startHour * 60 + startTime.minute
+        val totalCurrentMinutes = currentHour * 60 + currentMinute
+        val index = (totalCurrentMinutes - totalStartMinutes) / 60
+
+        return if (index in 0 until capacitiesSize) index else -1
     }
 
     /**

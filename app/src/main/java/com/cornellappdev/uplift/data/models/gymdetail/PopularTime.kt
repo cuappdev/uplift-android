@@ -1,4 +1,4 @@
-package com.cornellappdev.uplift.domain.gym.populartimes
+package com.cornellappdev.uplift.data.models.gymdetail
 
 data class PopularTime(
     val averagePercent: Double,
