@@ -61,7 +61,9 @@ fun MainNavigationWrapper(
 ) {
 
     val rootNavigationUiState = rootNavigationViewModel.collectUiStateValue()
-    val startDestination = rootNavigationUiState.startDestination
+    // TODO: Change back to startDestination = rootNavigationUiState.startDestination when releasing profile creation
+//    val startDestination = rootNavigationUiState.startDestination
+    val startDestination = UpliftRootRoute.Home
 
     val navController = rememberNavController()
     val systemUiController: SystemUiController = rememberSystemUiController()
