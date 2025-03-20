@@ -86,14 +86,10 @@ class GymDetailViewModel @Inject constructor(
                 hour
             } ?: 23
 
-            val hourlyCapacities = popularTimes
-                ?.filter { it.dayOfWeek == currentDayOfWeek }
-                ?.associateBy { it.hourOfDay }
-                .let { popularTimesMap ->
-                    (startHour..endHour).map { hour ->
-                        popularTimesMap?.get(hour)?.averagePercent?.toInt() ?: 0
-                    }
-                }
+            val hourlyCapacities = (startHour..endHour).map { hour ->
+                popularTimes?.find { it.dayOfWeek == currentDayOfWeek && it.hourOfDay == hour }?.averagePercent?.toInt()
+                    ?: 0
+            }
 
             val startTime = TimeOfDay(startHour % 12, 0, startHour < 12)
             val selectedPopularTimesIndex =
