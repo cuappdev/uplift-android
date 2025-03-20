@@ -2,7 +2,7 @@ package com.cornellappdev.uplift.ui.viewmodels.report
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.cornellappdev.uplift.domain.clients.ReportClient
+import com.cornellappdev.uplift.data.repositories.ReportRepository
 import com.cornellappdev.uplift.ui.nav.RootNavigationRepository
 import com.cornellappdev.uplift.ui.UpliftRootRoute
 import com.cornellappdev.uplift.util.HELEN_NEWMAN_ID
@@ -18,9 +18,9 @@ import javax.inject.Inject
 @HiltViewModel
 class ReportViewModel @Inject constructor(
     private val rootNavigationRepository: RootNavigationRepository,
-    private val reportClient: ReportClient
+    private val reportRepository: ReportRepository
 ) : ViewModel() {
-    val _reportButtonEnabled = MutableStateFlow(true)
+    private val _reportButtonEnabled = MutableStateFlow(true)
     val reportButtonEnabled = _reportButtonEnabled
 
     fun createReport(
@@ -30,14 +30,14 @@ class ReportViewModel @Inject constructor(
     ) {
         viewModelScope.launch {
             _reportButtonEnabled.value = false
-            val reportSuccess = reportClient.createReport(
+            val reportSuccess = reportRepository.createReport(
                 createdAt = LocalDateTime.now().toString(),
                 description = description,
                 gymId = mapGymToId(gym),
                 issue = formatIssue(issue),
             )
             //TODO: Consider adding error handling for the case when reportSuccess is not true, maybe a toast?
-            if (reportSuccess) {
+            if (reportSuccess.isSuccess) {
                 rootNavigationRepository.navigate(UpliftRootRoute.ReportSuccess)
             }
             _reportButtonEnabled.value = true

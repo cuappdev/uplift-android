@@ -1,16 +1,13 @@
-package com.cornellappdev.uplift.data.models
+package com.cornellappdev.uplift.data.models.gymdetail
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
-import com.cornellappdev.uplift.data.models.gymdetail.BowlingInfo
-import com.cornellappdev.uplift.data.models.gymdetail.CourtFacility
-import com.cornellappdev.uplift.data.models.gymdetail.GymEquipmentGroupInfo
-import com.cornellappdev.uplift.data.models.gymdetail.PopularTimes
-import com.cornellappdev.uplift.data.models.gymdetail.SwimmingInfo
-import com.cornellappdev.uplift.data.models.gymdetail.TimeInterval
-import com.cornellappdev.uplift.data.models.gymdetail.TimeOfDay
+import com.cornellappdev.uplift.data.models.PopularTimes
+import com.cornellappdev.uplift.data.models.TimeInterval
+import com.cornellappdev.uplift.data.models.TimeOfDay
+import com.cornellappdev.uplift.data.models.UpliftClass
 import com.cornellappdev.uplift.datastoreRepository
 import com.cornellappdev.uplift.data.repositories.LocationRepository
 import com.cornellappdev.uplift.fragment.GymFields

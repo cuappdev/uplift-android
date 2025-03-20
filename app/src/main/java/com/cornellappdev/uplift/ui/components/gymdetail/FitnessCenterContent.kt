@@ -11,9 +11,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.cornellappdev.uplift.data.models.gymdetail.GymEquipmentGroupInfo
-import com.cornellappdev.uplift.data.models.gymdetail.PopularTimes
-import com.cornellappdev.uplift.data.models.gymdetail.TimeOfDay
-import com.cornellappdev.uplift.data.models.UpliftGym
+import com.cornellappdev.uplift.data.models.PopularTimes
+import com.cornellappdev.uplift.data.models.TimeOfDay
+import com.cornellappdev.uplift.data.models.gymdetail.UpliftGym
 import com.cornellappdev.uplift.util.GRAY01
 import com.cornellappdev.uplift.util.isOpen
 import com.cornellappdev.uplift.util.todayIndex
@@ -25,7 +25,10 @@ import com.cornellappdev.uplift.util.todayIndex
 @Composable
 fun FitnessCenterContent(
     gym: UpliftGym,
-    equipmentGroupInfoList: List<GymEquipmentGroupInfo>
+    equipmentGroupInfoList: List<GymEquipmentGroupInfo>,
+    averageCapacitiesList: List<Int>,
+    startTime: TimeOfDay,
+    selectedPopularTimesIndex: Int
 ) {
     val day = todayIndex()
     Column(
@@ -39,33 +42,11 @@ fun FitnessCenterContent(
             gym.hours, day, isOpen(gym.hours[day])
         )
         SectionDivider()
+        // TODO(): Handle the empty list case for popular times
         PopularTimesSection(
-            popularTimes = PopularTimes(
-                busyList = listOf(
-                    20,
-                    30,
-                    40,
-                    50,
-                    50,
-                    45,
-                    35,
-                    40,
-                    50,
-                    70,
-                    80,
-                    90,
-                    95,
-                    85,
-                    70,
-                    65,
-                    20
-                ),
-                startTime = TimeOfDay(
-                    hour = 6,
-                    minute = 0,
-                    isAM = true
-                )
-            )
+            busyList = averageCapacitiesList,
+            startTime = startTime,
+            selectedPopularTimesIndex = selectedPopularTimesIndex,
         )
         SectionDivider()
         if (gym.amenities?.isNotEmpty() == true) {

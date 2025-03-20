@@ -1,4 +1,4 @@
-package com.cornellappdev.uplift.data.models.gymdetail
+package com.cornellappdev.uplift.data.models
 
 import java.util.Calendar
 

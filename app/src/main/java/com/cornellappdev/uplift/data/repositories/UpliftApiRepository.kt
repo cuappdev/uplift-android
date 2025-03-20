@@ -1,11 +1,11 @@
 package com.cornellappdev.uplift.data.repositories
 
 import android.util.Log
-import com.apollographql.apollo3.ApolloClient
+import com.apollographql.apollo.ApolloClient
 import com.cornellappdev.uplift.ClassListQuery
 import com.cornellappdev.uplift.GymListQuery
 import com.cornellappdev.uplift.data.models.UpliftClass
-import com.cornellappdev.uplift.data.models.UpliftGym
+import com.cornellappdev.uplift.data.models.gymdetail.UpliftGym
 import com.cornellappdev.uplift.data.models.ApiResponse
 import com.cornellappdev.uplift.data.adapters.toUpliftClass
 import com.cornellappdev.uplift.data.adapters.toUpliftGyms
@@ -72,7 +72,7 @@ class UpliftApiRepository @Inject constructor(
         // Idea: Have cancellable flows in the background that are emitted down classesApiFlow
         //  and gymApiFlow. On retry, cancel the previous flows, then start new ones.
         activeGymJob = CoroutineScope(Dispatchers.IO).launch {
-            gymQuery.toFlow().cancellable()
+            gymQuery.toFlowV3().cancellable()
                 .map {
                     val gymList = it.data?.getAllGyms?.filterNotNull()
                     if (gymList == null) {
@@ -96,7 +96,7 @@ class UpliftApiRepository @Inject constructor(
         // TODO: Classes taken out for 2024 backend rework. Most of this logic will likely be
         //  invalidated when classes are pushed for real.
         activeClassJob = CoroutineScope(Dispatchers.IO).launch {
-            classQuery.toFlow().cancellable()
+            classQuery.toFlowV3().cancellable()
                 .map {
                     val gyms = it.data?.getAllGyms
                     if (gyms == null) {

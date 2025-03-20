@@ -17,7 +17,6 @@ import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults.SecondaryIndicator
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -49,14 +48,16 @@ fun GymDetailScreen(
     gymDetailViewModel: GymDetailViewModel,
     onBack: () -> Unit
 ) {
-    val gym by gymDetailViewModel.gymFlow.collectAsState()
-    if (gym == null) return
-
+    val gymDetailUiState = gymDetailViewModel.collectUiStateValue()
+    val gym = gymDetailUiState.gym ?: return
+    val averageCapacitiesList = gymDetailUiState.averageCapacities
+    val startTime = gymDetailUiState.startTime
+    val selectedPopularTimesIndex = gymDetailUiState.selectedPopularTimesIndex
     val day = todayIndex()
 
     //tabs
     var tabIndex by remember { mutableIntStateOf(0) }
-    val tabs = if (gym?.hasOneFacility == true) {
+    val tabs = if (gym.hasOneFacility) {
         listOf("Fitness Center", "Facilities")
     } else {
         listOf("Fitness Center")
@@ -72,7 +73,7 @@ fun GymDetailScreen(
     val screenHeightPx = LocalConfiguration.current.screenHeightDp.toFloat() * screenDensity
 
 
-    val bitmapState = CoilRepository.getUrlState(gym?.imageUrl ?: "", LocalContext.current)
+    val bitmapState = CoilRepository.getUrlState(gym.imageUrl ?: "", LocalContext.current)
 
     val infiniteTransition = rememberInfiniteTransition(label = "gymDetailLoading")
     val progress by infiniteTransition.animateFloat(
@@ -100,7 +101,7 @@ fun GymDetailScreen(
             onBack,
             gym,
             day,
-            gym?.upliftCapacity,
+            gym.upliftCapacity,
             gymDetailViewModel::reload
         )
 
@@ -114,21 +115,18 @@ fun GymDetailScreen(
 
         when (tabIndex) {
             // TODO() -> Add Error Handling for null case
-            0 -> gym?.let {
-                gym?.equipmentGroupings?.let { equipmentGroupInfoList ->
-                    FitnessCenterContent(
-                        gym = it,
-                        equipmentGroupInfoList = equipmentGroupInfoList,
-                    )
-                }
-            }
+            0 -> FitnessCenterContent(
+                gym = gym,
+                equipmentGroupInfoList = gym.equipmentGroupings,
+                averageCapacitiesList = averageCapacitiesList,
+                startTime = startTime,
+                selectedPopularTimesIndex = selectedPopularTimesIndex
+            )
 
-            1 -> gym?.let {
-                GymFacilitySection(
-                    gym = it,
-                    today = day
-                )
-            } ?: Unit
+            1 -> GymFacilitySection(
+                gym = gym,
+                today = day
+            )
         }
 
 

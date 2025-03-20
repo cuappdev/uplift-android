@@ -10,7 +10,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.cornellappdev.uplift.data.models.UpliftGym
+import com.cornellappdev.uplift.data.models.gymdetail.UpliftGym
 import com.cornellappdev.uplift.data.repositories.LocationRepository
 import com.cornellappdev.uplift.ui.screens.gyms.subscreens.MainError
 import com.cornellappdev.uplift.ui.screens.gyms.subscreens.MainLoaded
