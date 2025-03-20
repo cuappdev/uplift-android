@@ -78,6 +78,7 @@ fun MainNavigationWrapper(
     val items = listOf(
         BottomNavScreens.Home,
         BottomNavScreens.Classes,
+        BottomNavScreens.Profile
         // TODO: Add new items when activities and profile are implemented.
     )
 
@@ -204,6 +205,9 @@ fun MainNavigationWrapper(
             }
             composable<UpliftRootRoute.ProfileCreation> {
                 ProfileCreationScreen()
+            }
+            composable<UpliftRootRoute.Profile>{
+
             }
             composable<UpliftRootRoute.Sports> {}
             composable<UpliftRootRoute.Favorites> {}
