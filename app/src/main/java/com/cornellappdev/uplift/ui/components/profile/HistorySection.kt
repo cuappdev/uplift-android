@@ -5,22 +5,17 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Icon
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.cornellappdev.uplift.R
-import com.cornellappdev.uplift.util.GRAY04
+import com.cornellappdev.uplift.util.GRAY01
 import com.cornellappdev.uplift.util.montserratFamily
 
 data class HistoryItem(
@@ -36,8 +31,8 @@ fun HistorySection(
     Column(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(12.dp)
-    ){
-        SectionTitleText()
+    ) {
+        SectionTitleText("HISTORY")
         HistoryList(historyItems)
     }
 
@@ -47,8 +42,11 @@ fun HistorySection(
 @Composable
 private fun HistoryList(historyItems: List<HistoryItem>) {
     Column {
-        historyItems.forEach { historyItem ->
+        historyItems.forEachIndexed { index, historyItem ->
             HistoryItemRow(historyItem = historyItem)
+            if (index != historyItems.size - 1) {
+                HorizontalDivider(color = GRAY01)
+            }
         }
     }
 }
@@ -56,14 +54,16 @@ private fun HistoryList(historyItems: List<HistoryItem>) {
 @Composable
 private fun HistoryItemRow(
     historyItem: HistoryItem
-){
+) {
     val gymName = historyItem.gymName
     val time = historyItem.time
     val date = historyItem.date
     Row(
-        modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 12.dp),
         horizontalArrangement = Arrangement.SpaceBetween
-    ){
+    ) {
         Text(
             text = gymName,
             fontFamily = montserratFamily,
@@ -77,31 +77,6 @@ private fun HistoryItemRow(
             fontSize = 12.sp,
             fontWeight = FontWeight.Light,
             color = Color.Black
-        )
-    }
-}
-
-@Composable
-private fun SectionTitleText() {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            text = "HISTORY",
-            fontFamily = montserratFamily,
-            fontSize = 14.sp,
-            fontWeight = FontWeight.Bold,
-            color = GRAY04
-        )
-        Icon(
-            painter = painterResource(id = R.drawable.chevron_right),
-            tint = GRAY04,
-            contentDescription = "View all history",
-            modifier = Modifier
-                .width(18.dp)
-                .height(18.dp),
         )
     }
 }
@@ -120,7 +95,7 @@ private fun HistorySectionPreview() {
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
-    ){
+    ) {
         HistorySection(
             historyItems = historyItems
         )
