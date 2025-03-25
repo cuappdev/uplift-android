@@ -21,8 +21,8 @@ android {
         applicationId "com.cornellappdev.uplift"
         minSdk 28
         targetSdk 35
-        versionCode 12
-        versionName "1.4-backend-fix"
+        versionCode 14
+        versionName "1.5-updated-gym-details"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
