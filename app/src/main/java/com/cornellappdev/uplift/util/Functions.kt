@@ -1,9 +1,10 @@
 package com.cornellappdev.uplift.util
 
 import android.location.Location
-import com.cornellappdev.uplift.models.TimeInterval
-import com.cornellappdev.uplift.models.TimeOfDay
-import com.cornellappdev.uplift.models.UpliftClass
+import com.cornellappdev.uplift.data.models.TimeInterval
+import com.cornellappdev.uplift.data.models.TimeOfDay
+import com.cornellappdev.uplift.data.models.UpliftClass
+import com.cornellappdev.uplift.type.DayOfWeekGraphQLEnum
 import java.util.Calendar
 
 /**
