@@ -38,7 +38,27 @@ import com.cornellappdev.uplift.R
  *  @param onPhotoSelected: function to call when the user selects a photo. Takes in uri parameter
  */
 @Composable
-fun PhotoPicker(imageUri: Uri? = null, onPhotoSelected: (Uri) -> Unit) {
+fun PhotoPicker(imageUri: Uri? = null, onPhotoSelected: (Uri) -> Unit, screenType: String = "onboarding") {
+    val outerCircleSize = when (screenType) {
+        "onboarding" -> 160.dp
+        "profile" -> 98.dp
+        else -> 160.dp
+    }
+    val innerCircleSize = when (screenType) {
+        "onboarding" -> 144.dp
+        "profile" -> 88.dp
+        else -> 144.dp
+    }
+    val smallCameraIconOffsetX = when (screenType) {
+        "onboarding" -> 60.dp
+        "profile" -> 36.dp
+        else -> 60.dp
+    }
+    val smallCameraIconOffsetY = when (screenType) {
+        "onboarding" -> 64.dp
+        "profile" -> 40.dp
+        else -> 64.dp
+    }
     // State to store the selected image URI
     var selectedImageUri by rememberSaveable { mutableStateOf(imageUri) }
 
@@ -54,13 +74,13 @@ fun PhotoPicker(imageUri: Uri? = null, onPhotoSelected: (Uri) -> Unit) {
         }
 
     Box(
-        modifier = Modifier.size(160.dp), contentAlignment = Alignment.Center
+        modifier = Modifier.size(outerCircleSize), contentAlignment = Alignment.Center
     ) {
         ElevatedCard(
             elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
             colors = CardDefaults.cardColors(containerColor = Color.White),
             shape = CircleShape,
-            modifier = Modifier.size(160.dp),
+            modifier = Modifier.size(outerCircleSize),
             onClick = {
                 // Launch the photo picker and let the user choose only images.
                 pickMedia.launch(
@@ -81,13 +101,13 @@ fun PhotoPicker(imageUri: Uri? = null, onPhotoSelected: (Uri) -> Unit) {
                         contentDescription = null,
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
-                            .size(144.dp)
+                            .size(innerCircleSize)
                             .clip(CircleShape)
                     )
                 } else {
                     Box(
                         modifier = Modifier
-                            .size(144.dp)
+                            .size(innerCircleSize)
                             .clip(CircleShape)
                             .background(GRAY01),
                     ) {
@@ -103,11 +123,12 @@ fun PhotoPicker(imageUri: Uri? = null, onPhotoSelected: (Uri) -> Unit) {
             }
         }
         // If a photo is selected, display the camera icon on top of the photo
-        if (selectedImageUri != null) {
+        if (selectedImageUri != null || screenType == "profile") {
             Image(
                 painter = painterResource(id = R.drawable.ic_camera_circle),
                 contentDescription = null,
-                modifier = Modifier.offset(60.dp, 64.dp)
+                modifier = Modifier
+                    .offset(smallCameraIconOffsetX, smallCameraIconOffsetY )
             )
         }
     }
@@ -121,6 +142,9 @@ private fun PhotoPickerPreview() {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        PhotoPicker {}
+        PhotoPicker(
+            imageUri = null,
+            onPhotoSelected = { }
+        )
     }
 }

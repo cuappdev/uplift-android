@@ -21,18 +21,20 @@ import com.cornellappdev.uplift.util.montserratFamily
 data class HistoryItem(
     val gymName: String,
     val time: String,
+    val dayOfWeek: String,
     val date: String,
 )
 
 @Composable
 fun HistorySection(
-    historyItems: List<HistoryItem>
+    historyItems: List<HistoryItem>,
+    onClick : () -> Unit
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        SectionTitleText("HISTORY")
+        SectionTitleText("HISTORY", onClick)
         HistoryList(historyItems)
     }
 
@@ -57,6 +59,7 @@ private fun HistoryItemRow(
 ) {
     val gymName = historyItem.gymName
     val time = historyItem.time
+    val dayOfWeek = historyItem.dayOfWeek
     val date = historyItem.date
     Row(
         modifier = Modifier
@@ -72,7 +75,7 @@ private fun HistoryItemRow(
             color = Color.Black
         )
         Text(
-            text = "$time · $date",
+            text = "$time · $dayOfWeek $date",
             fontFamily = montserratFamily,
             fontSize = 12.sp,
             fontWeight = FontWeight.Light,
@@ -85,11 +88,11 @@ private fun HistoryItemRow(
 @Composable
 private fun HistorySectionPreview() {
     val historyItems = listOf(
-        HistoryItem("Morrison", "11:00 PM", "10/14/2025"),
-        HistoryItem("Noyes", "1:00 PM", "10/13/2025"),
-        HistoryItem("Teagle Up", "2:00 PM", "10/12/2025"),
-        HistoryItem("Teagle Down", "12:00 PM", "10/11/2025"),
-        HistoryItem("Helen Newman", "10:00 AM", "10/09/2025"),
+        HistoryItem("Morrison", "11:00 PM", "Fri", "March 29, 2024"),
+        HistoryItem("Noyes", "1:00 PM","Fri", "March 29, 2024"),
+        HistoryItem("Teagle Up", "2:00 PM", "Fri", "March 29, 2024"),
+        HistoryItem("Teagle Down", "12:00 PM", "Fri", "March 29, 2024"),
+        HistoryItem("Helen Newman", "10:00 AM", "Fri", "March 29, 2024"),
     )
     Column(
         modifier = Modifier
@@ -97,7 +100,8 @@ private fun HistorySectionPreview() {
             .padding(16.dp)
     ) {
         HistorySection(
-            historyItems = historyItems
+            historyItems = historyItems,
+            onClick = {}
         )
     }
 

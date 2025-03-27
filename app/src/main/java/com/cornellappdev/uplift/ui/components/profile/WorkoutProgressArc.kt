@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
@@ -64,15 +63,17 @@ fun WorkoutProgressArc(
         animatedProgress.animateTo(
             targetValue = progress,
             animationSpec = tween(
-                durationMillis = Math.max(workoutsCompleted * 200, 1000),
+                durationMillis = (workoutsCompleted * 200).coerceAtLeast(1000),
                 easing = LinearEasing
             )
         )
     }
 
     Box(
-        contentAlignment = Alignment.TopCenter,
-        modifier = Modifier.size(250.dp)
+        contentAlignment = Alignment.Center,
+        modifier = Modifier
+            .width(250.dp)
+            .height(132.dp)
     ) {
         // Draw the progress arc
         ProgressArc(animatedProgress, workoutsCompleted, workoutGoal)
@@ -96,7 +97,7 @@ private fun ProgressArc(
         val radius = diameter / 2
         val topLeft = Offset(
             (size.width - diameter) / 2,
-            (size.height - diameter) / 2
+            0f
         )
         val arcSize = Size(diameter, diameter)
 
@@ -124,12 +125,15 @@ private fun ProgressArc(
             strokeWidth
         )
 
-        // Draw the progress dot at the end of the progress arc
+        // Progress arc circle
         val angle = Math.toRadians((startAngle + progressAngle).toDouble())
         val dotRadius = 16.dp.toPx()
 
-        val x = center.x + (radius * cos(angle)).toFloat()
-        val y = center.y + (radius * sin(angle)).toFloat()
+        val arcCenterX = topLeft.x + radius
+        val arcCenterY = topLeft.y + radius
+
+        val x = arcCenterX + (radius * cos(angle)).toFloat()
+        val y = arcCenterY + (radius * sin(angle)).toFloat()
 
         // Outer circle
         drawArcSliderOuterCircle(workoutsCompleted, workoutGoal, gradientBrush, dotRadius, x, y)
@@ -217,7 +221,7 @@ private fun WorkoutFractionTextSection(workoutsCompleted: Int, workoutGoal: Int)
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(12.dp),
-        modifier = Modifier.offset(y = 44.dp)
+        modifier = Modifier.offset(y = 16.dp)
     ) {
         Row(
             verticalAlignment = Alignment.Bottom,
@@ -273,15 +277,8 @@ private fun WorkoutsCompletedText(workoutsCompleted: Int, workoutGoal: Int) {
 @Preview(showBackground = true)
 @Composable
 private fun WorkoutProgressArcPreview() {
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        WorkoutProgressArc(
-            workoutsCompleted = 5,
-            workoutGoal = 5,
-        )
-    }
-
+    WorkoutProgressArc(
+        workoutsCompleted = 3,
+        workoutGoal = 5,
+    )
 }
