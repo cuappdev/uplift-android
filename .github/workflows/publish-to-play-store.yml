@@ -32,6 +32,10 @@ jobs:
           echo "${{ secrets.SECRETS_PROPERTIES }}" > secrets.properties
 
       # TODO: Add google services json
+      - name: Load Google Service file
+        env:
+          DATA: ${{ secrets.GOOGLE_SERVICES_JSON }}
+        run: echo $DATA | base64 -di > app/google-services.json
 
       - name: Build with Gradle
         id: build
