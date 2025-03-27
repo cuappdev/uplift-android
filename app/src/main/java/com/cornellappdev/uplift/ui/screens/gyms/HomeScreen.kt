@@ -25,6 +25,7 @@ import kotlinx.coroutines.delay
  * The home page of Uplift.
  */
 @OptIn(ExperimentalPermissionsApi::class)
+@Suppress("UnusedCrossfadeTargetStateParameter")
 @Composable
 fun HomeScreen(
     homeViewModel: HomeViewModel = hiltViewModel(),
@@ -57,11 +58,16 @@ fun HomeScreen(
         LocationRepository.instantiate(context)
     }
 
-    Crossfade(targetState = gymsState, label = "Main") {
-        when {
-            gymsLoading -> MainLoading(loadingShimmer)
-            gymsError -> MainError(reload = homeViewModel::reload)
-            gymsState.isNotEmpty() -> MainLoaded(
+    Crossfade(targetState = when {
+        gymsLoading -> "loading"
+        gymsError -> "error"
+        gymsState.isNotEmpty() -> "loaded"
+        else -> "empty"
+    }, label = "Main") { state ->
+        when (state) {
+            "loading" -> MainLoading(loadingShimmer)
+            "error" -> MainError(reload = homeViewModel::reload)
+            "loaded" -> MainLoaded(
                 openGym = openGym,
                 gymsList = gymsState,
                 navController = navController,
@@ -70,6 +76,7 @@ fun HomeScreen(
                 onToggleCapacities = { showCapacities = !showCapacities },
                 reload = homeViewModel::reload,
             )
+            else -> {} // Handle empty state if needed
         }
     }
 }
