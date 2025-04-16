@@ -23,7 +23,7 @@ fun GoalsSection(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        SectionTitleText("GOALS", onClick)
+        SectionTitleText("My Goals", onClick)
         Spacer(modifier = Modifier.height(12.dp))
         WorkoutProgressArc(
             workoutsCompleted,

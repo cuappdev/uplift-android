@@ -31,9 +31,11 @@ import com.cornellappdev.uplift.util.montserratFamily
 @Composable
 fun ProfileHeaderSection(
     name: String,
-    totalWorkouts: Int,
-    navigateToFavorites: () -> Unit,
-    profilePictureUri: Uri?
+    gymDays: Int,
+    streaks: Int,
+    badges: Int,
+    profilePictureUri: Uri?,
+    onPhotoSelected: (Uri) -> Unit
 ){
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -42,18 +44,19 @@ fun ProfileHeaderSection(
     ){
         PhotoPicker(
             imageUri = profilePictureUri,
-            onPhotoSelected = {},
+            onPhotoSelected = onPhotoSelected,
             screenType = "profile"
         )
-        ProfileHeaderInfoDisplay(name, totalWorkouts, navigateToFavorites)
+        ProfileHeaderInfoDisplay(name, gymDays, streaks, badges)
     }
 }
 
 @Composable
 private fun ProfileHeaderInfoDisplay(
     name: String,
-    totalWorkouts: Int,
-    navigateToFavorites: () -> Unit
+    gymDays: Int,
+    streaks: Int,
+    badges: Int
 ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -69,60 +72,41 @@ private fun ProfileHeaderInfoDisplay(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            TotalWorkoutsInfo(totalWorkouts)
-            FavoritesButton(navigateToFavorites)
-        }
-    }
-}
-
-@Composable
-private fun FavoritesButton(navigateToFavorites: () -> Unit) {
-    Surface(
-        shape = RoundedCornerShape(38.dp),
-        border = BorderStroke(1.dp, GRAY01),
-        color = Color.White,
-        modifier = Modifier.clickable(
-            onClick = navigateToFavorites
-        )
-    ) {
-        Row(
-            modifier = Modifier.padding(8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(4.dp)
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_star_black_filled),
-                contentDescription = "Favorites",
-                tint = Color.Unspecified,
-                modifier = Modifier.size(14.dp)
+            ProfileHeaderInfo(
+                label = "Gym Days",
+                amount = gymDays
             )
-            Text(
-                text = "Favorites",
-                fontFamily = montserratFamily,
-                fontSize = 12.sp
+            ProfileHeaderInfo(
+                label = "Streaks",
+                amount = streaks
+            )
+            ProfileHeaderInfo(
+                label = "Badges",
+                amount = badges
             )
         }
     }
 }
 
 @Composable
-private fun TotalWorkoutsInfo(totalWorkouts: Int) {
+private fun ProfileHeaderInfo(label: String, amount: Int) {
     Column(
         verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         Text(
-            text = "Total Workouts",
-            fontFamily = montserratFamily,
-            fontSize = 14.sp,
-            fontWeight = FontWeight.Medium,
-            color = GRAY04
-        )
-        Text(
-            text = totalWorkouts.toString(),
+            text = amount.toString(),
             fontFamily = montserratFamily,
             fontSize = 16.sp,
             fontWeight = FontWeight.Bold
         )
+        Text(
+            text = label,
+            fontFamily = montserratFamily,
+            fontSize = 12.sp,
+            fontWeight = FontWeight.Medium,
+            color = GRAY04
+        )
+
     }
 }
 
@@ -131,8 +115,10 @@ private fun TotalWorkoutsInfo(totalWorkouts: Int) {
 private fun ProfileHeaderSectionPreview() {
     ProfileHeaderSection(
         name = "John Doe",
-        totalWorkouts = 100,
-        navigateToFavorites = {},
-        profilePictureUri = null
+        gymDays = 100,
+        streaks = 15,
+        badges = 3,
+        profilePictureUri = null,
+        onPhotoSelected = {}
     )
 }

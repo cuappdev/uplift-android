@@ -16,7 +16,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cornellappdev.uplift.R
-import com.cornellappdev.uplift.util.GRAY04
+import com.cornellappdev.uplift.util.GRAY10
 import com.cornellappdev.uplift.util.montserratFamily
 
 @Composable
@@ -28,7 +28,9 @@ fun SectionTitleText(
         modifier = Modifier
             .fillMaxWidth()
             .clickable(
-                onClick = onClick
+                onClick = onClick,
+                indication = null,
+                interactionSource = null
             )
         ,
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -37,13 +39,13 @@ fun SectionTitleText(
         Text(
             text = title,
             fontFamily = montserratFamily,
-            fontSize = 14.sp,
+            fontSize = 16.sp,
             fontWeight = FontWeight.Bold,
-            color = GRAY04
+            color = GRAY10
         )
         Icon(
             painter = painterResource(id = R.drawable.chevron_right),
-            tint = GRAY04,
+            tint = GRAY10,
             contentDescription = "View all history",
             modifier = Modifier
                 .width(18.dp)

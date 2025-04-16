@@ -11,11 +11,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.TabRowDefaults.Divider
-import androidx.compose.material3.Text
-import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
-import androidx.compose.material3.TabRowDefaults.SecondaryIndicator
-import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -26,13 +21,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.cornellappdev.uplift.data.repositories.CoilRepository
+import com.cornellappdev.uplift.ui.components.general.UpliftTabRow
 import com.cornellappdev.uplift.ui.components.gymdetail.GymFacilitySection
 import com.cornellappdev.uplift.ui.components.gymdetail.FitnessCenterContent
 import com.cornellappdev.uplift.ui.components.gymdetail.GymDetailHero
@@ -110,7 +102,7 @@ fun GymDetailScreen(
         )
 
 
-        GymTabRow(tabIndex, tabs, onTabChange = { tabIndex = it })
+        UpliftTabRow(tabIndex, tabs, onTabChange = { tabIndex = it })
 
         when (tabIndex) {
             // TODO() -> Add Error Handling for null case
@@ -133,44 +125,6 @@ fun GymDetailScreen(
 
 
         Spacer(Modifier.height(30.dp))
-    }
-}
-
-@Composable
-private fun GymTabRow(tabIndex: Int, tabs: List<String>, onTabChange: (Int) -> Unit = {}) {
-    TabRow(
-        selectedTabIndex = tabIndex,
-        containerColor = Color.White,
-        indicator = { tabPositions ->
-            SecondaryIndicator(
-                Modifier.tabIndicatorOffset(tabPositions[tabIndex]),
-                height = 2.dp,
-                color = PRIMARY_YELLOW
-            )
-        },
-        divider = {
-            Divider(
-                color = GRAY01,
-                thickness = 1.dp,
-            )
-        }
-    ) {
-        tabs.forEachIndexed { index, title ->
-            Tab(
-                text = {
-                    Text(
-                        text = title,
-                        color = if (tabIndex == index) PRIMARY_BLACK else GRAY04,
-                        fontFamily = montserratFamily,
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                },
-                selected = tabIndex == index,
-                onClick = { onTabChange(index) },
-                selectedContentColor = GRAY01,
-            )
-        }
     }
 }
 

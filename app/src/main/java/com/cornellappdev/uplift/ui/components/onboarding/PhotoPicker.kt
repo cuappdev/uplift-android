@@ -28,45 +28,52 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.cornellappdev.uplift.util.GRAY01
 import com.cornellappdev.uplift.R
 
-/**
- * Component that displays a camera icon for the user to select a photo for their profile
- *  @param onPhotoSelected: function to call when the user selects a photo. Takes in uri parameter
- */
+data class PhotoPickerSizes(
+    val outerCircleSize: Dp,
+    val innerCircleSize: Dp,
+    val cameraIconOffsetX: Dp,
+    val cameraIconOffsetY: Dp
+)
+
+fun getPhotoPickerSizes(screenType: String): PhotoPickerSizes {
+    return when (screenType) {
+        "onboarding" -> PhotoPickerSizes(
+            outerCircleSize = 160.dp,
+            innerCircleSize = 144.dp,
+            cameraIconOffsetX = 60.dp,
+            cameraIconOffsetY = 64.dp
+        )
+        "profile" -> PhotoPickerSizes(
+            outerCircleSize = 98.dp,
+            innerCircleSize = 88.dp,
+            cameraIconOffsetX = 36.dp,
+            cameraIconOffsetY = 40.dp
+        )
+        else -> PhotoPickerSizes(
+            outerCircleSize = 160.dp,
+            innerCircleSize = 144.dp,
+            cameraIconOffsetX = 60.dp,
+            cameraIconOffsetY = 64.dp
+        )
+    }
+}
+
 @Composable
 fun PhotoPicker(imageUri: Uri? = null, onPhotoSelected: (Uri) -> Unit, screenType: String = "onboarding") {
-    val outerCircleSize = when (screenType) {
-        "onboarding" -> 160.dp
-        "profile" -> 98.dp
-        else -> 160.dp
-    }
-    val innerCircleSize = when (screenType) {
-        "onboarding" -> 144.dp
-        "profile" -> 88.dp
-        else -> 144.dp
-    }
-    val smallCameraIconOffsetX = when (screenType) {
-        "onboarding" -> 60.dp
-        "profile" -> 36.dp
-        else -> 60.dp
-    }
-    val smallCameraIconOffsetY = when (screenType) {
-        "onboarding" -> 64.dp
-        "profile" -> 40.dp
-        else -> 64.dp
-    }
+    val sizes = getPhotoPickerSizes(screenType)
+
     // State to store the selected image URI
     var selectedImageUri by rememberSaveable { mutableStateOf(imageUri) }
 
     // Registers a photo picker activity launcher in single-select mode.
     val pickMedia =
         rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-            // Callback is invoked after the user selects a media item or closes the
-            // photo picker.
             if (uri != null) {
                 selectedImageUri = uri
                 onPhotoSelected(uri)
@@ -74,15 +81,14 @@ fun PhotoPicker(imageUri: Uri? = null, onPhotoSelected: (Uri) -> Unit, screenTyp
         }
 
     Box(
-        modifier = Modifier.size(outerCircleSize), contentAlignment = Alignment.Center
+        modifier = Modifier.size(sizes.outerCircleSize), contentAlignment = Alignment.Center
     ) {
         ElevatedCard(
             elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
             colors = CardDefaults.cardColors(containerColor = Color.White),
             shape = CircleShape,
-            modifier = Modifier.size(outerCircleSize),
+            modifier = Modifier.size(sizes.outerCircleSize),
             onClick = {
-                // Launch the photo picker and let the user choose only images.
                 pickMedia.launch(
                     PickVisualMediaRequest(
                         ActivityResultContracts.PickVisualMedia.ImageOnly
@@ -94,20 +100,19 @@ fun PhotoPicker(imageUri: Uri? = null, onPhotoSelected: (Uri) -> Unit, screenTyp
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                // Check if a photo is selected, and display it, otherwise show the camera icon
                 if (selectedImageUri != null) {
                     Image(
                         painter = rememberAsyncImagePainter(selectedImageUri),
                         contentDescription = null,
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
-                            .size(innerCircleSize)
+                            .size(sizes.innerCircleSize)
                             .clip(CircleShape)
                     )
                 } else {
                     Box(
                         modifier = Modifier
-                            .size(innerCircleSize)
+                            .size(sizes.innerCircleSize)
                             .clip(CircleShape)
                             .background(GRAY01),
                     ) {
@@ -122,13 +127,12 @@ fun PhotoPicker(imageUri: Uri? = null, onPhotoSelected: (Uri) -> Unit, screenTyp
                 }
             }
         }
-        // If a photo is selected, display the camera icon on top of the photo
         if (selectedImageUri != null || screenType == "profile") {
             Image(
                 painter = painterResource(id = R.drawable.ic_camera_circle),
                 contentDescription = null,
                 modifier = Modifier
-                    .offset(smallCameraIconOffsetX, smallCameraIconOffsetY )
+                    .offset(sizes.cameraIconOffsetX, sizes.cameraIconOffsetY)
             )
         }
     }

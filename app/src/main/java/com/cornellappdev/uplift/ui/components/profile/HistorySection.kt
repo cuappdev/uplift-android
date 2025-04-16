@@ -34,7 +34,7 @@ fun HistorySection(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        SectionTitleText("HISTORY", onClick)
+        SectionTitleText("My History", onClick)
         HistoryList(historyItems)
     }
 

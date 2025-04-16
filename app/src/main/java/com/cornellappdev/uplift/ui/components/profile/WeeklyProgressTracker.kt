@@ -81,7 +81,7 @@ private fun BoxScope.ConnectingLines(
             .padding(horizontal = 14.dp)
     ) {
         val itemWidth = size.width / daysOfWeek.size
-        val circleRadius = 12.dp.toPx() // Half of the circle size (24.dp)
+        val circleRadius = 12.dp.toPx()
         val lineY = size.height / 2
 
         for (i in 0 until daysOfWeek.size - 1) {
