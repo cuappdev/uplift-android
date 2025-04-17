@@ -1,0 +1,46 @@
+mutation CreateCapacityReminder(
+    $capacityPercent: Int!, $daysOfWeek: [String]!, $fcmToken: String!, $gyms: [String]!
+){
+    createCapacityReminder(
+        capacityPercent: $capacityPercent,
+        daysOfWeek: $daysOfWeek,
+        fcmToken: $fcmToken,
+        gyms: $gyms
+    ) {
+        id
+        capacityThreshold
+        daysOfWeek
+        fcmToken
+        gyms
+        isActive
+    }
+}
+
+mutation EditCapacityReminder(
+    $reminderId: Int!, $capacityPercent: Int!, $daysOfWeek: [String]!, $gyms: [String]!
+){
+    editCapacityReminder(
+        reminderId: $reminderId,
+        capacityPercent: $capacityPercent,
+        daysOfWeek: $daysOfWeek,
+        gyms: $gyms
+    ) {
+        id
+        capacityThreshold
+        daysOfWeek
+        fcmToken
+        gyms
+        isActive
+    }
+}
+
+mutation DeleteCapacityReminder($reminderId: Int!) {
+    deleteCapacityReminder(reminderId: $reminderId) {
+        id
+        capacityThreshold
+        daysOfWeek
+        fcmToken
+        gyms
+        isActive
+    }
+}

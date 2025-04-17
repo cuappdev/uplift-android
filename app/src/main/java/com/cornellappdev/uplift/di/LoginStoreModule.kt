@@ -16,14 +16,6 @@ import javax.inject.Singleton
 
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "login")
 
-object PreferencesKeys {
-    val ID = stringPreferencesKey("id")
-    val USERNAME = stringPreferencesKey("username")
-    val NETID = stringPreferencesKey("netId")
-    val EMAIL = stringPreferencesKey("email")
-    val SKIP = booleanPreferencesKey("skip")
-}
-
 @Module
 @InstallIn(SingletonComponent::class)
 object LoginStoreModule {

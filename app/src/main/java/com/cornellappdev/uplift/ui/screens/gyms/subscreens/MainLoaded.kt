@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -35,12 +36,14 @@ import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.res.painterResource
@@ -50,6 +53,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.cornellappdev.uplift.R
+import com.cornellappdev.uplift.data.models.TimeOfDay
 import com.cornellappdev.uplift.data.models.gymdetail.UpliftCapacity
 import com.cornellappdev.uplift.data.models.gymdetail.UpliftGym
 import com.cornellappdev.uplift.ui.nav.navigateToGym
@@ -68,6 +72,7 @@ import com.cornellappdev.uplift.util.colorInterp
 import com.cornellappdev.uplift.util.isOpen
 import com.cornellappdev.uplift.util.montserratFamily
 import com.cornellappdev.uplift.util.todayIndex
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.util.Calendar
 import java.util.GregorianCalendar
@@ -82,7 +87,8 @@ fun MainLoaded(
     showCapacities: Boolean,
     titleText: String,
     onToggleCapacities: () -> Unit,
-    reload: () -> Unit
+    reload: () -> Unit,
+    navigateToCapacityReminders: () -> Unit,
 ) {
     val gymComparator = { gym1: UpliftGym, gym2: UpliftGym ->
         if (isOpen(gym1.hours[todayIndex()]) && !isOpen(gym2.hours[todayIndex()])) {
@@ -149,56 +155,13 @@ fun MainLoaded(
                 .background(Color.White)
         ) {
             stickyHeader {
-                UpliftTopBar(showIcon = false, title = titleText) {
-                    Button(
-                        onClick = {
-                            onToggleCapacities()
-                            coroutineScope.launch {
-                                lazyListState.animateScrollToItem(0)
-                            }
-                        },
-                        shape = RoundedCornerShape(12.dp),
-                        modifier = Modifier
-                            .width(60.dp)
-                            .height(40.dp),
-                        elevation = ButtonDefaults.elevation(defaultElevation = 0.dp),
-                        contentPadding = PaddingValues(8.dp),
-                        border = BorderStroke(1.dp, GRAY01),
-                        colors = ButtonDefaults.buttonColors(
-                            backgroundColor = colorInterp(
-                                capacityAnimation.value, Color.White, GRAY00
-                            )
-                        )
-                    ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Box {
-                                CircularProgressIndicator(
-                                    color = GRAY02,
-                                    strokeWidth = 3.dp,
-                                    modifier = Modifier.size(24.dp),
-                                    progress = 1f
-                                )
-                                CircularProgressIndicator(
-                                    color = ACCENT_ORANGE,
-                                    strokeWidth = 3.dp,
-                                    modifier = Modifier.size(24.dp),
-                                    progress = .75f,
-                                    strokeCap = StrokeCap.Round
-                                )
-                            }
-                            Icon(
-                                painter = painterResource(id = R.drawable.ic_chevron_down),
-                                contentDescription = null,
-                                modifier = Modifier.rotate(capacityAnimation.value * 180f),
-                                tint = GRAY06
-                            )
-                        }
-                    }
-                }
+                HomeTopBar(
+                    titleText,
+                    onToggleCapacities,
+                    coroutineScope,
+                    lazyListState,
+                    capacityAnimation
+                )
             }
 
             // Spacer from header.
@@ -215,121 +178,30 @@ fun MainLoaded(
                         .animateContentSize()
                 ) {
                     if (showCapacities) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 16.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Text(
-                                text = "GYM CAPACITIES",
-                                fontFamily = montserratFamily,
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight(700),
-                                lineHeight = 17.07.sp,
-                                textAlign = TextAlign.Center,
-                                color = GRAY04
-                            )
-                            Text(
-                                text = "Last Updated $lastUpdatedCapacity",
-                                fontFamily = montserratFamily,
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight(300),
-                                textAlign = TextAlign.Center,
-                                color = GRAY04
-                            )
-                        }
+                        ShowCapacitiesSection(
+                            lastUpdatedCapacity, gyms, navController, openGym,
+                            navigateToCapacityReminders
+                        )
 
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(top = 12.dp, bottom = 24.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            gyms.let { gymsWithCapacities ->
-                                // Place two capacities per row, or one if it's the last row and only 1 is left.
-                                val bound = (gymsWithCapacities.size / 2f).roundToInt()
-                                for (i in 0 until bound) {
-                                    Row(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(horizontal = 30.dp),
-                                        horizontalArrangement = Arrangement.SpaceEvenly
-                                    ) {
-                                        // First index [i * 2] should always exist.
-                                        Box(
-                                            modifier = Modifier
-                                                .padding(16.dp)
-                                                .widthIn(min = 143.dp)
-                                                .clickable(
-                                                    indication = null,
-                                                    interactionSource = remember { MutableInteractionSource() }
-                                                ) {
-                                                    navController.navigateToGym(
-                                                        openGym,
-                                                        gym = gymsWithCapacities[i * 2]
-                                                    )
-                                                },
-                                            contentAlignment = Alignment.Center
-                                        ) {
-                                            GymCapacity(
-                                                capacity = gymsWithCapacities[i * 2].upliftCapacity,
-                                                label = gymsWithCapacities[i * 2].name,
-                                                closed = !isOpen(gymsWithCapacities[i * 2].hours[todayIndex()])
-                                            )
-                                        }
 
-                                        // Second index [i * 2 + 1] may not exist.
-                                        if (i * 2 + 1 < gymsWithCapacities.size) {
-                                            Box(
-                                                modifier = Modifier
-                                                    .padding(16.dp)
-                                                    .widthIn(min = 143.dp)
-                                                    .clickable {
-                                                        navController.navigateToGym(
-                                                            openGym,
-                                                            gym = gymsWithCapacities[i * 2 + 1]
-                                                        )
-                                                    },
-                                                contentAlignment = Alignment.Center
-                                            ) {
-                                                GymCapacity(
-                                                    capacity = gymsWithCapacities[i * 2 + 1].upliftCapacity,
-                                                    label = gymsWithCapacities[i * 2 + 1].name,
-                                                    closed = !isOpen(gymsWithCapacities[i * 2 + 1].hours[todayIndex()])
-                                                )
-                                            }
-                                        }
-                                    }
-
-                                    if (i != bound - 1) {
-                                        Spacer(modifier = Modifier.height(12.dp))
-                                    }
-                                }
-                            }
-                        }
                     }
                 }
             }
 
             // Gyms
             item {
-                Row(
+                Text(
+                    text = "REC CENTERS",
+                    fontFamily = montserratFamily,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight(700),
+                    lineHeight = 17.07.sp,
+                    textAlign = TextAlign.Start,
+                    color = GRAY04,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text(
-                        text = "REC CENTERS",
-                        fontFamily = montserratFamily,
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight(700),
-                        lineHeight = 17.07.sp,
-                        textAlign = TextAlign.Center,
-                        color = GRAY04
-                    )
-                }
+                        .padding(horizontal = 16.dp)
+                )
             }
 
 
@@ -358,5 +230,222 @@ fun MainLoaded(
             contentColor = PRIMARY_YELLOW,
             backgroundColor = Color.White
         )
+    }
+}
+
+@Composable
+private fun ShowCapacitiesSection(
+    lastUpdatedCapacity: TimeOfDay,
+    gyms: MutableList<UpliftGym>,
+    navController: NavHostController,
+    openGym: (UpliftGym) -> Unit,
+    navigateToCapacityReminders: () -> Unit
+) {
+    ShowCapacitiesHeader(lastUpdatedCapacity)
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 12.dp, bottom = 24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        ShowCapacitiesGymItems(gyms, navController, openGym)
+        Button(
+            onClick = navigateToCapacityReminders,
+            contentPadding = PaddingValues(
+                vertical = 16.dp,
+                horizontal = 17.dp
+            ),
+            shape = RoundedCornerShape(12.dp),
+            border = BorderStroke(
+                width = 1.dp,
+                color = GRAY01
+            ),
+            modifier = Modifier
+                .padding(horizontal = 16.dp)
+                .shadow(
+                    elevation = 2.dp,
+                    shape = RoundedCornerShape(12.dp)
+                ),
+            colors = ButtonDefaults.buttonColors(
+                backgroundColor = Color.White
+            ),
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+                Text(
+                    text = "CAPACITY REMINDERS",
+                    fontFamily = montserratFamily,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = GRAY04
+                )
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_edit_capacity_reminders),
+                    contentDescription = "edit capacity reminders",
+                    tint = Color.Unspecified
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun ShowCapacitiesGymItems(
+    gyms: MutableList<UpliftGym>,
+    navController: NavHostController,
+    openGym: (UpliftGym) -> Unit
+) {
+    gyms.let { gymsWithCapacities ->
+        // Place two capacities per row, or one if it's the last row and only 1 is left.
+        val bound = (gymsWithCapacities.size / 2f).roundToInt()
+        for (i in 0 until bound) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 30.dp),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                // First index [i * 2] should always exist.
+                Box(
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .widthIn(min = 143.dp)
+                        .clickable(
+                            indication = null,
+                            interactionSource = remember { MutableInteractionSource() }
+                        ) {
+                            navController.navigateToGym(
+                                openGym,
+                                gym = gymsWithCapacities[i * 2]
+                            )
+                        },
+                    contentAlignment = Alignment.Center
+                ) {
+                    GymCapacity(
+                        capacity = gymsWithCapacities[i * 2].upliftCapacity,
+                        label = gymsWithCapacities[i * 2].name,
+                        closed = !isOpen(gymsWithCapacities[i * 2].hours[todayIndex()])
+                    )
+                }
+
+                // Second index [i * 2 + 1] may not exist.
+                if (i * 2 + 1 < gymsWithCapacities.size) {
+                    Box(
+                        modifier = Modifier
+                            .padding(16.dp)
+                            .widthIn(min = 143.dp)
+                            .clickable {
+                                navController.navigateToGym(
+                                    openGym,
+                                    gym = gymsWithCapacities[i * 2 + 1]
+                                )
+                            },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        GymCapacity(
+                            capacity = gymsWithCapacities[i * 2 + 1].upliftCapacity,
+                            label = gymsWithCapacities[i * 2 + 1].name,
+                            closed = !isOpen(gymsWithCapacities[i * 2 + 1].hours[todayIndex()])
+                        )
+                    }
+                }
+            }
+
+            if (i != bound - 1) {
+                Spacer(modifier = Modifier.height(12.dp))
+            }
+        }
+    }
+}
+
+@Composable
+private fun ShowCapacitiesHeader(lastUpdatedCapacity: TimeOfDay) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(
+            text = "GYM CAPACITIES",
+            fontFamily = montserratFamily,
+            fontSize = 14.sp,
+            fontWeight = FontWeight(700),
+            lineHeight = 17.07.sp,
+            textAlign = TextAlign.Center,
+            color = GRAY04
+        )
+        Text(
+            text = "Last Updated $lastUpdatedCapacity",
+            fontFamily = montserratFamily,
+            fontSize = 14.sp,
+            fontWeight = FontWeight(300),
+            textAlign = TextAlign.Center,
+            color = GRAY04
+        )
+    }
+}
+
+@Composable
+private fun HomeTopBar(
+    titleText: String,
+    onToggleCapacities: () -> Unit,
+    coroutineScope: CoroutineScope,
+    lazyListState: LazyListState,
+    capacityAnimation: State<Float>
+) {
+    UpliftTopBar(showIcon = false, title = titleText) {
+        Button(
+            onClick = {
+                onToggleCapacities()
+                coroutineScope.launch {
+                    lazyListState.animateScrollToItem(0)
+                }
+            },
+            shape = RoundedCornerShape(12.dp),
+            modifier = Modifier
+                .width(60.dp)
+                .height(40.dp),
+            elevation = ButtonDefaults.elevation(defaultElevation = 0.dp),
+            contentPadding = PaddingValues(8.dp),
+            border = BorderStroke(1.dp, GRAY01),
+            colors = ButtonDefaults.buttonColors(
+                backgroundColor = colorInterp(
+                    capacityAnimation.value, Color.White, GRAY00
+                )
+            )
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box {
+                    CircularProgressIndicator(
+                        color = GRAY02,
+                        strokeWidth = 3.dp,
+                        modifier = Modifier.size(24.dp),
+                        progress = 1f
+                    )
+                    CircularProgressIndicator(
+                        color = ACCENT_ORANGE,
+                        strokeWidth = 3.dp,
+                        modifier = Modifier.size(24.dp),
+                        progress = .75f,
+                        strokeCap = StrokeCap.Round
+                    )
+                }
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_chevron_down),
+                    contentDescription = null,
+                    modifier = Modifier.rotate(capacityAnimation.value * 180f),
+                    tint = GRAY06
+                )
+            }
+        }
     }
 }

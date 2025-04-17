@@ -6,6 +6,8 @@ import com.cornellappdev.uplift.data.models.TimeOfDay
 import com.cornellappdev.uplift.data.models.gymdetail.UpliftGym
 import com.cornellappdev.uplift.data.repositories.UpliftApiRepository
 import com.cornellappdev.uplift.data.repositories.UserInfoRepository
+import com.cornellappdev.uplift.ui.UpliftRootRoute
+import com.cornellappdev.uplift.ui.nav.RootNavigationRepository
 import com.cornellappdev.uplift.ui.viewmodels.UpliftViewModel
 import com.cornellappdev.uplift.util.getSystemTime
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,7 +24,8 @@ data class HomeUiState(
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val upliftApiRepository: UpliftApiRepository,
-    private val userInfoRepository: UserInfoRepository
+    private val userInfoRepository: UserInfoRepository,
+    private val rootNavigationRepository: RootNavigationRepository
 ) : UpliftViewModel<HomeUiState>(HomeUiState("", emptyList())) {
 
     init {
@@ -91,5 +94,9 @@ class HomeViewModel @Inject constructor(
         ) "Good Afternoon!"
         // 6 PM to 4 AM
         else "Good Evening!"
+    }
+
+    fun navigateToCapacityReminders() {
+        rootNavigationRepository.navigate(UpliftRootRoute.CapacityReminders)
     }
 }

@@ -2,7 +2,10 @@ package com.cornellappdev.uplift.data.repositories
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
 import com.cornellappdev.uplift.util.CLASS_FAVORITES_KEY
 import com.cornellappdev.uplift.util.GYM_FAVORITES_KEY
@@ -12,6 +15,19 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+
+object PreferencesKeys {
+    val ID = stringPreferencesKey("id")
+    val USERNAME = stringPreferencesKey("username")
+    val NETID = stringPreferencesKey("netId")
+    val EMAIL = stringPreferencesKey("email")
+    val SKIP = booleanPreferencesKey("skip")
+    val CAPACITY_REMINDERS_ID = intPreferencesKey("capacityRemindersId")
+    val CAPACITY_REMINDERS_TOGGLE = booleanPreferencesKey("capacityRemindersToggle")
+    val CAPACITY_REMINDERS_PERCENT = intPreferencesKey("capacityRemindersPercent")
+    val CAPACITY_REMINDERS_SELECTED_DAYS = stringSetPreferencesKey("capacityRemindersSelectedDays")
+    val CAPACITY_REMINDERS_SELECTED_GYMS = stringSetPreferencesKey("capacityRemindersSelectedGyms")
+}
 
 class DatastoreRepository(private val dataStore: DataStore<Preferences>) {
     /**
