@@ -1,5 +1,6 @@
 package com.cornellappdev.uplift.data.repositories
 
+import android.util.Log
 import com.apollographql.apollo.ApolloClient
 import com.cornellappdev.uplift.CreateCapacityReminderMutation
 import com.cornellappdev.uplift.DeleteCapacityReminderMutation
@@ -31,6 +32,10 @@ class CapacityRemindersRepository @Inject constructor(
             )
         ).execute().toResult()
         if (result.isSuccess) {
+            Log.d(
+                "CapacityRemindersRepository",
+                "Created reminder with ID: ${result.getOrNull()?.createCapacityReminder?.id}"
+            )
             val id =
                 result.getOrNull()?.createCapacityReminder?.id?.toInt() ?: return Result.failure(
                     IllegalStateException("Failed to get reminder ID")
@@ -48,6 +53,12 @@ class CapacityRemindersRepository @Inject constructor(
             dataStoreRepository.storePreference(
                 PreferencesKeys.CAPACITY_REMINDERS_SELECTED_GYMS,
                 gyms.toSet()
+            )
+        } else {
+            Log.e("CapacityRemindersRepository", "Failed to create reminder")
+            Log.d(
+                "CapacityRemindersRepository",
+                result.exceptionOrNull()?.message ?: "Unknown error"
             )
         }
         return result
@@ -68,6 +79,7 @@ class CapacityRemindersRepository @Inject constructor(
             )
         ).execute().toResult()
         if (result.isSuccess) {
+            Log.d("CapacityRemindersRepository", "Edited reminder with ID: $reminderId")
             dataStoreRepository.storePreference(
                 PreferencesKeys.CAPACITY_REMINDERS_PERCENT,
                 capacityPercent
@@ -80,6 +92,12 @@ class CapacityRemindersRepository @Inject constructor(
                 PreferencesKeys.CAPACITY_REMINDERS_SELECTED_GYMS,
                 gyms.toSet()
             )
+        } else {
+            Log.e("CapacityRemindersRepository", "Failed to edit reminder with ID: $reminderId")
+            Log.d(
+                "CapacityRemindersRepository",
+                result.exceptionOrNull()?.message ?: "Unknown error"
+            )
         }
         return result
     }
@@ -89,8 +107,15 @@ class CapacityRemindersRepository @Inject constructor(
             DeleteCapacityReminderMutation(reminderId)
         ).execute().toResult()
         if (result.isSuccess) {
+            Log.d("CapacityRemindersRepository", "Deleted reminder with ID: $reminderId")
             dataStoreRepository.storePreference(PreferencesKeys.CAPACITY_REMINDERS_TOGGLE, false)
             dataStoreRepository.deletePreference(PreferencesKeys.CAPACITY_REMINDERS_ID)
+        } else {
+            Log.e("CapacityRemindersRepository", "Failed to delete reminder with ID: $reminderId")
+            Log.d(
+                "CapacityRemindersRepository",
+                result.exceptionOrNull()?.message ?: "Unknown error"
+            )
         }
         return result
     }

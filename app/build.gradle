@@ -114,7 +114,7 @@ dependencies {
 }
 
 apollo {
-    service("service") {
+    service("service"){
         packageName.set("com.cornellappdev.uplift")
     }
 }

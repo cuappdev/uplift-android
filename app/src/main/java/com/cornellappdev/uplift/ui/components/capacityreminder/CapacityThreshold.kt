@@ -104,7 +104,7 @@ private fun CapacityThresholdRangeLabel() {
             color = GRAY04
         )
         Text(
-            text = "99%",
+            text = "100%",
             fontFamily = montserratFamily,
             fontWeight = FontWeight.SemiBold,
             fontSize = 12.sp,
@@ -120,8 +120,11 @@ private fun CapacityThresholdSlider(sliderVal: Float, onSliderValChange: (Float)
         modifier = Modifier.fillMaxWidth(),
         value = sliderVal,
         onValueChange = {
-            onSliderValChange(it)
+            // Round to nearest 0.1 increment (10%)
+            val roundedValue = (it * 10).toInt() / 10f
+            onSliderValChange(roundedValue)
         },
+        steps = 10,
         thumb = {
             Surface(
                 shape = CircleShape,
@@ -181,7 +184,7 @@ private fun BoxScope.SliderThresholdLabel(sliderVal: Float) {
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = "${(min(sliderVal, 0.99f) * 100).toInt()}%",
+            text = "${(sliderVal * 100).toInt() / 10 * 10}%",
             fontFamily = montserratFamily,
             fontWeight = FontWeight.SemiBold,
             fontSize = 12.sp,
