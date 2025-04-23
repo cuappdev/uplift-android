@@ -1,16 +1,10 @@
 package com.cornellappdev.uplift.data.repositories
 
-import android.util.Log
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.edit
 import com.apollographql.apollo.ApolloClient
 import com.cornellappdev.uplift.CreateCapacityReminderMutation
 import com.cornellappdev.uplift.DeleteCapacityReminderMutation
 import com.cornellappdev.uplift.EditCapacityReminderMutation
 import com.cornellappdev.uplift.data.mappers.toResult
-import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
 

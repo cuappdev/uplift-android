@@ -1,6 +1,6 @@
 package com.cornellappdev.uplift.ui.viewmodels.reminders
 
-import android.util.Log
+
 import androidx.lifecycle.viewModelScope
 import com.cornellappdev.uplift.data.repositories.CapacityRemindersRepository
 import com.cornellappdev.uplift.data.repositories.DatastoreRepository
