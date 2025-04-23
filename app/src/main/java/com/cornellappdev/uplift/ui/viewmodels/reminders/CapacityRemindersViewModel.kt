@@ -28,10 +28,6 @@ class CapacityRemindersViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            Log.d(
-                "CAPACITY_REMINDERS",
-                dataStoreRepository.getPreference(PreferencesKeys.FCM_TOKEN).toString()
-            )
             val capacityPercent =
                 dataStoreRepository.getPreference(PreferencesKeys.CAPACITY_REMINDERS_PERCENT)
             val selectedDays =
@@ -73,6 +69,10 @@ class CapacityRemindersViewModel @Inject constructor(
             } else if (!toggledOn && capacityReminderId != null) {
                 capacityRemindersRepository.deleteCapacityReminder(capacityReminderId)
             }
+            dataStoreRepository.storePreference(
+                PreferencesKeys.CAPACITY_REMINDERS_TOGGLE,
+                toggledOn
+            )
         }
     }
 
