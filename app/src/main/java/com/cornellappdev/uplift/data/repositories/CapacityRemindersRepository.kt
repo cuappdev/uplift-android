@@ -1,5 +1,6 @@
 package com.cornellappdev.uplift.data.repositories
 
+import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
@@ -16,14 +17,17 @@ import javax.inject.Singleton
 @Singleton
 class CapacityRemindersRepository @Inject constructor(
     private val apolloClient: ApolloClient,
-    private val dataStore: DataStore<Preferences>,
+    private val dataStoreRepository: DatastoreRepository,
 ) {
     suspend fun createCapacityReminder(
         capacityPercent: Int,
         daysOfWeek: List<String>,
-        fcmToken: String,
         gyms: List<String>
     ): Result<CreateCapacityReminderMutation.Data> {
+        val fcmToken =
+            dataStoreRepository.getPreference(PreferencesKeys.FCM_TOKEN) ?: return Result.failure(
+                IllegalStateException("FCM token not found")
+            )
         val result = apolloClient.mutation(
             CreateCapacityReminderMutation(
                 capacityPercent,
@@ -33,12 +37,24 @@ class CapacityRemindersRepository @Inject constructor(
             )
         ).execute().toResult()
         if (result.isSuccess) {
-            val id = result.getOrNull()?.createCapacityReminder?.id?.toInt() ?: -1
-            storePreference(PreferencesKeys.CAPACITY_REMINDERS_ID, id)
-            storePreference(PreferencesKeys.CAPACITY_REMINDERS_TOGGLE, true)
-            storePreference(PreferencesKeys.CAPACITY_REMINDERS_PERCENT, capacityPercent)
-            storePreference(PreferencesKeys.CAPACITY_REMINDERS_SELECTED_DAYS, daysOfWeek.toSet())
-            storePreference(PreferencesKeys.CAPACITY_REMINDERS_SELECTED_GYMS, gyms.toSet())
+            val id =
+                result.getOrNull()?.createCapacityReminder?.id?.toInt() ?: return Result.failure(
+                    IllegalStateException("Failed to get reminder ID")
+                )
+            dataStoreRepository.storePreference(PreferencesKeys.CAPACITY_REMINDERS_ID, id)
+            dataStoreRepository.storePreference(PreferencesKeys.CAPACITY_REMINDERS_TOGGLE, true)
+            dataStoreRepository.storePreference(
+                PreferencesKeys.CAPACITY_REMINDERS_PERCENT,
+                capacityPercent
+            )
+            dataStoreRepository.storePreference(
+                PreferencesKeys.CAPACITY_REMINDERS_SELECTED_DAYS,
+                daysOfWeek.toSet()
+            )
+            dataStoreRepository.storePreference(
+                PreferencesKeys.CAPACITY_REMINDERS_SELECTED_GYMS,
+                gyms.toSet()
+            )
         }
         return result
     }
@@ -58,9 +74,18 @@ class CapacityRemindersRepository @Inject constructor(
             )
         ).execute().toResult()
         if (result.isSuccess) {
-            storePreference(PreferencesKeys.CAPACITY_REMINDERS_PERCENT, capacityPercent)
-            storePreference(PreferencesKeys.CAPACITY_REMINDERS_SELECTED_DAYS, daysOfWeek.toSet())
-            storePreference(PreferencesKeys.CAPACITY_REMINDERS_SELECTED_GYMS, gyms.toSet())
+            dataStoreRepository.storePreference(
+                PreferencesKeys.CAPACITY_REMINDERS_PERCENT,
+                capacityPercent
+            )
+            dataStoreRepository.storePreference(
+                PreferencesKeys.CAPACITY_REMINDERS_SELECTED_DAYS,
+                daysOfWeek.toSet()
+            )
+            dataStoreRepository.storePreference(
+                PreferencesKeys.CAPACITY_REMINDERS_SELECTED_GYMS,
+                gyms.toSet()
+            )
         }
         return result
     }
@@ -70,30 +95,29 @@ class CapacityRemindersRepository @Inject constructor(
             DeleteCapacityReminderMutation(reminderId)
         ).execute().toResult()
         if (result.isSuccess) {
-            deletePreference(PreferencesKeys.CAPACITY_REMINDERS_ID)
-            deletePreference(PreferencesKeys.CAPACITY_REMINDERS_PERCENT)
-            deletePreference(PreferencesKeys.CAPACITY_REMINDERS_SELECTED_DAYS)
-            deletePreference(PreferencesKeys.CAPACITY_REMINDERS_SELECTED_GYMS)
-            storePreference(PreferencesKeys.CAPACITY_REMINDERS_TOGGLE, false)
+            dataStoreRepository.storePreference(PreferencesKeys.CAPACITY_REMINDERS_TOGGLE, false)
+            dataStoreRepository.deletePreference(PreferencesKeys.CAPACITY_REMINDERS_ID)
         }
         return result
     }
 
-    suspend fun <T> storePreference(key: Preferences.Key<T>, value: T) {
-        dataStore.edit { preferences ->
-            preferences[key] = value
-        }
-    }
+    suspend fun updateCapacityReminderOnFCMTokenChange() {
+        val capacityReminderId =
+            dataStoreRepository.getPreference(PreferencesKeys.CAPACITY_REMINDERS_ID) ?: return
+        val capacityPercent =
+            dataStoreRepository.getPreference(PreferencesKeys.CAPACITY_REMINDERS_PERCENT) ?: return
+        val selectedDays =
+            dataStoreRepository.getPreference(PreferencesKeys.CAPACITY_REMINDERS_SELECTED_DAYS)
+                ?.toList() ?: return
+        val selectedGyms =
+            dataStoreRepository.getPreference(PreferencesKeys.CAPACITY_REMINDERS_SELECTED_GYMS)
+                ?.toList() ?: return
 
-    private suspend fun <T> getPreference(key: Preferences.Key<T>): T? {
-        return dataStore.data.map { preferences ->
-            preferences[key]
-        }.firstOrNull()
-    }
-
-    private suspend fun <T> deletePreference(key: Preferences.Key<T>) {
-        dataStore.edit { preferences ->
-            preferences.remove(key)
-        }
+        deleteCapacityReminder(capacityReminderId)
+        createCapacityReminder(
+            capacityPercent,
+            selectedDays,
+            selectedGyms
+        )
     }
 }

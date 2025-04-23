@@ -12,9 +12,12 @@ import com.cornellappdev.uplift.util.GYM_FAVORITES_KEY
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import javax.inject.Inject
+import javax.inject.Singleton
 
 object PreferencesKeys {
     val ID = stringPreferencesKey("id")
@@ -22,6 +25,7 @@ object PreferencesKeys {
     val NETID = stringPreferencesKey("netId")
     val EMAIL = stringPreferencesKey("email")
     val SKIP = booleanPreferencesKey("skip")
+    val FCM_TOKEN = stringPreferencesKey("fcmToken")
     val CAPACITY_REMINDERS_ID = intPreferencesKey("capacityRemindersId")
     val CAPACITY_REMINDERS_TOGGLE = booleanPreferencesKey("capacityRemindersToggle")
     val CAPACITY_REMINDERS_PERCENT = intPreferencesKey("capacityRemindersPercent")
@@ -29,7 +33,26 @@ object PreferencesKeys {
     val CAPACITY_REMINDERS_SELECTED_GYMS = stringSetPreferencesKey("capacityRemindersSelectedGyms")
 }
 
-class DatastoreRepository(private val dataStore: DataStore<Preferences>) {
+@Singleton
+class DatastoreRepository @Inject constructor(private val dataStore: DataStore<Preferences>) {
+    suspend fun <T> storePreference(key: Preferences.Key<T>, value: T) {
+        dataStore.edit { preferences ->
+            preferences[key] = value
+        }
+    }
+
+    suspend fun <T> getPreference(key: Preferences.Key<T>): T? {
+        return dataStore.data.map { preferences ->
+            preferences[key]
+        }.firstOrNull()
+    }
+
+    suspend fun <T> deletePreference(key: Preferences.Key<T>) {
+        dataStore.edit { preferences ->
+            preferences.remove(key)
+        }
+    }
+
     /**
      * A [StateFlow] that emits sets of gym ids. A gym is considered a favorite if it exists
      * in this flow.

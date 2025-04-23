@@ -60,7 +60,8 @@ fun CapacityReminderScreen(
         capacityRemindersViewModel::setSelectedDays,
         capacityRemindersViewModel::setCapacityThreshold,
         capacityRemindersViewModel::setSelectedGyms,
-        capacityRemindersViewModel::onBack
+        capacityRemindersViewModel::onBack,
+        capacityRemindersViewModel::saveChanges
     )
 }
 
@@ -75,6 +76,7 @@ private fun CapacityRemindersContent(
     setCapacityThreshold: (Float) -> Unit,
     setSelectedGyms: (Set<String>) -> Unit,
     onBack: () -> Unit,
+    saveChanges: () -> Unit
 ) {
     Scaffold(topBar = {
         UpliftTopBarWithBack(
@@ -115,7 +117,8 @@ private fun CapacityRemindersContent(
                     capacityThreshold,
                     setCapacityThreshold,
                     initialSelectedGyms,
-                    setSelectedGyms
+                    setSelectedGyms,
+                    saveChanges
                 )
             }
         }
@@ -130,7 +133,7 @@ private fun CapacityRemindersSettings(
     setCapacityThreshold: (Float) -> Unit,
     initialSelectedGyms: Set<String>,
     setSelectedGyms: (Set<String>) -> Unit,
-    saveChanges: () -> Unit = {},
+    saveChanges: () -> Unit,
 ) {
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -181,6 +184,7 @@ private fun CapacityReminderScreenPreview() {
         setSelectedDays = { selectedDays = it },
         setCapacityThreshold = { sliderVal = it },
         setSelectedGyms = { selectedGyms = it },
-        onBack = {}
+        onBack = {},
+        saveChanges = {}
     )
 }
