@@ -2,7 +2,7 @@ package com.cornellappdev.uplift.ui.components.profile
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
-import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.EaseInOutSine
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -63,12 +62,11 @@ fun WorkoutProgressArc(
         animatedProgress.animateTo(
             targetValue = progress,
             animationSpec = tween(
-                durationMillis = (workoutsCompleted * 200).coerceAtLeast(1000),
-                easing = LinearEasing
+                durationMillis = (200 * workoutsCompleted).coerceAtLeast(1000),
+                easing = EaseInOutSine
             )
         )
     }
-
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
@@ -276,9 +274,18 @@ private fun WorkoutsCompletedText(workoutsCompleted: Int, workoutGoal: Int) {
 
 @Preview(showBackground = true)
 @Composable
-private fun WorkoutProgressArcPreview() {
+private fun WorkoutProgressArcDefaultPreview() {
     WorkoutProgressArc(
         workoutsCompleted = 3,
-        workoutGoal = 5,
+        workoutGoal = 7,
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun WorkoutProgressArcCompletedPreview() {
+    WorkoutProgressArc(
+        workoutsCompleted = 7,
+        workoutGoal = 7,
     )
 }

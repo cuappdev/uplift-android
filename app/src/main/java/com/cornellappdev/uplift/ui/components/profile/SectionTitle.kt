@@ -13,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cornellappdev.uplift.R
@@ -22,7 +23,8 @@ import com.cornellappdev.uplift.util.montserratFamily
 @Composable
 fun SectionTitleText(
     title: String,
-    onClick : () -> Unit
+    onClick : () -> Unit,
+    iconDescription: String? = null,
 ) {
     Row(
         modifier = Modifier
@@ -46,10 +48,19 @@ fun SectionTitleText(
         Icon(
             painter = painterResource(id = R.drawable.chevron_right),
             tint = GRAY10,
-            contentDescription = "View all history",
+            contentDescription = iconDescription,
             modifier = Modifier
                 .width(18.dp)
                 .height(18.dp),
         )
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun SectionTitleTextPreview() {
+    SectionTitleText(
+        title = "My Reminders",
+        onClick = {}
+    )
 }

@@ -35,35 +35,53 @@ import com.cornellappdev.uplift.util.LIGHT_YELLOW
 import com.cornellappdev.uplift.util.PRIMARY_YELLOW
 import com.cornellappdev.uplift.util.montserratFamily
 
+
+data class DayProgress(
+    val dayOfWeek: String,
+    val isCompleted: Boolean,
+    val dayOfMonth: Int,
+)
+
 @Composable
 fun WeeklyProgressTracker(
     daysOfMonth: List<Int>,
     completedDays: List<Boolean>
 ) {
     val daysOfWeek = listOf("M", "T", "W", "Th", "F", "Sa", "Su")
-    val lastCompletedIndex = completedDays.indexOfLast { it }
+    val paddedCompletedDays = if (completedDays.size < daysOfWeek.size) {
+        completedDays + List(daysOfWeek.size - completedDays.size) { false }
+    } else {
+        completedDays
+    }
+    val lastCompletedIndex = paddedCompletedDays.indexOfLast { it }
 
     Box(modifier = Modifier.fillMaxWidth()) {
         ConnectingLines(daysOfWeek, lastCompletedIndex)
-        DayProgressCirclesRow(daysOfWeek, completedDays, daysOfMonth)
+        DayProgressCirclesRow(
+            dayProgressList = daysOfWeek.mapIndexed { index, dayOfWeek ->
+                DayProgress(
+                    dayOfWeek = dayOfWeek,
+                    isCompleted = paddedCompletedDays[index],
+                    dayOfMonth = daysOfMonth[index]
+                )
+            }
+        )
     }
 }
 
 @Composable
 private fun DayProgressCirclesRow(
-    daysOfWeek: List<String>,
-    completedDays: List<Boolean>,
-    daysOfMonth: List<Int>
+    dayProgressList: List<DayProgress>
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
-        daysOfWeek.forEachIndexed { index, dayOfWeek ->
+        dayProgressList.forEach { dayProgress ->
             DayProgressCircle(
-                dayOfWeek = dayOfWeek,
-                isCompleted = completedDays[index],
-                day = daysOfMonth[index]
+                dayOfWeek = dayProgress.dayOfWeek,
+                isCompleted = dayProgress.isCompleted,
+                day = dayProgress.dayOfMonth
             )
         }
     }
@@ -182,7 +200,7 @@ private fun ProgressCircle(isCompleted: Boolean) {
 @Composable
 private fun WeeklyProgressTrackerPreview() {
     val daysOfMonth = (25..31).toList()
-    val completedDays = listOf(true, false, true, false, true, false, false)
+    val completedDays = listOf(true, false, true, true, false, true, false)
     WeeklyProgressTracker(
         daysOfMonth,
         completedDays
