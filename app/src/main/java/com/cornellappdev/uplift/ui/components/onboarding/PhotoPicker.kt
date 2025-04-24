@@ -24,6 +24,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -37,35 +38,43 @@ import com.cornellappdev.uplift.R
 data class PhotoPickerSizes(
     val outerCircleSize: Dp,
     val innerCircleSize: Dp,
-    val cameraIconOffsetX: Dp,
-    val cameraIconOffsetY: Dp
+    val cameraIconOffset: Offset
+
 )
 
-fun getPhotoPickerSizes(screenType: String): PhotoPickerSizes {
+enum class ScreenType {
+    ONBOARDING,
+    PROFILE
+}
+
+fun getPhotoPickerSizes(screenType: ScreenType): PhotoPickerSizes {
     return when (screenType) {
-        "onboarding" -> PhotoPickerSizes(
+        ScreenType.ONBOARDING -> PhotoPickerSizes(
             outerCircleSize = 160.dp,
             innerCircleSize = 144.dp,
-            cameraIconOffsetX = 60.dp,
-            cameraIconOffsetY = 64.dp
+            cameraIconOffset = Offset(
+                x = 60.dp.value,
+                y = 60.dp.value
+            )
         )
-        "profile" -> PhotoPickerSizes(
+
+        ScreenType.PROFILE -> PhotoPickerSizes(
             outerCircleSize = 98.dp,
             innerCircleSize = 88.dp,
-            cameraIconOffsetX = 36.dp,
-            cameraIconOffsetY = 40.dp
-        )
-        else -> PhotoPickerSizes(
-            outerCircleSize = 160.dp,
-            innerCircleSize = 144.dp,
-            cameraIconOffsetX = 60.dp,
-            cameraIconOffsetY = 64.dp
+            cameraIconOffset = Offset(
+                x = 36.dp.value,
+                y = 36.dp.value
+            )
         )
     }
 }
 
 @Composable
-fun PhotoPicker(imageUri: Uri? = null, onPhotoSelected: (Uri) -> Unit, screenType: String = "onboarding") {
+fun PhotoPicker(
+    imageUri: Uri? = null,
+    onPhotoSelected: (Uri) -> Unit,
+    screenType: ScreenType = ScreenType.ONBOARDING
+) {
     val sizes = getPhotoPickerSizes(screenType)
 
     // State to store the selected image URI
@@ -127,12 +136,15 @@ fun PhotoPicker(imageUri: Uri? = null, onPhotoSelected: (Uri) -> Unit, screenTyp
                 }
             }
         }
-        if (selectedImageUri != null || screenType == "profile") {
+        if (selectedImageUri != null || screenType == ScreenType.PROFILE) {
             Image(
                 painter = painterResource(id = R.drawable.ic_camera_circle),
                 contentDescription = null,
                 modifier = Modifier
-                    .offset(sizes.cameraIconOffsetX, sizes.cameraIconOffsetY)
+                    .offset(
+                        sizes.cameraIconOffset.x.dp,
+                        sizes.cameraIconOffset.y.dp
+                    )
             )
         }
     }

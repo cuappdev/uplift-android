@@ -117,7 +117,10 @@ fun ProfileScreen() {
                     daysOfMonth,
                     completedDays,
                     reminderItems,
-                    historyItems
+                    historyItems,
+                    navigateToGoalsSection = { /* TODO: Replace {} with viewmodel nav call */ },
+                    navigateToRemindersSection = { /* TODO: Replace {} with viewmodel nav call */ },
+                    navigateToHistorySection = { /* TODO: Replace {} with viewmodel nav call */ }
                 )
 
                 1 -> AchievementsSectionContent()
@@ -134,25 +137,25 @@ private fun WorkoutsSectionContent(
     daysOfMonth: List<Int>,
     completedDays: List<Boolean>,
     reminderItems: List<ReminderItem>,
-    historyItems: List<HistoryItem>
+    historyItems: List<HistoryItem>,
+    navigateToGoalsSection: () -> Unit,
+    navigateToRemindersSection: () -> Unit,
+    navigateToHistorySection: () -> Unit
 ) {
-    /* TODO: Replace {} with viewmodel nav call */
     GoalsSection(
         workoutsCompleted = workoutsCompleted,
         workoutGoal = workoutGoal,
         daysOfMonth = daysOfMonth,
         completedDays = completedDays,
-        onClick = {}
+        onClick = navigateToGoalsSection,
     )
-    /* TODO: Replace {} with viewmodel nav call */
     MyRemindersSection(
         reminderItems,
-        onClickHeader = {}
+        onClickHeader = navigateToRemindersSection,
     )
-    /* TODO: Replace {} with viewmodel nav call */
     HistorySection(
         historyItems = historyItems,
-        onClick = {}
+        onClick = navigateToHistorySection,
     )
 }
 

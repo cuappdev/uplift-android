@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cornellappdev.uplift.R
 import com.cornellappdev.uplift.ui.components.onboarding.PhotoPicker
+import com.cornellappdev.uplift.ui.components.onboarding.ScreenType
 import com.cornellappdev.uplift.util.GRAY01
 import com.cornellappdev.uplift.util.GRAY04
 import com.cornellappdev.uplift.util.montserratFamily
@@ -45,7 +46,7 @@ fun ProfileHeaderSection(
         PhotoPicker(
             imageUri = profilePictureUri,
             onPhotoSelected = onPhotoSelected,
-            screenType = "profile"
+            screenType = ScreenType.PROFILE
         )
         ProfileHeaderInfoDisplay(name, gymDays, streaks, badges)
     }

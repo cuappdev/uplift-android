@@ -5,12 +5,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -40,26 +36,40 @@ fun MyRemindersSection(
 ) {
     Column(
         modifier = Modifier
-            .fillMaxWidth()
-            .height(200.dp),
+            .fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         SectionTitleText("My Reminders", onClickHeader)
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(2),
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            horizontalArrangement = Arrangement.spacedBy(10.dp)
-        ) {
-            items(reminderItems) { reminderItem ->
-                ReminderItemCard(
-                    dayOfWeek = reminderItem.dayOfWeek,
-                    startTime = reminderItem.startTime,
-                    endTime = reminderItem.endTime,
-                    toggledOn = reminderItem.toggledOn,
-                    onToggle = reminderItem.onToggle
-                )
-            }
+        RemindersGrid(reminderItems)
+    }
+}
+
+@Composable
+private fun RemindersGrid(reminderItems: List<ReminderItem>) {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        reminderItems.take(4).chunked(2).forEach { rowItems ->
+            RemindersGridRow(rowItems)
+        }
+    }
+}
+
+@Composable
+private fun RemindersGridRow(rowItems: List<ReminderItem>) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        rowItems.forEach { reminderItem ->
+            ReminderItemCard(
+                dayOfWeek = reminderItem.dayOfWeek,
+                startTime = reminderItem.startTime,
+                endTime = reminderItem.endTime,
+                toggledOn = reminderItem.toggledOn,
+                onToggle = reminderItem.onToggle,
+            )
         }
     }
 }
@@ -74,7 +84,7 @@ private fun ReminderItemCard(
 ) {
     Row(
         modifier = Modifier
-            .width(170.dp)
+            .width(180.dp)
             .border(
                 width = 1.dp,
                 color = if (toggledOn) PRIMARY_YELLOW else GRAY01,
@@ -104,14 +114,14 @@ private fun ReminderItemCard(
                 fontWeight = FontWeight.Bold
             )
             Text(
-                text = endTime,
+                text = "to $endTime",
                 fontFamily = montserratFamily,
                 fontSize = 14.sp,
             )
         }
         ReminderSwitch(
             checked = toggledOn,
-            onCheckedChange = { onToggle(toggledOn) }
+            onCheckedChange = { onToggle(it) }
         )
     }
 }

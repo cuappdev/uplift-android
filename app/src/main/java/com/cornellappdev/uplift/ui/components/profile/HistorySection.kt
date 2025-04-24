@@ -44,7 +44,7 @@ fun HistorySection(
 @Composable
 private fun HistoryList(historyItems: List<HistoryItem>) {
     Column {
-        historyItems.forEachIndexed { index, historyItem ->
+        historyItems.take(5).forEachIndexed { index, historyItem ->
             HistoryItemRow(historyItem = historyItem)
             if (index != historyItems.size - 1) {
                 HorizontalDivider(color = GRAY01)
