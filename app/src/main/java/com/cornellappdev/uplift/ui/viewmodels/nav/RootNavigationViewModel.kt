@@ -20,6 +20,7 @@ class RootNavigationViewModel @Inject constructor(
     data class RootNavigationUiState(
         val navEvent: UIEvent<UpliftRootRoute>? = null,
         val popBackStack: UIEvent<Unit>? = null,
+        val navigateUp: UIEvent<Unit>? = null,
         val startDestination: UpliftRootRoute = UpliftRootRoute.Home
     )
 
@@ -34,6 +35,12 @@ class RootNavigationViewModel @Inject constructor(
         asyncCollect(rootNavigationRepository.popBackStackFlow) { pop ->
             applyMutation {
                 copy(popBackStack = pop)
+            }
+        }
+
+        asyncCollect(rootNavigationRepository.navigateUpFlow) { up ->
+            applyMutation {
+                copy(navigateUp = up)
             }
         }
 

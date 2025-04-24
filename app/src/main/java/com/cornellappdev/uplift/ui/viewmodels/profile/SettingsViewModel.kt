@@ -37,7 +37,7 @@ class SettingsViewModel @Inject constructor(
     }
 
     fun onBack(){
-        rootNavigationRepository.navigate(UpliftRootRoute.Profile)
+        rootNavigationRepository.navigateUp()
     }
 
     fun navigateToAbout() {
