@@ -1,6 +1,8 @@
 package com.cornellappdev.uplift
 
+import android.util.Log
 import com.cornellappdev.uplift.data.repositories.CapacityRemindersRepository
+import com.cornellappdev.uplift.data.repositories.DatastoreRepository
 import com.cornellappdev.uplift.data.repositories.PreferencesKeys
 import com.cornellappdev.uplift.util.NotificationHelper
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -19,6 +21,9 @@ class UpliftMessageService : FirebaseMessagingService() {
     @Inject
     lateinit var capacityRemindersRepository: CapacityRemindersRepository
 
+    @Inject
+    lateinit var datastoreRepository: DatastoreRepository
+
     override fun onNewToken(token: String) {
         super.onNewToken(token)
         CoroutineScope(Dispatchers.IO).launch {
@@ -31,7 +36,15 @@ class UpliftMessageService : FirebaseMessagingService() {
     }
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
+        Log.d(
+            "UpliftMessageService",
+            "From: ${remoteMessage.from}"
+        )
         remoteMessage.notification?.let { notification ->
+            Log.d(
+                "UpliftMessageService",
+                "Message Notification Body: ${notification.body}"
+            )
             notificationHelper.showNotification(
                 title = notification.title.toString(),
                 body = notification.body.toString(),

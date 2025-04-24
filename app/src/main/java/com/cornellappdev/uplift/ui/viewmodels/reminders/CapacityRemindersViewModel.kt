@@ -1,11 +1,9 @@
 package com.cornellappdev.uplift.ui.viewmodels.reminders
 
-
 import androidx.lifecycle.viewModelScope
 import com.cornellappdev.uplift.data.repositories.CapacityRemindersRepository
 import com.cornellappdev.uplift.data.repositories.DatastoreRepository
 import com.cornellappdev.uplift.data.repositories.PreferencesKeys
-import com.cornellappdev.uplift.ui.UpliftRootRoute
 import com.cornellappdev.uplift.ui.nav.RootNavigationRepository
 import com.cornellappdev.uplift.ui.viewmodels.UpliftViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,6 +15,10 @@ data class CapacityRemindersUiState(
     val selectedDays: Set<String> = emptySet(),
     val capacityThreshold: Float = 0.5f,
     val selectedGyms: Set<String> = emptySet(),
+    val isLoading: Boolean = false,
+    val hasUnsavedChanges: Boolean = false,
+    val error: String? = null,
+    val showUnsavedChangesDialog: Boolean = false
 )
 
 @HiltViewModel
@@ -26,93 +28,221 @@ class CapacityRemindersViewModel @Inject constructor(
     private val rootNavigationRepository: RootNavigationRepository
 ) : UpliftViewModel<CapacityRemindersUiState>(CapacityRemindersUiState()) {
 
+    private var initialState: CapacityRemindersUiState? = null
+
     init {
         viewModelScope.launch {
-            val capacityPercent =
-                dataStoreRepository.getPreference(PreferencesKeys.CAPACITY_REMINDERS_PERCENT)
-            val selectedDays =
-                dataStoreRepository.getPreference(PreferencesKeys.CAPACITY_REMINDERS_SELECTED_DAYS)
-            val selectedGyms =
-                dataStoreRepository.getPreference(PreferencesKeys.CAPACITY_REMINDERS_SELECTED_GYMS)
-            val toggledOn =
-                dataStoreRepository.getPreference(PreferencesKeys.CAPACITY_REMINDERS_TOGGLE)
+            applyMutation { copy(isLoading = true) }
 
-            applyMutation {
-                copy(
+            try {
+                val capacityPercent =
+                    dataStoreRepository.getPreference(PreferencesKeys.CAPACITY_REMINDERS_PERCENT)
+                val selectedDays =
+                    dataStoreRepository.getPreference(PreferencesKeys.CAPACITY_REMINDERS_SELECTED_DAYS)
+                val selectedGyms =
+                    dataStoreRepository.getPreference(PreferencesKeys.CAPACITY_REMINDERS_SELECTED_GYMS)
+                val toggledOn =
+                    dataStoreRepository.getPreference(PreferencesKeys.CAPACITY_REMINDERS_TOGGLE)
+
+                val newState = CapacityRemindersUiState(
                     toggledOn = toggledOn == true,
                     selectedDays = selectedDays?.map { it.toAbbreviatedDayOfWeek() }?.toSet()
                         ?: emptySet(),
                     capacityThreshold = (capacityPercent ?: 0) / 100f,
                     selectedGyms = selectedGyms?.map { it.toFormattedGymName() }?.toSet()
-                        ?: emptySet()
+                        ?: emptySet(),
+                    isLoading = false
                 )
+
+                initialState = newState
+                applyMutation { newState }
+            } catch (e: Exception) {
+                applyMutation {
+                    copy(
+                        isLoading = false,
+                        error = "Failed to load reminder settings: ${e.message}"
+                    )
+                }
             }
         }
-
     }
 
     fun setToggle(toggledOn: Boolean) {
-        applyMutation { copy(toggledOn = toggledOn) }
-        viewModelScope.launch {
-            val capacityReminderId =
-                dataStoreRepository.getPreference(PreferencesKeys.CAPACITY_REMINDERS_ID)
-            if (toggledOn && capacityReminderId == null) {
-                val capacityReminder = getStateValue()
-                val capacityPercent = (capacityReminder.capacityThreshold * 100).toInt()
-                val daysOfWeek = capacityReminder.selectedDays.map { it.toFullDayOfWeek() }
-                val gymNames = capacityReminder.selectedGyms.map { it.uppercase().replace(" ", "") }
-                capacityRemindersRepository.createCapacityReminder(
-                    capacityPercent,
-                    daysOfWeek,
-                    gymNames
-                )
-            } else if (!toggledOn && capacityReminderId != null) {
-                capacityRemindersRepository.deleteCapacityReminder(capacityReminderId)
-            }
-            dataStoreRepository.storePreference(
-                PreferencesKeys.CAPACITY_REMINDERS_TOGGLE,
-                toggledOn
+        applyMutation {
+            copy(
+                toggledOn = toggledOn,
+                hasUnsavedChanges = true
             )
         }
     }
 
     fun setSelectedDays(days: Set<String>) {
-        applyMutation { copy(selectedDays = days) }
+        applyMutation {
+            copy(
+                selectedDays = days,
+                hasUnsavedChanges = true
+            )
+        }
     }
 
     fun setCapacityThreshold(threshold: Float) {
-        applyMutation { copy(capacityThreshold = threshold) }
+        applyMutation {
+            copy(
+                capacityThreshold = threshold,
+                hasUnsavedChanges = true
+            )
+        }
     }
 
     fun setSelectedGyms(gyms: Set<String>) {
-        applyMutation { copy(selectedGyms = gyms) }
+        applyMutation {
+            copy(
+                selectedGyms = gyms,
+                hasUnsavedChanges = true
+            )
+        }
     }
 
     fun onBack() {
-        rootNavigationRepository.navigate(UpliftRootRoute.Home)
+        if (getStateValue().hasUnsavedChanges) {
+            applyMutation { copy(showUnsavedChangesDialog = true) }
+        } else {
+            rootNavigationRepository.navigateUp()
+        }
+    }
+
+    fun onConfirmDiscard() {
+        applyMutation { copy(showUnsavedChangesDialog = false) }
+        rootNavigationRepository.navigateUp()
+    }
+
+    fun onDismissDialog() {
+        applyMutation { copy(showUnsavedChangesDialog = false) }
     }
 
     fun saveChanges() {
+        val currentState = getStateValue()
+
+        if (!currentState.toggledOn) {
+            deleteReminder()
+            return
+        }
+
+        if (currentState.selectedDays.isEmpty() || currentState.selectedGyms.isEmpty()) {
+            applyMutation { copy(error = "Please select at least one day and one gym") }
+            return
+        }
+
         viewModelScope.launch {
-            val capacityRemindersId =
-                dataStoreRepository.getPreference(PreferencesKeys.CAPACITY_REMINDERS_ID)
-            val capacityReminder = getStateValue()
-            val capacityPercent = (capacityReminder.capacityThreshold * 100).toInt()
-            val daysOfWeek = capacityReminder.selectedDays.map { it.toFullDayOfWeek() }
-            val gymNames = capacityReminder.selectedGyms.map { it.uppercase().replace(" ", "") }
-            if (capacityRemindersId != null) {
-                capacityRemindersRepository.editCapacityReminder(
-                    capacityRemindersId,
-                    capacityPercent,
-                    daysOfWeek,
-                    gymNames
-                )
-            } else {
-                capacityRemindersRepository.createCapacityReminder(
-                    capacityPercent,
-                    daysOfWeek,
-                    gymNames
-                )
+            applyMutation { copy(isLoading = true, error = null) }
+
+            try {
+                val capacityReminderId =
+                    dataStoreRepository.getPreference(PreferencesKeys.CAPACITY_REMINDERS_ID)
+                val capacityPercent = (currentState.capacityThreshold * 100).toInt()
+                val daysOfWeek = currentState.selectedDays.map { it.toFullDayOfWeek() }
+                val gymNames = currentState.selectedGyms.map { it.uppercase().replace(" ", "") }
+
+                val result = if (capacityReminderId != null) {
+                    capacityRemindersRepository.editCapacityReminder(
+                        capacityReminderId,
+                        capacityPercent,
+                        daysOfWeek,
+                        gymNames
+                    )
+                } else {
+                    capacityRemindersRepository.createCapacityReminder(
+                        capacityPercent,
+                        daysOfWeek,
+                        gymNames
+                    )
+                }
+
+                if (result.isSuccess) {
+                    initialState = currentState.copy(
+                        hasUnsavedChanges = false,
+                        isLoading = false
+                    )
+                    applyMutation {
+                        copy(
+                            hasUnsavedChanges = false,
+                            isLoading = false
+                        )
+                    }
+                } else {
+                    applyMutation {
+                        copy(
+                            isLoading = false,
+                            error = "Failed to save reminder: ${result.exceptionOrNull()?.message ?: "Unknown error"}"
+                        )
+                    }
+                }
+            } catch (e: Exception) {
+                applyMutation {
+                    copy(
+                        isLoading = false,
+                        error = "Error saving reminder: ${e.message}"
+                    )
+                }
+            }
+        }
+    }
+
+    private fun deleteReminder() {
+        viewModelScope.launch {
+            applyMutation { copy(isLoading = true, error = null) }
+
+            try {
+                val capacityReminderId =
+                    dataStoreRepository.getPreference(PreferencesKeys.CAPACITY_REMINDERS_ID)
+
+                if (capacityReminderId != null) {
+                    val result =
+                        capacityRemindersRepository.deleteCapacityReminder(capacityReminderId)
+
+                    if (result.isSuccess) {
+                        initialState = getStateValue().copy(
+                            hasUnsavedChanges = false,
+                            isLoading = false
+                        )
+                        applyMutation {
+                            copy(
+                                hasUnsavedChanges = false,
+                                isLoading = false
+                            )
+                        }
+                    } else {
+                        applyMutation {
+                            copy(
+                                isLoading = false,
+                                error = "Failed to delete reminder: ${result.exceptionOrNull()?.message ?: "Unknown error"}"
+                            )
+                        }
+                    }
+                } else {
+                    // No reminder exists to delete, just update the UI state
+                    dataStoreRepository.storePreference(
+                        PreferencesKeys.CAPACITY_REMINDERS_TOGGLE,
+                        false
+                    )
+                    initialState = getStateValue().copy(
+                        hasUnsavedChanges = false,
+                        isLoading = false
+                    )
+                    applyMutation {
+                        copy(
+                            hasUnsavedChanges = false,
+                            isLoading = false
+                        )
+                    }
+                }
+            } catch (e: Exception) {
+                applyMutation {
+                    copy(
+                        isLoading = false,
+                        error = "Error deleting reminder: ${e.message}"
+                    )
+                }
             }
         }
     }
@@ -151,4 +281,3 @@ class CapacityRemindersViewModel @Inject constructor(
         }
     }
 }
-

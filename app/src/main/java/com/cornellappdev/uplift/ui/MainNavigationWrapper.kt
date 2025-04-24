@@ -96,6 +96,12 @@ fun MainNavigationWrapper(
         }
     }
 
+    LaunchedEffect(rootNavigationUiState.navigateUp) {
+        rootNavigationUiState.navigateUp?.consumeSuspend {
+            navController.navigateUp()
+        }
+    }
+
     @Composable
     fun isRoute(route: UpliftRootRoute): Boolean {
         val navBackStackEntry by navController.currentBackStackEntryAsState()

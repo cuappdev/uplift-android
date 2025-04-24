@@ -15,11 +15,18 @@ abstract class BaseNavigationRepository<ScreenType> {
     private val _popBackStackFlow: MutableStateFlow<UIEvent<Unit>?> = MutableStateFlow(null)
     val popBackStackFlow: StateFlow<UIEvent<Unit>?> = _popBackStackFlow.asStateFlow()
 
+    private val _navigateUpFlow: MutableStateFlow<UIEvent<Unit>?> = MutableStateFlow(null)
+    val navigateUpFlow: StateFlow<UIEvent<Unit>?> = _navigateUpFlow.asStateFlow()
+
     fun navigate(route: ScreenType) {
         _routeFlow.value = UIEvent(route)
     }
 
     fun popBackStack() {
         _popBackStackFlow.value = UIEvent(Unit)
+    }
+
+    fun navigateUp() {
+        _navigateUpFlow.value = UIEvent(Unit)
     }
 }

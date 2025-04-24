@@ -14,6 +14,12 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
+/**
+ * Helper class to show/build notifications and create notification channels.
+ * This class can be used to create the notification channel that notifications will be posted to,
+ * and it can also be used to build the notification from the parameters passed to its method and
+ * post it to the notification manager where it will be displayed to the user.
+ */
 @Singleton
 class NotificationHelper @Inject constructor(
     @ApplicationContext private val context: Context

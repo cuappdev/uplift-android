@@ -7,13 +7,16 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -37,6 +40,7 @@ import com.cornellappdev.uplift.ui.components.capacityreminder.LocationsToRemind
 import com.cornellappdev.uplift.ui.components.capacityreminder.ReminderDays
 import com.cornellappdev.uplift.ui.components.general.UpliftButton
 import com.cornellappdev.uplift.ui.viewmodels.reminders.CapacityRemindersViewModel
+import com.cornellappdev.uplift.util.PRIMARY_BLACK
 
 /**
  * Screen for the capacity reminder feature.
@@ -51,11 +55,18 @@ fun CapacityReminderScreen(
     val initialSelectedDays = capacityRemindersUiState.selectedDays
     val capacityThreshold = capacityRemindersUiState.capacityThreshold
     val initialSelectedGyms = capacityRemindersUiState.selectedGyms
+    if (capacityRemindersUiState.showUnsavedChangesDialog) {
+        UnsavedChangesDialog(
+            onConfirm = capacityRemindersViewModel::onConfirmDiscard,
+            onDismiss = capacityRemindersViewModel::onDismissDialog
+        )
+    }
     CapacityRemindersContent(
         checked,
         initialSelectedDays,
         capacityThreshold,
         initialSelectedGyms,
+        capacityRemindersUiState.isLoading,
         capacityRemindersViewModel::setToggle,
         capacityRemindersViewModel::setSelectedDays,
         capacityRemindersViewModel::setCapacityThreshold,
@@ -66,11 +77,68 @@ fun CapacityReminderScreen(
 }
 
 @Composable
+private fun UnsavedChangesDialog(
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(
+                text = "Unsaved Changes",
+                fontFamily = montserratFamily,
+                fontWeight = FontWeight.Bold,
+                fontSize = 20.sp,
+                color = PRIMARY_BLACK
+            )
+        },
+        text = {
+            Text(
+                text = "Are you sure you want to discard your changes?",
+                fontFamily = montserratFamily,
+                fontWeight = FontWeight.Medium,
+                fontSize = 16.sp,
+                color = PRIMARY_BLACK
+            )
+        },
+        containerColor = Color.White,
+
+        confirmButton = {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                TextButton(onClick = onDismiss) {
+                    Text(
+                        text = "Keep Editing",
+                        fontFamily = montserratFamily,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 14.sp,
+                        color = PRIMARY_BLACK
+                    )
+                }
+
+                TextButton(onClick = onConfirm) {
+                    Text(
+                        text = "Discard Changes",
+                        fontFamily = montserratFamily,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 14.sp,
+                        color = PRIMARY_BLACK
+                    )
+                }
+            }
+        },
+    )
+}
+
+@Composable
 private fun CapacityRemindersContent(
     switchChecked: Boolean,
     initialSelectedDays: Set<String>,
     capacityThreshold: Float,
     initialSelectedGyms: Set<String>,
+    isLoading: Boolean,
     setToggle: (Boolean) -> Unit,
     setSelectedDays: (Set<String>) -> Unit,
     setCapacityThreshold: (Float) -> Unit,
@@ -90,11 +158,12 @@ private fun CapacityRemindersContent(
                 .fillMaxSize()
                 .padding(
                     top = padding.calculateTopPadding() + 24.dp, start = 16.dp, end = 16.dp
-                ), verticalArrangement = Arrangement.spacedBy(16.dp)
+                ), verticalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Column(
                 modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+                verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 CapacityReminderSwitch(
                     checked = switchChecked,
@@ -118,9 +187,18 @@ private fun CapacityRemindersContent(
                     setCapacityThreshold,
                     initialSelectedGyms,
                     setSelectedGyms,
-                    saveChanges
+                    saveChanges,
+                    isLoading
                 )
             }
+            Spacer(modifier = Modifier.height(32.dp))
+            UpliftButton(
+                text = if (isLoading) "Saving..." else "Save",
+                onClick = {
+                    saveChanges()
+                },
+                enabled = !isLoading,
+            )
         }
     }
 }
@@ -134,6 +212,7 @@ private fun CapacityRemindersSettings(
     initialSelectedGyms: Set<String>,
     setSelectedGyms: (Set<String>) -> Unit,
     saveChanges: () -> Unit,
+    isLoading: Boolean
 ) {
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -151,10 +230,11 @@ private fun CapacityRemindersSettings(
         )
         Spacer(modifier = Modifier.height(32.dp))
         UpliftButton(
-            text = "Save",
+            text = if (isLoading) "Saving..." else "Save",
             onClick = {
                 saveChanges()
             },
+            enabled = !isLoading,
         )
     }
 }
@@ -180,6 +260,7 @@ private fun CapacityReminderScreenPreview() {
         initialSelectedDays = selectedDays,
         capacityThreshold = sliderVal,
         initialSelectedGyms = selectedGyms,
+        isLoading = false,
         setToggle = { checked = it },
         setSelectedDays = { selectedDays = it },
         setCapacityThreshold = { sliderVal = it },
