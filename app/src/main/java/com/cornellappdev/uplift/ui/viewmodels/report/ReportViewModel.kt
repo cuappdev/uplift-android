@@ -20,7 +20,7 @@ class ReportViewModel @Inject constructor(
     private val rootNavigationRepository: RootNavigationRepository,
     private val reportClient: ReportClient
 ) : ViewModel() {
-    val _reportButtonEnabled = MutableStateFlow(true)
+    private val _reportButtonEnabled = MutableStateFlow(true)
     val reportButtonEnabled = _reportButtonEnabled
 
     fun createReport(

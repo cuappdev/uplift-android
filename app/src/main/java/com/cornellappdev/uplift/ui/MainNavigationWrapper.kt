@@ -34,6 +34,8 @@ import com.cornellappdev.uplift.ui.screens.gyms.HomeScreen
 import com.cornellappdev.uplift.ui.screens.onboarding.ProfileCreationScreen
 import com.cornellappdev.uplift.ui.screens.onboarding.SignInPromptScreen
 import com.cornellappdev.uplift.ui.screens.profile.ProfileScreen
+import com.cornellappdev.uplift.ui.screens.profile.SettingsScreen
+import com.cornellappdev.uplift.ui.screens.reminders.MainReminderScreen
 import com.cornellappdev.uplift.ui.screens.report.ReportIssueScreen
 import com.cornellappdev.uplift.ui.screens.report.ReportSubmittedScreen
 import com.cornellappdev.uplift.ui.viewmodels.classes.ClassDetailViewModel
@@ -94,6 +96,12 @@ fun MainNavigationWrapper(
     LaunchedEffect(rootNavigationUiState.popBackStack) {
         rootNavigationUiState.popBackStack?.consumeSuspend {
             navController.popBackStack()
+        }
+    }
+
+    LaunchedEffect(rootNavigationUiState.navigateUp) {
+        rootNavigationUiState.navigateUp?.consumeSuspend {
+            navController.navigateUp()
         }
     }
 
@@ -207,8 +215,14 @@ fun MainNavigationWrapper(
             composable<UpliftRootRoute.ProfileCreation> {
                 ProfileCreationScreen()
             }
-            composable<UpliftRootRoute.Profile>{
+            composable<UpliftRootRoute.Profile> {
                 ProfileScreen()
+            }
+            composable<UpliftRootRoute.Reminders> {
+                MainReminderScreen()
+            }
+            composable<UpliftRootRoute.Settings> {
+                SettingsScreen()
             }
             composable<UpliftRootRoute.Sports> {}
             composable<UpliftRootRoute.Favorites> {}
@@ -246,8 +260,14 @@ sealed class UpliftRootRoute {
     data object Profile : UpliftRootRoute()
 
     @Serializable
+    data object Reminders : UpliftRootRoute()
+
+    @Serializable
     data object ReportIssue : UpliftRootRoute()
 
     @Serializable
     data object ReportSuccess : UpliftRootRoute()
+
+    @Serializable
+    data object Settings : UpliftRootRoute()
 }
