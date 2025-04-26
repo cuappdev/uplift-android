@@ -103,7 +103,7 @@ dependencies {
     // Serialization
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3"
     // Authentication + Firebase
-    implementation platform('com.google.firebase:firebase-bom:33.12.0')
+    implementation platform('com.google.firebase:firebase-bom:33.13.0')
     implementation "androidx.credentials:credentials:<latest version>"
     implementation "androidx.credentials:credentials-play-services-auth:<latest version>"
     implementation "com.google.android.libraries.identity.googleid:googleid:<latest version>"
@@ -114,7 +114,7 @@ dependencies {
 }
 
 apollo {
-    service("service"){
+    service("service") {
         packageName.set("com.cornellappdev.uplift")
     }
 }

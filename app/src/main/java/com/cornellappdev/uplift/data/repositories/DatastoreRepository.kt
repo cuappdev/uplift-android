@@ -26,6 +26,8 @@ object PreferencesKeys {
     val EMAIL = stringPreferencesKey("email")
     val SKIP = booleanPreferencesKey("skip")
     val FCM_TOKEN = stringPreferencesKey("fcmToken")
+    val DECLINED_NOTIFICATION_PERMISSION =
+        booleanPreferencesKey("declinedNotificationPermission")
     val CAPACITY_REMINDERS_ID = intPreferencesKey("capacityRemindersId")
     val CAPACITY_REMINDERS_TOGGLE = booleanPreferencesKey("capacityRemindersToggle")
     val CAPACITY_REMINDERS_PERCENT = intPreferencesKey("capacityRemindersPercent")

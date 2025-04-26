@@ -15,9 +15,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -26,6 +30,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -38,7 +43,9 @@ import com.cornellappdev.uplift.util.GRAY03
 import com.cornellappdev.uplift.util.montserratFamily
 import com.cornellappdev.uplift.ui.components.capacityreminder.LocationsToRemind
 import com.cornellappdev.uplift.ui.components.capacityreminder.ReminderDays
+import com.cornellappdev.uplift.ui.components.general.NotificationPermissionHandler
 import com.cornellappdev.uplift.ui.components.general.UpliftButton
+import com.cornellappdev.uplift.ui.viewmodels.notifications.NotificationPermissionViewModel
 import com.cornellappdev.uplift.ui.viewmodels.reminders.CapacityRemindersViewModel
 import com.cornellappdev.uplift.util.PRIMARY_BLACK
 
@@ -48,7 +55,7 @@ import com.cornellappdev.uplift.util.PRIMARY_BLACK
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun CapacityReminderScreen(
-    capacityRemindersViewModel: CapacityRemindersViewModel = hiltViewModel()
+    capacityRemindersViewModel: CapacityRemindersViewModel = hiltViewModel(),
 ) {
     val capacityRemindersUiState = capacityRemindersViewModel.collectUiStateValue()
     val checked = capacityRemindersUiState.toggledOn
@@ -72,8 +79,11 @@ fun CapacityReminderScreen(
         capacityRemindersViewModel::setCapacityThreshold,
         capacityRemindersViewModel::setSelectedGyms,
         capacityRemindersViewModel::onBack,
-        capacityRemindersViewModel::saveChanges
+        capacityRemindersViewModel::saveChanges,
+        capacityRemindersUiState.saveSuccess,
+        capacityRemindersUiState.error
     )
+    NotificationPermissionHandler()
 }
 
 @Composable
@@ -104,29 +114,25 @@ private fun UnsavedChangesDialog(
         containerColor = Color.White,
 
         confirmButton = {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                TextButton(onClick = onDismiss) {
-                    Text(
-                        text = "Keep Editing",
-                        fontFamily = montserratFamily,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 14.sp,
-                        color = PRIMARY_BLACK
-                    )
-                }
-
-                TextButton(onClick = onConfirm) {
-                    Text(
-                        text = "Discard Changes",
-                        fontFamily = montserratFamily,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 14.sp,
-                        color = PRIMARY_BLACK
-                    )
-                }
+            TextButton(onClick = onConfirm) {
+                Text(
+                    text = "Confirm",
+                    fontFamily = montserratFamily,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 14.sp,
+                    color = PRIMARY_BLACK
+                )
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(
+                    text = "Cancel",
+                    fontFamily = montserratFamily,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 14.sp,
+                    color = PRIMARY_BLACK
+                )
             }
         },
     )
@@ -144,14 +150,28 @@ private fun CapacityRemindersContent(
     setCapacityThreshold: (Float) -> Unit,
     setSelectedGyms: (Set<String>) -> Unit,
     onBack: () -> Unit,
-    saveChanges: () -> Unit
+    saveChanges: () -> Unit,
+    saveSuccess: Boolean,
+    error: String?,
 ) {
-    Scaffold(topBar = {
-        UpliftTopBarWithBack(
-            title = "Capacity Reminder",
-            onBackClick = onBack
-        )
-    }) { padding ->
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(error) {
+        if (error != null) {
+            snackbarHostState.showSnackbar(
+                message = error,
+                duration = SnackbarDuration.Short
+            )
+        }
+    }
+    Scaffold(
+        topBar = {
+            UpliftTopBarWithBack(
+                title = "Capacity Reminder",
+                onBackClick = onBack
+            )
+        },
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }) { padding ->
         Column(
             modifier = Modifier
                 .background(Color.White)
@@ -188,16 +208,19 @@ private fun CapacityRemindersContent(
                     initialSelectedGyms,
                     setSelectedGyms,
                     saveChanges,
-                    isLoading
+                    isLoading,
+                    saveSuccess
                 )
             }
             Spacer(modifier = Modifier.height(32.dp))
             UpliftButton(
-                text = if (isLoading) "Saving..." else "Save",
-                onClick = {
-                    saveChanges()
+                text = when {
+                    isLoading -> "Saving..."
+                    saveSuccess -> "Saved"
+                    else -> "Save"
                 },
-                enabled = !isLoading,
+                onClick = saveChanges,
+                enabled = !isLoading && !saveSuccess,
             )
         }
     }
@@ -212,7 +235,8 @@ private fun CapacityRemindersSettings(
     initialSelectedGyms: Set<String>,
     setSelectedGyms: (Set<String>) -> Unit,
     saveChanges: () -> Unit,
-    isLoading: Boolean
+    isLoading: Boolean,
+    saveSuccess: Boolean,
 ) {
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -230,11 +254,13 @@ private fun CapacityRemindersSettings(
         )
         Spacer(modifier = Modifier.height(32.dp))
         UpliftButton(
-            text = if (isLoading) "Saving..." else "Save",
-            onClick = {
-                saveChanges()
+            text = when {
+                isLoading -> "Saving..."
+                saveSuccess -> "Saved"
+                else -> "Save"
             },
-            enabled = !isLoading,
+            onClick = saveChanges,
+            enabled = !isLoading && !saveSuccess,
         )
     }
 }
@@ -266,6 +292,8 @@ private fun CapacityReminderScreenPreview() {
         setCapacityThreshold = { sliderVal = it },
         setSelectedGyms = { selectedGyms = it },
         onBack = {},
-        saveChanges = {}
+        saveChanges = {},
+        saveSuccess = false,
+        error = null
     )
 }

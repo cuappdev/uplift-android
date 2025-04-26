@@ -137,8 +137,7 @@ class CapacityRemindersRepository @Inject constructor(
 
     /**
      * Deletes the current existing capacity reminder and creates a new one with the current values
-     * in the datastore and the new fcm token. To be called in [UpliftMessageService] when the FCM
-     * token changes.
+     * in the datastore and the new fcm token.
      */
     suspend fun updateCapacityReminderOnFCMTokenChange() {
         val capacityReminderId =

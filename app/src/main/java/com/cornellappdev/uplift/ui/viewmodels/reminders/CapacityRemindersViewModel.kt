@@ -1,5 +1,6 @@
 package com.cornellappdev.uplift.ui.viewmodels.reminders
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.cornellappdev.uplift.data.repositories.CapacityRemindersRepository
 import com.cornellappdev.uplift.data.repositories.DatastoreRepository
@@ -17,6 +18,7 @@ data class CapacityRemindersUiState(
     val selectedGyms: Set<String> = emptySet(),
     val isLoading: Boolean = false,
     val hasUnsavedChanges: Boolean = false,
+    val saveSuccess: Boolean = false,
     val error: String? = null,
     val showUnsavedChangesDialog: Boolean = false
 )
@@ -60,9 +62,13 @@ class CapacityRemindersViewModel @Inject constructor(
                 applyMutation {
                     copy(
                         isLoading = false,
-                        error = "Failed to load reminder settings: ${e.message}"
+                        error = "Failed to load reminder settings"
                     )
                 }
+                Log.e(
+                    "CapacityRemindersViewModel",
+                    "Failed to load reminder settings: ${e.message}"
+                )
             }
         }
     }
@@ -71,7 +77,8 @@ class CapacityRemindersViewModel @Inject constructor(
         applyMutation {
             copy(
                 toggledOn = toggledOn,
-                hasUnsavedChanges = true
+                hasUnsavedChanges = true,
+                saveSuccess = false
             )
         }
     }
@@ -80,7 +87,8 @@ class CapacityRemindersViewModel @Inject constructor(
         applyMutation {
             copy(
                 selectedDays = days,
-                hasUnsavedChanges = true
+                hasUnsavedChanges = true,
+                saveSuccess = false
             )
         }
     }
@@ -89,7 +97,8 @@ class CapacityRemindersViewModel @Inject constructor(
         applyMutation {
             copy(
                 capacityThreshold = threshold,
-                hasUnsavedChanges = true
+                hasUnsavedChanges = true,
+                saveSuccess = false
             )
         }
     }
@@ -98,7 +107,8 @@ class CapacityRemindersViewModel @Inject constructor(
         applyMutation {
             copy(
                 selectedGyms = gyms,
-                hasUnsavedChanges = true
+                hasUnsavedChanges = true,
+                saveSuccess = false
             )
         }
     }
@@ -121,6 +131,7 @@ class CapacityRemindersViewModel @Inject constructor(
     }
 
     fun saveChanges() {
+        applyMutation { copy(isLoading = true, error = null, saveSuccess = false) }
         val currentState = getStateValue()
 
         if (!currentState.toggledOn) {
@@ -134,8 +145,6 @@ class CapacityRemindersViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
-            applyMutation { copy(isLoading = true, error = null) }
-
             try {
                 val capacityReminderId =
                     dataStoreRepository.getPreference(PreferencesKeys.CAPACITY_REMINDERS_ID)
@@ -161,36 +170,48 @@ class CapacityRemindersViewModel @Inject constructor(
                 if (result.isSuccess) {
                     initialState = currentState.copy(
                         hasUnsavedChanges = false,
-                        isLoading = false
+                        isLoading = false,
+                        saveSuccess = true
                     )
                     applyMutation {
                         copy(
                             hasUnsavedChanges = false,
-                            isLoading = false
+                            isLoading = false,
+                            saveSuccess = true
                         )
                     }
                 } else {
                     applyMutation {
                         copy(
                             isLoading = false,
-                            error = "Failed to save reminder: ${result.exceptionOrNull()?.message ?: "Unknown error"}"
+                            error = "Failed to save reminder. Please try again later.",
+                            saveSuccess = false
                         )
                     }
+                    Log.e(
+                        "CapacityRemindersViewModel",
+                        "Failed to save reminder: ${result.exceptionOrNull()?.message ?: "Unknown error"}"
+                    )
                 }
             } catch (e: Exception) {
                 applyMutation {
                     copy(
                         isLoading = false,
-                        error = "Error saving reminder: ${e.message}"
+                        error = "Error saving reminder: ${e.message}",
+                        saveSuccess = false
                     )
                 }
+                Log.e(
+                    "CapacityRemindersViewModel",
+                    "Error saving reminder. Please try again later."
+                )
             }
         }
     }
 
     private fun deleteReminder() {
         viewModelScope.launch {
-            applyMutation { copy(isLoading = true, error = null) }
+            applyMutation { copy(isLoading = true, error = null, saveSuccess = false) }
 
             try {
                 val capacityReminderId =
@@ -203,21 +224,27 @@ class CapacityRemindersViewModel @Inject constructor(
                     if (result.isSuccess) {
                         initialState = getStateValue().copy(
                             hasUnsavedChanges = false,
-                            isLoading = false
+                            isLoading = false,
+                            saveSuccess = true
                         )
                         applyMutation {
                             copy(
                                 hasUnsavedChanges = false,
-                                isLoading = false
+                                isLoading = false,
+                                saveSuccess = true
                             )
                         }
                     } else {
                         applyMutation {
                             copy(
                                 isLoading = false,
-                                error = "Failed to delete reminder: ${result.exceptionOrNull()?.message ?: "Unknown error"}"
+                                error = "Failed to delete reminder. Please try again later.",
                             )
                         }
+                        Log.e(
+                            "CapacityRemindersViewModel",
+                            "Failed to delete reminder: ${result.exceptionOrNull()?.message ?: "Unknown error"}"
+                        )
                     }
                 } else {
                     // No reminder exists to delete, just update the UI state
@@ -240,9 +267,14 @@ class CapacityRemindersViewModel @Inject constructor(
                 applyMutation {
                     copy(
                         isLoading = false,
-                        error = "Error deleting reminder: ${e.message}"
+                        error = "Error deleting reminder",
+                        saveSuccess = false
                     )
                 }
+                Log.e(
+                    "CapacityRemindersViewModel",
+                    "Error deleting reminder: ${e.message}"
+                )
             }
         }
     }
