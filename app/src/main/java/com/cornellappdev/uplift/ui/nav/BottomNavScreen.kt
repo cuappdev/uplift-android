@@ -23,6 +23,12 @@ sealed class BottomNavScreens<T>(
         titleText = "Classes"
     )
     @Serializable
+    data object Profile : BottomNavScreens<UpliftRootRoute.Profile>(
+        route = UpliftRootRoute.Profile,
+        painterIds = Pair(R.drawable.ic_profile_inactive, R.drawable.ic_profile_active),
+        titleText = "Profile"
+    )
+    @Serializable
     data object Sports : BottomNavScreens<UpliftRootRoute.Sports>(
         route = UpliftRootRoute.Sports,
         painterIds = Pair(R.drawable.ic_sports_inactive, R.drawable.ic_sports_inactive),
