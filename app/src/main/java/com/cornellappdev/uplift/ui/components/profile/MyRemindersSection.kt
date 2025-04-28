@@ -96,7 +96,6 @@ private fun ReminderItemCard(
                 horizontal = 8.dp
             ),
         verticalAlignment = Alignment.CenterVertically,
-//        horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
             text = dayOfWeek,
