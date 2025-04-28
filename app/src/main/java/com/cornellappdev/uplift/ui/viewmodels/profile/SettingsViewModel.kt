@@ -40,15 +40,15 @@ class SettingsViewModel @Inject constructor(
         rootNavigationRepository.navigateUp()
     }
 
-    fun navigateToAbout() {
+    fun onAboutPressed() {
         //TODO: Add route nav after implement About screen
     }
 
-    fun navigateToReminders() {
+    fun onRemindersPressed() {
         rootNavigationRepository.navigate(UpliftRootRoute.Reminders)
     }
 
-    fun navigateToReport() {
+    fun onReportPressed() {
         rootNavigationRepository.navigate(UpliftRootRoute.ReportIssue)
     }
 

@@ -4,6 +4,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -84,7 +85,7 @@ private fun ReminderItemCard(
 ) {
     Row(
         modifier = Modifier
-            .width(180.dp)
+            .width(175.dp)
             .border(
                 width = 1.dp,
                 color = if (toggledOn) PRIMARY_YELLOW else GRAY01,
@@ -95,7 +96,7 @@ private fun ReminderItemCard(
                 horizontal = 8.dp
             ),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
+//        horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
             text = dayOfWeek,
@@ -103,6 +104,7 @@ private fun ReminderItemCard(
             fontSize = 14.sp,
             fontWeight = FontWeight.Medium
         )
+        Spacer(modifier = Modifier.weight(1f))
         Column(
             verticalArrangement = Arrangement.spacedBy(2.dp),
             horizontalAlignment = Alignment.CenterHorizontally
@@ -114,11 +116,12 @@ private fun ReminderItemCard(
                 fontWeight = FontWeight.Bold
             )
             Text(
-                text = "to $endTime",
+                text = "$endTime",
                 fontFamily = montserratFamily,
                 fontSize = 14.sp,
             )
         }
+        Spacer(modifier = Modifier.weight(1f))
         ReminderSwitch(
             checked = toggledOn,
             onCheckedChange = { onToggle(it) }

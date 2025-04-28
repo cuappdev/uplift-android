@@ -39,9 +39,9 @@ fun SettingsScreen(
     SettingsScreenContent(
         isLoggedIn = settingsUiState.isLoggedIn,
         onBackClick = settingsViewModel::onBack,
-        navigateToAbout = settingsViewModel::navigateToAbout,
-        navigateToReminders = settingsViewModel::navigateToReminders,
-        navigateToReport = settingsViewModel::navigateToReport,
+        onAboutPressed = settingsViewModel::onAboutPressed,
+        onRemindersPressed = settingsViewModel::onRemindersPressed,
+        onReportPressed = settingsViewModel::onReportPressed,
         onLogOut = settingsViewModel::onLogOut
     )
 }
@@ -50,9 +50,9 @@ fun SettingsScreen(
 private fun SettingsScreenContent(
     isLoggedIn: Boolean,
     onBackClick: () -> Unit,
-    navigateToAbout: () -> Unit = {},
-    navigateToReminders: () -> Unit,
-    navigateToReport: () -> Unit,
+    onAboutPressed: () -> Unit,
+    onRemindersPressed: () -> Unit,
+    onReportPressed: () -> Unit,
     onLogOut: () -> Unit
 ) {
     Scaffold(topBar = {
@@ -72,19 +72,19 @@ private fun SettingsScreenContent(
             SettingsOption(
                 icon = R.drawable.ic_appdev,
                 title = "About Uplift",
-                onClick = navigateToAbout,
+                onClick = onAboutPressed,
             )
             Divider(color = GRAY01)
             SettingsOption(
                 icon = R.drawable.ic_reminders_clock,
                 title = "Reminders",
-                onClick = navigateToReminders,
+                onClick = onRemindersPressed,
             )
             Divider(color = GRAY01)
             SettingsOption(
                 icon = R.drawable.ic_report,
                 title = "Report an Issue",
-                onClick = navigateToReport,
+                onClick = onReportPressed,
             )
             Divider(color = GRAY01)
             if (isLoggedIn) {
@@ -163,9 +163,9 @@ private fun SettingsScreenPreview() {
     SettingsScreenContent(
         isLoggedIn = true,
         onBackClick = {},
-        navigateToAbout = {},
-        navigateToReminders = {},
-        navigateToReport = {},
+        onAboutPressed = {},
+        onRemindersPressed = {},
+        onReportPressed = {},
         onLogOut = {}
     )
 }

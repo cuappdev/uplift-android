@@ -272,6 +272,7 @@ private fun WorkoutsCompletedText(workoutsCompleted: Int, workoutGoal: Int) {
     }
 }
 
+
 @Preview(showBackground = true)
 @Composable
 private fun WorkoutProgressArcDefaultPreview() {
@@ -286,6 +287,15 @@ private fun WorkoutProgressArcDefaultPreview() {
 private fun WorkoutProgressArcCompletedPreview() {
     WorkoutProgressArc(
         workoutsCompleted = 7,
+        workoutGoal = 7,
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun WorkoutProgressArcZeroPreview() {
+    WorkoutProgressArc(
+        workoutsCompleted = 0,
         workoutGoal = 7,
     )
 }
