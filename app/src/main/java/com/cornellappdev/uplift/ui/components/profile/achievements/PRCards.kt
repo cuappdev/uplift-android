@@ -32,6 +32,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -142,8 +143,13 @@ fun PRCard(
             .swipeToRight { onMoveToBack() }
             .height(311.dp)
             .width(229.dp)
+            .shadow(
+                elevation = 6.dp,
+                shape = RoundedCornerShape(22.dp),
+            )
             .background(backgroundGradient, RoundedCornerShape(22.dp))
             .padding(6.dp)
+
     ) {
         Box(
             modifier = Modifier
@@ -281,11 +287,11 @@ private fun Modifier.swipeToRight(
                             initialVelocity = velocity,
                             animationSpec = keyframes {
                                 durationMillis = boomerangDuration
-                                distanceToFling at (boomerangDuration / 2) with LinearOutSlowInEasing // Changed sign for right movement
+                                distanceToFling at (boomerangDuration / 2) with LinearOutSlowInEasing
                                 40f at boomerangDuration - 70
                             }
                         ) {
-                            if (value >= size.width * 2 && !clearedHurdle) { // Changed from <= to >= for right movement
+                            if (value >= size.width * 2 && !clearedHurdle) {
                                 onMoveToBack()
                                 clearedHurdle = true
                             }
@@ -296,7 +302,7 @@ private fun Modifier.swipeToRight(
             }
         }
     }
-        .offset { IntOffset(offsetX.value.roundToInt(), 0) } // Changed to use X offset instead of Y
+        .offset { IntOffset(offsetX.value.roundToInt(), 0) }
 }
 
 @Preview
