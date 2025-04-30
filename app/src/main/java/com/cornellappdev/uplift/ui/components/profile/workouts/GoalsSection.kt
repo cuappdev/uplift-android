@@ -1,6 +1,5 @@
-package com.cornellappdev.uplift.ui.components.profile
+package com.cornellappdev.uplift.ui.components.profile.workouts
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -10,6 +9,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.cornellappdev.uplift.ui.components.profile.SectionTitleText
 
 @Composable
 fun GoalsSection(

@@ -1,4 +1,4 @@
-package com.cornellappdev.uplift.ui.components.profile
+package com.cornellappdev.uplift.ui.components.profile.workouts
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
