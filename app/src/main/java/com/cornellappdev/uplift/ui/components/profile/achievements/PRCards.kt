@@ -296,8 +296,8 @@ private fun Modifier.swipeToRight(
                                 clearedHurdle = true
                             }
                         }
+                        clearedHurdle = false // Reset after animation completes
                     }
-                    clearedHurdle = false
                 }
             }
         }
