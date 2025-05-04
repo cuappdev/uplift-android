@@ -287,7 +287,7 @@ private fun Modifier.swipeToRight(
                             initialVelocity = velocity,
                             animationSpec = keyframes {
                                 durationMillis = boomerangDuration
-                                distanceToFling at (boomerangDuration / 2) with LinearOutSlowInEasing
+                                distanceToFling at (boomerangDuration / 2) using LinearOutSlowInEasing
                                 40f at boomerangDuration - 70
                             }
                         ) {
@@ -296,7 +296,7 @@ private fun Modifier.swipeToRight(
                                 clearedHurdle = true
                             }
                         }
-                        clearedHurdle = false // Reset after animation completes
+                        clearedHurdle = false
                     }
                 }
             }
