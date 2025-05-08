@@ -1,7 +1,7 @@
 package com.cornellappdev.uplift.ui.viewmodels.profile
 
 import androidx.lifecycle.viewModelScope
-import com.cornellappdev.uplift.domain.repositories.UserInfoRepository
+import com.cornellappdev.uplift.data.repositories.UserInfoRepository
 import com.cornellappdev.uplift.ui.UpliftRootRoute
 import com.cornellappdev.uplift.ui.nav.RootNavigationRepository
 import com.cornellappdev.uplift.ui.viewmodels.UpliftViewModel
@@ -36,7 +36,7 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
-    fun onBack(){
+    fun onBack() {
         rootNavigationRepository.navigateUp()
     }
 
