@@ -7,23 +7,35 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.cornellappdev.uplift.ui.components.capacityreminder.CapacityReminderSwitch
 import com.cornellappdev.uplift.ui.components.capacityreminder.CapacityThreshold
 import com.cornellappdev.uplift.ui.components.general.UpliftTopBarWithBack
@@ -31,6 +43,11 @@ import com.cornellappdev.uplift.util.GRAY03
 import com.cornellappdev.uplift.util.montserratFamily
 import com.cornellappdev.uplift.ui.components.capacityreminder.LocationsToRemind
 import com.cornellappdev.uplift.ui.components.capacityreminder.ReminderDays
+import com.cornellappdev.uplift.ui.components.general.NotificationPermissionHandler
+import com.cornellappdev.uplift.ui.components.general.UpliftButton
+import com.cornellappdev.uplift.ui.viewmodels.notifications.NotificationPermissionViewModel
+import com.cornellappdev.uplift.ui.viewmodels.reminders.CapacityRemindersViewModel
+import com.cornellappdev.uplift.util.PRIMARY_BLACK
 
 /**
  * Screen for the capacity reminder feature.
@@ -38,39 +55,140 @@ import com.cornellappdev.uplift.ui.components.capacityreminder.ReminderDays
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun CapacityReminderScreen(
-    /* TODO: Change parameters to VM calls */
-    checked: Boolean,
-    onChecked: (Boolean) -> Unit = {},
-    initialSelectedDays: Set<String> = emptySet(),
-    onDaySelected: (Set<String>) -> Unit = {},
-    capacityThreshold: Float = 0.5f,
-    onSliderChange: (Float) -> Unit = {},
-    initialSelectedGyms: Set<String> = emptySet(),
-    onGymSelected: (Set<String>) -> Unit = {},
-    onBackClick: () -> Unit = {}
+    capacityRemindersViewModel: CapacityRemindersViewModel = hiltViewModel(),
 ) {
-    var switchChecked by remember { mutableStateOf(checked) }
-    Scaffold(topBar = {
-        UpliftTopBarWithBack(title = "Capacity Reminder", onBackClick = onBackClick)
-    }) { padding ->
+    val capacityRemindersUiState = capacityRemindersViewModel.collectUiStateValue()
+    val checked = capacityRemindersUiState.toggledOn
+    val initialSelectedDays = capacityRemindersUiState.selectedDays
+    val capacityThreshold = capacityRemindersUiState.capacityThreshold
+    val initialSelectedGyms = capacityRemindersUiState.selectedGyms
+    if (capacityRemindersUiState.showUnsavedChangesDialog) {
+        UnsavedChangesDialog(
+            onConfirm = capacityRemindersViewModel::onConfirmDiscard,
+            onDismiss = capacityRemindersViewModel::onDismissDialog
+        )
+    }
+    CapacityRemindersContent(
+        checked,
+        initialSelectedDays,
+        capacityThreshold,
+        initialSelectedGyms,
+        capacityRemindersUiState.isLoading,
+        capacityRemindersViewModel::setToggle,
+        capacityRemindersViewModel::setSelectedDays,
+        capacityRemindersViewModel::setCapacityThreshold,
+        capacityRemindersViewModel::setSelectedGyms,
+        capacityRemindersViewModel::onBack,
+        capacityRemindersViewModel::saveChanges,
+        capacityRemindersUiState.saveSuccess,
+        capacityRemindersUiState.error
+    )
+    NotificationPermissionHandler()
+}
+
+@Composable
+private fun UnsavedChangesDialog(
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(
+                text = "Unsaved Changes",
+                fontFamily = montserratFamily,
+                fontWeight = FontWeight.Bold,
+                fontSize = 20.sp,
+                color = PRIMARY_BLACK
+            )
+        },
+        text = {
+            Text(
+                text = "Are you sure you want to discard your changes?",
+                fontFamily = montserratFamily,
+                fontWeight = FontWeight.Medium,
+                fontSize = 16.sp,
+                color = PRIMARY_BLACK
+            )
+        },
+        containerColor = Color.White,
+
+        confirmButton = {
+            TextButton(onClick = onConfirm) {
+                Text(
+                    text = "Confirm",
+                    fontFamily = montserratFamily,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 14.sp,
+                    color = PRIMARY_BLACK
+                )
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(
+                    text = "Cancel",
+                    fontFamily = montserratFamily,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 14.sp,
+                    color = PRIMARY_BLACK
+                )
+            }
+        },
+    )
+}
+
+@Composable
+private fun CapacityRemindersContent(
+    switchChecked: Boolean,
+    initialSelectedDays: Set<String>,
+    capacityThreshold: Float,
+    initialSelectedGyms: Set<String>,
+    isLoading: Boolean,
+    setToggle: (Boolean) -> Unit,
+    setSelectedDays: (Set<String>) -> Unit,
+    setCapacityThreshold: (Float) -> Unit,
+    setSelectedGyms: (Set<String>) -> Unit,
+    onBack: () -> Unit,
+    saveChanges: () -> Unit,
+    saveSuccess: Boolean,
+    error: String?,
+) {
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(error) {
+        if (error != null) {
+            snackbarHostState.showSnackbar(
+                message = error,
+                duration = SnackbarDuration.Short
+            )
+        }
+    }
+    Scaffold(
+        topBar = {
+            UpliftTopBarWithBack(
+                title = "Capacity Reminder",
+                onBackClick = onBack
+            )
+        },
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }) { padding ->
         Column(
             modifier = Modifier
                 .background(Color.White)
                 .fillMaxSize()
                 .padding(
                     top = padding.calculateTopPadding() + 24.dp, start = 16.dp, end = 16.dp
-                ), verticalArrangement = Arrangement.spacedBy(16.dp)
+                ), verticalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Column(
                 modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+                verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 CapacityReminderSwitch(
                     checked = switchChecked,
-                    onCheckedChange = {
-                        switchChecked = it
-                        onChecked(it)
-                    })
+                    onCheckedChange = setToggle
+                )
                 Text(
                     text = "Uplift will send you a notification when gyms dip below the set capacity",
                     fontFamily = montserratFamily,
@@ -82,16 +200,68 @@ fun CapacityReminderScreen(
             AnimatedVisibility(
                 visible = switchChecked, enter = fadeIn(), exit = fadeOut()
             ) {
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    ReminderDays(initialSelectedDays, onDaySelected)
-                    CapacityThreshold(capacityThreshold, onSliderChange)
-                    LocationsToRemind(initialSelectedGyms, onGymSelected)
-                }
+                CapacityRemindersSettings(
+                    initialSelectedDays,
+                    setSelectedDays,
+                    capacityThreshold,
+                    setCapacityThreshold,
+                    initialSelectedGyms,
+                    setSelectedGyms,
+                    saveChanges,
+                    isLoading,
+                    saveSuccess
+                )
             }
+            Spacer(modifier = Modifier.height(32.dp))
+            UpliftButton(
+                text = when {
+                    isLoading -> "Saving..."
+                    saveSuccess -> "Saved"
+                    else -> "Save"
+                },
+                onClick = saveChanges,
+                enabled = !isLoading && !saveSuccess,
+            )
         }
+    }
+}
+
+@Composable
+private fun CapacityRemindersSettings(
+    initialSelectedDays: Set<String>,
+    setSelectedDays: (Set<String>) -> Unit,
+    capacityThreshold: Float,
+    setCapacityThreshold: (Float) -> Unit,
+    initialSelectedGyms: Set<String>,
+    setSelectedGyms: (Set<String>) -> Unit,
+    saveChanges: () -> Unit,
+    isLoading: Boolean,
+    saveSuccess: Boolean,
+) {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        ReminderDays(initialSelectedDays, setSelectedDays)
+        CapacityThreshold(
+            capacityThreshold,
+            setCapacityThreshold
+        )
+        LocationsToRemind(
+            initialSelectedGyms,
+            setSelectedGyms
+        )
+        Spacer(modifier = Modifier.height(32.dp))
+        UpliftButton(
+            text = when {
+                isLoading -> "Saving..."
+                saveSuccess -> "Saved"
+                else -> "Save"
+            },
+            onClick = saveChanges,
+            enabled = !isLoading && !saveSuccess,
+        )
     }
 }
 
@@ -99,18 +269,31 @@ fun CapacityReminderScreen(
 @Preview(showBackground = true)
 @Composable
 private fun CapacityReminderScreenPreview() {
-    val checked by remember { mutableStateOf(true) }
+    var checked by remember { mutableStateOf(true) }
     var sliderVal by remember { mutableFloatStateOf(0.5f) }
     var selectedDays by remember { mutableStateOf(setOf("M", "Tu", "W", "Th", "F")) }
-    var selectedGyms by remember { mutableStateOf(setOf("Teagle Up", "Teagle Down", "Helen Newman")) }
-    CapacityReminderScreen(
-        checked,
-        {},
-        selectedDays,
-        { selectedDays = it },
-        sliderVal,
-        { sliderVal = it },
-        selectedGyms,
-        { selectedGyms = it }
-        ) {}
+    var selectedGyms by remember {
+        mutableStateOf(
+            setOf(
+                "Teagle Up",
+                "Teagle Down",
+                "Helen Newman"
+            )
+        )
+    }
+    CapacityRemindersContent(
+        switchChecked = checked,
+        initialSelectedDays = selectedDays,
+        capacityThreshold = sliderVal,
+        initialSelectedGyms = selectedGyms,
+        isLoading = false,
+        setToggle = { checked = it },
+        setSelectedDays = { selectedDays = it },
+        setCapacityThreshold = { sliderVal = it },
+        setSelectedGyms = { selectedGyms = it },
+        onBack = {},
+        saveChanges = {},
+        saveSuccess = false,
+        error = null
+    )
 }
