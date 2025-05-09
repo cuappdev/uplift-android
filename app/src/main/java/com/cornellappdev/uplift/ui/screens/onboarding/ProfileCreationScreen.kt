@@ -121,7 +121,7 @@ private fun ProfileCreationScreenContent(
         ) {
             Spacer(modifier = Modifier.weight(0.05f))
 
-            PhotoPicker { onPhotoSelected(it) }
+            PhotoPicker(onPhotoSelected = onPhotoSelected,)
 
             Text(
                 text = name,
