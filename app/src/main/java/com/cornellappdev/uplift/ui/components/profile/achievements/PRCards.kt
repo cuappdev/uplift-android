@@ -1,6 +1,7 @@
 package com.cornellappdev.uplift.ui.components.profile.achievements
 
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
@@ -37,6 +38,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.PointerInputScope
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.positionChange
 import androidx.compose.ui.input.pointer.util.VelocityTracker
@@ -62,6 +64,7 @@ import com.cornellappdev.uplift.util.YELLOW03
 import com.cornellappdev.uplift.util.YELLOW04
 import com.cornellappdev.uplift.util.YELLOW05
 import com.cornellappdev.uplift.util.montserratFamily
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import java.lang.Float.min
@@ -80,33 +83,23 @@ data class PRCardData(
 
 @Composable
 fun PRCards(
-    prCardDataList: List<PRCardData>,
-    onMoveToBack: (PRCardData) -> Unit
+    prCardDataList: List<PRCardData>, onMoveToBack: (PRCardData) -> Unit
 ) {
     Box(
-        Modifier
-            .fillMaxWidth(),
-        contentAlignment = Alignment.CenterStart
+        Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterStart
     ) {
         prCardDataList.forEachIndexed { idx, prCardData ->
             key(prCardData) {
                 PRCard(
                     order = idx,
                     totalCount = prCardDataList.size,
-                    title = prCardData.title,
-                    weight = prCardData.weight,
-                    reps = prCardData.reps,
-                    backgroundGradient = prCardData.backgroundGradient,
-                    innerBorderGradient = prCardData.innerBorderGradient,
-                    titleColor = prCardData.titleColor,
-                    weightAndRepsColor = prCardData.weightAndRepsColor,
+                    prCardData = prCardData,
                     onMoveToBack = {
                         onMoveToBack(prCardData)
                     },
-                    onUpdate = {
+                    onUpdatePressed = {
                         /* TODO: Fill in with update function */
-                    }
-                )
+                    })
             }
         }
     }
@@ -116,15 +109,9 @@ fun PRCards(
 fun PRCard(
     order: Int,
     totalCount: Int,
-    title: String,
-    weight: Int,
-    reps: Int,
-    backgroundGradient: Brush,
-    innerBorderGradient: Brush,
-    titleColor: Color,
-    weightAndRepsColor: Color,
+    prCardData: PRCardData,
     onMoveToBack: () -> Unit,
-    onUpdate: () -> Unit
+    onUpdatePressed: () -> Unit
 ) {
     val animatedScale by animateFloatAsState(
         targetValue = 1f - (totalCount - order) * 0.05f,
@@ -140,14 +127,14 @@ fun PRCard(
                 scaleX = animatedScale
                 scaleY = animatedScale
             }
-            .swipeToRight { onMoveToBack() }
+            .onSwipeToRight { onMoveToBack() }
             .height(311.dp)
             .width(229.dp)
             .shadow(
                 elevation = 6.dp,
                 shape = RoundedCornerShape(22.dp),
             )
-            .background(backgroundGradient, RoundedCornerShape(22.dp))
+            .background(prCardData.backgroundGradient, RoundedCornerShape(22.dp))
             .padding(6.dp)
 
     ) {
@@ -157,24 +144,23 @@ fun PRCard(
                 .height(298.dp)
                 .border(
                     width = 1.4.dp,
-                    brush = innerBorderGradient,
+                    brush = prCardData.innerBorderGradient,
                     shape = RoundedCornerShape(16.5.dp)
                 )
                 .padding(vertical = 39.dp)
         ) {
-            PRCardContent(title, titleColor, weight, reps, weightAndRepsColor, onUpdate)
+            PRCardContent(
+                prCardData,
+                onUpdatePressed
+            )
         }
     }
 }
 
 @Composable
 private fun PRCardContent(
-    title: String,
-    titleColor: Color,
-    weight: Int,
-    reps: Int,
-    weightAndRepsColor: Color,
-    onUpdate: () -> Unit
+    prCardData: PRCardData,
+    onUpdatePressed: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -189,30 +175,30 @@ private fun PRCardContent(
         )
         Spacer(modifier = Modifier.height(11.dp))
         Text(
-            text = title,
-            color = titleColor,
+            text = prCardData.title,
+            color = prCardData.titleColor,
             fontFamily = montserratFamily,
             fontSize = 22.sp,
             fontWeight = FontWeight.Bold,
         )
         Spacer(modifier = Modifier.height(16.dp))
         Text(
-            text = "$weight lb / $reps reps",
-            color = weightAndRepsColor,
+            text = "${prCardData.weight} lb / ${prCardData.reps} reps",
+            color = prCardData.weightAndRepsColor,
             fontFamily = montserratFamily,
             fontSize = 16.sp,
             fontWeight = FontWeight.Medium,
         )
         Spacer(modifier = Modifier.weight(1f))
         UpdateButton(
-            onUpdate = onUpdate
+            onUpdatePressed = onUpdatePressed
         )
     }
 }
 
 @Composable
 private fun UpdateButton(
-    onUpdate: () -> Unit
+    onUpdatePressed: () -> Unit
 ) {
     val yellowBorderGradient = Brush.linearGradient(
         colors = listOf(LIGHT_YELLOW, PRIMARY_YELLOW)
@@ -223,16 +209,13 @@ private fun UpdateButton(
             .width(82.dp)
             .height(32.dp)
             .background(
-                color = PRIMARY_BLACK,
-                shape = RoundedCornerShape(30.dp)
+                color = PRIMARY_BLACK, shape = RoundedCornerShape(30.dp)
             )
             .border(
-                width = 1.4.dp,
-                brush = yellowBorderGradient,
-                shape = RoundedCornerShape(30.dp)
+                width = 1.4.dp, brush = yellowBorderGradient, shape = RoundedCornerShape(30.dp)
             )
             .clickable(
-                onClick = onUpdate,
+                onClick = onUpdatePressed,
             )
     ) {
         Text(
@@ -245,7 +228,7 @@ private fun UpdateButton(
     }
 }
 
-private fun Modifier.swipeToRight(
+private fun Modifier.onSwipeToRight(
     onMoveToBack: () -> Unit
 ): Modifier = composed {
     val offsetX = remember { Animatable(0f) }
@@ -274,35 +257,54 @@ private fun Modifier.swipeToRight(
                 if (targetOffsetX.absoluteValue <= size.width) {
                     launch { offsetX.animateTo(targetValue = 0f, initialVelocity = velocity) }
                 } else {
-                    val boomerangDuration = 600
-                    val maxDistanceToFling =
-                        (size.width * 4).toFloat()
-                    val distanceToFling = min(
-                        targetOffsetX.absoluteValue + size.width, maxDistanceToFling
+                    onAnimateBoomerang(
+                        this@pointerInput,
+                        targetOffsetX,
+                        this@coroutineScope,
+                        offsetX,
+                        velocity,
+                        clearedHurdle,
+                        setClearedHurdle = { clearedHurdle = it },
+                        onMoveToBack
                     )
-
-                    launch {
-                        offsetX.animateTo(
-                            targetValue = 0f,
-                            initialVelocity = velocity,
-                            animationSpec = keyframes {
-                                durationMillis = boomerangDuration
-                                distanceToFling at (boomerangDuration / 2) using LinearOutSlowInEasing
-                                40f at boomerangDuration - 70
-                            }
-                        ) {
-                            if (value >= size.width * 2 && !clearedHurdle) {
-                                onMoveToBack()
-                                clearedHurdle = true
-                            }
-                        }
-                        clearedHurdle = false
-                    }
                 }
             }
         }
+    }.offset { IntOffset(offsetX.value.roundToInt(), 0) }
+}
+
+private fun onAnimateBoomerang(
+    pointerInputScope: PointerInputScope,
+    targetOffsetX: Float,
+    coroutineScope: CoroutineScope,
+    offsetX: Animatable<Float, AnimationVector1D>,
+    velocity: Float,
+    clearedHurdle: Boolean,
+    setClearedHurdle: (Boolean) -> Unit,
+    onMoveToBack: () -> Unit
+) {
+    val boomerangDuration = 600
+    val maxDistanceToFling = (pointerInputScope.size.width * 4).toFloat()
+    val distanceToFling = min(
+        targetOffsetX.absoluteValue + pointerInputScope.size.width, maxDistanceToFling
+    )
+    val boomerangAnimationOffset = 70
+    coroutineScope.launch {
+        offsetX.animateTo(
+            targetValue = 0f,
+            initialVelocity = velocity,
+            animationSpec = keyframes {
+                durationMillis = boomerangDuration
+                distanceToFling at (boomerangDuration / 2) using LinearOutSlowInEasing
+                40f at boomerangDuration - boomerangAnimationOffset
+            }) {
+            if (value >= pointerInputScope.size.width * 2 && !clearedHurdle) {
+                onMoveToBack()
+                setClearedHurdle(true)
+            }
+        }
+        setClearedHurdle(false)
     }
-        .offset { IntOffset(offsetX.value.roundToInt(), 0) }
 }
 
 @Preview
@@ -357,11 +359,9 @@ private fun PRCardsPreview() {
         )
     }
     PRCards(
-        prCardDataList = prCardDataList,
-        onMoveToBack = { prCardData ->
+        prCardDataList = prCardDataList, onMoveToBack = { prCardData ->
             prCardDataList = listOf(prCardData) + (prCardDataList - prCardData)
-        }
-    )
+        })
 }
 
 
