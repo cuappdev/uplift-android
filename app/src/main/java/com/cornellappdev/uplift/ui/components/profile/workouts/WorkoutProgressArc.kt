@@ -1,4 +1,4 @@
-package com.cornellappdev.uplift.ui.components.profile
+package com.cornellappdev.uplift.ui.components.profile.workouts
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D

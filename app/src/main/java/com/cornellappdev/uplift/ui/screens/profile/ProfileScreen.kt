@@ -29,12 +29,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cornellappdev.uplift.R
 import com.cornellappdev.uplift.ui.components.general.UpliftTabRow
-import com.cornellappdev.uplift.ui.components.profile.GoalsSection
-import com.cornellappdev.uplift.ui.components.profile.HistoryItem
-import com.cornellappdev.uplift.ui.components.profile.HistorySection
-import com.cornellappdev.uplift.ui.components.profile.MyRemindersSection
+import com.cornellappdev.uplift.ui.components.profile.workouts.GoalsSection
+import com.cornellappdev.uplift.ui.components.profile.workouts.HistoryItem
+import com.cornellappdev.uplift.ui.components.profile.workouts.HistorySection
+import com.cornellappdev.uplift.ui.components.profile.workouts.MyRemindersSection
 import com.cornellappdev.uplift.ui.components.profile.ProfileHeaderSection
-import com.cornellappdev.uplift.ui.components.profile.ReminderItem
+import com.cornellappdev.uplift.ui.components.profile.workouts.ReminderItem
 import com.cornellappdev.uplift.util.GRAY01
 import com.cornellappdev.uplift.util.montserratFamily
 
