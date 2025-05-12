@@ -12,7 +12,6 @@ import com.cornellappdev.uplift.GetUserByNetIdQuery
 import kotlinx.coroutines.flow.map;
 import kotlinx.coroutines.flow.firstOrNull
 import com.cornellappdev.uplift.data.models.UserInfo
-import com.cornellappdev.uplift.di.PreferencesKeys
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider

@@ -3,6 +3,7 @@ package com.cornellappdev.uplift.ui.screens.onboarding
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -54,58 +55,60 @@ private fun SignInPromptScreenContent(
     onSignInWithGoogle: (credential: Credential) -> Unit,
     onSkip: () -> Unit
 ) {
-        Canvas(modifier = Modifier.fillMaxSize()) {
-            drawCircle(
-                color = LIGHT_YELLOW,
-                radius = 244.dp.toPx(),
-                center = Offset(x = 142.dp.toPx(), y = (-35).dp.toPx())
-            )
-        }
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxSize()
-        ) {
-            Spacer(modifier = Modifier.weight(0.1f))
+    Canvas(modifier = Modifier
+        .fillMaxSize()
+        .background(Color.White)) {
+        drawCircle(
+            color = LIGHT_YELLOW,
+            radius = 244.dp.toPx(),
+            center = Offset(x = 142.dp.toPx(), y = (-35).dp.toPx())
+        )
+    }
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.fillMaxSize()
+    ) {
+        Spacer(modifier = Modifier.weight(0.1f))
 
-            Image(
-                painter = painterResource(id = R.drawable.ic_main_logo),
-                contentDescription = "Uplift logo",
-                modifier = Modifier
-                    .height(130.dp)
-                    .width(115.dp)
-            )
-            Spacer(modifier = Modifier.weight(0.07f))
+        Image(
+            painter = painterResource(id = R.drawable.ic_main_logo),
+            contentDescription = "Uplift logo",
+            modifier = Modifier
+                .height(130.dp)
+                .width(115.dp)
+        )
+        Spacer(modifier = Modifier.weight(0.07f))
 
-            Text(
-                text = "Find what uplifts you.",
-                fontSize = 24.sp,
-                fontFamily = montserratFamily,
-                fontWeight = FontWeight.Bold
-            )
+        Text(
+            text = "Find what uplifts you.",
+            fontSize = 24.sp,
+            fontFamily = montserratFamily,
+            fontWeight = FontWeight.Bold
+        )
 
-            Spacer(modifier = Modifier.weight(0.1f))
+        Spacer(modifier = Modifier.weight(0.1f))
 
-            Text(
-                "Log in to:",
-                fontSize = 16.sp,
-                fontFamily = montserratFamily,
-                fontWeight = FontWeight.Bold
-            )
+        Text(
+            "Log in to:",
+            fontSize = 16.sp,
+            fontFamily = montserratFamily,
+            fontWeight = FontWeight.Bold
+        )
 
-            Spacer(modifier = Modifier.weight(0.03f))
+        Spacer(modifier = Modifier.weight(0.03f))
 
-            UpliftUsesCardList()
+        UpliftUsesCardList()
 
-            Spacer(modifier = Modifier.weight(0.16f))
+        Spacer(modifier = Modifier.weight(0.16f))
 
-            LogInButton(onRequestResult = onSignInWithGoogle)
+        LogInButton(onRequestResult = onSignInWithGoogle)
 
-            Spacer(modifier = Modifier.weight(0.02f))
+        Spacer(modifier = Modifier.weight(0.02f))
 
-            SkipButton(onClick = onSkip)
+        SkipButton(onClick = onSkip)
 
-            Spacer(modifier = Modifier.weight(0.06f))
-        }
+        Spacer(modifier = Modifier.weight(0.06f))
+    }
 }
 
 @Composable

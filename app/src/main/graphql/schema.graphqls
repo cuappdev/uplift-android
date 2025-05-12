@@ -10,6 +10,11 @@ type Query {
   getUserByNetId(netId: String): [User]
 
   """
+  Get all friends of a user by ID.
+  """
+  getUsersFriends(id: Int): [User]
+
+  """
   Get all users given a giveaway ID.
   """
   getUsersByGiveawayId(id: Int): [User]
@@ -32,9 +37,24 @@ type Query {
   getAllReports: [Report]
 
   """
+  Get the workout goals of a user by ID.
+  """
+  getWorkoutGoals(id: Int!): [String]
+
+  """
+  Get the current and max workout streak of a user.
+  """
+  getUserStreak(id: Int!): JSONString
+
+  """
   Get all facility hourly average capacities.
   """
   getHourlyAverageCapacitiesByFacilityId(facilityId: Int): [HourlyAverageCapacity]
+
+  """
+  Get all friends for a user.
+  """
+  getUserFriends(userId: Int!): [User]
 }
 
 type Gym {
@@ -63,21 +83,6 @@ type Gym {
   reports: [Report]
 }
 
-"""
-The `ID` scalar type represents a unique identifier, often used to refetch an object or as key for a cache. The ID type appears in a JSON response as a String; however, it is not intended to be human-readable. When expected as an input type, any string (such as `"4"`) or integer (such as `4`) input value will be accepted as an ID.
-"""
-scalar ID
-
-"""
-The `String` scalar type represents textual data, represented as UTF-8 character sequences. The String type is most often used by GraphQL to represent free-form human-readable text.
-"""
-scalar String
-
-"""
-The `Float` scalar type represents signed double-precision fractional values as specified by [IEEE 754](http://en.wikipedia.org/wiki/IEEE_floating_point). 
-"""
-scalar Float
-
 type Activity {
   id: ID!
 
@@ -93,16 +98,6 @@ type Activity {
 
   pricing: [Price]
 }
-
-"""
-The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31 - 1) and 2^31 - 1 since represented in JSON as double-precision floating point numbers specifiedby [IEEE 754](http://en.wikipedia.org/wiki/IEEE_floating_point).
-"""
-scalar Int
-
-"""
-The `Boolean` scalar type represents `true` or `false`.
-"""
-scalar Boolean
 
 type Price {
   id: ID!
@@ -353,9 +348,23 @@ type User {
 
   name: String!
 
+  activeStreak: Int
+
+  maxStreak: Int
+
   workoutGoal: [DayOfWeekGraphQLEnum]
 
+  encodedImage: String
+
   giveaways: [Giveaway]
+
+  friendRequestsSent: [Friendship]
+
+  friendRequestsReceived: [Friendship]
+
+  friendships: [Friendship]
+
+  friends: [User]
 }
 
 enum DayOfWeekGraphQLEnum {
@@ -382,13 +391,38 @@ type Giveaway {
   users: [User]
 }
 
+type Friendship {
+  id: ID!
+
+  userId: Int!
+
+  friendId: Int!
+
+  createdAt: DateTime
+
+  isAccepted: Boolean
+
+  acceptedAt: DateTime
+
+  user: User
+
+  friend: User
+}
+
 type Workout {
   id: ID!
 
   workoutTime: DateTime!
 
   userId: Int!
+
+  facilityId: Int!
 }
+
+"""
+JSON String
+"""
+scalar JSONString
 
 type HourlyAverageCapacity {
   id: ID!
@@ -413,7 +447,12 @@ type Mutation {
   """
   Creates a new user.
   """
-  createUser(email: String!, name: String!, netId: String!): User
+  createUser(email: String!, encodedImage: String, name: String!, netId: String!): User
+
+  """
+  Edit a new user.
+  """
+  editUser(email: String, encodedImage: String, name: String, netId: String!): User
 
   """
   Enters a user into a giveaway.
@@ -428,12 +467,67 @@ type Mutation {
   """
   Log a user's workout.
   """
-  logWorkout(userId: Int!, workoutTime: DateTime!): Workout
+  logWorkout(facilityId: Int!, userId: Int!, workoutTime: DateTime!): Workout
+
+  """
+  Login a user.
+  """
+  loginUser(netId: String!): LoginUser
+
+  """
+  Logs out a user.
+  """
+  logoutUser: LogoutUser
+
+  """
+  Refreshes the access token.
+  """
+  refreshAccessToken: RefreshAccessToken
 
   """
   Creates a new report.
   """
   createReport(createdAt: DateTime!, description: String!, gymId: Int!, issue: String!): CreateReport
+
+  """
+  Deletes a user by ID.
+  """
+  deleteUser(userId: Int!): User
+
+  """
+  Create a new capacity reminder.
+  """
+  createCapacityReminder(capacityPercent: Int!, daysOfWeek: [String]!, fcmToken: String!, gyms: [String]!): CapacityReminder
+
+  """
+  Edit capacity reminder.
+  """
+  editCapacityReminder(capacityPercent: Int!, daysOfWeek: [String]!, gyms: [String]!, reminderId: Int!): CapacityReminder
+
+  """
+  Delete a capacity reminder
+  """
+  deleteCapacityReminder(reminderId: Int!): CapacityReminder
+
+  """
+  Send a friend request to another user.
+  """
+  addFriend(friendId: Int!, userId: Int!): Friendship
+
+  """
+  Accept a friend request.
+  """
+  acceptFriendRequest(friendshipId: Int!): Friendship
+
+  """
+  Remove a friendship.
+  """
+  removeFriend(friendId: Int!, userId: Int!): RemoveFriend
+
+  """
+  Get all pending friend requests for a user.
+  """
+  getPendingFriendRequests(userId: Int!): GetPendingFriendRequests
 }
 
 type GiveawayInstance {
@@ -446,8 +540,78 @@ type GiveawayInstance {
   numEntries: Int!
 }
 
+type LoginUser {
+  accessToken: String
+
+  refreshToken: String
+}
+
+type LogoutUser {
+  success: Boolean
+}
+
+type RefreshAccessToken {
+  newAccessToken: String
+}
+
 type CreateReport {
   report: Report
+}
+
+type CapacityReminder {
+  id: ID!
+
+  fcmToken: String!
+
+  gyms: [CapacityReminderGym]!
+
+  capacityThreshold: Int!
+
+  daysOfWeek: [DayOfWeekEnum]!
+
+  isActive: Boolean
+}
+
+"""
+An enumeration.
+"""
+enum CapacityReminderGym {
+  TEAGLEUP
+
+  TEAGLEDOWN
+
+  HELENNEWMAN
+
+  TONIMORRISON
+
+  NOYES
+}
+
+"""
+An enumeration.
+"""
+enum DayOfWeekEnum {
+  MONDAY
+
+  TUESDAY
+
+  WEDNESDAY
+
+  THURSDAY
+
+  FRIDAY
+
+  SATURDAY
+
+  SUNDAY
+}
+
+type RemoveFriend {
+  success: Boolean
+}
+
+type GetPendingFriendRequests {
+  pendingRequests: [Friendship]
 }
 
 """
