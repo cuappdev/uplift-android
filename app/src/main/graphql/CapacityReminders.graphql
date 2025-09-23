@@ -10,7 +10,6 @@ mutation CreateCapacityReminder(
         id
         capacityThreshold
         daysOfWeek
-        fcmToken
         gyms
         isActive
     }
@@ -28,7 +27,6 @@ mutation EditCapacityReminder(
         id
         capacityThreshold
         daysOfWeek
-        fcmToken
         gyms
         isActive
     }
@@ -39,7 +37,6 @@ mutation DeleteCapacityReminder($reminderId: Int!) {
         id
         capacityThreshold
         daysOfWeek
-        fcmToken
         gyms
         isActive
     }

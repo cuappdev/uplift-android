@@ -145,6 +145,7 @@ class CapacityRemindersViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
+            applyMutation { copy(showUnsavedChangesDialog = false) }
             try {
                 val capacityReminderId =
                     dataStoreRepository.getPreference(PreferencesKeys.CAPACITY_REMINDERS_ID)
