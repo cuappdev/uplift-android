@@ -140,7 +140,13 @@ class CapacityRemindersViewModel @Inject constructor(
         }
 
         if (currentState.selectedDays.isEmpty() || currentState.selectedGyms.isEmpty()) {
-            applyMutation { copy(error = "Please select at least one day and one gym") }
+            applyMutation { copy(
+                isLoading = false,
+                hasUnsavedChanges = true,
+                saveSuccess = false,
+                error = "Please select at least one day and one gym"
+            )
+            }
             return
         }
 

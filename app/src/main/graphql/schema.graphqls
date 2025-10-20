@@ -558,7 +558,7 @@ type Mutation {
   """
   Edit capacity reminder.
   """
-  editCapacityReminder(capacityPercent: Int!, daysOfWeek: [String]!, gyms: [String]!, reminderId: Int!): CapacityReminder
+  editCapacityReminder(daysOfWeek: [String]!, newCapacityThreshold: Int!, newGyms: [String]!, reminderId: Int!): CapacityReminder
 
   """
   Delete a capacity reminder
