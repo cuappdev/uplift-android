@@ -45,10 +45,7 @@ class MainActivity : ComponentActivity() {
             val token = task.result
 
             // Log and handle your token
-            //dm6JI2K5QLi6pwezI470V0:APA91bFm-GDnEDSDVi0TrlwrdkcjOVsVVIhJ0l8Vwmp1F_ldCH6pcVhV2-fo6SOcDNA1RJv5WFE57g3yocOjdpToJ39jgAHPgFWVCHLndUaSFw7BljELW1U
             Log.d("FCM", "Current token: $token")
-
-            // You can now save this token to your datastore or send it to your server
         }
     }
 }
