@@ -1,5 +1,6 @@
 package com.cornellappdev.uplift.ui.components.general
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -76,8 +77,9 @@ fun UpliftButton(
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
-        ) {
+            horizontalArrangement = Arrangement.Center,
+            modifier = Modifier.animateContentSize()
+            ) {
             leadingIcon?.let {
                 it()
             }
