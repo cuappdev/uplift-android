@@ -8,7 +8,7 @@ import androidx.compose.ui.graphics.toArgb
 
 val GRAY00 = Color(0xFFEFF1F4)
 val GRAY01 = Color(0xFFE5ECED)
-val GRAY02 = Color(0xFFD1D5DA)
+val GRAY02 = Color(0xFFA5A5A5)
 val GRAY03 = Color(0xFFA1A5A6)
 val GRAY04 = Color(0xFF707070)
 val GRAY05 = Color(0xFF738390)

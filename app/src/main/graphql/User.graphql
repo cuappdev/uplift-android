@@ -39,8 +39,8 @@ mutation SetWorkoutGoals($id: Int!, $workoutGoal: [String!]!) {
     }
 }
 
-mutation LogWorkout($workoutTime: DateTime!, $id: Int!) {
-    logWorkout(workoutTime: $workoutTime, userId: $id) {
+mutation LogWorkout($facilityId: Int!, $workoutTime: DateTime!, $id: Int!) {
+    logWorkout(facilityId: $facilityId, userId: $id, workoutTime: $workoutTime) {
         ...workoutFields
     }
 }

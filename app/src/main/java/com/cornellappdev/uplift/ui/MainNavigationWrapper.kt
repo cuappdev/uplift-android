@@ -33,6 +33,7 @@ import com.cornellappdev.uplift.ui.screens.gyms.GymDetailScreen
 import com.cornellappdev.uplift.ui.screens.gyms.HomeScreen
 import com.cornellappdev.uplift.ui.screens.onboarding.ProfileCreationScreen
 import com.cornellappdev.uplift.ui.screens.onboarding.SignInPromptScreen
+import com.cornellappdev.uplift.ui.screens.reminders.CapacityReminderScreen
 import com.cornellappdev.uplift.ui.screens.profile.ProfileScreen
 import com.cornellappdev.uplift.ui.screens.profile.SettingsScreen
 import com.cornellappdev.uplift.ui.screens.reminders.MainReminderScreen
@@ -215,17 +216,20 @@ fun MainNavigationWrapper(
             composable<UpliftRootRoute.ProfileCreation> {
                 ProfileCreationScreen()
             }
-            composable<UpliftRootRoute.Profile> {
-                ProfileScreen()
+            composable<UpliftRootRoute.CapacityReminders> {
+                CapacityReminderScreen()
+                composable<UpliftRootRoute.Profile> {
+                    ProfileScreen()
+                }
+                composable<UpliftRootRoute.Reminders> {
+                    MainReminderScreen()
+                }
+                composable<UpliftRootRoute.Settings> {
+                    SettingsScreen()
+                }
+                composable<UpliftRootRoute.Sports> {}
+                composable<UpliftRootRoute.Favorites> {}
             }
-            composable<UpliftRootRoute.Reminders> {
-                MainReminderScreen()
-            }
-            composable<UpliftRootRoute.Settings> {
-                SettingsScreen()
-            }
-            composable<UpliftRootRoute.Sports> {}
-            composable<UpliftRootRoute.Favorites> {}
         }
     }
 }
@@ -258,6 +262,9 @@ sealed class UpliftRootRoute {
 
     @Serializable
     data object Profile : UpliftRootRoute()
+
+    @Serializable
+    data object CapacityReminders : UpliftRootRoute()
 
     @Serializable
     data object Reminders : UpliftRootRoute()

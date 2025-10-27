@@ -1,16 +1,19 @@
 package com.cornellappdev.uplift.ui.components.general
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
@@ -46,7 +49,9 @@ fun UpliftButton(
     disabledContainerColor: Color = GRAY02,
     contentColor: Color = PRIMARY_BLACK,
     disabledContentColor: Color = PRIMARY_BLACK,
-    elevation: Dp = 4.dp
+    elevation: Dp = 4.dp,
+    leadingIcon: (@Composable () -> Unit)? = null,
+    modifier: Modifier = Modifier
 ) {
     val enabledAlpha by animateFloatAsState(
         targetValue = if (enabled) 1f else 0.5f,
@@ -60,8 +65,8 @@ fun UpliftButton(
             disabledContentColor = disabledContentColor
         ),
         shape = RoundedCornerShape(38.dp),
-        modifier = Modifier
-            .width(width)
+        modifier = modifier
+            .defaultMinSize(minWidth = width)
             .height(height)
             .alpha(enabledAlpha),
         elevation = ButtonDefaults.buttonElevation(
@@ -70,15 +75,24 @@ fun UpliftButton(
         onClick = { onClick() },
         enabled = enabled,
     ) {
-        Text(
-            text = text,
-            color = PRIMARY_BLACK,
-            fontFamily = montserratFamily,
-            fontSize = fontSize.sp,
-            fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.wrapContentSize()
-        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
+            modifier = Modifier.animateContentSize()
+            ) {
+            leadingIcon?.let {
+                it()
+            }
+            Text(
+                text = text,
+                color = contentColor,
+                fontFamily = montserratFamily,
+                fontSize = fontSize.sp,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center,
+                modifier = modifier.wrapContentSize()
+            )
+        }
     }
 }
 

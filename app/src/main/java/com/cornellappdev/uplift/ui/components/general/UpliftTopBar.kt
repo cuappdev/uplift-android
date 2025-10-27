@@ -121,7 +121,11 @@ fun UpliftTopBarWithBack(
         ),
         title = {
             Text(
-                title, fontFamily = montserratFamily, fontWeight = FontWeight.Bold, fontSize = 16.sp
+                title,
+                fontFamily = montserratFamily,
+                fontWeight = FontWeight.Bold,
+                fontSize = 16.sp,
+                color = PRIMARY_BLACK
 
             )
         },

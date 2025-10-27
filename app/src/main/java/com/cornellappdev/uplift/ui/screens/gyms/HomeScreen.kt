@@ -69,6 +69,7 @@ fun HomeScreen(
                 titleText = titleText,
                 onToggleCapacities = { showCapacities = !showCapacities },
                 reload = homeViewModel::reload,
+                navigateToCapacityReminders = homeViewModel::navigateToCapacityReminders
             )
         }
     }
