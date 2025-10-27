@@ -55,6 +55,16 @@ type Query {
   Get all friends for a user.
   """
   getUserFriends(userId: Int!): [User]
+
+  """
+  Get a specific capacity reminder by its ID.
+  """
+  getCapacityReminderById(id: Int!): CapacityReminder
+
+  """
+  Get all capacity reminders.
+  """
+  getAllCapacityReminders: [CapacityReminder]
 }
 
 type Gym {
@@ -438,6 +448,52 @@ type HourlyAverageCapacity {
   history: [Float]!
 }
 
+type CapacityReminder {
+  id: ID!
+
+  gyms: [CapacityReminderGym]!
+
+  capacityThreshold: Int!
+
+  daysOfWeek: [DayOfWeekEnum]!
+
+  isActive: Boolean
+}
+
+"""
+An enumeration.
+"""
+enum CapacityReminderGym {
+  TEAGLEUP
+
+  TEAGLEDOWN
+
+  HELENNEWMAN
+
+  TONIMORRISON
+
+  NOYES
+}
+
+"""
+An enumeration.
+"""
+enum DayOfWeekEnum {
+  MONDAY
+
+  TUESDAY
+
+  WEDNESDAY
+
+  THURSDAY
+
+  FRIDAY
+
+  SATURDAY
+
+  SUNDAY
+}
+
 type Mutation {
   """
   Creates a new giveaway.
@@ -502,7 +558,7 @@ type Mutation {
   """
   Edit capacity reminder.
   """
-  editCapacityReminder(capacityPercent: Int!, daysOfWeek: [String]!, gyms: [String]!, reminderId: Int!): CapacityReminder
+  editCapacityReminder(daysOfWeek: [String]!, newCapacityThreshold: Int!, newGyms: [String]!, reminderId: Int!): CapacityReminder
 
   """
   Delete a capacity reminder
@@ -556,54 +612,6 @@ type RefreshAccessToken {
 
 type CreateReport {
   report: Report
-}
-
-type CapacityReminder {
-  id: ID!
-
-  fcmToken: String!
-
-  gyms: [CapacityReminderGym]!
-
-  capacityThreshold: Int!
-
-  daysOfWeek: [DayOfWeekEnum]!
-
-  isActive: Boolean
-}
-
-"""
-An enumeration.
-"""
-enum CapacityReminderGym {
-  TEAGLEUP
-
-  TEAGLEDOWN
-
-  HELENNEWMAN
-
-  TONIMORRISON
-
-  NOYES
-}
-
-"""
-An enumeration.
-"""
-enum DayOfWeekEnum {
-  MONDAY
-
-  TUESDAY
-
-  WEDNESDAY
-
-  THURSDAY
-
-  FRIDAY
-
-  SATURDAY
-
-  SUNDAY
 }
 
 type RemoveFriend {

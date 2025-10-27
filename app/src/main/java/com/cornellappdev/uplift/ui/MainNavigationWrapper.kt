@@ -216,19 +216,20 @@ fun MainNavigationWrapper(
             composable<UpliftRootRoute.ProfileCreation> {
                 ProfileCreationScreen()
             }
-            composable<UpliftRootRoute.CapacityReminders>{
+            composable<UpliftRootRoute.CapacityReminders> {
                 CapacityReminderScreen()
-            composable<UpliftRootRoute.Profile> {
-                ProfileScreen()
+                composable<UpliftRootRoute.Profile> {
+                    ProfileScreen()
+                }
+                composable<UpliftRootRoute.Reminders> {
+                    MainReminderScreen()
+                }
+                composable<UpliftRootRoute.Settings> {
+                    SettingsScreen()
+                }
+                composable<UpliftRootRoute.Sports> {}
+                composable<UpliftRootRoute.Favorites> {}
             }
-            composable<UpliftRootRoute.Reminders> {
-                MainReminderScreen()
-            }
-            composable<UpliftRootRoute.Settings> {
-                SettingsScreen()
-            }
-            composable<UpliftRootRoute.Sports> {}
-            composable<UpliftRootRoute.Favorites> {}
         }
     }
 }

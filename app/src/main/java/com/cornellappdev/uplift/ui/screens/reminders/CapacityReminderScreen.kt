@@ -6,20 +6,25 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -30,24 +35,26 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.cornellappdev.uplift.R
 import com.cornellappdev.uplift.ui.components.capacityreminder.CapacityReminderSwitch
 import com.cornellappdev.uplift.ui.components.capacityreminder.CapacityThreshold
-import com.cornellappdev.uplift.ui.components.general.UpliftTopBarWithBack
-import com.cornellappdev.uplift.util.GRAY03
-import com.cornellappdev.uplift.util.montserratFamily
 import com.cornellappdev.uplift.ui.components.capacityreminder.LocationsToRemind
 import com.cornellappdev.uplift.ui.components.capacityreminder.ReminderDays
 import com.cornellappdev.uplift.ui.components.general.NotificationPermissionHandler
 import com.cornellappdev.uplift.ui.components.general.UpliftButton
-import com.cornellappdev.uplift.ui.viewmodels.notifications.NotificationPermissionViewModel
+import com.cornellappdev.uplift.ui.components.general.UpliftTopBarWithBack
 import com.cornellappdev.uplift.ui.viewmodels.reminders.CapacityRemindersViewModel
+import com.cornellappdev.uplift.util.GRAY02
+import com.cornellappdev.uplift.util.GRAY03
 import com.cornellappdev.uplift.util.PRIMARY_BLACK
+import com.cornellappdev.uplift.util.montserratFamily
 
 /**
  * Screen for the capacity reminder feature.
@@ -64,8 +71,9 @@ fun CapacityReminderScreen(
     val initialSelectedGyms = capacityRemindersUiState.selectedGyms
     if (capacityRemindersUiState.showUnsavedChangesDialog) {
         UnsavedChangesDialog(
-            onConfirm = capacityRemindersViewModel::onConfirmDiscard,
-            onDismiss = capacityRemindersViewModel::onDismissDialog
+            onSave = capacityRemindersViewModel::saveChanges,
+            onDismiss = capacityRemindersViewModel::onDismissDialog,
+            onDiscard = capacityRemindersViewModel::onConfirmDiscard
         )
     }
     CapacityRemindersContent(
@@ -88,51 +96,63 @@ fun CapacityReminderScreen(
 
 @Composable
 private fun UnsavedChangesDialog(
-    onConfirm: () -> Unit,
-    onDismiss: () -> Unit
+    onSave: () -> Unit,
+    onDismiss: () -> Unit,
+    onDiscard: () -> Unit
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
         title = {
-            Text(
-                text = "Unsaved Changes",
-                fontFamily = montserratFamily,
-                fontWeight = FontWeight.Bold,
-                fontSize = 20.sp,
-                color = PRIMARY_BLACK
-            )
+            Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.TopCenter){
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_edit),
+                        contentDescription = "Edit symbol",
+                        tint = Color.Unspecified
+                    )
+                    Spacer(Modifier.height(16.dp))
+                }
+
+                IconButton(
+                    onClick = onDismiss,
+                    modifier = Modifier.align(Alignment.TopEnd).offset(y = (-15).dp, x=15.dp)
+                ) {
+                    Icon(
+                    painter = painterResource(id=R.drawable.ic_close),
+                        contentDescription = "Exit symbol",
+                        modifier = Modifier.height(32.dp).width(32.dp)
+                    )
+                }
+            }
         },
         text = {
             Text(
-                text = "Are you sure you want to discard your changes?",
+                text = "Your unsaved changes will be lost. Save before closing?",
                 fontFamily = montserratFamily,
                 fontWeight = FontWeight.Medium,
                 fontSize = 16.sp,
-                color = PRIMARY_BLACK
+                color = PRIMARY_BLACK,
+                textAlign = TextAlign.Center
             )
         },
         containerColor = Color.White,
 
         confirmButton = {
-            TextButton(onClick = onConfirm) {
-                Text(
-                    text = "Confirm",
-                    fontFamily = montserratFamily,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 14.sp,
-                    color = PRIMARY_BLACK
+            Column(modifier = Modifier.fillMaxWidth()) {
+                UpliftButton(
+                    onClick = onSave,
+                    text = "Save",
+                    containerColor = PRIMARY_BLACK,
+                    contentColor = Color.White,
+                    elevation = 0.dp,
+                    modifier = Modifier.fillMaxWidth()
                 )
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text(
-                    text = "Cancel",
-                    fontFamily = montserratFamily,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 14.sp,
-                    color = PRIMARY_BLACK
-                )
+                Spacer(modifier = Modifier.height(8.dp))
+                UpliftButton(onClick = onDiscard,
+                    text = "Continue",
+                    containerColor = Color.White,
+                    elevation = 0.dp,
+                    modifier = Modifier.fillMaxWidth())
             }
         },
     )
@@ -217,10 +237,27 @@ private fun CapacityRemindersContent(
                 text = when {
                     isLoading -> "Saving..."
                     saveSuccess -> "Saved"
-                    else -> "Save"
+                    else -> "Save Changes"
                 },
                 onClick = saveChanges,
                 enabled = !isLoading && !saveSuccess,
+                containerColor = PRIMARY_BLACK,
+                contentColor = Color.White,
+                disabledContainerColor = GRAY03,
+                disabledContentColor = Color.White,
+                elevation = 0.dp,
+                leadingIcon = {
+                    if (saveSuccess) {
+                        Icon(
+                            painter=painterResource(id=R.drawable.ic_check),
+                            contentDescription = "Saved",
+                            tint = Color.White,
+                            modifier = Modifier.size(24.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                    }
+                },
+                modifier = Modifier.wrapContentWidth()
             )
         }
     }
@@ -257,10 +294,27 @@ private fun CapacityRemindersSettings(
             text = when {
                 isLoading -> "Saving..."
                 saveSuccess -> "Saved"
-                else -> "Save"
+                else -> "Save Changes"
             },
             onClick = saveChanges,
             enabled = !isLoading && !saveSuccess,
+            containerColor = PRIMARY_BLACK,
+            contentColor = Color.White,
+            disabledContainerColor = GRAY02,
+            disabledContentColor = Color.White,
+            elevation = 0.dp,
+            leadingIcon = {
+                if (saveSuccess) {
+                    Icon(
+                        painter=painterResource(id=R.drawable.ic_check),
+                        contentDescription = "Saved",
+                        tint = Color.White,
+                        modifier = Modifier.size(24.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                }
+            },
+            modifier = Modifier.wrapContentWidth()
         )
     }
 }

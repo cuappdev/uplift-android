@@ -10,25 +10,23 @@ mutation CreateCapacityReminder(
         id
         capacityThreshold
         daysOfWeek
-        fcmToken
         gyms
         isActive
     }
 }
 
 mutation EditCapacityReminder(
-    $reminderId: Int!, $capacityPercent: Int!, $daysOfWeek: [String]!, $gyms: [String]!
-){
+    $reminderId: Int!, $newCapacityThreshold: Int!, $daysOfWeek: [String]!, $newGyms: [String]!
+) {
     editCapacityReminder(
-        reminderId: $reminderId,
-        capacityPercent: $capacityPercent,
-        daysOfWeek: $daysOfWeek,
-        gyms: $gyms
+        reminderId: $reminderId
+        newCapacityThreshold: $newCapacityThreshold
+        daysOfWeek: $daysOfWeek
+        newGyms: $newGyms
     ) {
         id
         capacityThreshold
         daysOfWeek
-        fcmToken
         gyms
         isActive
     }
@@ -39,7 +37,6 @@ mutation DeleteCapacityReminder($reminderId: Int!) {
         id
         capacityThreshold
         daysOfWeek
-        fcmToken
         gyms
         isActive
     }
