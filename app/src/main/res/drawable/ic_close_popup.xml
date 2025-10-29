@@ -1,4 +1,5 @@
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
+<<<<<<< HEAD
     android:width="32dp"
     android:height="32dp"
     android:viewportWidth="32"
@@ -15,4 +16,17 @@
       android:fillColor="#00000000"
       android:strokeColor="#222222"
       android:strokeLineCap="round"/>
+=======
+    android:width="19dp"
+    android:height="20dp"
+    android:viewportWidth="19"
+    android:viewportHeight="20">
+  <group>
+    <clip-path
+        android:pathData="M0,0.5h19v19h-19z"/>
+    <path
+        android:pathData="M3.4,16L2,14.6L7.6,9L2,3.4L3.4,2L9,7.6L14.6,2L16,3.4L10.4,9L16,14.6L14.6,16L9,10.4L3.4,16Z"
+        android:fillColor="#1C1B1F"/>
+  </group>
+>>>>>>> e2f11cf (Implemented check-in pop up UI)
 </vector>
