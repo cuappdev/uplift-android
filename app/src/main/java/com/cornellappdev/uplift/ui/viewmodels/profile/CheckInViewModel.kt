@@ -95,18 +95,28 @@ class CheckInViewModel @Inject constructor(
         onClose()
     }
 
+    /**
+     * Note: Temporarily skips over failed backend log workout call to keep functionality while auth and
+     * sign in are not working.
+     */
     fun onCheckIn() = viewModelScope.launch {
+        val currentGymId = uiStateFlow.value.gymId
+        val gymIdInt = currentGymId?.toIntOrNull()
+
+        if (gymIdInt == null) {
+            Log.w("CheckInVM", "Invalid or missing gym ID: $currentGymId")
+            return@launch
+        }
         try {
             hasCheckedInToday = true
             checkInRepository.markCheckInToday()
             applyMutation {
                 copy(
                     showPopUp = true,
-                    mode = CheckInMode.Complete,
-                    showConfetti = true
+                    mode = CheckInMode.Complete
                 )
             }
-            val successful = checkInRepository.logWorkoutFromCheckIn()
+            val successful = checkInRepository.logWorkoutFromCheckIn(gymIdInt)
             if (successful) {
                 Log.d("CheckInVM", "Workout logged successfully.")
             } else {

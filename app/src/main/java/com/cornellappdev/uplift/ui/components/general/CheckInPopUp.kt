@@ -135,7 +135,7 @@ fun CheckInPopUp(
                         }
 
                         Image(
-                            painter = painterResource(id = R.drawable.ic_close_popup),
+                            painter = painterResource(id = R.drawable.ic_close),
                             contentDescription = "close pop up",
                             contentScale = ContentScale.None,
                             modifier = Modifier.clickable { onDismiss() }
@@ -162,7 +162,7 @@ fun CheckInPopUp(
                         )
                     )
                     Image(
-                        painter = painterResource(id = R.drawable.ic_close_popup),
+                        painter = painterResource(id = R.drawable.ic_close),
                         contentDescription = "close pop up",
                         contentScale = ContentScale.None,
                         modifier = Modifier.clickable { onClosePopUp() }
@@ -178,5 +178,5 @@ fun CheckInPopUp(
 fun CheckInPopUpPreview(
 ){
     CheckInPopUp("Helen Newman",
-   "1:00 PM", {}, {}, {}, CheckInMode.Complete)
+   "1:00 PM", {}, {}, {}, CheckInMode.Prompt)
 }
