@@ -1,5 +1,9 @@
 package com.cornellappdev.uplift.ui
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
@@ -9,8 +13,10 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -24,6 +30,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.cornellappdev.uplift.ui.components.general.CheckInPopUp
 import com.cornellappdev.uplift.ui.nav.BottomNavScreens
 import com.cornellappdev.uplift.ui.nav.popBackClass
 import com.cornellappdev.uplift.ui.nav.popBackGym
@@ -42,6 +49,8 @@ import com.cornellappdev.uplift.ui.screens.report.ReportSubmittedScreen
 import com.cornellappdev.uplift.ui.viewmodels.classes.ClassDetailViewModel
 import com.cornellappdev.uplift.ui.viewmodels.gyms.GymDetailViewModel
 import com.cornellappdev.uplift.ui.viewmodels.nav.RootNavigationViewModel
+import com.cornellappdev.uplift.ui.viewmodels.profile.CheckInMode
+import com.cornellappdev.uplift.ui.viewmodels.profile.CheckInViewModel
 import com.cornellappdev.uplift.util.PRIMARY_BLACK
 import com.cornellappdev.uplift.util.PRIMARY_YELLOW
 import com.cornellappdev.uplift.util.montserratFamily
@@ -62,13 +71,17 @@ fun MainNavigationWrapper(
     gymDetailViewModel: GymDetailViewModel = hiltViewModel(),
     classDetailViewModel: ClassDetailViewModel = hiltViewModel(),
     rootNavigationViewModel: RootNavigationViewModel = hiltViewModel(),
+
 ) {
 
+    val checkInViewModel: CheckInViewModel = hiltViewModel()
     val rootNavigationUiState = rootNavigationViewModel.collectUiStateValue()
     val startDestination = rootNavigationUiState.startDestination
 
     val navController = rememberNavController()
     val systemUiController: SystemUiController = rememberSystemUiController()
+
+    val checkInUiState = checkInViewModel.collectUiStateValue()
 
     val yourShimmerTheme = defaultShimmerTheme.copy(
         shaderColors = listOf(
@@ -107,16 +120,19 @@ fun MainNavigationWrapper(
     }
 
     @Composable
-    fun isRoute(route: UpliftRootRoute): Boolean {
+    fun isMainScreen(): Boolean {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
-        val currentDestination = navBackStackEntry?.destination
-        return currentDestination?.route == route::class.qualifiedName
+        val currentRoute = navBackStackEntry?.destination?.route
+        val mainRoutes = setOf(
+            UpliftRootRoute.Home::class.qualifiedName,
+            UpliftRootRoute.Classes::class.qualifiedName,
+            UpliftRootRoute.Profile::class.qualifiedName,
+        )
+        return currentRoute in mainRoutes
     }
 
     Scaffold(bottomBar = {
-        if (!isRoute(UpliftRootRoute.Onboarding)
-            && !isRoute(UpliftRootRoute.ProfileCreation)
-        ) {
+        if (isMainScreen()) {
             BottomNavigation(
                 backgroundColor = PRIMARY_YELLOW, contentColor = PRIMARY_BLACK, elevation = 1.dp
             ) {
@@ -164,60 +180,65 @@ fun MainNavigationWrapper(
                 }
             }
         }
-    }) {
+    }
+    ) {
         // TODO 1: Change back to home if releasing features before google sign in is finished.
         // TODO 2: Change to Onboarding after google sign in is finished
-        NavHost(
-            navController = navController,
-            startDestination = startDestination,
-            modifier = Modifier.padding(it)
+        Box(
+            modifier = Modifier.fillMaxSize()
         ) {
-            composable<UpliftRootRoute.Home> {
-                HomeScreen(
-                    navController = navController,
-                    openGym = gymDetailViewModel::openGym,
-                    loadingShimmer = shimmer
-                )
-            }
-            composable<UpliftRootRoute.GymDetail> {
-                GymDetailScreen(
-                    gymDetailViewModel = gymDetailViewModel,
-                ) {
-                    navController.popBackGym(gymDetailViewModel::popBackStack)
+            NavHost(
+                navController = navController,
+                startDestination = startDestination,
+                modifier = Modifier.padding(it)
+            ) {
+                composable<UpliftRootRoute.Home> {
+                    HomeScreen(
+                        navController = navController,
+                        openGym = gymDetailViewModel::openGym,
+                        loadingShimmer = shimmer
+                    )
                 }
-            }
-            composable<UpliftRootRoute.ClassDetail> {
-                ClassDetailScreen(
-                    classDetailViewModel = classDetailViewModel, navController = navController
-                ) {
-                    navController.popBackClass(classDetailViewModel::popBackStack)
+                composable<UpliftRootRoute.GymDetail> {
+                    GymDetailScreen(
+                        gymDetailViewModel = gymDetailViewModel,
+                    ) {
+                        navController.popBackGym(gymDetailViewModel::popBackStack)
+                    }
                 }
-            }
-            composable<UpliftRootRoute.Classes> {
-                ClassScreen(
-                    openClass = classDetailViewModel::openClass,
-                    navController = navController,
-                )
-            }
-            composable<UpliftRootRoute.ReportIssue> {
-                ReportIssueScreen(
-                    onBack = { navController.popBackStack() }
-                )
-            }
-            composable<UpliftRootRoute.ReportSuccess> {
-                ReportSubmittedScreen(
-                    navigateToReport = { navController.navigate(UpliftRootRoute.ReportIssue) },
-                    navigateToHome = { navController.navigate(UpliftRootRoute.Home) }
-                )
-            }
-            composable<UpliftRootRoute.Onboarding> {
-                SignInPromptScreen()
-            }
-            composable<UpliftRootRoute.ProfileCreation> {
-                ProfileCreationScreen()
-            }
-            composable<UpliftRootRoute.CapacityReminders> {
-                CapacityReminderScreen()
+                composable<UpliftRootRoute.ClassDetail> {
+                    ClassDetailScreen(
+                        classDetailViewModel = classDetailViewModel, navController = navController
+                    ) {
+                        navController.popBackClass(classDetailViewModel::popBackStack)
+                    }
+                }
+                composable<UpliftRootRoute.Classes> {
+                    ClassScreen(
+                        openClass = classDetailViewModel::openClass,
+                        navController = navController,
+                    )
+                }
+                composable<UpliftRootRoute.ReportIssue> {
+                    ReportIssueScreen(
+                        onBack = { navController.popBackStack() }
+                    )
+                }
+                composable<UpliftRootRoute.ReportSuccess> {
+                    ReportSubmittedScreen(
+                        navigateToReport = { navController.navigate(UpliftRootRoute.ReportIssue) },
+                        navigateToHome = { navController.navigate(UpliftRootRoute.Home) }
+                    )
+                }
+                composable<UpliftRootRoute.Onboarding> {
+                    SignInPromptScreen()
+                }
+                composable<UpliftRootRoute.ProfileCreation> {
+                    ProfileCreationScreen()
+                }
+                composable<UpliftRootRoute.CapacityReminders> {
+                    CapacityReminderScreen()
+                }
                 composable<UpliftRootRoute.Profile> {
                     ProfileScreen()
                 }
@@ -230,6 +251,28 @@ fun MainNavigationWrapper(
                 composable<UpliftRootRoute.Sports> {}
                 composable<UpliftRootRoute.Favorites> {}
             }
+
+            AnimatedVisibility(
+                visible = checkInUiState.showPopUp && isMainScreen(),
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .fillMaxWidth()
+                    .padding(
+                        start = 10.dp,
+                        end = 9.dp,
+                        bottom = it.calculateBottomPadding() + 13.dp
+                    )
+            ){
+                CheckInPopUp(
+                    gymName = checkInUiState.gymName,
+                    currentTimeText = checkInUiState.timeText,
+                    onDismiss = { checkInViewModel.onDismiss() },
+                    onCheckIn = { checkInViewModel.onCheckIn() },
+                    onClosePopUp = { checkInViewModel.onClose() },
+                    mode = checkInUiState.mode,
+                )
+            }
+
         }
     }
 }
