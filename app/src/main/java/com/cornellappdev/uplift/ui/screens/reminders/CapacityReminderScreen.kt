@@ -2,6 +2,7 @@ package com.cornellappdev.uplift.ui.screens.reminders
 
 import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
@@ -17,8 +18,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
@@ -43,6 +44,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.cornellappdev.uplift.R
+import com.cornellappdev.uplift.ui.components.capacityreminder.CapacityReminderLoading
 import com.cornellappdev.uplift.ui.components.capacityreminder.CapacityReminderSwitch
 import com.cornellappdev.uplift.ui.components.capacityreminder.CapacityThreshold
 import com.cornellappdev.uplift.ui.components.capacityreminder.LocationsToRemind
@@ -115,12 +117,16 @@ private fun UnsavedChangesDialog(
 
                 IconButton(
                     onClick = onDismiss,
-                    modifier = Modifier.align(Alignment.TopEnd).offset(y = (-15).dp, x=15.dp)
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .offset(y = (-15).dp, x = 15.dp)
                 ) {
                     Icon(
                     painter = painterResource(id=R.drawable.ic_close),
                         contentDescription = "Exit symbol",
-                        modifier = Modifier.height(32.dp).width(32.dp)
+                        modifier = Modifier
+                            .height(32.dp)
+                            .width(32.dp)
                     )
                 }
             }
@@ -184,81 +190,91 @@ private fun CapacityRemindersContent(
             )
         }
     }
-    Scaffold(
-        topBar = {
-            UpliftTopBarWithBack(
-                title = "Capacity Reminder",
-                onBackClick = onBack
-            )
-        },
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }) { padding ->
-        Column(
-            modifier = Modifier
-                .background(Color.White)
-                .fillMaxSize()
-                .padding(
-                    top = padding.calculateTopPadding() + 24.dp, start = 16.dp, end = 16.dp
-                ), verticalArrangement = Arrangement.spacedBy(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
+    Box(modifier = Modifier.fillMaxSize()){
+        Scaffold(
+            topBar = {
+                UpliftTopBarWithBack(
+                    title = "Capacity Reminder",
+                    onBackClick = onBack
+                )
+            },
+            snackbarHost = { SnackbarHost(hostState = snackbarHostState) }) { padding ->
             Column(
-                modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
+                modifier = Modifier
+                    .background(Color.White)
+                    .fillMaxSize()
+                    .padding(
+                        top = padding.calculateTopPadding() + 24.dp, start = 16.dp, end = 16.dp
+                    ), verticalArrangement = Arrangement.spacedBy(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                CapacityReminderSwitch(
-                    checked = switchChecked,
-                    onCheckedChange = setToggle
-                )
-                Text(
-                    text = "Uplift will send you a notification when gyms dip below the set capacity",
-                    fontFamily = montserratFamily,
-                    fontWeight = FontWeight.Normal,
-                    fontSize = 12.sp,
-                    color = GRAY03
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                ) {
+                    CapacityReminderSwitch(
+                        checked = switchChecked,
+                        onCheckedChange = setToggle
+                    )
+                    Text(
+                        text = "Uplift will send you a notification when gyms dip below the set capacity",
+                        fontFamily = montserratFamily,
+                        fontWeight = FontWeight.Normal,
+                        fontSize = 12.sp,
+                        color = GRAY03
+                    )
+                }
+                AnimatedVisibility(
+                    visible = switchChecked, enter = fadeIn(), exit = fadeOut()
+                ) {
+                    CapacityRemindersSettings(
+                        initialSelectedDays,
+                        setSelectedDays,
+                        capacityThreshold,
+                        setCapacityThreshold,
+                        initialSelectedGyms,
+                        setSelectedGyms,
+                        saveChanges,
+                        isLoading,
+                        saveSuccess
+                    )
+                }
+                Spacer(modifier = Modifier.height(32.dp))
+                UpliftButton(
+                    text = when {
+                        isLoading -> "Saving..."
+                        saveSuccess -> "Saved"
+                        else -> "Save Changes"
+                    },
+                    onClick = saveChanges,
+                    enabled = !isLoading && !saveSuccess,
+                    containerColor = PRIMARY_BLACK,
+                    contentColor = Color.White,
+                    disabledContainerColor = GRAY03,
+                    disabledContentColor = Color.White,
+                    elevation = 0.dp,
+                    leadingIcon = {
+                        if (saveSuccess) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_check),
+                                contentDescription = "Saved",
+                                tint = Color.White,
+                                modifier = Modifier.size(24.dp)
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                        }
+                    },
+                    modifier = Modifier.wrapContentWidth()
                 )
             }
-            AnimatedVisibility(
-                visible = switchChecked, enter = fadeIn(), exit = fadeOut()
-            ) {
-                CapacityRemindersSettings(
-                    initialSelectedDays,
-                    setSelectedDays,
-                    capacityThreshold,
-                    setCapacityThreshold,
-                    initialSelectedGyms,
-                    setSelectedGyms,
-                    saveChanges,
-                    isLoading,
-                    saveSuccess
-                )
-            }
-            Spacer(modifier = Modifier.height(32.dp))
-            UpliftButton(
-                text = when {
-                    isLoading -> "Saving..."
-                    saveSuccess -> "Saved"
-                    else -> "Save Changes"
-                },
-                onClick = saveChanges,
-                enabled = !isLoading && !saveSuccess,
-                containerColor = PRIMARY_BLACK,
-                contentColor = Color.White,
-                disabledContainerColor = GRAY03,
-                disabledContentColor = Color.White,
-                elevation = 0.dp,
-                leadingIcon = {
-                    if (saveSuccess) {
-                        Icon(
-                            painter=painterResource(id=R.drawable.ic_check),
-                            contentDescription = "Saved",
-                            tint = Color.White,
-                            modifier = Modifier.size(24.dp)
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                    }
-                },
-                modifier = Modifier.wrapContentWidth()
-            )
+        }
+        AnimatedVisibility(
+            visible = isLoading,
+            enter = fadeIn(animationSpec = tween(300)),
+            exit = fadeOut(animationSpec = tween(300)),
+            modifier = Modifier.align(Alignment.Center)
+        ) {
+            CapacityReminderLoading()
         }
     }
 }
