@@ -15,6 +15,7 @@ import com.cornellappdev.uplift.util.getSystemTime
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -104,6 +105,14 @@ class HomeViewModel @Inject constructor(
     }
 
     fun navigateToCapacityReminders() {
+        viewModelScope.launch {
+            if (!datastoreRepository.hasShownCapacityTutorial().first()) {
+                datastoreRepository.storePreference(
+                    key = PreferencesKeys.CAPACITY_REMINDERS_TUTORIAL_SHOWN,
+                    value = true
+                )
+            }
+        }
         rootNavigationRepository.navigate(UpliftRootRoute.CapacityReminders)
     }
 
