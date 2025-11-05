@@ -50,7 +50,7 @@ fun CapacityReminderTutorial(
     LaunchedEffect(Unit) {
         offsetY.animateTo(
             targetValue = 0f,
-            animationSpec = tween(durationMillis = 1000)
+            animationSpec = tween(durationMillis = 1500)
         )
     }
     Column(
@@ -58,9 +58,11 @@ fun CapacityReminderTutorial(
             .width(300.dp)
             .clip(RoundedCornerShape(20.dp))
     ) {
-        Box(modifier = Modifier
-            .height(175.dp)
-            .clipToBounds()) {
+        Box(
+            modifier = Modifier
+                .height(175.dp)
+                .clipToBounds()
+        ) {
             Box(
                 modifier = Modifier
                     .matchParentSize()
@@ -161,7 +163,8 @@ fun CapacityReminderTutorial(
                 containerColor = PRIMARY_BLACK,
                 contentColor = Color.White,
                 modifier = Modifier.fillMaxWidth(),
-                onClick = onAccept)
+                onClick = onAccept
+            )
             Spacer(modifier = Modifier.height(8.dp))
             UpliftButton(
                 text = "Maybe later",
@@ -169,7 +172,8 @@ fun CapacityReminderTutorial(
                 contentColor = GRAY03,
                 modifier = Modifier.fillMaxWidth(),
                 elevation = 0.dp,
-                onClick = onDismiss)
+                onClick = onDismiss
+            )
         }
     }
 }
@@ -177,5 +181,5 @@ fun CapacityReminderTutorial(
 @Preview
 @Composable
 fun CapacityReminderTutorialPreview() {
-    CapacityReminderTutorial({},{})
+    CapacityReminderTutorial({}, {})
 }

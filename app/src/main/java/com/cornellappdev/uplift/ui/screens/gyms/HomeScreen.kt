@@ -1,6 +1,5 @@
 package com.cornellappdev.uplift.ui.screens.gyms
 
-import android.annotation.SuppressLint
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -33,7 +32,6 @@ import kotlinx.coroutines.delay
 /**
  * The home page of Uplift.
  */
-@SuppressLint("UnusedCrossfadeTargetStateParameter")
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun HomeScreen(
@@ -68,7 +66,7 @@ fun HomeScreen(
         LocationRepository.instantiate(context)
     }
 
-    Box(modifier = Modifier.fillMaxSize()){
+    Box(modifier = Modifier.fillMaxSize()) {
         Crossfade(targetState = gymsState, label = "Main") {
             when {
                 gymsLoading -> MainLoading(loadingShimmer)
@@ -86,14 +84,17 @@ fun HomeScreen(
             }
         }
 
-        if(showTutorial) {
-            Box(modifier = Modifier.fillMaxSize().background(GRAY04.copy(alpha=0.5f))){
-                Box(modifier = Modifier.align(Alignment.Center)) {
-                    CapacityReminderTutorial(
-                        onAccept = { homeViewModel.navigateToCapacityReminders() },
-                        onDismiss = { homeViewModel.onTutorialDismissed() },
-                    )
-                }
+        if (showTutorial) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(GRAY04.copy(alpha = 0.5f)),
+                contentAlignment = Alignment.Center
+            ) {
+                CapacityReminderTutorial(
+                    onAccept = { homeViewModel.navigateToCapacityReminders() },
+                    onDismiss = { homeViewModel.onTutorialDismissed() },
+                )
             }
         }
     }

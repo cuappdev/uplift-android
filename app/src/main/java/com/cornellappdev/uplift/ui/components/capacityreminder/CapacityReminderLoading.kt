@@ -53,7 +53,7 @@ fun CapacityReminderLoading() {
 
     val rotationAngle by infiniteTransition.animateFloat(
         initialValue = 0f,
-        targetValue = 360f,animationSpec = infiniteRepeatable(
+        targetValue = 360f, animationSpec = infiniteRepeatable(
             animation = tween(durationMillis = 2000, easing = LinearEasing),
             repeatMode = RepeatMode.Restart
         ),
@@ -62,8 +62,8 @@ fun CapacityReminderLoading() {
 
     val logoYOffset by infiniteTransition.animateValue(
         initialValue = 0.dp,
-        targetValue = (-20).dp,animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 750, easing= EaseInOut),
+        targetValue = (-20).dp, animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 750, easing = EaseInOut),
             repeatMode = RepeatMode.Reverse
         ),
         label = "logoYOffset",
@@ -72,7 +72,7 @@ fun CapacityReminderLoading() {
 
     val componentSize by infiniteTransition.animateFloat(
         initialValue = 1f,
-        targetValue = 0.97f,animationSpec = infiniteRepeatable(
+        targetValue = 0.97f, animationSpec = infiniteRepeatable(
             animation = tween(durationMillis = 750, easing = EaseInOut),
             repeatMode = RepeatMode.Reverse
         ),
@@ -81,8 +81,8 @@ fun CapacityReminderLoading() {
 
     val textOpacity by infiniteTransition.animateFloat(
         initialValue = 1f,
-        targetValue = 0.5f,animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 750,easing = EaseInOut),
+        targetValue = 0.5f, animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 750, easing = EaseInOut),
             repeatMode = RepeatMode.Reverse
         ),
         label = "textOpacity"
@@ -95,17 +95,18 @@ fun CapacityReminderLoading() {
         animationSpec = infiniteRepeatable(
             animation = tween(
                 durationMillis = 1500,
-                easing = { fraction ->
-                    val step = 0.25f
-                    (fraction / step).toInt() * step
-                }
+                easing = LinearEasing
             ),
             repeatMode = RepeatMode.Restart
         ),
         label = "dotCount"
     )
 
-    Box(modifier = Modifier.fillMaxSize().background(Color(0xFFD9D9D9).copy(alpha=0.5f))){
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFFD9D9D9).copy(alpha = 0.5f))
+    ) {
         Box(
             modifier = Modifier
                 .height((270 * componentSize).toInt().dp)
