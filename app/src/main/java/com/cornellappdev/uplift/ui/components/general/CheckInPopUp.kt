@@ -26,17 +26,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.cornellappdev.uplift.R
+import com.cornellappdev.uplift.ui.theme.AppColors
+import com.cornellappdev.uplift.ui.theme.AppTextStyles
 import com.cornellappdev.uplift.ui.viewmodels.profile.CheckInMode
 
 
@@ -53,12 +49,12 @@ fun CheckInPopUp(
         modifier = Modifier
             .shadow(
                 elevation = 40.dp,
-                spotColor = Color(0xFFE5ECED),
-                ambientColor = Color(0xFFE5ECED)
+                spotColor = AppColors.Gray01,
+                ambientColor = AppColors.Gray01
             )
             .fillMaxWidth()
             .height(62.dp)
-            .background(color = Color(0xFFFFFFFF), shape = RoundedCornerShape(size = 12.dp))
+            .background(color = AppColors.White, shape = RoundedCornerShape(size = 12.dp))
             .padding(12.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
@@ -81,27 +77,14 @@ fun CheckInPopUp(
                     ) {
                         Text(
                             text = "We see you're near a gym...",
-                            style = TextStyle(
-                                fontSize = 14.sp,
-                                lineHeight = 16.sp,
-                                fontFamily = FontFamily(Font(R.font.montserrat_bold)),
-                                fontWeight = FontWeight(600),
-                                color = Color(0xFF222222),
-
-                                )
+                            style = AppTextStyles.BodySemibold,
+                            color = AppColors.Black
                         )
                         Spacer(Modifier.height(4.dp))
                         Text(
                             text = "$gymName at $currentTimeText",
-                            style = TextStyle(
-                                fontSize = 12.sp,
-                                lineHeight = 16.sp,
-                                fontFamily = FontFamily(Font(R.font.montserrat_regular)),
-                                fontWeight = FontWeight(400),
-                                color = Color(0xFF707070),
-
-                                )
-
+                            style = AppTextStyles.LabelNormal,
+                            color = AppColors.Black
                         )
                     }
                     Row(
@@ -116,21 +99,16 @@ fun CheckInPopUp(
                                 .height(34.dp),
                             shape = RoundedCornerShape(size = 11.05263.dp),
                             colors = ButtonDefaults.buttonColors(
-                                backgroundColor = Color(0xFFFCF5A4),
-                                contentColor = Color.Black
+                                backgroundColor = AppColors.LightYellow,
+                                contentColor = AppColors.Black
                             ),
                             contentPadding = PaddingValues(horizontal = 12.dp, vertical = 10.dp),
                             onClick = onCheckIn
                         ) {
                             Text(
                                 text = "Check In?",
-                                style = TextStyle(
-                                    fontSize = 14.sp,
-                                    lineHeight = 16.sp,
-                                    fontFamily = FontFamily(Font(R.font.montserrat_regular)),
-                                    fontWeight = FontWeight(500),
-                                    color = Color(0xFF000000),
-                                )
+                                style = AppTextStyles.LabelBig,
+                                color = AppColors.Black
                             )
                         }
 
@@ -153,13 +131,8 @@ fun CheckInPopUp(
                 ) {
                     Text(
                         text = "You’re all set. Enjoy your workout!",
-                        style = TextStyle(
-                            fontSize = 14.sp,
-                            lineHeight = 16.sp,
-                            fontFamily = FontFamily(Font(R.font.montserrat_bold)),
-                            fontWeight = FontWeight(600),
-                            color = Color(0xFF222222),
-                        )
+                        style = AppTextStyles.BodySemibold,
+                        color = AppColors.Black
                     )
                     Image(
                         painter = painterResource(id = R.drawable.ic_close),
@@ -175,8 +148,8 @@ fun CheckInPopUp(
 
 @Preview
 @Composable
-fun CheckInPopUpPreview(
+private fun CheckInPopUpPreview(
 ){
     CheckInPopUp("Helen Newman",
-   "1:00 PM", {}, {}, {}, CheckInMode.Prompt)
+   "1:00 PM", {}, {}, {}, CheckInMode.Complete)
 }

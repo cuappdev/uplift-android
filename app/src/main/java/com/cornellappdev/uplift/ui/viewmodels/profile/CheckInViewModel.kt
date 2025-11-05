@@ -5,7 +5,6 @@ import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.cornellappdev.uplift.data.repositories.CheckInRepository
 import com.cornellappdev.uplift.data.repositories.LocationRepository
-import com.cornellappdev.uplift.data.repositories.UserInfoRepository
 import com.cornellappdev.uplift.ui.viewmodels.UpliftViewModel
 import com.cornellappdev.uplift.util.isOpen
 import com.cornellappdev.uplift.util.todayIndex
@@ -15,8 +14,23 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+/**
+ * UI mode for the Check-In pop up.
+ * - [Prompt]: user is near an open gym and can choose to check in.
+ * -[Complete]: a check in was just logged and the confirmation/congratulation state is shown.
+ */
 enum class CheckInMode {Prompt, Complete}
 
+/**
+ * UI state backing the Check-In pop-up
+ *
+ * @param showPopUp whether the pop-up should be visible on screen
+ * @param mode the current mode of the pop-up
+ * @param gymId the identifier of the nearest open gym (null if unknown or not applicable)
+ * @param gymName the display name of the nearest/open gym
+ * @param timeText a pre-formatted time string to display
+ * @param showConfetti whether a confetti animation should be shown after a successful check-in
+ */
 data class CheckInUiState(
     val showPopUp: Boolean = false,
     val mode: CheckInMode = CheckInMode.Prompt,
@@ -26,14 +40,14 @@ data class CheckInUiState(
     val showConfetti: Boolean = false
 )
 
+/** A [CheckInViewModel] manages state and actions for the Check-In pop-up on main screens. */
 @HiltViewModel
 class CheckInViewModel @Inject constructor(
     private val checkInRepository: CheckInRepository,
 ) : UpliftViewModel<CheckInUiState>(CheckInUiState()) {
 
     private var locationJob: Job? = null
-    private var hasCheckedInToday = false
-    val day: Int = todayIndex()
+    private val day: Int = todayIndex()
 
     init {
         viewModelScope.launch {
@@ -46,7 +60,7 @@ class CheckInViewModel @Inject constructor(
                     val inComplete = currentMode == CheckInMode.Complete
 
                     when {
-                         allowed && gym != null && !hasCheckedInToday && isOpen(gym.hours[day]) -> applyMutation {
+                         allowed && gym != null && isOpen(gym.hours[day]) -> applyMutation {
                             copy(
                                 showPopUp = true,
                                 mode = if (inComplete) CheckInMode.Complete else CheckInMode.Prompt,
@@ -62,11 +76,16 @@ class CheckInViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Calls [LocationRepository.startLocationUpdates] to begin location updates and launches a
+     * ViewModel scoped collector that feeds new non-null locations to the proximity evaluation flow.
+     */
     fun startLocationUpdates(context: Context) {
         if (locationJob?.isActive == true) return
+        LocationRepository.startLocationUpdates(context)
         locationJob = viewModelScope.launch {
             try {
-                LocationRepository.locationFlow(context).collect{ location ->
+                LocationRepository.currentLocationFlow.collect{ location ->
                    try {
                        if (location != null) {
                            checkInRepository.evaluateProximity(location)
@@ -81,11 +100,20 @@ class CheckInViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Cancels location collection job and calls [LocationRepository.stopLocationUpdates] to stop
+     * location updates.
+     */
     fun stopLocationUpdates() {
         locationJob?.cancel()
         locationJob = null
+        LocationRepository.stopLocationUpdates()
     }
 
+    /**
+     * Records a temporary cooldown window by calling [checkInRepository] to mark the user's dismissal
+     * of the pop up.
+     */
     fun onDismiss() = viewModelScope.launch {
         try {
             checkInRepository.markCheckInDismissedFor()
@@ -96,6 +124,10 @@ class CheckInViewModel @Inject constructor(
     }
 
     /**
+     * Marks the user as checked in for the day, triggering a cooldown til the end of day and a
+     * logworkout mutation through [checkInRepository]. On a successful call, transitions UI into
+     * [CheckInMode.Complete].
+     *
      * Note: Temporarily skips over failed backend log workout call to keep functionality while auth and
      * sign in are not working.
      */
@@ -108,7 +140,6 @@ class CheckInViewModel @Inject constructor(
             return@launch
         }
         try {
-            hasCheckedInToday = true
             checkInRepository.markCheckInToday()
             applyMutation {
                 copy(
@@ -116,17 +147,15 @@ class CheckInViewModel @Inject constructor(
                     mode = CheckInMode.Complete
                 )
             }
-            val successful = checkInRepository.logWorkoutFromCheckIn(gymIdInt)
-            if (successful) {
-                Log.d("CheckInVM", "Workout logged successfully.")
-            } else {
-                Log.d("CheckInVM", "Workout logging skipped (no user ID).")
-            }
+            checkInRepository.logWorkoutFromCheckIn(gymIdInt)
         } catch (e: Exception) {
-            Log.e("CheckInViewModel", "Error logging workout", e)
+            Log.e("CheckInViewModel", "Error checking in", e)
         }
     }
 
+    /**
+     * Closes the pop-up immediately by not displaying the pop-up.
+     */
     fun onClose() {
         applyMutation { copy(showPopUp = false) }
     }
