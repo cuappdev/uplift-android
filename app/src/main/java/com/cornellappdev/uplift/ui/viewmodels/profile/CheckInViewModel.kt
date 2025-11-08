@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+private const val tag = "CheckInVM"
 /**
  * UI mode for the Check-In pop up.
  * - [Prompt]: user is near an open gym and can choose to check in.
@@ -91,11 +92,11 @@ class CheckInViewModel @Inject constructor(
                            checkInRepository.evaluateProximity(location)
                        }
                    } catch (e: Exception) {
-                       Log.e("CheckInViewModel", "Error evaluating proximity from location update", e)
+                       Log.e(tag, "Error evaluating proximity from location update", e)
                    }
                 }
             } catch (e: Exception) {
-                Log.e("CheckInViewModel", "Error collecting location flow", e)
+                Log.e(tag, "Error collecting location flow", e)
             }
         }
     }
@@ -118,7 +119,7 @@ class CheckInViewModel @Inject constructor(
         try {
             checkInRepository.markCheckInDismissedFor()
         } catch (e: Exception) {
-            Log.e("CheckInViewModel", "Error dismissing check-in", e)
+            Log.e(tag, "Error dismissing check-in", e)
         }
         onClose()
     }
@@ -136,7 +137,7 @@ class CheckInViewModel @Inject constructor(
         val gymIdInt = currentGymId?.toIntOrNull()
 
         if (gymIdInt == null) {
-            Log.w("CheckInVM", "Invalid or missing gym ID: $currentGymId")
+            Log.w(tag, "Invalid or missing gym ID: $currentGymId")
             return@launch
         }
         try {
@@ -149,7 +150,7 @@ class CheckInViewModel @Inject constructor(
             }
             checkInRepository.logWorkoutFromCheckIn(gymIdInt)
         } catch (e: Exception) {
-            Log.e("CheckInViewModel", "Error checking in", e)
+            Log.e(tag, "Error checking in", e)
         }
     }
 
