@@ -34,7 +34,13 @@ android {
 
     buildTypes {
         create("onboarding") {
+            buildConfigField("String", "BACKEND_URL", secretsProperties['DEV_ENDPOINT'])
+            buildConfigField(
+                    "String",
+                    "GOOGLE_AUTH_CLIENT_ID", secretsProperties["GOOGLE_AUTH_CLIENT_ID"]
+            )
             buildConfigField("boolean", "ONBOARDING_FLAG", "true")
+            signingConfig signingConfigs.debug
         }
         release {
             minifyEnabled false
