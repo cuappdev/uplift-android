@@ -91,16 +91,11 @@ fun MainNavigationWrapper(
     )
     val shimmer = rememberShimmer(shimmerBounds = ShimmerBounds.Window, theme = yourShimmerTheme)
 
-    var items = listOf(
+    val items = listOfNotNull(
         BottomNavScreens.Home,
         BottomNavScreens.Classes,
-        BottomNavScreens.Profile
-        // TODO: Add new items when activities and profile are implemented.
+        BottomNavScreens.Profile.takeIf { ONBOARDING_FLAG }
     )
-
-    if (!ONBOARDING_FLAG) {
-        items = items.filterNot { it == BottomNavScreens.Profile }
-    }
 
     systemUiController.setStatusBarColor(PRIMARY_YELLOW)
 
