@@ -2,9 +2,10 @@ package com.cornellappdev.uplift.ui.viewmodels.nav
 
 import androidx.lifecycle.viewModelScope
 import com.cornellappdev.uplift.data.repositories.UserInfoRepository
-import com.cornellappdev.uplift.ui.nav.RootNavigationRepository
 import com.cornellappdev.uplift.ui.UpliftRootRoute
+import com.cornellappdev.uplift.ui.nav.RootNavigationRepository
 import com.cornellappdev.uplift.ui.viewmodels.UpliftViewModel
+import com.cornellappdev.uplift.util.ONBOARDING_FLAG
 import com.cornellappdev.uplift.util.UIEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -55,7 +56,7 @@ class RootNavigationViewModel @Inject constructor(
             }
             applyMutation {
                 copy(
-                    startDestination = if (hasSkipped || hasUser) UpliftRootRoute.Home else UpliftRootRoute.Onboarding
+                    startDestination = if (hasSkipped || hasUser || !ONBOARDING_FLAG) UpliftRootRoute.Home else UpliftRootRoute.Onboarding
                 )
             }
         }
