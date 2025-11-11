@@ -33,6 +33,9 @@ android {
     }
 
     buildTypes {
+        create("onboarding") {
+            buildConfigField("boolean", "ONBOARDING_FLAG", "true")
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
@@ -46,6 +49,7 @@ android {
                     "GOOGLE_AUTH_CLIENT_ID", secretsProperties["GOOGLE_AUTH_CLIENT_ID"]
             )
             signingConfig signingConfigs.debug
+            buildConfigField("boolean", "ONBOARDING_FLAG", "false")
         }
     }
     compileOptions {
