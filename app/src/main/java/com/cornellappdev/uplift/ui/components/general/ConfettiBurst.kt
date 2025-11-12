@@ -47,6 +47,19 @@ private data class ConfettiParticle2D(
     val rotation: Float
 )
 
+/**
+ * Renders a confetti burst anchored to a given popup rectangle.(checkinpopup).
+ *
+ * Reads 'showing' from [ConfettiViewModel]. If false or rect is null, renders nothing.
+ * When shown, spawns particles inside the bounds of 'originRectInRoot'.
+ * Animates progress from 0 to 1 in 1.2 seconds with linear easing.
+ * Applies simple ballistic motion to each particle:
+ * x(t) = x0 + vx * t
+ * y(t) = y0 +vy0 * t + 0.5 * g * t^2
+ * where g = 1750 px/s^2 to pull particles downward.
+ * Fades particles out as progress approaches 1.
+ * When complete calls [ConfettiViewModel.onAnimationFinished] to hide the confetti.
+ */
 @Composable
 fun ConfettiBurst(
     confettiViewModel: ConfettiViewModel,
@@ -73,22 +86,31 @@ fun ConfettiBurst(
     LaunchedEffect(uiState.showing) {
         if (uiState.showing) started = true
     }
+
+    // Progress 0 to 1 over 1.2s, used as time 't' in the physics below
     val progress by animateFloatAsState(
         targetValue =  if (started) 1f else 0f,
         animationSpec = tween(durationMillis = 1200, easing = LinearEasing),
         label = "confettiProgress"
     )
 
+    //build particles each with spawn, shape, size and velocity
     val particles = remember((uiState.showing)) {
         List(particleCount) {
+            //spawn uniformly inside the rect bounds
             val x = Random.nextFloat() * rect.width + rect.left
             val y = Random.nextFloat() * rect.height + rect.top
             val start: Offset = Offset(x,y)
+            //angled straight up with a random right skew to look more natural
             val angle = ((-90f + Random.nextFloat() * 110f) * Math.PI / 180f).toFloat()
+            //initial speed
             val speed = Random.nextFloat() * 700f + 400f
+            //velocity compontents
             val vx = cos(angle) * speed
             val vy0 = sin(angle) * speed
+            //size in px
             val size = Random.nextInt(18, 34).toFloat()
+
             ConfettiParticle2D(
                 start = start,
                 vx = vx,
@@ -109,16 +131,21 @@ fun ConfettiBurst(
         }
     }
 
+    //Renders ballisitc motion + fade out for each particle
     Canvas(modifier = modifier.fillMaxSize()) {
+        //gravity and seconds t
         val g = 1750f
         val t = progress * 1.2f
 
         particles.forEach { particle ->
+            //position at time t
             val x = particle.start.x + particle.vx * t
             val y = particle.start.y + (particle.vy0 * t + 0.5f * g * t * t)
 
+            // fade progress
             val alpha = 1f - progress
 
+            //gradient brush
             val brush = Brush.linearGradient(
                 colors = colors,
                 start = Offset(x - particle.size * 0.8f, y- particle.size * 0.8f),
@@ -126,6 +153,7 @@ fun ConfettiBurst(
             )
 
             when (particle.shape) {
+                //draws circle
                 ConfettiShape.CIRCLE -> {
                     drawCircle(
                         brush = brush,
@@ -135,6 +163,7 @@ fun ConfettiBurst(
                     )
                 }
 
+                //draws rectangle
                 ConfettiShape.RECTANGLE -> {
                     withTransform({
                         rotate(degrees = particle.rotation, pivot = Offset(x, y))
