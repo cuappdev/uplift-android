@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.cornellappdev.uplift.data.repositories.CheckInRepository
+import com.cornellappdev.uplift.data.repositories.ConfettiRepository
 import com.cornellappdev.uplift.data.repositories.LocationRepository
 import com.cornellappdev.uplift.ui.viewmodels.UpliftViewModel
 import com.cornellappdev.uplift.util.isOpen
@@ -37,14 +38,14 @@ data class CheckInUiState(
     val mode: CheckInMode = CheckInMode.Prompt,
     val gymId: String? = "",
     val gymName: String = "",
-    val timeText: String = "",
-    val showConfetti: Boolean = false
+    val timeText: String = ""
 )
 
 /** A [CheckInViewModel] manages state and actions for the Check-In pop-up on main screens. */
 @HiltViewModel
 class CheckInViewModel @Inject constructor(
     private val checkInRepository: CheckInRepository,
+    private val confettiRepository: ConfettiRepository
 ) : UpliftViewModel<CheckInUiState>(CheckInUiState()) {
 
     private var locationJob: Job? = null
@@ -127,7 +128,7 @@ class CheckInViewModel @Inject constructor(
     /**
      * Marks the user as checked in for the day, triggering a cooldown til the end of day and a
      * logworkout mutation through [checkInRepository]. On a successful call, transitions UI into
-     * [CheckInMode.Complete].
+     * [CheckInMode.Complete] and bursts confetti from popup through a [confettiRepository].
      *
      * Note: Temporarily skips over failed backend log workout call to keep functionality while auth and
      * sign in are not working.
@@ -148,6 +149,7 @@ class CheckInViewModel @Inject constructor(
                     mode = CheckInMode.Complete
                 )
             }
+            confettiRepository.showConfetti(ConfettiViewModel.ConfettiUiState())
             checkInRepository.logWorkoutFromCheckIn(gymIdInt)
         } catch (e: Exception) {
             Log.e(tag, "Error checking in", e)
