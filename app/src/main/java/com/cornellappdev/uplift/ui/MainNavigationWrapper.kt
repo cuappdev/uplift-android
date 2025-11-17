@@ -90,7 +90,7 @@ fun MainNavigationWrapper(
     val systemUiController: SystemUiController = rememberSystemUiController()
 
     val checkInUiState = checkInViewModel.collectUiStateValue()
-    var confettiBounds by remember { mutableStateOf<Rect?>(null) }
+    val confettiUiState = confettiViewModel.collectUiStateValue()
 
     val yourShimmerTheme = defaultShimmerTheme.copy(
         shaderColors = listOf(
@@ -275,7 +275,7 @@ fun MainNavigationWrapper(
                 ){
                     Box(
                         modifier = Modifier.onGloballyPositioned { coords ->
-                            confettiBounds = coords.boundsInRoot()
+                            confettiViewModel.setConfettiBounds(coords.boundsInRoot())
                         }
                     ){
                         CheckInPopUp(
@@ -290,7 +290,7 @@ fun MainNavigationWrapper(
                 }
                 ConfettiBurst(
                     confettiViewModel = confettiViewModel,
-                    originRectInRoot = confettiBounds,
+                    particleSpawningBounds = confettiUiState.confettiBounds,
                     modifier = Modifier
                 )
             }

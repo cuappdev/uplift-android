@@ -1,5 +1,6 @@
 package com.cornellappdev.uplift.ui.viewmodels.profile
 
+import androidx.compose.ui.geometry.Rect
 import com.cornellappdev.uplift.data.repositories.ConfettiRepository
 import com.cornellappdev.uplift.ui.viewmodels.UpliftViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -10,13 +11,14 @@ import javax.inject.Inject
 /** A [ConfettiViewModel] listens for confetti events and exposes animation state to the UI. */
 @HiltViewModel
 class ConfettiViewModel @Inject constructor(
-    confettiRepository: ConfettiRepository
+    private val confettiRepository: ConfettiRepository
 ) :
     UpliftViewModel<ConfettiViewModel.ConfettiUiState>(
         initialUiState = ConfettiUiState()
     ) {
     data class ConfettiUiState(
-        val showing: Boolean = false
+        val showing: Boolean = false,
+        val confettiBounds: Rect? = null
     )
 
     /** Sets UI state to show the confetti animation. */
@@ -29,6 +31,10 @@ class ConfettiViewModel @Inject constructor(
         applyMutation { copy(showing = false) }
     }
 
+    fun setConfettiBounds(bounds: Rect?) {
+        confettiRepository.setConfettiBounds(bounds)
+    }
+
     init {
         asyncCollect(confettiRepository.showConfettiEvent) { event ->
             event?.consume {
@@ -38,6 +44,11 @@ class ConfettiViewModel @Inject constructor(
                     )
                 }
             }
+        }
+
+        asyncCollect(confettiRepository.confettiBounds) { rect ->
+            applyMutation { copy(confettiBounds = rect) }
+
         }
     }
 }

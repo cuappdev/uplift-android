@@ -17,6 +17,8 @@ import androidx.compose.ui.graphics.drawscope.withTransform
 import com.cornellappdev.uplift.ui.theme.ConfettiColors
 import kotlinx.coroutines.delay
 import com.cornellappdev.uplift.ui.viewmodels.profile.ConfettiViewModel
+import com.google.android.play.core.integrity.x
+import com.google.android.play.integrity.internal.y
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.random.Random
@@ -63,7 +65,7 @@ private data class ConfettiParticle2D(
 @Composable
 fun ConfettiBurst(
     confettiViewModel: ConfettiViewModel,
-    originRectInRoot: Rect?,
+    particleSpawningBounds: Rect?,
     modifier: Modifier = Modifier,
     particleCount: Int = 30,
     colors: List<Color> = listOf(
@@ -75,11 +77,11 @@ fun ConfettiBurst(
 ) {
     val uiState = confettiViewModel.collectUiStateValue()
 
-    if (!uiState.showing || originRectInRoot == null) {
+    if (!uiState.showing || particleSpawningBounds == null) {
         return
     }
 
-    val rect = originRectInRoot
+    val rect = particleSpawningBounds
 
     var started by remember(uiState.showing) { mutableStateOf(false) }
 
@@ -105,7 +107,7 @@ fun ConfettiBurst(
             val angle = ((-90f + Random.nextFloat() * 110f) * Math.PI / 180f).toFloat()
             //initial speed
             val speed = Random.nextFloat() * 700f + 400f
-            //velocity compontents
+            //velocity components
             val vx = cos(angle) * speed
             val vy0 = sin(angle) * speed
             //size in px
@@ -131,16 +133,16 @@ fun ConfettiBurst(
         }
     }
 
-    //Renders ballisitc motion + fade out for each particle
+    //Renders ballistic motion + fade out for each particle
     Canvas(modifier = modifier.fillMaxSize()) {
-        //gravity and seconds t
-        val g = 1750f
-        val t = progress * 1.2f
+        //gravity and seconds (time)
+        val gravity = 1750f
+        val time = progress * 1.2f
 
         particles.forEach { particle ->
-            //position at time t
-            val x = particle.start.x + particle.vx * t
-            val y = particle.start.y + (particle.vy0 * t + 0.5f * g * t * t)
+            //position at time
+            val posX = particle.start.x + particle.vx * time
+            val posY = particle.start.y + (particle.vy0 * time + 0.5f * gravity * time * time)
 
             // fade progress
             val alpha = 1f - progress
@@ -148,31 +150,29 @@ fun ConfettiBurst(
             //gradient brush
             val brush = Brush.linearGradient(
                 colors = colors,
-                start = Offset(x - particle.size * 0.8f, y- particle.size * 0.8f),
-                end = Offset(x + particle.size* 0.8f, y+ particle.size * 0.8f)
+                start = Offset(posX - particle.size * 0.8f, posY- particle.size * 0.8f),
+                end = Offset(posX + particle.size* 0.8f, posY + particle.size * 0.8f)
             )
 
             when (particle.shape) {
-                //draws circle
                 ConfettiShape.CIRCLE -> {
                     drawCircle(
                         brush = brush,
                         radius = particle.size.toFloat(),
-                        center = Offset(x, y),
+                        center = Offset(posX, posY),
                         alpha = alpha
                     )
                 }
 
-                //draws rectangle
                 ConfettiShape.RECTANGLE -> {
                     withTransform({
-                        rotate(degrees = particle.rotation, pivot = Offset(x, y))
+                        rotate(degrees = particle.rotation, pivot = Offset(posX, posY))
                     }) {
                         drawRoundRect(
                             brush = brush,
                             topLeft = Offset(
-                                x - (particle.size / 8f),
-                                y - (particle.size / 2f)
+                                posX - (particle.size / 8f),
+                                posY - (particle.size / 2f)
                             ),
                             size = Size(
                                 width = particle.size * 0.6f,
