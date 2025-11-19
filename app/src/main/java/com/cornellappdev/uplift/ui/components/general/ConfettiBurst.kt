@@ -17,8 +17,6 @@ import androidx.compose.ui.graphics.drawscope.withTransform
 import com.cornellappdev.uplift.ui.theme.ConfettiColors
 import kotlinx.coroutines.delay
 import com.cornellappdev.uplift.ui.viewmodels.profile.ConfettiViewModel
-import com.google.android.play.core.integrity.x
-import com.google.android.play.integrity.internal.y
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.random.Random
@@ -85,8 +83,8 @@ fun ConfettiBurst(
 
     var started by remember(uiState.showing) { mutableStateOf(false) }
 
-    LaunchedEffect(uiState.showing) {
-        if (uiState.showing) started = true
+    LaunchedEffect(Unit) {
+        started = true
     }
 
     // Progress 0 to 1 over 1.2s, used as time 't' in the physics below
@@ -126,11 +124,9 @@ fun ConfettiBurst(
     }
 
 
-    LaunchedEffect(uiState.showing) {
-        if (uiState.showing) {
-            delay(1300)
-            confettiViewModel.onAnimationFinished()
-        }
+    LaunchedEffect(Unit) {
+        delay(1300)
+        confettiViewModel.onAnimationFinished()
     }
 
     //Renders ballistic motion + fade out for each particle
