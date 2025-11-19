@@ -15,3 +15,10 @@ object AppColors {
     val TextPrimary = Color(0xFF1B1F23)
     val Gray01 = Color(0xFFE5ECED)
 }
+
+object ConfettiColors{
+    val Yellow1 = Color(0xFFFFF176)
+    val Yellow2 = Color(0xFFFFEB3B)
+    val Yellow3 = Color(0xFFFFD54F)
+    val Yellow4 = Color(0xFFFFF59D)
+}
