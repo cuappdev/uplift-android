@@ -46,17 +46,17 @@ import com.cornellappdev.uplift.ui.screens.gyms.GymDetailScreen
 import com.cornellappdev.uplift.ui.screens.gyms.HomeScreen
 import com.cornellappdev.uplift.ui.screens.onboarding.ProfileCreationScreen
 import com.cornellappdev.uplift.ui.screens.onboarding.SignInPromptScreen
-import com.cornellappdev.uplift.ui.screens.reminders.CapacityReminderScreen
 import com.cornellappdev.uplift.ui.screens.profile.ProfileScreen
 import com.cornellappdev.uplift.ui.screens.profile.SettingsScreen
+import com.cornellappdev.uplift.ui.screens.reminders.CapacityReminderScreen
 import com.cornellappdev.uplift.ui.screens.reminders.MainReminderScreen
 import com.cornellappdev.uplift.ui.screens.report.ReportIssueScreen
 import com.cornellappdev.uplift.ui.screens.report.ReportSubmittedScreen
 import com.cornellappdev.uplift.ui.viewmodels.classes.ClassDetailViewModel
 import com.cornellappdev.uplift.ui.viewmodels.gyms.GymDetailViewModel
 import com.cornellappdev.uplift.ui.viewmodels.nav.RootNavigationViewModel
-import com.cornellappdev.uplift.ui.viewmodels.profile.CheckInMode
 import com.cornellappdev.uplift.ui.viewmodels.profile.CheckInViewModel
+import com.cornellappdev.uplift.util.ONBOARDING_FLAG
 import com.cornellappdev.uplift.ui.viewmodels.profile.ConfettiViewModel
 import com.cornellappdev.uplift.util.PRIMARY_BLACK
 import com.cornellappdev.uplift.util.PRIMARY_YELLOW
@@ -79,7 +79,7 @@ fun MainNavigationWrapper(
     classDetailViewModel: ClassDetailViewModel = hiltViewModel(),
     rootNavigationViewModel: RootNavigationViewModel = hiltViewModel(),
 
-) {
+    ) {
 
     val confettiViewModel: ConfettiViewModel = hiltViewModel()
     val checkInViewModel: CheckInViewModel = hiltViewModel()
@@ -101,11 +101,10 @@ fun MainNavigationWrapper(
     )
     val shimmer = rememberShimmer(shimmerBounds = ShimmerBounds.Window, theme = yourShimmerTheme)
 
-    val items = listOf(
+    val items = listOfNotNull(
         BottomNavScreens.Home,
         BottomNavScreens.Classes,
-        BottomNavScreens.Profile
-        // TODO: Add new items when activities and profile are implemented.
+        BottomNavScreens.Profile.takeIf { ONBOARDING_FLAG }
     )
 
     systemUiController.setStatusBarColor(PRIMARY_YELLOW)
