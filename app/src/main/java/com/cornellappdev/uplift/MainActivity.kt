@@ -44,7 +44,7 @@ class MainActivity : ComponentActivity() {
     override fun onResume() {
         super.onResume()
         LocationRepository.startLocationUpdates(this)
-        if (CHECK_IN_FLAG == true){
+        if (CHECK_IN_FLAG){
             checkInViewModel.startLocationUpdates(this)
         }
     }
@@ -52,7 +52,7 @@ class MainActivity : ComponentActivity() {
     override fun onPause() {
         super.onPause()
         LocationRepository.stopLocationUpdates()
-        if (CHECK_IN_FLAG == true){
+        if (CHECK_IN_FLAG){
             checkInViewModel.stopLocationUpdates()
         }
     }

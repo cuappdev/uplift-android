@@ -13,12 +13,8 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -88,13 +84,6 @@ fun MainNavigationWrapper(
 
     val navController = rememberNavController()
     val systemUiController: SystemUiController = rememberSystemUiController()
-
-    val checkInViewModel: CheckInViewModel? =
-        if (CHECK_IN_FLAG) hiltViewModel() else null
-    val confettiViewModel: ConfettiViewModel? =
-        if (CHECK_IN_FLAG) hiltViewModel() else null
-    val checkInUiState = checkInViewModel?.collectUiStateValue() ?: CheckInUiState()
-    val confettiUiState = confettiViewModel?.collectUiStateValue()
 
     val yourShimmerTheme = defaultShimmerTheme.copy(
         shaderColors = listOf(
@@ -264,8 +253,13 @@ fun MainNavigationWrapper(
                 composable<UpliftRootRoute.Favorites> {}
             }
 
-            Box(modifier = Modifier.fillMaxSize()){
-                if(CHECK_IN_FLAG){
+            Box(modifier = Modifier.fillMaxSize()) {
+                if (CHECK_IN_FLAG) {
+                    val checkInViewModel: CheckInViewModel = hiltViewModel()
+                    val confettiViewModel: ConfettiViewModel = hiltViewModel()
+                    val checkInUiState = checkInViewModel.collectUiStateValue()
+                    val confettiUiState = confettiViewModel.collectUiStateValue()
+
                     AnimatedVisibility(
                         visible = checkInUiState.showPopUp && isMainScreen(),
                         modifier = Modifier
@@ -276,29 +270,29 @@ fun MainNavigationWrapper(
                                 end = 9.dp,
                                 bottom = it.calculateBottomPadding() + 13.dp
                             )
-                    ){
+                    ) {
                         Box(
                             modifier = Modifier.onGloballyPositioned { coords ->
-                                confettiViewModel?.setConfettiBounds(coords.boundsInRoot())
+                                confettiViewModel.setConfettiBounds(coords.boundsInRoot())
                             }
-                        ){
+                        ) {
                             CheckInPopUp(
                                 gymName = checkInUiState.gymName,
                                 currentTimeText = checkInUiState.timeText,
-                                onDismiss = { checkInViewModel?.onDismiss() },
-                                onCheckIn = { checkInViewModel?.onCheckIn() },
-                                onClosePopUp = { checkInViewModel?.onClose() },
+                                onDismiss = checkInViewModel::onDismiss,
+                                onCheckIn = checkInViewModel::onCheckIn,
+                                onClosePopUp = checkInViewModel::onClose,
                                 mode = checkInUiState.mode,
                             )
                         }
                     }
-                    if(confettiViewModel != null){
-                        ConfettiBurst(
-                            confettiViewModel = confettiViewModel,
-                            particleSpawningBounds = confettiUiState?.confettiBounds,
-                            modifier = Modifier
-                        )
-                    }
+
+                    ConfettiBurst(
+                        confettiViewModel = confettiViewModel,
+                        particleSpawningBounds = confettiUiState.confettiBounds,
+                        modifier = Modifier
+                    )
+
                 }
             }
 
