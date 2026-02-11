@@ -8,9 +8,11 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.cornellappdev.uplift.data.repositories.DatastoreRepository
+import com.cornellappdev.uplift.data.repositories.LocationRepository
 import com.cornellappdev.uplift.ui.MainNavigationWrapper
 import com.cornellappdev.uplift.ui.theme.UpliftTheme
 import com.cornellappdev.uplift.ui.viewmodels.profile.CheckInViewModel
+import com.cornellappdev.uplift.util.CHECK_IN_FLAG
 import com.cornellappdev.uplift.util.LockScreenOrientation
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -41,11 +43,17 @@ class MainActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
-        checkInViewModel.startLocationUpdates(this)
+        LocationRepository.startLocationUpdates(this)
+        if (CHECK_IN_FLAG){
+            checkInViewModel.startLocationUpdates(this)
+        }
     }
 
     override fun onPause() {
         super.onPause()
-        checkInViewModel.stopLocationUpdates()
+        LocationRepository.stopLocationUpdates()
+        if (CHECK_IN_FLAG){
+            checkInViewModel.stopLocationUpdates()
+        }
     }
 }
