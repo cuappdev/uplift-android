@@ -55,9 +55,11 @@ import com.cornellappdev.uplift.ui.screens.report.ReportSubmittedScreen
 import com.cornellappdev.uplift.ui.viewmodels.classes.ClassDetailViewModel
 import com.cornellappdev.uplift.ui.viewmodels.gyms.GymDetailViewModel
 import com.cornellappdev.uplift.ui.viewmodels.nav.RootNavigationViewModel
+import com.cornellappdev.uplift.ui.viewmodels.profile.CheckInUiState
 import com.cornellappdev.uplift.ui.viewmodels.profile.CheckInViewModel
 import com.cornellappdev.uplift.util.ONBOARDING_FLAG
 import com.cornellappdev.uplift.ui.viewmodels.profile.ConfettiViewModel
+import com.cornellappdev.uplift.util.CHECK_IN_FLAG
 import com.cornellappdev.uplift.util.PRIMARY_BLACK
 import com.cornellappdev.uplift.util.PRIMARY_YELLOW
 import com.cornellappdev.uplift.util.montserratFamily
@@ -81,16 +83,18 @@ fun MainNavigationWrapper(
 
     ) {
 
-    val confettiViewModel: ConfettiViewModel = hiltViewModel()
-    val checkInViewModel: CheckInViewModel = hiltViewModel()
     val rootNavigationUiState = rootNavigationViewModel.collectUiStateValue()
     val startDestination = rootNavigationUiState.startDestination
 
     val navController = rememberNavController()
     val systemUiController: SystemUiController = rememberSystemUiController()
 
-    val checkInUiState = checkInViewModel.collectUiStateValue()
-    val confettiUiState = confettiViewModel.collectUiStateValue()
+    val checkInViewModel: CheckInViewModel? =
+        if (CHECK_IN_FLAG) hiltViewModel() else null
+    val confettiViewModel: ConfettiViewModel? =
+        if (CHECK_IN_FLAG) hiltViewModel() else null
+    val checkInUiState = checkInViewModel?.collectUiStateValue() ?: CheckInUiState()
+    val confettiUiState = confettiViewModel?.collectUiStateValue()
 
     val yourShimmerTheme = defaultShimmerTheme.copy(
         shaderColors = listOf(
@@ -261,37 +265,41 @@ fun MainNavigationWrapper(
             }
 
             Box(modifier = Modifier.fillMaxSize()){
-                AnimatedVisibility(
-                    visible = checkInUiState.showPopUp && isMainScreen(),
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .fillMaxWidth()
-                        .padding(
-                            start = 10.dp,
-                            end = 9.dp,
-                            bottom = it.calculateBottomPadding() + 13.dp
-                        )
-                ){
-                    Box(
-                        modifier = Modifier.onGloballyPositioned { coords ->
-                            confettiViewModel.setConfettiBounds(coords.boundsInRoot())
-                        }
+                if(CHECK_IN_FLAG){
+                    AnimatedVisibility(
+                        visible = checkInUiState.showPopUp && isMainScreen(),
+                        modifier = Modifier
+                            .align(Alignment.BottomCenter)
+                            .fillMaxWidth()
+                            .padding(
+                                start = 10.dp,
+                                end = 9.dp,
+                                bottom = it.calculateBottomPadding() + 13.dp
+                            )
                     ){
-                        CheckInPopUp(
-                            gymName = checkInUiState.gymName,
-                            currentTimeText = checkInUiState.timeText,
-                            onDismiss = checkInViewModel::onDismiss,
-                            onCheckIn = checkInViewModel::onCheckIn,
-                            onClosePopUp = checkInViewModel::onClose,
-                            mode = checkInUiState.mode,
+                        Box(
+                            modifier = Modifier.onGloballyPositioned { coords ->
+                                confettiViewModel?.setConfettiBounds(coords.boundsInRoot())
+                            }
+                        ){
+                            CheckInPopUp(
+                                gymName = checkInUiState.gymName,
+                                currentTimeText = checkInUiState.timeText,
+                                onDismiss = { checkInViewModel?.onDismiss() },
+                                onCheckIn = { checkInViewModel?.onCheckIn() },
+                                onClosePopUp = { checkInViewModel?.onClose() },
+                                mode = checkInUiState.mode,
+                            )
+                        }
+                    }
+                    if(confettiViewModel != null){
+                        ConfettiBurst(
+                            confettiViewModel = confettiViewModel,
+                            particleSpawningBounds = confettiUiState?.confettiBounds,
+                            modifier = Modifier
                         )
                     }
                 }
-                ConfettiBurst(
-                    confettiViewModel = confettiViewModel,
-                    particleSpawningBounds = confettiUiState.confettiBounds,
-                    modifier = Modifier
-                )
             }
 
         }

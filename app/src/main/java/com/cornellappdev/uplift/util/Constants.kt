@@ -20,3 +20,5 @@ const val MORRISON_ID = 9537684
 const val TEAGLE_ID = 3454585
 
 const val ONBOARDING_FLAG = BuildConfig.ONBOARDING_FLAG
+
+const val CHECK_IN_FLAG = BuildConfig.CHECK_IN_FLAG

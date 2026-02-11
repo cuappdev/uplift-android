@@ -21,8 +21,8 @@ android {
         applicationId "com.cornellappdev.uplift"
         minSdk 28
         targetSdk 35
-        versionCode 12
-        versionName "1.4-backend-fix"
+        versionCode 16
+        versionName "1.6-capacity-reminders"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -40,6 +40,7 @@ android {
                     "GOOGLE_AUTH_CLIENT_ID", secretsProperties["GOOGLE_AUTH_CLIENT_ID"]
             )
             buildConfigField("boolean", "ONBOARDING_FLAG", "true")
+            buildConfigField("boolean", "CHECK_IN_FLAG", "true")
             signingConfig signingConfigs.debug
         }
         release {
@@ -48,6 +49,7 @@ android {
             buildConfigField("String", "GOOGLE_AUTH_CLIENT_ID", secretsProperties["GOOGLE_AUTH_CLIENT_ID"])
             buildConfigField("String", "BACKEND_URL", secretsProperties['PROD_ENDPOINT'])
             buildConfigField("boolean", "ONBOARDING_FLAG", "false")
+            buildConfigField("boolean", "CHECK_IN_FLAG", "false")
         }
         debug {
             buildConfigField("String", "BACKEND_URL", secretsProperties['DEV_ENDPOINT'])
@@ -57,6 +59,7 @@ android {
             )
             signingConfig signingConfigs.debug
             buildConfigField("boolean", "ONBOARDING_FLAG", "false")
+            buildConfigField("boolean", "CHECK_IN_FLAG", "false")
         }
     }
     compileOptions {
