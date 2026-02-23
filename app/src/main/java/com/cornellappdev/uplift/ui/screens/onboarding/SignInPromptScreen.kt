@@ -112,7 +112,7 @@ private fun SignInPromptScreenContent(
 }
 
 @Composable
-private fun SkipButton(onClick: () -> Unit) {
+fun SkipButton(onClick: () -> Unit) {
     TextButton(
         onClick = onClick
     ) {
