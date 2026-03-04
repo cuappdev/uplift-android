@@ -8,22 +8,29 @@ import com.cornellappdev.uplift.ui.UpliftRootRoute
 import com.cornellappdev.uplift.ui.nav.RootNavigationRepository
 import com.cornellappdev.uplift.ui.viewmodels.UpliftViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-data class ProfileCreationUiState(
+data class GoalsPromptUiState(
     val name: String = "",
     val imageUri: Uri? = null
 )
 
 @HiltViewModel
-class ProfileCreationViewModel @Inject constructor(
+class GoalsPromptViewModel @Inject constructor(
     private val userInfoRepository: UserInfoRepository,
     private val rootNavigationRepository: RootNavigationRepository,
-) : UpliftViewModel<ProfileCreationUiState>(ProfileCreationUiState()) {
+) : UpliftViewModel<GoalsPromptUiState>(GoalsPromptUiState()) {
+
+    private val _goalValue = MutableStateFlow(0f)
+    val goalValue: StateFlow<Float> = _goalValue.asStateFlow()
 
     init {
         viewModelScope.launch {
+            // TODO: Change this later to reflect correct inputs
             val user = userInfoRepository.getFirebaseUser()
             val name = user?.displayName ?: ""
             applyMutation {
@@ -32,33 +39,20 @@ class ProfileCreationViewModel @Inject constructor(
         }
     }
 
-    fun createUser() = viewModelScope.launch {
-        val user = userInfoRepository.getFirebaseUser()
-        val name = user?.displayName ?: ""
-        val email = user?.email ?: ""
-        val netId = email.substring(0, email.indexOf('@'))
-        if (userInfoRepository.createUser(email, name, netId)) {
-            navigateToGoals()
-        } else {
-            //TODO: Add error handling
-            Log.e("Error", "User not created")
-            userInfoRepository.signOut()
-        }
+    fun onGoalValueChange(newValue: Float) {
+        _goalValue.value = newValue
     }
 
-    fun onPhotoSelected(uri: Uri) {
-        //TODO: Once backend finishes image upload endpoint, add call here
-        applyMutation {
-            copy(imageUri = uri)
-        }
+    // TODO: Change skip and google sign in to reflect correct behavior
+    fun onSkip() {
+        navigateToHome()
     }
 
-    private fun navigateToGoals() {
-        rootNavigationRepository.navigate(UpliftRootRoute.GoalsPrompt)
+    fun onSignInWithGoogle() {
+        navigateToHome()
     }
 
-    // Possibly get rid of this function
-    private fun navigateToHome() {
+    fun navigateToHome() {
         rootNavigationRepository.navigate(UpliftRootRoute.Home)
     }
 }

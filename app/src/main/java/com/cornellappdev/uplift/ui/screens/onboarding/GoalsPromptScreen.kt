@@ -30,8 +30,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.credentials.Credential
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.cornellappdev.uplift.ui.components.goalsetting.GoalSlider
 import com.cornellappdev.uplift.ui.components.onboarding.auth.LogInButton
+import com.cornellappdev.uplift.ui.viewmodels.onboarding.GoalsPromptViewModel
 import com.cornellappdev.uplift.util.GRAY01
 import com.cornellappdev.uplift.util.montserratFamily
 
@@ -43,12 +46,11 @@ import com.cornellappdev.uplift.util.montserratFamily
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GoalPromptScreen(
-    /* TODO: Replace functions with viewmodel calls */
-    goalValue: Float,
-    onGoalValueChange: (Float) -> Unit,
-    onSignInWithGoogle: (credential: Credential) -> Unit,
-    onSkip: () -> Unit
+    viewModel: GoalsPromptViewModel = hiltViewModel(),
 ) {
+
+    val currentGoal by viewModel.goalValue.collectAsStateWithLifecycle()
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -90,7 +92,7 @@ fun GoalPromptScreen(
                     .verticalScroll(rememberScrollState()),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                GoalSlider(value = goalValue, onValueChange = onGoalValueChange)
+                GoalSlider(value = currentGoal, onValueChange = { viewModel.onGoalValueChange(it) })
             }
 
             // Buttons pinned to the bottom
@@ -101,8 +103,8 @@ fun GoalPromptScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                LogInButton { onSignInWithGoogle }
-                SkipButton { onSkip }
+                LogInButton { viewModel.onSignInWithGoogle() }
+                SkipButton { viewModel.onSkip() }
             }
         }
     }
@@ -111,6 +113,6 @@ fun GoalPromptScreen(
 @Preview(showBackground = true)
 @Composable
 fun GoalPromptScreenPreview() {
-    var sliderVal by remember { mutableFloatStateOf(1f) }
-    GoalPromptScreen(goalValue = sliderVal, onGoalValueChange = { sliderVal = it }, {}, {})
+    var sliderVal by remember { mutableFloatStateOf(0f) }
+    GoalPromptScreen()
 }

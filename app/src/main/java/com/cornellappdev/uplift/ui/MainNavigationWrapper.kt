@@ -40,6 +40,7 @@ import com.cornellappdev.uplift.ui.screens.classes.ClassDetailScreen
 import com.cornellappdev.uplift.ui.screens.classes.ClassScreen
 import com.cornellappdev.uplift.ui.screens.gyms.GymDetailScreen
 import com.cornellappdev.uplift.ui.screens.gyms.HomeScreen
+import com.cornellappdev.uplift.ui.screens.onboarding.GoalPromptScreen
 import com.cornellappdev.uplift.ui.screens.onboarding.ProfileCreationScreen
 import com.cornellappdev.uplift.ui.screens.onboarding.SignInPromptScreen
 import com.cornellappdev.uplift.ui.screens.profile.ProfileScreen
@@ -237,6 +238,9 @@ fun MainNavigationWrapper(
                 composable<UpliftRootRoute.ProfileCreation> {
                     ProfileCreationScreen()
                 }
+                composable<UpliftRootRoute.GoalsPrompt> {
+                    GoalPromptScreen()
+                }
                 composable<UpliftRootRoute.CapacityReminders> {
                     CapacityReminderScreen()
                 }
@@ -328,6 +332,10 @@ sealed class UpliftRootRoute {
 
     @Serializable
     data object Profile : UpliftRootRoute()
+
+    @Serializable
+    data object GoalsPrompt : UpliftRootRoute()
+
 
     @Serializable
     data object CapacityReminders : UpliftRootRoute()
