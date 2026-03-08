@@ -183,3 +183,38 @@ val startTimeComparator = { class1: UpliftClass, class2: UpliftClass ->
         class1.time.end.compareTo(class2.time.end)
     }
 }
+
+/**
+ * Returns a relative time string such as:
+ * "1 day ago", "2 weeks ago", "1 month ago", "1 year ago"
+ */
+fun Calendar.timeAgoString(): String {
+    val now = Calendar.getInstance()
+
+    val diffMillis = now.timeInMillis - this.timeInMillis
+    if (diffMillis < 0) return "Today"
+
+    val diffDays = diffMillis / (1000 * 60 * 60 * 24)
+
+    val diffWeeks = diffDays / 7
+    val diffMonths = diffDays / 30
+    val diffYears = diffDays / 365
+
+    return when {
+        diffDays < 1 -> "Today"
+
+        diffDays == 1L -> "1 day ago"
+        diffDays in 2..6 -> "$diffDays days ago"
+
+        diffWeeks == 1L -> "1 week ago"
+        diffWeeks in 2..4 -> "$diffWeeks weeks ago"
+
+        diffMonths == 1L -> "1 month ago"
+        diffMonths in 2..11 -> "$diffMonths months ago"
+
+        diffYears == 1L -> "1 year ago"
+        diffYears > 1L -> "$diffYears years ago"
+
+        else -> "Today"
+    }
+}
