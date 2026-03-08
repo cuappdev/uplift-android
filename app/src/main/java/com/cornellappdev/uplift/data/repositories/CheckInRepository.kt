@@ -150,7 +150,14 @@ class CheckInRepository @Inject constructor(
      * Logs a completed workout to the backend. Returns true if the mutation succeeded, false otherwise.
      */
     suspend fun logWorkoutFromCheckIn(gymId: Int): Boolean {
-        val userId = userInfoRepository.getUserIdFromDataStore()?.toIntOrNull() ?: return false
+        val userIdString = userInfoRepository.getUserIdFromDataStore()
+        val userId = userIdString?.toIntOrNull()
+
+        if (userId == null) {
+            Log.e("CheckInRepository", "Missing or invalid userId in DataStore: $userIdString")
+            return false
+        }
+
         val time = Instant.now().toString()
 
         return try {
@@ -161,6 +168,7 @@ class CheckInRepository @Inject constructor(
             val ok = response.data?.logWorkout?.workoutFields != null && !response.hasErrors()
             if (!ok) {
                 Log.e("CheckInRepository", "LogWorkout errors=${response.errors}")
+                Log.e("CheckInRepository", "LogWorkout response data=${response.data}")
             }
             ok
         } catch (t: Throwable){
