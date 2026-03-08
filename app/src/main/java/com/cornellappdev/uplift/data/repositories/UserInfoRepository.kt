@@ -14,6 +14,7 @@ import com.cornellappdev.uplift.SetWorkoutGoalsMutation
 import kotlinx.coroutines.flow.map;
 import kotlinx.coroutines.flow.firstOrNull
 import com.cornellappdev.uplift.data.models.UserInfo
+import com.cornellappdev.uplift.type.DayOfWeekEnum
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
@@ -107,6 +108,24 @@ class UserInfoRepository @Inject constructor(
         }
     }
 
+    suspend fun syncUserToDataStore(netId: String): Boolean {
+        return try {
+            val user = getUserByNetId(netId) ?: return false
+
+            storeId(user.id)
+            storeNetId(user.netId)
+            storeUsername(user.name)
+            storeEmail(user.email)
+            storeSkip(false)
+
+            Log.d("UserInfoRepositoryImpl", "Synced existing user to DataStore: ${user.id}")
+            true
+        } catch (e: Exception) {
+            Log.e("UserInfoRepositoryImpl", "Error syncing user to DataStore", e)
+            false
+        }
+    }
+
     suspend fun getUserByNetId(netId: String): UserInfo? {
         try {
             val response = apolloClient.query(
@@ -120,6 +139,12 @@ class UserInfoRepository @Inject constructor(
                 name = user.name,
                 email = user.email ?: "",
                 netId = user.netId,
+                encodedImage = user.encodedImage,
+                activeStreak = user.activeStreak,
+                maxStreak = user.maxStreak,
+                workoutGoal = user.workoutGoal,
+                streakStart = user.streakStart?.toString(),
+                totalGymDays = user.totalGymDays
             )
         } catch (e: Exception) {
             Log.e("UserInfoRepositoryImpl", "Error getting user by netId: $e")
