@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -126,24 +127,28 @@ private fun WorkoutReminderContent(
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            Column {
+            Column(modifier = Modifier.fillMaxSize()) {
                 GoalSlider(value = goalValue, onValueChange = onGoalValueChange)
 
-                WorkoutReminders(
-                    selectedReminder = selectedReminder,
-                    onSelectedReminderChange = onSelectedReminderChange,
-                    reminders = reminders,
-                    onRemindersChange = onRemindersChange,
-                    addNewReminderState = addNewReminderState,
-                    onAddNewReminderStateChange = onAddNewReminderStateChange,
-                    openDelete = { onDeleteDialogOpenChange(true) }
-                )
+                if (!isOnboarding) {
+                    WorkoutReminders(
+                        selectedReminder = selectedReminder,
+                        onSelectedReminderChange = onSelectedReminderChange,
+                        reminders = reminders,
+                        onRemindersChange = onRemindersChange,
+                        addNewReminderState = addNewReminderState,
+                        onAddNewReminderStateChange = onAddNewReminderStateChange,
+                        openDelete = { onDeleteDialogOpenChange(true) }
+                    )
+                }
             }
 
+            Spacer(modifier = Modifier.weight(1f))
             if (isOnboarding) {
                 OnboardingButtons(onNext, onSkip)
             }
         }
+
 
         if (deleteDialogOpen) {
             DeleteDialog(
@@ -218,6 +223,7 @@ fun WorkoutReminderScreenPreview() {
             reminders.clear()
             reminders.addAll(updatedReminders)
         },
+        isOnboarding = true,
         goalValue = sliderVal,
         onGoalValueChange = { sliderVal = it },
         onBackClick = {},
