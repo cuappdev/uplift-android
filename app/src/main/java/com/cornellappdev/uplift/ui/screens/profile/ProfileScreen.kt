@@ -1,10 +1,15 @@
 package com.cornellappdev.uplift.ui.screens.profile
 
+import android.R.attr.name
 import android.annotation.SuppressLint
+import android.net.Uri
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.windowInsetsEndWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -15,6 +20,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -27,7 +34,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.cornellappdev.uplift.R
+import com.cornellappdev.uplift.data.repositories.ProfileRepository
+import com.cornellappdev.uplift.data.repositories.UserInfoRepository
 import com.cornellappdev.uplift.ui.components.general.UpliftTabRow
 import com.cornellappdev.uplift.ui.components.profile.workouts.GoalsSection
 import com.cornellappdev.uplift.ui.components.profile.workouts.HistoryItem
@@ -35,96 +46,63 @@ import com.cornellappdev.uplift.ui.components.profile.workouts.HistorySection
 import com.cornellappdev.uplift.ui.components.profile.workouts.MyRemindersSection
 import com.cornellappdev.uplift.ui.components.profile.ProfileHeaderSection
 import com.cornellappdev.uplift.ui.components.profile.workouts.ReminderItem
+import com.cornellappdev.uplift.ui.viewmodels.profile.ProfileViewModel
 import com.cornellappdev.uplift.util.GRAY01
 import com.cornellappdev.uplift.util.montserratFamily
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileScreen() {
-    /* TODO: Replace with call to viewmodel */
-    val name = "John Doe"
-    /* TODO: Replace with call to viewmodel */
-    val gymDays = 132
-    /* TODO: Replace with call to viewmodel */
-    val streaks = 14
-    /* TODO: Replace with call to viewmodel */
-    val badges = 6
-    /* TODO: Replace with call to viewmodel */
-    val profilePicture = null
-    /* TODO: Replace with call to viewmodel */
-    val workoutsCompleted = 3
-    /* TODO: Replace with call to viewmodel */
-    val workoutGoal = 5
-    /* TODO: Replace with call to viewmodel */
-    val daysOfMonth = (25..31).toList()
-    /* TODO: Replace with call to viewmodel */
-    val completedDays = listOf(false, true, true, false, true, false, false)
-    /* TODO: Replace with call to viewmodel */
-    val reminderItems = listOf(
-        ReminderItem("Mon", "8:00 AM", "9:00 AM", true),
-        ReminderItem("Tue", "8:00 AM", "12:00 PM", false),
-        ReminderItem("Wed", "8:00 AM", "9:00 AM", true),
-        ReminderItem("Thu", "8:00 AM", "9:00 AM", false),
-        ReminderItem("Fri", "11:30 AM", "12:00 PM", true),
-    )
-    /* TODO: Replace with call to viewmodel */
-    val historyItems = listOf(
-        HistoryItem("Morrison", "11:00 PM", "Fri", "March 29, 2024"),
-        HistoryItem("Noyes", "1:00 PM", "Fri", "March 29, 2024"),
-        HistoryItem("Teagle Up", "2:00 PM", "Fri", "March 29, 2024"),
-        HistoryItem("Teagle Down", "12:00 PM", "Fri", "March 29, 2024"),
-        HistoryItem("Helen Newman", "10:00 AM", "Fri", "March 29, 2024"),
-    )
+fun ProfileScreen(
+    viewModel: ProfileViewModel = hiltViewModel(),
+    toSettings:() -> Unit,
+    toGoals:() -> Unit,
+    toHistory:() -> Unit
+) {
+//    var tabIndex by remember { mutableIntStateOf(0) }
+//    val tabs = listOf("WORKOUTS", "ACHIEVEMENTS")
 
-    var tabIndex by remember { mutableIntStateOf(0) }
-    val tabs = listOf("WORKOUTS", "ACHIEVEMENTS")
+    val uiState by viewModel.uiStateFlow.collectAsState()
 
-    val scrollState = rememberScrollState()
+    LaunchedEffect(Unit) {
+        viewModel.reload()
+    }
 
     Scaffold(
         containerColor = Color.White,
         topBar = {
-            /* TODO: Replace {} with viewmodel nav call */
-            ProfileScreenTopBar(navigateToSettings = {})
+            ProfileScreenTopBar(navigateToSettings = toSettings)
         }
     ) { innerPadding ->
         Column(
-            verticalArrangement = Arrangement.spacedBy(24.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(scrollState)
                 .padding(
                     top = innerPadding.calculateTopPadding() + 24.dp,
                     start = 16.dp,
                     end = 16.dp,
                 )
         ) {
-            /* TODO: Replace {} with viewmodel function call */
             ProfileHeaderSection(
-                name = name,
-                gymDays = gymDays,
-                streaks = streaks,
-                badges = badges,
-                profilePictureUri = profilePicture,
-                onPhotoSelected = {}
+                name = uiState.name,
+                gymDays = uiState.totalGymDays,
+                streaks = uiState.activeStreak,
+                profilePictureUri = uiState.profileImage?.let { Uri.parse(it) },
+                onPhotoSelected = {},
+                netID = uiState.netId
             )
-            UpliftTabRow(tabIndex, tabs, onTabChange = { tabIndex = it })
-            when (tabIndex) {
-                0 -> WorkoutsSectionContent(
-                    workoutsCompleted,
-                    workoutGoal,
-                    daysOfMonth,
-                    completedDays,
-                    reminderItems,
-                    historyItems,
-                    navigateToGoalsSection = { /* TODO: Replace {} with viewmodel nav call */ },
-                    navigateToRemindersSection = { /* TODO: Replace {} with viewmodel nav call */ },
-                    navigateToHistorySection = { /* TODO: Replace {} with viewmodel nav call */ }
-                )
-
-                1 -> AchievementsSectionContent()
-            }
+            WorkoutsSectionContent(
+                workoutsCompleted = uiState.workoutsCompleted,
+                workoutGoal = uiState.workoutGoal,
+                daysOfMonth = uiState.daysOfMonth,
+                completedDays = uiState.completedDays,
+                reminderItems= emptyList(), //implement
+                historyItems = uiState.historyItems,
+                navigateToGoalsSection = toGoals,
+                navigateToRemindersSection = { /* TODO: Replace {} with viewmodel nav call */ },
+                navigateToHistorySection = toHistory
+            )
 
         }
     }
@@ -142,21 +120,24 @@ private fun WorkoutsSectionContent(
     navigateToRemindersSection: () -> Unit,
     navigateToHistorySection: () -> Unit
 ) {
-    GoalsSection(
-        workoutsCompleted = workoutsCompleted,
-        workoutGoal = workoutGoal,
-        daysOfMonth = daysOfMonth,
-        completedDays = completedDays,
-        onClick = navigateToGoalsSection,
-    )
-    MyRemindersSection(
-        reminderItems,
-        onClickHeader = navigateToRemindersSection,
-    )
-    HistorySection(
-        historyItems = historyItems,
-        onClick = navigateToHistorySection,
-    )
+    Column(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        GoalsSection(
+            workoutsCompleted = workoutsCompleted,
+            workoutGoal = workoutGoal,
+            daysOfMonth = daysOfMonth,
+            completedDays = completedDays,
+            onClick = navigateToGoalsSection,
+        )
+        Spacer(modifier = Modifier.height(24.dp))
+
+        HistorySection(
+            historyItems = historyItems,
+            onClick = navigateToHistorySection,
+            modifier = Modifier.weight(1f)
+        )
+    }
 }
 
 //TODO: Implement AchievementsSection
@@ -195,10 +176,4 @@ private fun ProfileScreenTopBar(
             }
         }
     )
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun ProfileScreenPreview() {
-    ProfileScreen()
 }
