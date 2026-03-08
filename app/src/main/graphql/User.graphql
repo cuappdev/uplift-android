@@ -1,14 +1,24 @@
 fragment userFields on User {
     id
     email
-    name
     netId
+    name
+    encodedImage
+    activeStreak
+    maxStreak
+    streakStart
+    workoutGoal
+    lastGoalChange
+    lastStreak
+    totalGymDays
 }
 
 fragment workoutFields on Workout {
     id
     workoutTime
     userId
+    facilityId
+    gymName
 }
 
 mutation CreateUser($email: String!, $name: String!, $netId: String!) {
