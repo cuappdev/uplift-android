@@ -29,7 +29,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.credentials.Credential
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.cornellappdev.uplift.ui.components.goalsetting.GoalSlider
@@ -38,12 +37,7 @@ import com.cornellappdev.uplift.ui.viewmodels.onboarding.GoalsPromptViewModel
 import com.cornellappdev.uplift.util.GRAY01
 import com.cornellappdev.uplift.util.montserratFamily
 
-/**
- * @param goalValue: value of the goal slider
- * @param onGoalValueChange: callback for when the goal slider value is changed
- * @return GoalPromptScreen composable
- */
-@OptIn(ExperimentalMaterial3Api::class)
+// Use this as reference but delete later
 @Composable
 fun GoalPromptScreen(
     viewModel: GoalsPromptViewModel = hiltViewModel(),
@@ -51,6 +45,22 @@ fun GoalPromptScreen(
 
     val currentGoal by viewModel.goalValue.collectAsStateWithLifecycle()
 
+    GoalPromptContent(
+        currentGoal,
+        { viewModel.onGoalValueChange(it) },
+        { viewModel.onSkip() },
+        { viewModel.onSignInWithGoogle() }
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun GoalPromptContent(
+    currentGoal: Float,
+    onValueChange: (Float) -> Unit = {},
+    onSkip: () -> Unit = {},
+    onLogin: () -> Unit = {}
+) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -92,7 +102,7 @@ fun GoalPromptScreen(
                     .verticalScroll(rememberScrollState()),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                GoalSlider(value = currentGoal, onValueChange = { viewModel.onGoalValueChange(it) })
+                GoalSlider(value = currentGoal, onValueChange = onValueChange)
             }
 
             // Buttons pinned to the bottom
@@ -103,8 +113,7 @@ fun GoalPromptScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                LogInButton { viewModel.onSignInWithGoogle() }
-                SkipButton { viewModel.onSkip() }
+                LogInButton { onLogin() }
             }
         }
     }
@@ -112,7 +121,10 @@ fun GoalPromptScreen(
 
 @Preview(showBackground = true)
 @Composable
-fun GoalPromptScreenPreview() {
+private fun GoalPromptScreenPreview() {
     var sliderVal by remember { mutableFloatStateOf(0f) }
-    GoalPromptScreen()
+    GoalPromptContent(
+        sliderVal,
+        { sliderVal = it}
+    )
 }

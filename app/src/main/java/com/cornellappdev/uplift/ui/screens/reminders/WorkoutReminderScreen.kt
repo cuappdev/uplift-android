@@ -56,7 +56,7 @@ data class Reminder(
  */
 @Composable
 fun WorkoutReminderScreen(
-    /* TODO: Replace functions with viewmodel calls */
+    /* TODO: Add view model calls */
     reminders: List<Reminder> = emptyList(),
     onRemindersChange: (List<Reminder>) -> Unit,
     goalValue: Float,
@@ -66,10 +66,48 @@ fun WorkoutReminderScreen(
     onNext: () -> Unit = {},
     onSkip: () -> Unit = {}
 ) {
+    // These states are local to this screen
     var selectedReminder by remember { mutableStateOf<Reminder?>(null) }
     var addNewReminderState by remember { mutableStateOf(false) }
     var deleteDialogOpen by remember { mutableStateOf(false) }
 
+    WorkoutReminderContent(
+        reminders = reminders,
+        selectedReminder = selectedReminder,
+        addNewReminderState = addNewReminderState,
+        deleteDialogOpen = deleteDialogOpen,
+        goalValue = goalValue,
+        isOnboarding = isOnboarding,
+        // Pass callbacks to update the state defined above
+        onSelectedReminderChange = { selectedReminder = it },
+        onAddNewReminderStateChange = { addNewReminderState = it },
+        onDeleteDialogOpenChange = { deleteDialogOpen = it },
+        onRemindersChange = onRemindersChange,
+        onGoalValueChange = onGoalValueChange,
+        onBackClick = onBackClick,
+        onNext = onNext,
+        onSkip = onSkip
+    )
+}
+
+
+@Composable
+private fun WorkoutReminderContent(
+    reminders: List<Reminder>,
+    selectedReminder: Reminder?,
+    addNewReminderState: Boolean,
+    deleteDialogOpen: Boolean,
+    goalValue: Float,
+    isOnboarding: Boolean,
+    onSelectedReminderChange: (Reminder?) -> Unit,
+    onAddNewReminderStateChange: (Boolean) -> Unit,
+    onDeleteDialogOpenChange: (Boolean) -> Unit,
+    onRemindersChange: (List<Reminder>) -> Unit,
+    onGoalValueChange: (Float) -> Unit,
+    onBackClick: () -> Unit,
+    onNext: () -> Unit,
+    onSkip: () -> Unit
+) {
     Scaffold(
         topBar = {
             UpliftTopBarWithBack(
@@ -83,42 +121,44 @@ fun WorkoutReminderScreen(
         Column(
             modifier = Modifier
                 .background(color = Color.White)
-                .padding(
-                    top = padding.calculateTopPadding(),
-                )
+                .padding(top = padding.calculateTopPadding())
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            /* Groups the goal slider and workout reminders together */
             Column {
                 GoalSlider(value = goalValue, onValueChange = onGoalValueChange)
 
                 WorkoutReminders(
                     selectedReminder = selectedReminder,
-                    onSelectedReminderChange = { selectedReminder = it },
+                    onSelectedReminderChange = onSelectedReminderChange,
                     reminders = reminders,
                     onRemindersChange = onRemindersChange,
                     addNewReminderState = addNewReminderState,
-                    onAddNewReminderStateChange = { addNewReminderState = it },
-                    openDelete = { deleteDialogOpen = true }
+                    onAddNewReminderStateChange = onAddNewReminderStateChange,
+                    openDelete = { onDeleteDialogOpenChange(true) }
                 )
             }
-            if (isOnboarding) OnboardingButtons(onNext, onSkip)
 
+            if (isOnboarding) {
+                OnboardingButtons(onNext, onSkip)
+            }
         }
-        DeleteDialog(
-            deleteDialogOpen = deleteDialogOpen,
-            onConfirm = {
-                selectedReminder?.let { reminder ->
-                    onRemindersChange(reminders.filter { it != reminder })
-                }
-                deleteDialogOpen = false
-                selectedReminder = null
-                addNewReminderState = false
-            },
-            onDismiss = { deleteDialogOpen = false }
-        )
+
+        if (deleteDialogOpen) {
+            DeleteDialog(
+                deleteDialogOpen = deleteDialogOpen,
+                onConfirm = {
+                    selectedReminder?.let { reminder ->
+                        onRemindersChange(reminders.filter { it != reminder })
+                    }
+                    onDeleteDialogOpenChange(false)
+                    onSelectedReminderChange(null)
+                    onAddNewReminderStateChange(false)
+                },
+                onDismiss = { onDeleteDialogOpenChange(false) }
+            )
+        }
     }
 }
 
