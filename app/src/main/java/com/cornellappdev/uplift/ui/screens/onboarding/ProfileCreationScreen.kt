@@ -59,7 +59,7 @@ fun ProfileCreationScreen(
 ) = with(profileCreationViewModel.collectUiStateValue()) {
     ProfileCreationScreenContent(
         profileCreationViewModel::onPhotoSelected,
-        profileCreationViewModel::createUser,
+        profileCreationViewModel::navigateToGoals,
         name
     )
 }
@@ -68,7 +68,7 @@ fun ProfileCreationScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 private fun ProfileCreationScreenContent(
     onPhotoSelected: (Uri) -> Unit,
-    createUser: () -> Unit,
+    navigateToGoals: () -> Unit,
     name: String,
 ) {
     val checkboxColors: CheckboxColors =
@@ -145,7 +145,7 @@ private fun ProfileCreationScreenContent(
             ReadyToUplift(opacityModifier)
 
             UpliftButton(
-                onClick = createUser,
+                onClick = navigateToGoals,
                 enabled = allChecked,
                 text = if (allChecked) "Get started" else "Next",
                 width = 144.dp,
@@ -256,7 +256,7 @@ private fun InfoCheckboxRow(
 private fun ProfileCreationScreenPreview() {
     ProfileCreationScreenContent(
         onPhotoSelected = {},
-        createUser = {},
+        navigateToGoals = {},
         name = "John Doe",
     )
 }

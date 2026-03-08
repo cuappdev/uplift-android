@@ -24,7 +24,7 @@ class UserInfoRepository @Inject constructor(
     private val dataStore: DataStore<Preferences>,
 ){
 
-    suspend fun createUser(email: String, name: String, netId: String): Boolean {
+    suspend fun createUser(email: String, name: String, netId: String, skip: Boolean, goal: Int): Boolean {
         try{
             val response = apolloClient.mutation(
                 CreateUserMutation(
@@ -38,6 +38,9 @@ class UserInfoRepository @Inject constructor(
             storeUsername(name)
             storeEmail(email)
             storeSkip(false)
+            if (!skip) {
+                storeGoal(goal)
+            }
             Log.d("UserInfoRepositoryImpl", "User created successfully" + response.data)
             return true
         } catch (e: Exception) {
@@ -108,6 +111,12 @@ class UserInfoRepository @Inject constructor(
     private suspend fun storeEmail(email: String) {
         dataStore.edit { preferences ->
             preferences[PreferencesKeys.EMAIL] = email
+        }
+    }
+
+    private suspend fun storeGoal(goal: Int) {
+        dataStore.edit { preferences ->
+            preferences[PreferencesKeys.GOAL] = goal
         }
     }
 
