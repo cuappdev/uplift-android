@@ -1,6 +1,5 @@
 package com.cornellappdev.uplift.ui.screens.profile
 
-import android.R.attr.name
 import android.annotation.SuppressLint
 import android.net.Uri
 import androidx.compose.foundation.layout.Arrangement
@@ -9,9 +8,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.windowInsetsEndWidth
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -23,27 +19,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.cornellappdev.uplift.R
-import com.cornellappdev.uplift.data.repositories.ProfileRepository
-import com.cornellappdev.uplift.data.repositories.UserInfoRepository
-import com.cornellappdev.uplift.ui.components.general.UpliftTabRow
 import com.cornellappdev.uplift.ui.components.profile.workouts.GoalsSection
 import com.cornellappdev.uplift.ui.components.profile.workouts.HistoryItem
 import com.cornellappdev.uplift.ui.components.profile.workouts.HistorySection
-import com.cornellappdev.uplift.ui.components.profile.workouts.MyRemindersSection
 import com.cornellappdev.uplift.ui.components.profile.ProfileHeaderSection
 import com.cornellappdev.uplift.ui.components.profile.workouts.ReminderItem
 import com.cornellappdev.uplift.ui.viewmodels.profile.ProfileViewModel
@@ -90,7 +77,7 @@ fun ProfileScreen(
                 streaks = uiState.activeStreak,
                 profilePictureUri = uiState.profileImage?.let { Uri.parse(it) },
                 onPhotoSelected = {},
-                netID = uiState.netId
+                netId = uiState.netId
             )
             WorkoutsSectionContent(
                 workoutsCompleted = uiState.workoutsCompleted,

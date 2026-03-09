@@ -168,7 +168,6 @@ class CheckInRepository @Inject constructor(
             val ok = response.data?.logWorkout?.workoutFields != null && !response.hasErrors()
             if (!ok) {
                 Log.e("CheckInRepository", "LogWorkout errors=${response.errors}")
-                Log.e("CheckInRepository", "LogWorkout response data=${response.data}")
             }
             ok
         } catch (t: Throwable){

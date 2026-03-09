@@ -1,5 +1,4 @@
 package com.cornellappdev.uplift.data.models
-import com.cornellappdev.uplift.type.DateTime
 import kotlinx.serialization.Serializable
 
 

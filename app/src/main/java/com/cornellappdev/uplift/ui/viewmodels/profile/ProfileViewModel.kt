@@ -3,14 +3,12 @@ package com.cornellappdev.uplift.ui.viewmodels.profile
 import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.cornellappdev.uplift.data.repositories.ProfileRepository
-import com.cornellappdev.uplift.data.repositories.UpliftApiRepository
 import com.cornellappdev.uplift.data.repositories.UserInfoRepository
 import com.cornellappdev.uplift.ui.components.profile.workouts.HistoryItem
 import com.cornellappdev.uplift.ui.viewmodels.UpliftViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import okhttp3.internal.format
 import java.time.DayOfWeek
 import java.time.Instant
 import java.time.LocalDate
@@ -129,7 +127,7 @@ class ProfileViewModel @Inject constructor(
         .withZone(ZoneId.systemDefault())
 
     private val formatDate = DateTimeFormatter
-        .ofPattern("MMMM d, yyyy • h:mm a")
+        .ofPattern("MMMM d, yyyy")
         .withLocale(Locale.US)
         .withZone(ZoneId.systemDefault())
 }

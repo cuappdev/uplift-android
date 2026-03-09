@@ -14,7 +14,6 @@ import com.cornellappdev.uplift.SetWorkoutGoalsMutation
 import kotlinx.coroutines.flow.map;
 import kotlinx.coroutines.flow.firstOrNull
 import com.cornellappdev.uplift.data.models.UserInfo
-import com.cornellappdev.uplift.type.DayOfWeekEnum
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider

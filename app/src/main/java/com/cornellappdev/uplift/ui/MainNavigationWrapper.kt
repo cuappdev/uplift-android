@@ -53,9 +53,7 @@ import com.cornellappdev.uplift.ui.viewmodels.classes.ClassDetailViewModel
 import com.cornellappdev.uplift.ui.viewmodels.gyms.GymDetailViewModel
 import com.cornellappdev.uplift.ui.viewmodels.nav.RootNavigationViewModel
 import com.cornellappdev.uplift.ui.viewmodels.profile.CheckInViewModel
-import com.cornellappdev.uplift.util.ONBOARDING_FLAG
 import com.cornellappdev.uplift.ui.viewmodels.profile.ConfettiViewModel
-import com.cornellappdev.uplift.ui.viewmodels.profile.ProfileViewModel
 import com.cornellappdev.uplift.util.CHECK_IN_FLAG
 import com.cornellappdev.uplift.util.PRIMARY_BLACK
 import com.cornellappdev.uplift.util.PRIMARY_YELLOW
@@ -88,13 +86,6 @@ fun MainNavigationWrapper(
     val navController = rememberNavController()
     val systemUiController: SystemUiController = rememberSystemUiController()
 
-    val checkInUiState = checkInViewModel.collectUiStateValue()
-    val confettiUiState = confettiViewModel.collectUiStateValue()
-
-    val profileViewModel: ProfileViewModel = hiltViewModel()
-
-
-
     val yourShimmerTheme = defaultShimmerTheme.copy(
         shaderColors = listOf(
             Color.Unspecified.copy(alpha = 1f),
@@ -107,7 +98,7 @@ fun MainNavigationWrapper(
     val items = listOfNotNull(
         BottomNavScreens.Home,
         BottomNavScreens.Classes,
-        BottomNavScreens.Profile.takeIf { ONBOARDING_FLAG }
+        BottomNavScreens.Profile
     )
 
     systemUiController.setStatusBarColor(PRIMARY_YELLOW)
@@ -254,7 +245,7 @@ fun MainNavigationWrapper(
                     CapacityReminderScreen()
                 }
                 composable<UpliftRootRoute.Profile> {
-                    ProfileScreen(profileViewModel, {}, {}, {})
+                    ProfileScreen(toSettings = {}, toGoals = {}, toHistory = {})
                 }
                 composable<UpliftRootRoute.Reminders> {
                     MainReminderScreen()
