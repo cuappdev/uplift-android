@@ -62,9 +62,14 @@ class UserInfoRepository @Inject constructor(
             storeRefreshToken(refreshToken)
             if (!skip) {
                 storeGoal(goal)
+                val numericId = id.toIntOrNull()
+                if (numericId == null) {
+                    Log.e("UserInfoRepository", "Failed to set goal: non-numeric user ID '$id'")
+                    return false
+                }
                 val goalResponse = apolloClient.mutation(
                     SetWorkoutGoalsMutation(
-                        id = id.toInt(),
+                        id = numericId,
                         workoutGoal = goal
                     )
                 )
