@@ -61,7 +61,7 @@ class ProfileCreationViewModel @Inject constructor(
     }
 
     fun onBackClick() {
-        navigateToProfileCreation()
+        rootNavigationRepository.navigateUp()
     }
 
     fun updateGoals(newGoal: Int) {
