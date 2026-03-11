@@ -9,6 +9,8 @@ import androidx.datastore.preferences.core.Preferences
 import com.apollographql.apollo.ApolloClient
 import com.cornellappdev.uplift.CreateUserMutation
 import com.cornellappdev.uplift.GetUserByNetIdQuery
+import com.cornellappdev.uplift.LoginUserMutation
+import com.cornellappdev.uplift.SetWorkoutGoalsMutation
 import kotlinx.coroutines.flow.map;
 import kotlinx.coroutines.flow.firstOrNull
 import com.cornellappdev.uplift.data.models.UserInfo
@@ -33,13 +35,45 @@ class UserInfoRepository @Inject constructor(
                     netId = netId,
                 )
             ).execute()
-            storeId(response.data?.createUser?.userFields?.let { storeId(it.id) }.toString())
+            val userFields = response.data?.createUser?.userFields
+            if (userFields == null) {
+                Log.e("UserInfoRepository", "Server error: ${response.errors}")
+                return false
+            }
+            val loginResponse = apolloClient.mutation(
+                LoginUserMutation(
+                    netId = netId
+                )
+            ).execute()
+            val id = userFields.id
+            val loginData = loginResponse.data?.loginUser
+            if (loginData?.accessToken == null || loginData.refreshToken == null) {
+                Log.e("UserInfoRepository", "Login failed after creation: ${loginResponse.errors}")
+                return false
+            }
+            val accessToken = loginData.accessToken
+            val refreshToken = loginData.refreshToken
+            storeId(id)
             storeNetId(netId)
             storeUsername(name)
             storeEmail(email)
-            storeSkip(false)
+            storeSkip(skip)
+            storeAccessToken(accessToken)
+            storeRefreshToken(refreshToken)
             if (!skip) {
                 storeGoal(goal)
+                val goalResponse = apolloClient.mutation(
+                    SetWorkoutGoalsMutation(
+                        id = id.toInt(),
+                        workoutGoal = goal
+                    )
+                )
+                    .addHttpHeader("Authorization", "Bearer $accessToken")
+                    .execute()
+                if (goalResponse.hasErrors()) {
+                    Log.e("UserInfoRepository", "Failed to set goal: ${goalResponse.errors}")
+                    return false
+                }
             }
             Log.d("UserInfoRepositoryImpl", "User created successfully" + response.data)
             return true
@@ -123,6 +157,18 @@ class UserInfoRepository @Inject constructor(
     suspend fun storeSkip(skip: Boolean) {
         dataStore.edit { preferences ->
             preferences[PreferencesKeys.SKIP] = skip
+        }
+    }
+
+    private suspend fun storeAccessToken(accessToken: String) {
+        dataStore.edit { preferences ->
+            preferences[PreferencesKeys.ACCESS_TOKEN] = accessToken
+        }
+    }
+
+    private suspend fun storeRefreshToken(refreshToken: String) {
+        dataStore.edit { preferences ->
+            preferences[PreferencesKeys.REFRESH_TOKEN] = refreshToken
         }
     }
 

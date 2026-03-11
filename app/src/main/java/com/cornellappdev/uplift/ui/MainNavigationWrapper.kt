@@ -40,19 +40,18 @@ import com.cornellappdev.uplift.ui.screens.classes.ClassDetailScreen
 import com.cornellappdev.uplift.ui.screens.classes.ClassScreen
 import com.cornellappdev.uplift.ui.screens.gyms.GymDetailScreen
 import com.cornellappdev.uplift.ui.screens.gyms.HomeScreen
-import com.cornellappdev.uplift.ui.screens.onboarding.GoalPromptScreen
 import com.cornellappdev.uplift.ui.screens.onboarding.ProfileCreationScreen
 import com.cornellappdev.uplift.ui.screens.onboarding.SignInPromptScreen
 import com.cornellappdev.uplift.ui.screens.profile.ProfileScreen
 import com.cornellappdev.uplift.ui.screens.profile.SettingsScreen
 import com.cornellappdev.uplift.ui.screens.reminders.CapacityReminderScreen
 import com.cornellappdev.uplift.ui.screens.reminders.MainReminderScreen
+import com.cornellappdev.uplift.ui.screens.reminders.WorkoutReminderOnboardingScreen
 import com.cornellappdev.uplift.ui.screens.report.ReportIssueScreen
 import com.cornellappdev.uplift.ui.screens.report.ReportSubmittedScreen
 import com.cornellappdev.uplift.ui.viewmodels.classes.ClassDetailViewModel
 import com.cornellappdev.uplift.ui.viewmodels.gyms.GymDetailViewModel
 import com.cornellappdev.uplift.ui.viewmodels.nav.RootNavigationViewModel
-import com.cornellappdev.uplift.ui.viewmodels.profile.CheckInUiState
 import com.cornellappdev.uplift.ui.viewmodels.profile.CheckInViewModel
 import com.cornellappdev.uplift.util.ONBOARDING_FLAG
 import com.cornellappdev.uplift.ui.viewmodels.profile.ConfettiViewModel
@@ -238,8 +237,8 @@ fun MainNavigationWrapper(
                 composable<UpliftRootRoute.ProfileCreation> {
                     ProfileCreationScreen()
                 }
-                composable<UpliftRootRoute.GoalsPrompt> {
-                    GoalPromptScreen()
+                composable<UpliftRootRoute.GoalsOnboarding> {
+                    WorkoutReminderOnboardingScreen()
                 }
                 composable<UpliftRootRoute.CapacityReminders> {
                     CapacityReminderScreen()
@@ -334,7 +333,7 @@ sealed class UpliftRootRoute {
     data object Profile : UpliftRootRoute()
 
     @Serializable
-    data object GoalsPrompt : UpliftRootRoute()
+    data object GoalsOnboarding : UpliftRootRoute()
 
 
     @Serializable

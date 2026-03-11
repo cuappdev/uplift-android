@@ -58,7 +58,6 @@ fun WorkoutReminderOnboardingScreen(
     WorkoutReminderScreen(
         goalValue = goalValue,
         isOnboarding = true,
-        // Pass callbacks to update the state defined above
         onGoalValueChange = { viewModel.updateGoals(it.toInt()) },
         onBackClick = { viewModel.onBackClick() },
         onNext = { viewModel.onNext() },

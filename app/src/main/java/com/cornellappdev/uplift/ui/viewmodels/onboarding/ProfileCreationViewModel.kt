@@ -2,7 +2,6 @@ package com.cornellappdev.uplift.ui.viewmodels.onboarding
 
 import android.net.Uri
 import android.util.Log
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import com.cornellappdev.uplift.data.repositories.UserInfoRepository
 import com.cornellappdev.uplift.ui.UpliftRootRoute
@@ -89,7 +88,7 @@ class ProfileCreationViewModel @Inject constructor(
 
 
     fun navigateToGoals() {
-        rootNavigationRepository.navigate(UpliftRootRoute.GoalsPrompt)
+        rootNavigationRepository.navigate(UpliftRootRoute.GoalsOnboarding)
     }
 
     private fun navigateToHome() {
