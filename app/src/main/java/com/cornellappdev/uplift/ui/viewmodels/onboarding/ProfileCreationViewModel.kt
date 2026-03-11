@@ -75,7 +75,7 @@ class ProfileCreationViewModel @Inject constructor(
             copy(isGoalSkipped = true)
         }
         createUser()
-        navigateToHome()
+    }
     }
 
     fun onNext() {
