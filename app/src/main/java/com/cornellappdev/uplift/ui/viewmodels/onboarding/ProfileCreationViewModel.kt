@@ -7,11 +7,13 @@ import com.cornellappdev.uplift.data.repositories.UserInfoRepository
 import com.cornellappdev.uplift.ui.UpliftRootRoute
 import com.cornellappdev.uplift.ui.nav.RootNavigationRepository
 import com.cornellappdev.uplift.ui.viewmodels.UpliftViewModel
+import com.google.firebase.auth.FirebaseUser
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class ProfileCreationUiState(
+    val user: FirebaseUser? = null,
     val name: String = "",
     val imageUri: Uri? = null,
     val isGoalSkipped: Boolean = false,
@@ -29,13 +31,14 @@ class ProfileCreationViewModel @Inject constructor(
             val user = userInfoRepository.getFirebaseUser()
             val name = user?.displayName ?: ""
             applyMutation {
-                copy(name = name)
+                copy(user = user, name = name)
             }
         }
     }
 
     private fun createUser() = viewModelScope.launch {
-        val user = userInfoRepository.getFirebaseUser()
+        val state = getStateValue()
+        val user = state.user
         val name = user?.displayName ?: ""
         val email = user?.email
         if (email.isNullOrBlank()) {
@@ -45,11 +48,8 @@ class ProfileCreationViewModel @Inject constructor(
         }
 
         val netId = email.substringBefore("@")
-        val isSkipped = getStateValue().isGoalSkipped
-        var goal = 0
-        if (!isSkipped) {
-            goal = getStateValue().goal.toInt()
-        }
+        val isSkipped = state.isGoalSkipped
+        val goal = if (isSkipped) 0 else state.goal.toInt()
         if (userInfoRepository.createUser(email, name, netId, isSkipped, goal)) {
             navigateToHome()
         } else {
@@ -70,9 +70,9 @@ class ProfileCreationViewModel @Inject constructor(
         rootNavigationRepository.navigateUp()
     }
 
-    fun updateGoals(newGoal: Int) {
+    fun updateGoals(newGoal: Float) {
         applyMutation {
-            copy(goal = newGoal.toFloat())
+            copy(goal = newGoal)
         }
     }
 

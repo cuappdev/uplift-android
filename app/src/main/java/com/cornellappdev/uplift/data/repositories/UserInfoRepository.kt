@@ -8,6 +8,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.Preferences
 import com.apollographql.apollo.ApolloClient
 import com.cornellappdev.uplift.CreateUserMutation
+import com.cornellappdev.uplift.DeleteUserMutation
 import com.cornellappdev.uplift.GetUserByNetIdQuery
 import com.cornellappdev.uplift.LoginUserMutation
 import com.cornellappdev.uplift.SetWorkoutGoalsMutation
@@ -57,7 +58,12 @@ class UserInfoRepository @Inject constructor(
             tokenManager.saveTokens(accessToken, refreshToken)
             if (!skip) {
                 val numericId = id.toIntOrNull()
-                uploadGoal(numericId, goal)
+                if (!uploadGoal(numericId, goal)) {
+                    return false
+                }
+            }
+            else {
+                Log.d("UserInfoRepository", "Skipping goal upload")
             }
             storeUserFields(id, name, netId, email, skip, accessToken, refreshToken, goal)
             Log.d("UserInfoRepositoryImpl", "User created successfully")
@@ -79,13 +85,12 @@ class UserInfoRepository @Inject constructor(
                 workoutGoal = goal
             )
         )
-            // Change so that it uses auth interceptor
-            .addHttpHeader("Authorization", "Bearer ${tokenManager.getAccessToken()}")
             .execute()
         if (goalResponse.hasErrors()) {
             Log.e("UserInfoRepository", "Failed to set goal: ${goalResponse.errors}")
             return false
         }
+        Log.d("UserInfoRepository", "Goal set successfully: $goal")
         return true
     }
 

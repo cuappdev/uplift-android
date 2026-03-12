@@ -48,23 +48,6 @@ data class Reminder(
 )
 
 @Composable
-fun WorkoutReminderOnboardingScreen(
-    viewModel: ProfileCreationViewModel = hiltViewModel(),
-) {
-    val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
-    val goalValue = uiState.goal
-
-    WorkoutReminderScreen(
-        goalValue = goalValue,
-        isOnboarding = true,
-        onGoalValueChange = { viewModel.updateGoals(it.toInt()) },
-        onBackClick = { viewModel.onBackClick() },
-        onNext = { viewModel.onNext() },
-        onSkip = { viewModel.onSkip() },
-    )
-}
-
-@Composable
 fun WorkoutReminderSettingsScreen(
     viewModel: SettingsViewModel = hiltViewModel(),
 ) {

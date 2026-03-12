@@ -46,7 +46,7 @@ import com.cornellappdev.uplift.ui.screens.profile.ProfileScreen
 import com.cornellappdev.uplift.ui.screens.profile.SettingsScreen
 import com.cornellappdev.uplift.ui.screens.reminders.CapacityReminderScreen
 import com.cornellappdev.uplift.ui.screens.reminders.MainReminderScreen
-import com.cornellappdev.uplift.ui.screens.reminders.WorkoutReminderOnboardingScreen
+import com.cornellappdev.uplift.ui.screens.onboarding.WorkoutReminderOnboardingScreen
 import com.cornellappdev.uplift.ui.screens.report.ReportIssueScreen
 import com.cornellappdev.uplift.ui.screens.report.ReportSubmittedScreen
 import com.cornellappdev.uplift.ui.viewmodels.classes.ClassDetailViewModel
