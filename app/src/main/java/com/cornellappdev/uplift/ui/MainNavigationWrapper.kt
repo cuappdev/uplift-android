@@ -46,12 +46,12 @@ import com.cornellappdev.uplift.ui.screens.profile.ProfileScreen
 import com.cornellappdev.uplift.ui.screens.profile.SettingsScreen
 import com.cornellappdev.uplift.ui.screens.reminders.CapacityReminderScreen
 import com.cornellappdev.uplift.ui.screens.reminders.MainReminderScreen
+import com.cornellappdev.uplift.ui.screens.onboarding.WorkoutReminderOnboardingScreen
 import com.cornellappdev.uplift.ui.screens.report.ReportIssueScreen
 import com.cornellappdev.uplift.ui.screens.report.ReportSubmittedScreen
 import com.cornellappdev.uplift.ui.viewmodels.classes.ClassDetailViewModel
 import com.cornellappdev.uplift.ui.viewmodels.gyms.GymDetailViewModel
 import com.cornellappdev.uplift.ui.viewmodels.nav.RootNavigationViewModel
-import com.cornellappdev.uplift.ui.viewmodels.profile.CheckInUiState
 import com.cornellappdev.uplift.ui.viewmodels.profile.CheckInViewModel
 import com.cornellappdev.uplift.util.ONBOARDING_FLAG
 import com.cornellappdev.uplift.ui.viewmodels.profile.ConfettiViewModel
@@ -237,6 +237,9 @@ fun MainNavigationWrapper(
                 composable<UpliftRootRoute.ProfileCreation> {
                     ProfileCreationScreen()
                 }
+                composable<UpliftRootRoute.GoalsOnboarding> {
+                    WorkoutReminderOnboardingScreen()
+                }
                 composable<UpliftRootRoute.CapacityReminders> {
                     CapacityReminderScreen()
                 }
@@ -328,6 +331,10 @@ sealed class UpliftRootRoute {
 
     @Serializable
     data object Profile : UpliftRootRoute()
+
+    @Serializable
+    data object GoalsOnboarding : UpliftRootRoute()
+
 
     @Serializable
     data object CapacityReminders : UpliftRootRoute()

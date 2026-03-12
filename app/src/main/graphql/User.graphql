@@ -33,7 +33,7 @@ query getUserByNetId($netId: String!) {
     }
 }
 
-mutation SetWorkoutGoals($id: Int!, $workoutGoal: [String!]!) {
+mutation SetWorkoutGoals($id: Int!, $workoutGoal: Int!) {
     setWorkoutGoals(userId: $id, workoutGoal: $workoutGoal) {
         ...userFields
     }
@@ -42,5 +42,18 @@ mutation SetWorkoutGoals($id: Int!, $workoutGoal: [String!]!) {
 mutation LogWorkout($facilityId: Int!, $workoutTime: DateTime!, $id: Int!) {
     logWorkout(facilityId: $facilityId, userId: $id, workoutTime: $workoutTime) {
         ...workoutFields
+    }
+}
+
+mutation DeleteUser($userId: Int!) {
+    deleteUser(userId: $userId) {
+        ...userFields
+    }
+}
+
+mutation LoginUser($netId: String!) {
+    loginUser(netId: $netId) {
+        accessToken
+        refreshToken
     }
 }

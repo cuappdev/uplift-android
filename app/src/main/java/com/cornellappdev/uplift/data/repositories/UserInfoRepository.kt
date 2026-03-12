@@ -9,6 +9,8 @@ import androidx.datastore.preferences.core.Preferences
 import com.apollographql.apollo.ApolloClient
 import com.cornellappdev.uplift.CreateUserMutation
 import com.cornellappdev.uplift.GetUserByNetIdQuery
+import com.cornellappdev.uplift.LoginUserMutation
+import com.cornellappdev.uplift.SetWorkoutGoalsMutation
 import kotlinx.coroutines.flow.map;
 import kotlinx.coroutines.flow.firstOrNull
 import com.cornellappdev.uplift.data.models.UserInfo
@@ -22,9 +24,10 @@ class UserInfoRepository @Inject constructor(
     private val firebaseAuth: FirebaseAuth,
     private val apolloClient: ApolloClient,
     private val dataStore: DataStore<Preferences>,
+    private val tokenManager: TokenManager
 ){
 
-    suspend fun createUser(email: String, name: String, netId: String): Boolean {
+    suspend fun createUser(email: String, name: String, netId: String, skip: Boolean, goal: Int): Boolean {
         try{
             val response = apolloClient.mutation(
                 CreateUserMutation(
@@ -33,16 +36,74 @@ class UserInfoRepository @Inject constructor(
                     netId = netId,
                 )
             ).execute()
-            storeId(response.data?.createUser?.userFields?.let { storeId(it.id) }.toString())
-            storeNetId(netId)
-            storeUsername(name)
-            storeEmail(email)
-            storeSkip(false)
-            Log.d("UserInfoRepositoryImpl", "User created successfully" + response.data)
+            val userFields = response.data?.createUser?.userFields
+            if (response.hasErrors() || userFields == null) {
+                Log.e("UserInfoRepository", "Server error: ${response.errors}")
+                return false
+            }
+            val loginResponse = apolloClient.mutation(
+                LoginUserMutation(
+                    netId = netId
+                )
+            ).execute()
+            val id = userFields.id
+            val loginData = loginResponse.data?.loginUser
+            if (loginData?.accessToken == null || loginData.refreshToken == null) {
+                Log.e("UserInfoRepository", "Login failed after creation: ${loginResponse.errors}")
+                return false
+            }
+            val accessToken = loginData.accessToken
+            val refreshToken = loginData.refreshToken
+            tokenManager.saveTokens(accessToken, refreshToken)
+            if (!skip) {
+                val numericId = id.toIntOrNull()
+                if (!uploadGoal(numericId, goal)) {
+                    return false
+                }
+            }
+            else {
+                Log.d("UserInfoRepository", "Skipping goal upload")
+            }
+            storeUserFields(id, name, netId, email, skip, goal)
+            Log.d("UserInfoRepositoryImpl", "User created successfully")
             return true
         } catch (e: Exception) {
             Log.e("UserInfoRepositoryImpl", "Error creating user: $e")
             return false
+        }
+    }
+
+    suspend fun uploadGoal(id:Int?, goal: Int): Boolean {
+        if (id == null) {
+            Log.e("UserInfoRepository", "Failed to set goal: non-numeric user ID '$id'")
+            return false
+        }
+        val goalResponse = apolloClient.mutation(
+            SetWorkoutGoalsMutation(
+                id = id,
+                workoutGoal = goal
+            )
+        )
+            .execute()
+        if (goalResponse.hasErrors()) {
+            Log.e("UserInfoRepository", "Failed to set goal: ${goalResponse.errors}")
+            return false
+        }
+        Log.d("UserInfoRepository", "Goal set successfully: $goal")
+        return true
+    }
+
+
+    suspend fun storeUserFields(id: String, username: String, netId: String, email: String, skip: Boolean, goal: Int) {
+        dataStore.edit { preferences ->
+            preferences[PreferencesKeys.ID] = id
+            preferences[PreferencesKeys.NETID] = netId
+            preferences[PreferencesKeys.USERNAME] = username
+            preferences[PreferencesKeys.EMAIL] = email
+            preferences[PreferencesKeys.SKIP] = skip
+            if (!skip) {
+                preferences[PreferencesKeys.GOAL] = goal
+            }
         }
     }
 
@@ -52,8 +113,8 @@ class UserInfoRepository @Inject constructor(
                 GetUserByNetIdQuery(
                     netId = netId
                 )
-            ).executeV3()
-            val user = response.data?.getUserByNetId?.get(0)?.userFields ?: return null
+            ).execute()
+            val user = response.data?.getUserByNetId?.firstOrNull()?.userFields ?: return null
             return UserInfo(
                 id = user.id,
                 name = user.name,
@@ -70,7 +131,7 @@ class UserInfoRepository @Inject constructor(
         return firebaseAuth.currentUser != null
     }
 
-    suspend fun getFirebaseUser(): FirebaseUser? {
+    fun getFirebaseUser(): FirebaseUser? {
         return firebaseAuth.currentUser
     }
 
@@ -108,6 +169,12 @@ class UserInfoRepository @Inject constructor(
     private suspend fun storeEmail(email: String) {
         dataStore.edit { preferences ->
             preferences[PreferencesKeys.EMAIL] = email
+        }
+    }
+
+    private suspend fun storeGoal(goal: Int) {
+        dataStore.edit { preferences ->
+            preferences[PreferencesKeys.GOAL] = goal
         }
     }
 

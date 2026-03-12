@@ -127,6 +127,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth'
     implementation 'com.google.firebase:firebase-messaging'
     implementation("com.google.firebase:firebase-analytics")
+    implementation "androidx.security:security-crypto:1.1.0-alpha06"
 }
 
 apollo {

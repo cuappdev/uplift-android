@@ -37,16 +37,6 @@ type Query {
   getAllReports: [Report]
 
   """
-  Get the workout goals of a user by ID.
-  """
-  getWorkoutGoals(id: Int!): [String]
-
-  """
-  Get the current and max workout streak of a user.
-  """
-  getUserStreak(id: Int!): JSONString
-
-  """
   Get all facility hourly average capacities.
   """
   getHourlyAverageCapacitiesByFacilityId(facilityId: Int): [HourlyAverageCapacity]
@@ -358,15 +348,21 @@ type User {
 
   name: String!
 
-  activeStreak: Int
+  activeStreak: Int!
 
-  maxStreak: Int
+  maxStreak: Int!
 
-  workoutGoal: [DayOfWeekGraphQLEnum]
+  workoutGoal: Int
+
+  lastGoalChange: DateTime
+
+  lastStreak: Int!
 
   encodedImage: String
 
   giveaways: [Giveaway]
+
+  goalHistory: [WorkoutGoalHistory]
 
   friendRequestsSent: [Friendship]
 
@@ -375,22 +371,16 @@ type User {
   friendships: [Friendship]
 
   friends: [User]
-}
 
-enum DayOfWeekGraphQLEnum {
-  MONDAY
+  """
+  Get the total number of gym days (unique workout days) for user.
+  """
+  totalGymDays: Int!
 
-  TUESDAY
-
-  WEDNESDAY
-
-  THURSDAY
-
-  FRIDAY
-
-  SATURDAY
-
-  SUNDAY
+  """
+  The start date of the most recent active streak, up until the current date.
+  """
+  streakStart: Date
 }
 
 type Giveaway {
@@ -399,6 +389,18 @@ type Giveaway {
   name: String!
 
   users: [User]
+}
+
+type WorkoutGoalHistory {
+  id: ID!
+
+  userId: Int!
+
+  workoutGoal: Int!
+
+  effectiveAt: DateTime!
+
+  user: User
 }
 
 type Friendship {
@@ -419,6 +421,13 @@ type Friendship {
   friend: User
 }
 
+"""
+The `Date` scalar type represents a Date
+value as specified by
+[iso8601](https://en.wikipedia.org/wiki/ISO_8601).
+"""
+scalar Date
+
 type Workout {
   id: ID!
 
@@ -427,12 +436,9 @@ type Workout {
   userId: Int!
 
   facilityId: Int!
-}
 
-"""
-JSON String
-"""
-scalar JSONString
+  gymName: String!
+}
 
 type HourlyAverageCapacity {
   id: ID!
@@ -446,6 +452,22 @@ type HourlyAverageCapacity {
   dayOfWeek: DayOfWeekGraphQLEnum
 
   history: [Float]!
+}
+
+enum DayOfWeekGraphQLEnum {
+  MONDAY
+
+  TUESDAY
+
+  WEDNESDAY
+
+  THURSDAY
+
+  FRIDAY
+
+  SATURDAY
+
+  SUNDAY
 }
 
 type CapacityReminder {
@@ -518,7 +540,7 @@ type Mutation {
   """
   Set a user's workout goals.
   """
-  setWorkoutGoals("The ID of the user." userId: Int!, "The new workout goal for the user in terms of days of the week." workoutGoal: [String]!): User
+  setWorkoutGoals("The ID of the user." userId: Int!, "The new workout goal for the user in terms of number of days per week." workoutGoal: Int!): User
 
   """
   Log a user's workout.
@@ -544,6 +566,11 @@ type Mutation {
   Creates a new report.
   """
   createReport(createdAt: DateTime!, description: String!, gymId: Int!, issue: String!): CreateReport
+
+  """
+  Deletes a report by ID.
+  """
+  deleteReport(reportId: Int!): Report
 
   """
   Deletes a user by ID.
