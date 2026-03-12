@@ -6,124 +6,105 @@ import com.cornellappdev.uplift.GetUserByNetIdQuery
 import com.cornellappdev.uplift.GetWeeklyWorkoutDaysQuery
 import com.cornellappdev.uplift.GetWorkoutsByIdQuery
 import com.cornellappdev.uplift.SetWorkoutGoalsMutation
+import com.cornellappdev.uplift.data.models.ProfileData
+import com.cornellappdev.uplift.data.models.WorkoutDomain
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import java.time.Instant
 import javax.inject.Inject
 import javax.inject.Singleton
 
-data class ProfileData(
-    val name: String,
-    val netId: String,
-    val encodedImage: String?,
-    val totalGymDays: Int,
-    val activeStreak: Int,
-    val maxStreak: Int,
-    val streakStart: String?,
-    val workoutGoal: Int,
-    val workouts: List<WorkoutDomain>,
-    val weeklyWorkoutDays: List<String>
-)
-
-data class WorkoutDomain(
-    val gymName: String,
-    val timestamp: Long
-)
 
 @Singleton
 class ProfileRepository @Inject constructor(
     private val userInfoRepository: UserInfoRepository,
     private val apolloClient: ApolloClient
 ) {
-    suspend fun getProfile(): Result<ProfileData> {
-        return try{
-            val netId = userInfoRepository.getNetIdFromDataStore()
-                ?: return Result.failure(Exception("NetId missing"))
+    suspend fun getProfile(): Result<ProfileData> = runCatching {
+        val netId = userInfoRepository.getNetIdFromDataStore()
+            ?: throw IllegalStateException("NetId missing")
 
-            val userResponse = apolloClient.query(
-                GetUserByNetIdQuery(netId)
-            ).execute()
+        val userResponse = apolloClient.query(
+            GetUserByNetIdQuery(netId)
+        ).execute()
 
-            if (userResponse.hasErrors()) {
-                Log.e("ProfileRepo", "User query errors: ${userResponse.errors}")
-                return Result.failure(IllegalStateException("User query failed"))
+        if (userResponse.hasErrors()) {
+            Log.e("ProfileRepo", "User query errors: ${userResponse.errors}")
+            throw IllegalStateException("User query failed")
+        }
+
+        val user = userResponse.data?.getUserByNetId?.firstOrNull()?.userFields
+            ?: throw IllegalStateException("User not found")
+
+        val userId = user.id.toIntOrNull()
+            ?: throw IllegalStateException("Invalid user ID: ${user.id}")
+
+        coroutineScope {
+            val workoutDeferred = async {
+                apolloClient.query(GetWorkoutsByIdQuery(userId)).execute()
+            }
+            val weeklyDeferred = async {
+                apolloClient.query(GetWeeklyWorkoutDaysQuery(userId)).execute()
             }
 
-            val user = userResponse.data?.getUserByNetId?.firstOrNull()?.userFields
-                ?: return Result.failure(IllegalStateException("User not found"))
-
-            val userId = user.id.toIntOrNull()
-                ?: return Result.failure(IllegalStateException("Invalid user ID: ${user.id}"))
-
-            val workoutResponse = apolloClient
-                .query(GetWorkoutsByIdQuery(userId))
-                .execute()
-
+            val workoutResponse = workoutDeferred.await()
             if (workoutResponse.hasErrors()) {
                 Log.e("ProfileRepo", "Workout query errors: ${workoutResponse.errors}")
+                throw IllegalStateException("Workout query failed")
             }
 
-            val workouts = if (workoutResponse.hasErrors()) {
-                emptyList()
-            } else {
-                workoutResponse.data?.getWorkoutsById?.filterNotNull() ?: emptyList()
-            }
+            val workouts = workoutResponse.data?.getWorkoutsById?.filterNotNull().orEmpty()
 
             val workoutDomain = workouts.map {
                 WorkoutDomain(
                     gymName = it.workoutFields.gymName,
-                    timestamp = Instant.parse(it.workoutFields.workoutTime.toString()).toEpochMilli()
+                    timestamp = Instant.parse(it.workoutFields.workoutTime.toString())
+                        .toEpochMilli()
                 )
             }
 
-            val weeklyResponse = apolloClient.query(GetWeeklyWorkoutDaysQuery(userId)).execute()
+            val weeklyResponse = weeklyDeferred.await()
             if (weeklyResponse.hasErrors()) {
-                Log.e("ProfileRepo", "Weekly query errors=${weeklyResponse.errors}")
+                Log.e("ProfileRepo", "Weekly query errors: ${weeklyResponse.errors}")
+                throw IllegalStateException("Weekly workout days query failed")
             }
 
-            val weeklyDays = if (weeklyResponse.hasErrors()) {
-                emptyList()
-            } else {
-                weeklyResponse.data?.getWeeklyWorkoutDays?.filterNotNull() ?: emptyList()
-            }
+            val weeklyDays = weeklyResponse.data?.getWeeklyWorkoutDays?.filterNotNull().orEmpty()
 
-            Result.success(
-                ProfileData(
-                    name = user.name,
-                    netId = user.netId,
-                    encodedImage = user.encodedImage,
-                    totalGymDays = user.totalGymDays,
-                    activeStreak = user.activeStreak,
-                    maxStreak = user.maxStreak,
-                    streakStart = user.streakStart?.toString(),
-                    workoutGoal = user.workoutGoal ?: 0,
-                    workouts = workoutDomain,
-                    weeklyWorkoutDays = weeklyDays
-                )
+            ProfileData(
+                name = user.name,
+                netId = user.netId,
+                encodedImage = user.encodedImage,
+                totalGymDays = user.totalGymDays,
+                activeStreak = user.activeStreak,
+                maxStreak = user.maxStreak,
+                streakStart = user.streakStart?.toString(),
+                workoutGoal = user.workoutGoal ?: 0,
+                workouts = workoutDomain,
+                weeklyWorkoutDays = weeklyDays
             )
-        } catch (e: Exception) {
-        Log.e("ProfileRepo", "Failed to load profile", e)
-            Result.failure(e)
         }
+    }.onFailure { e ->
+        Log.e("ProfileRepo", "Failed to load profile", e)
     }
 
-    suspend fun setWorkoutGoal(userId: Int, goal: Int): Result<Unit> {
-        return try {
-            val response = apolloClient
-                .mutation(
-                    SetWorkoutGoalsMutation(
-                        id = userId,
-                        workoutGoal = goal
-                    )
+    suspend fun setWorkoutGoal(goal: Int): Result<Unit> = runCatching {
+        val userId = userInfoRepository.getUserIdFromDataStore()?.toIntOrNull()
+            ?: throw IllegalStateException("Missing user ID")
+
+        val response = apolloClient
+            .mutation(
+                SetWorkoutGoalsMutation(
+                    id = userId,
+                    workoutGoal = goal
                 )
-                .execute()
+            )
+            .execute()
 
-            if (response.hasErrors()) {
-                Result.failure(Exception("Goal update failed"))
-            } else {
-                Result.success(Unit)
-            }
-
-        } catch (e: Exception) {
-            Result.failure(e)
+        if (response.hasErrors()) {
+            throw IllegalStateException("Goal update failed")
         }
+    }.onFailure { e ->
+        Log.e("ProfileRepo", "Failed to update workout goal", e)
     }
 }

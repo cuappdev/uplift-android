@@ -135,7 +135,7 @@ private fun EmptyHistorySection(){
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
-            painter = painterResource(id = R.drawable.ic_bag),
+            painter = painterResource(id = R.drawable.ic_dufflebag),
             contentDescription = null,
             modifier = Modifier
                 .width(64.99967.dp)

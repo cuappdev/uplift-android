@@ -77,9 +77,6 @@ fun MainNavigationWrapper(
     rootNavigationViewModel: RootNavigationViewModel = hiltViewModel(),
 
 ) {
-
-    val confettiViewModel: ConfettiViewModel = hiltViewModel()
-    val checkInViewModel: CheckInViewModel = hiltViewModel()
     val rootNavigationUiState = rootNavigationViewModel.collectUiStateValue()
     val startDestination = rootNavigationUiState.startDestination
 
@@ -245,7 +242,7 @@ fun MainNavigationWrapper(
                     CapacityReminderScreen()
                 }
                 composable<UpliftRootRoute.Profile> {
-                    ProfileScreen(toSettings = {}, toGoals = {}, toHistory = {})
+                    ProfileScreen()
                 }
                 composable<UpliftRootRoute.Reminders> {
                     MainReminderScreen()

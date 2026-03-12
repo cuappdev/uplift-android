@@ -24,15 +24,18 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.cornellappdev.uplift.R
 import com.cornellappdev.uplift.ui.components.profile.workouts.GoalsSection
 import com.cornellappdev.uplift.ui.components.profile.workouts.HistoryItem
 import com.cornellappdev.uplift.ui.components.profile.workouts.HistorySection
 import com.cornellappdev.uplift.ui.components.profile.ProfileHeaderSection
 import com.cornellappdev.uplift.ui.components.profile.workouts.ReminderItem
+import com.cornellappdev.uplift.ui.viewmodels.profile.ProfileUiState
 import com.cornellappdev.uplift.ui.viewmodels.profile.ProfileViewModel
 import com.cornellappdev.uplift.util.GRAY01
 import com.cornellappdev.uplift.util.montserratFamily
@@ -41,20 +44,21 @@ import com.cornellappdev.uplift.util.montserratFamily
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(
-    viewModel: ProfileViewModel = hiltViewModel(),
-    toSettings:() -> Unit,
-    toGoals:() -> Unit,
-    toHistory:() -> Unit
+    viewModel: ProfileViewModel = hiltViewModel()
 ) {
-//    var tabIndex by remember { mutableIntStateOf(0) }
-//    val tabs = listOf("WORKOUTS", "ACHIEVEMENTS")
-
     val uiState by viewModel.uiStateFlow.collectAsState()
 
-    LaunchedEffect(Unit) {
-        viewModel.reload()
-    }
+    ProfileScreenContent(uiState,viewModel::toSettings,viewModel::toGoals, viewModel::toHistory)
 
+}
+
+@Composable
+private fun ProfileScreenContent(
+    uiState: ProfileUiState,
+    toSettings: () -> Unit,
+    toGoals: () -> Unit,
+    toHistory: () -> Unit
+) {
     Scaffold(
         containerColor = Color.White,
         topBar = {
@@ -75,7 +79,7 @@ fun ProfileScreen(
                 name = uiState.name,
                 gymDays = uiState.totalGymDays,
                 streaks = uiState.activeStreak,
-                profilePictureUri = uiState.profileImage?.let { Uri.parse(it) },
+                profilePictureUri = uiState.profileImage,
                 onPhotoSelected = {},
                 netId = uiState.netId
             )
@@ -162,5 +166,33 @@ private fun ProfileScreenTopBar(
                 )
             }
         }
+    )
+}
+
+@Preview
+@Composable
+private fun ProfileScreenContentPreview() {
+    ProfileScreenContent(
+        uiState = ProfileUiState(
+            name = "Melissa Velasquez",
+            netId = "mv477",
+            totalGymDays = 42,
+            activeStreak = 5,
+            workoutGoal = 4,
+            historyItems = listOf(
+                HistoryItem(
+                    gymName = "Teagle",
+                    time = "10:00 AM",
+                    date = "March 29, 2024",
+                    timestamp = 0L
+                )
+            ),
+            daysOfMonth = listOf(10, 11, 12, 13, 14, 15, 16),
+            completedDays = listOf(true, false, true, false, true, false, false),
+            workoutsCompleted = 3
+        ),
+        {},
+        {},
+        {}
     )
 }

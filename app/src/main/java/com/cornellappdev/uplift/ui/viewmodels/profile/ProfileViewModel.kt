@@ -1,10 +1,14 @@
 package com.cornellappdev.uplift.ui.viewmodels.profile
 
+import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.viewModelScope
+import coil.util.CoilUtils.result
 import com.cornellappdev.uplift.data.repositories.ProfileRepository
 import com.cornellappdev.uplift.data.repositories.UserInfoRepository
+import com.cornellappdev.uplift.ui.UpliftRootRoute
 import com.cornellappdev.uplift.ui.components.profile.workouts.HistoryItem
+import com.cornellappdev.uplift.ui.nav.RootNavigationRepository
 import com.cornellappdev.uplift.ui.viewmodels.UpliftViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -22,7 +26,7 @@ data class ProfileUiState(
     val error: Boolean = false,
     val name: String = "",
     val netId: String = "",
-    val profileImage: String? = null,
+    val profileImage: Uri? = null,
     val totalGymDays: Int = 0,
     val activeStreak: Int = 0,
     val maxStreak: Int = 0,
@@ -37,10 +41,14 @@ data class ProfileUiState(
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
     private val profileRepository: ProfileRepository,
-    private val userInfoRepository: UserInfoRepository,
+    private val rootNavigationRepository: RootNavigationRepository,
 ) : UpliftViewModel<ProfileUiState>(ProfileUiState()) {
 
     private var loadingJob: Job? = null
+
+    init {
+        reload()
+    }
 
     fun reload() {
         if (loadingJob?.isActive == true) return
@@ -54,65 +62,62 @@ class ProfileViewModel @Inject constructor(
 
         val result = profileRepository.getProfile()
 
-        if (result.isSuccess) {
-            val profile = result.getOrNull()!!
-
-            val historyItems = profile.workouts.map {
-                HistoryItem(
-                    gymName = it.gymName,
-                    time = formatTime.format(
-                        Instant.ofEpochMilli(it.timestamp)
-                    ),
-                    date = formatDate.format(
-                        Instant.ofEpochMilli(it.timestamp)
-                    ),
-                    timestamp = it.timestamp
-                )
-            }
-
-            val now = LocalDate.now()
-            val startOfWeek = now.with(DayOfWeek.MONDAY)
-
-            val weekDates = (0..6).map {
-                startOfWeek.plusDays(it.toLong())
-            }
-
-            val daysOfMonth = weekDates.map { it.dayOfMonth }
-
-            val completedDays = weekDates.map { date ->
-                profile.weeklyWorkoutDays.contains(date.toString())
-            }
-
-            val workoutsCompleted = profile.weeklyWorkoutDays.size
-
-            applyMutation {
-                copy(
-                    loading = false,
-                    name = profile.name,
-                    netId = profile.netId,
-                    profileImage = profile.encodedImage,
-                    totalGymDays = profile.totalGymDays,
-                    activeStreak = profile.activeStreak,
-                    maxStreak = profile.maxStreak,
-                    streakStart = profile.streakStart,
-                    workoutGoal = profile.workoutGoal,
-                    historyItems = historyItems,
-                    daysOfMonth = daysOfMonth,
-                    completedDays = completedDays,
-                    workoutsCompleted = workoutsCompleted
-                )
-            }
-        } else {
+        val profile = result.getOrNull()
+        if (profile == null) {
             Log.e("profile VM", "Failed to load profile", result.exceptionOrNull())
             applyMutation { copy(loading = false, error = true) }
+            return@launch
+        }
+        val historyItems = profile.workouts.map {
+            HistoryItem(
+                gymName = it.gymName,
+                time = formatTime.format(
+                    Instant.ofEpochMilli(it.timestamp)
+                ),
+                date = formatDate.format(
+                    Instant.ofEpochMilli(it.timestamp)
+                ),
+                timestamp = it.timestamp
+            )
         }
 
+        val now = LocalDate.now()
+        val startOfWeek = now.with(DayOfWeek.MONDAY)
+
+        val weekDates = (0..6).map {
+            startOfWeek.plusDays(it.toLong())
+        }
+
+        val daysOfMonth = weekDates.map { it.dayOfMonth }
+
+        val completedDays = weekDates.map { date ->
+            profile.weeklyWorkoutDays.contains(date.toString())
+        }
+
+        val workoutsCompleted = profile.weeklyWorkoutDays.size
+
+        applyMutation {
+            copy(
+                loading = false,
+                name = profile.name,
+                netId = profile.netId,
+                profileImage = profile.encodedImage?.let(Uri::parse),
+                totalGymDays = profile.totalGymDays,
+                activeStreak = profile.activeStreak,
+                maxStreak = profile.maxStreak,
+                streakStart = profile.streakStart,
+                workoutGoal = profile.workoutGoal,
+                historyItems = historyItems,
+                daysOfMonth = daysOfMonth,
+                completedDays = completedDays,
+                workoutsCompleted = workoutsCompleted
+            )
+
+        }
     }
 
-
     fun updateWorkoutGoal(goal: Int) = viewModelScope.launch {
-        val userId = userInfoRepository.getUserIdFromDataStore()?.toIntOrNull() ?: return@launch
-        val result = profileRepository.setWorkoutGoal(userId, goal)
+        val result = profileRepository.setWorkoutGoal(goal)
 
         if (result.isSuccess) {
             reload()
@@ -120,6 +125,20 @@ class ProfileViewModel @Inject constructor(
             Log.e("profile VM", "Failed to update workout goal", result.exceptionOrNull())
         }
     }
+
+    fun toSettings() {
+        rootNavigationRepository.navigate(UpliftRootRoute.Settings)
+    }
+
+    fun toGoals() {
+        // replace with the actual route once goals exists
+    }
+
+    fun toHistory() {
+        // replace with the actual route once history exists
+    }
+
+
 
     private val formatTime = DateTimeFormatter
         .ofPattern("h:mm a")
