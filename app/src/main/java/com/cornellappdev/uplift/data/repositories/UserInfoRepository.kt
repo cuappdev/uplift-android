@@ -24,6 +24,7 @@ class UserInfoRepository @Inject constructor(
     private val firebaseAuth: FirebaseAuth,
     private val apolloClient: ApolloClient,
     private val dataStore: DataStore<Preferences>,
+    private val tokenManager: TokenManager
 ){
 
     suspend fun createUser(email: String, name: String, netId: String, skip: Boolean, goal: Int): Boolean {
@@ -36,7 +37,7 @@ class UserInfoRepository @Inject constructor(
                 )
             ).execute()
             val userFields = response.data?.createUser?.userFields
-            if (userFields == null) {
+            if (response.hasErrors() || userFields == null) {
                 Log.e("UserInfoRepository", "Server error: ${response.errors}")
                 return false
             }
@@ -53,33 +54,54 @@ class UserInfoRepository @Inject constructor(
             }
             val accessToken = loginData.accessToken
             val refreshToken = loginData.refreshToken
-            storeId(id)
-            storeNetId(netId)
-            storeUsername(name)
-            storeEmail(email)
-            storeSkip(skip)
-            storeAccessToken(accessToken)
-            storeRefreshToken(refreshToken)
+            tokenManager.saveTokens(accessToken, refreshToken)
             if (!skip) {
-                storeGoal(goal)
-                val goalResponse = apolloClient.mutation(
-                    SetWorkoutGoalsMutation(
-                        id = id.toInt(),
-                        workoutGoal = goal
-                    )
-                )
-                    .addHttpHeader("Authorization", "Bearer $accessToken")
-                    .execute()
-                if (goalResponse.hasErrors()) {
-                    Log.e("UserInfoRepository", "Failed to set goal: ${goalResponse.errors}")
-                    return false
-                }
+                val numericId = id.toIntOrNull()
+                uploadGoal(numericId, goal)
             }
-            Log.d("UserInfoRepositoryImpl", "User created successfully" + response.data)
+            storeUserFields(id, name, netId, email, skip, accessToken, refreshToken, goal)
+            Log.d("UserInfoRepositoryImpl", "User created successfully")
             return true
         } catch (e: Exception) {
             Log.e("UserInfoRepositoryImpl", "Error creating user: $e")
             return false
+        }
+    }
+
+    suspend fun uploadGoal(id:Int?, goal: Int): Boolean {
+        if (id == null) {
+            Log.e("UserInfoRepository", "Failed to set goal: non-numeric user ID '$id'")
+            return false
+        }
+        val goalResponse = apolloClient.mutation(
+            SetWorkoutGoalsMutation(
+                id = id,
+                workoutGoal = goal
+            )
+        )
+            // Change so that it uses auth interceptor
+            .addHttpHeader("Authorization", "Bearer ${tokenManager.getAccessToken()}")
+            .execute()
+        if (goalResponse.hasErrors()) {
+            Log.e("UserInfoRepository", "Failed to set goal: ${goalResponse.errors}")
+            return false
+        }
+        return true
+    }
+
+
+    suspend fun storeUserFields(id: String, username: String, netId: String, email: String, skip: Boolean, accessToken: String, refreshToken: String, goal: Int) {
+        dataStore.edit { preferences ->
+            preferences[PreferencesKeys.ID] = id
+            preferences[PreferencesKeys.NETID] = netId
+            preferences[PreferencesKeys.USERNAME] = username
+            preferences[PreferencesKeys.EMAIL] = email
+            preferences[PreferencesKeys.SKIP] = skip
+            preferences[PreferencesKeys.ACCESS_TOKEN] = accessToken
+            preferences[PreferencesKeys.REFRESH_TOKEN] = refreshToken
+            if (!skip) {
+                preferences[PreferencesKeys.GOAL] = goal
+            }
         }
     }
 
@@ -89,8 +111,8 @@ class UserInfoRepository @Inject constructor(
                 GetUserByNetIdQuery(
                     netId = netId
                 )
-            ).executeV3()
-            val user = response.data?.getUserByNetId?.get(0)?.userFields ?: return null
+            ).execute()
+            val user = response.data?.getUserByNetId?.firstOrNull()?.userFields ?: return null
             return UserInfo(
                 id = user.id,
                 name = user.name,
@@ -107,7 +129,7 @@ class UserInfoRepository @Inject constructor(
         return firebaseAuth.currentUser != null
     }
 
-    suspend fun getFirebaseUser(): FirebaseUser? {
+    fun getFirebaseUser(): FirebaseUser? {
         return firebaseAuth.currentUser
     }
 

@@ -37,8 +37,14 @@ class ProfileCreationViewModel @Inject constructor(
     private fun createUser() = viewModelScope.launch {
         val user = userInfoRepository.getFirebaseUser()
         val name = user?.displayName ?: ""
-        val email = user?.email ?: ""
-        val netId = email.substring(0, email.indexOf('@'))
+        val email = user?.email
+        if (email.isNullOrBlank()) {
+            Log.e("Error", "Cannot create user: missing or blank email")
+            userInfoRepository.signOut()
+            return@launch
+        }
+
+        val netId = email.substringBefore("@")
         val isSkipped = getStateValue().isGoalSkipped
         var goal = 0
         if (!isSkipped) {
@@ -75,7 +81,6 @@ class ProfileCreationViewModel @Inject constructor(
             copy(isGoalSkipped = true)
         }
         createUser()
-    }
     }
 
     fun onNext() {

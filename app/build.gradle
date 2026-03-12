@@ -58,7 +58,7 @@ android {
                     "GOOGLE_AUTH_CLIENT_ID", secretsProperties["GOOGLE_AUTH_CLIENT_ID"]
             )
             signingConfig signingConfigs.debug
-            buildConfigField("boolean", "ONBOARDING_FLAG", "true")
+            buildConfigField("boolean", "ONBOARDING_FLAG", "false")
             buildConfigField("boolean", "CHECK_IN_FLAG", "false")
         }
     }
@@ -127,6 +127,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth'
     implementation 'com.google.firebase:firebase-messaging'
     implementation("com.google.firebase:firebase-analytics")
+    implementation "androidx.security:security-crypto:1.1.0-alpha06"
 }
 
 apollo {

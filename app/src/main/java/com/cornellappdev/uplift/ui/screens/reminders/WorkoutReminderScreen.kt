@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -112,7 +111,7 @@ fun WorkoutReminderScreen(
         selectedReminder = selectedReminder,
         addNewReminderState = addNewReminderState,
         deleteDialogOpen = deleteDialogOpen,
-        goalValue = goalValue.toInt(),
+        goalValue = goalValue,
         isOnboarding = isOnboarding,
         // Pass callbacks to update the state defined above
         onSelectedReminderChange = { selectedReminder = it },
@@ -133,7 +132,7 @@ private fun WorkoutReminderContent(
     selectedReminder: Reminder?,
     addNewReminderState: Boolean,
     deleteDialogOpen: Boolean,
-    goalValue: Int,
+    goalValue: Float,
     isOnboarding: Boolean,
     onSelectedReminderChange: (Reminder?) -> Unit,
     onAddNewReminderStateChange: (Boolean) -> Unit,
@@ -152,35 +151,32 @@ private fun WorkoutReminderContent(
                 withBack = true
             )
         },
+        bottomBar = {
+            if (isOnboarding) {
+                OnboardingButtons(onNext, onSkip)
+            }
+        },
         modifier = Modifier.fillMaxSize(),
     ) { padding ->
         Column(
             modifier = Modifier
                 .background(color = Color.White)
-                .padding(top = padding.calculateTopPadding())
+                .padding(padding)
                 .fillMaxSize()
-                .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.SpaceBetween
+                .verticalScroll(rememberScrollState())
         ) {
-            Column(modifier = Modifier.fillMaxSize()) {
-                GoalSlider(value = goalValue.toFloat(), onValueChange = onGoalValueChange)
+            GoalSlider(value = goalValue, onValueChange = onGoalValueChange)
 
-                if (!isOnboarding) {
-                    WorkoutReminders(
-                        selectedReminder = selectedReminder,
-                        onSelectedReminderChange = onSelectedReminderChange,
-                        reminders = reminders,
-                        onRemindersChange = onRemindersChange,
-                        addNewReminderState = addNewReminderState,
-                        onAddNewReminderStateChange = onAddNewReminderStateChange,
-                        openDelete = { onDeleteDialogOpenChange(true) }
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.weight(1f))
-            if (isOnboarding) {
-                OnboardingButtons(onNext, onSkip)
+            if (!isOnboarding) {
+                WorkoutReminders(
+                    selectedReminder = selectedReminder,
+                    onSelectedReminderChange = onSelectedReminderChange,
+                    reminders = reminders,
+                    onRemindersChange = onRemindersChange,
+                    addNewReminderState = addNewReminderState,
+                    onAddNewReminderStateChange = onAddNewReminderStateChange,
+                    openDelete = { onDeleteDialogOpenChange(true) }
+                )
             }
         }
 
