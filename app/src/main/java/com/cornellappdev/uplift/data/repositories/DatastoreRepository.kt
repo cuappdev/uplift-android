@@ -28,8 +28,6 @@ object PreferencesKeys {
     val GOAL = intPreferencesKey("workoutGoal")
     val SKIP = booleanPreferencesKey("skip")
     val FCM_TOKEN = stringPreferencesKey("fcmToken")
-    val ACCESS_TOKEN = stringPreferencesKey("accessToken")
-    val REFRESH_TOKEN = stringPreferencesKey("refreshToken")
     val DECLINED_NOTIFICATION_PERMISSION =
         booleanPreferencesKey("declinedNotificationPermission")
     val CAPACITY_REMINDERS_ID = intPreferencesKey("capacityRemindersId")

@@ -24,17 +24,14 @@ data class ProfileCreationUiState(
 class ProfileCreationViewModel @Inject constructor(
     private val userInfoRepository: UserInfoRepository,
     private val rootNavigationRepository: RootNavigationRepository,
-) : UpliftViewModel<ProfileCreationUiState>(ProfileCreationUiState()) {
-
-    init {
-        viewModelScope.launch {
-            val user = userInfoRepository.getFirebaseUser()
-            val name = user?.displayName ?: ""
-            applyMutation {
-                copy(user = user, name = name)
-            }
-        }
+) : UpliftViewModel<ProfileCreationUiState>(
+    userInfoRepository.getFirebaseUser().let { user ->
+        ProfileCreationUiState(
+            user = user,
+            name = user?.displayName ?: ""
+        )
     }
+) {
 
     private fun createUser() = viewModelScope.launch {
         val state = getStateValue()

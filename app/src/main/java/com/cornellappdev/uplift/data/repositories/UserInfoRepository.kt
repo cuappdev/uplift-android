@@ -8,7 +8,6 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.Preferences
 import com.apollographql.apollo.ApolloClient
 import com.cornellappdev.uplift.CreateUserMutation
-import com.cornellappdev.uplift.DeleteUserMutation
 import com.cornellappdev.uplift.GetUserByNetIdQuery
 import com.cornellappdev.uplift.LoginUserMutation
 import com.cornellappdev.uplift.SetWorkoutGoalsMutation
@@ -65,7 +64,7 @@ class UserInfoRepository @Inject constructor(
             else {
                 Log.d("UserInfoRepository", "Skipping goal upload")
             }
-            storeUserFields(id, name, netId, email, skip, accessToken, refreshToken, goal)
+            storeUserFields(id, name, netId, email, skip, goal)
             Log.d("UserInfoRepositoryImpl", "User created successfully")
             return true
         } catch (e: Exception) {
@@ -95,15 +94,13 @@ class UserInfoRepository @Inject constructor(
     }
 
 
-    suspend fun storeUserFields(id: String, username: String, netId: String, email: String, skip: Boolean, accessToken: String, refreshToken: String, goal: Int) {
+    suspend fun storeUserFields(id: String, username: String, netId: String, email: String, skip: Boolean, goal: Int) {
         dataStore.edit { preferences ->
             preferences[PreferencesKeys.ID] = id
             preferences[PreferencesKeys.NETID] = netId
             preferences[PreferencesKeys.USERNAME] = username
             preferences[PreferencesKeys.EMAIL] = email
             preferences[PreferencesKeys.SKIP] = skip
-            preferences[PreferencesKeys.ACCESS_TOKEN] = accessToken
-            preferences[PreferencesKeys.REFRESH_TOKEN] = refreshToken
             if (!skip) {
                 preferences[PreferencesKeys.GOAL] = goal
             }
@@ -184,18 +181,6 @@ class UserInfoRepository @Inject constructor(
     suspend fun storeSkip(skip: Boolean) {
         dataStore.edit { preferences ->
             preferences[PreferencesKeys.SKIP] = skip
-        }
-    }
-
-    private suspend fun storeAccessToken(accessToken: String) {
-        dataStore.edit { preferences ->
-            preferences[PreferencesKeys.ACCESS_TOKEN] = accessToken
-        }
-    }
-
-    private suspend fun storeRefreshToken(refreshToken: String) {
-        dataStore.edit { preferences ->
-            preferences[PreferencesKeys.REFRESH_TOKEN] = refreshToken
         }
     }
 

@@ -24,13 +24,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.cornellappdev.uplift.ui.components.general.UpliftTopBarWithBack
 import com.cornellappdev.uplift.ui.components.goalsetting.DeleteDialog
 import com.cornellappdev.uplift.ui.components.goalsetting.GoalSlider
 import com.cornellappdev.uplift.ui.components.goalsetting.WorkoutReminders
 import com.cornellappdev.uplift.ui.components.general.UpliftButton
-import com.cornellappdev.uplift.ui.viewmodels.onboarding.ProfileCreationViewModel
 import com.cornellappdev.uplift.ui.viewmodels.profile.SettingsViewModel
 import com.cornellappdev.uplift.util.GRAY04
 import com.cornellappdev.uplift.util.montserratFamily
@@ -63,6 +61,7 @@ fun WorkoutReminderSettingsScreen(
 
 /**
  * @param reminders: list of reminders
+ * @param goalValue: the value of the goal slider
  * @param onRemindersChange: callback for when reminders are changed
  * @param onGoalValueChange: callback for when the goal slider value is changed
  * @param onBackClick: callback for when the back button is clicked

@@ -15,13 +15,22 @@ class TokenManager @Inject constructor(@ApplicationContext private val context: 
     private val fileName = "encrypted_tokens"
 
     // Initialize EncryptedSharedPreferences
-    private val sharedPreferences: SharedPreferences by lazy {
+    private val sharedPreferences: SharedPreferences? by lazy {
         try {
             createEncryptedPrefs()
         } catch (e: Exception) {
             Log.e("TokenManager", "Failed to initialize EncryptedSharedPreferences", e)
+            // Clear corrupted state
             context.deleteSharedPreferences(fileName)
-            context.getSharedPreferences(fileName, Context.MODE_PRIVATE)
+            try {
+                // Could have failed due to previous corrupted state
+                // One more attempt after cleaning the corruption
+                createEncryptedPrefs()
+            } catch (retryException: Exception) {
+                // Probably broken return null
+                Log.e("TokenManager", "Failed to initialize EncryptedSharedPreferences again", retryException)
+                null
+            }
         }
     }
 
@@ -40,18 +49,17 @@ class TokenManager @Inject constructor(@ApplicationContext private val context: 
     }
 
     fun saveTokens(accessToken: String, refreshToken: String) {
-        sharedPreferences.edit().apply {
+        sharedPreferences?.edit {
             putString("access_token", accessToken)
             putString("refresh_token", refreshToken)
-            apply()
         }
     }
 
-    fun getAccessToken(): String? = sharedPreferences.getString("access_token", null)
+    fun getAccessToken(): String? = sharedPreferences?.getString("access_token", null)
 
-    fun getRefreshToken(): String? = sharedPreferences.getString("refresh_token", null)
+    fun getRefreshToken(): String? = sharedPreferences?.getString("refresh_token", null)
 
     fun clearTokens() {
-        sharedPreferences.edit { clear() }
+        sharedPreferences?.edit { clear() }
     }
 }
