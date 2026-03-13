@@ -24,7 +24,6 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -53,7 +52,7 @@ fun WorkoutProgressArc(
     workoutGoal: Int,
 ) {
     val isZero = workoutsCompleted <= 0 || workoutGoal <= 0
-    val isComplete = workoutGoal > 0 && workoutsCompleted >= workoutGoal
+    val isComplete = workoutGoal in 1..workoutsCompleted
 
     // Calculate progress percentage
     val progress = when {
@@ -184,75 +183,6 @@ private fun ProgressArc(
             radius = dotRadius * 0.4f,
             center = Offset(x, y)
         )
-    }
-}
-
-private fun DrawScope.drawProgressArc(
-    workoutsCompleted: Int,
-    workoutGoal: Int,
-    gradientBrush: Brush,
-    startAngle: Float,
-    progressAngle: Float,
-    topLeft: Offset,
-    arcSize: Size,
-    strokeWidth: Float
-) {
-    if (workoutsCompleted == workoutGoal) {
-        drawArc(
-            brush = gradientBrush,
-            startAngle = startAngle,
-            sweepAngle = progressAngle,
-            useCenter = false,
-            topLeft = topLeft,
-            size = arcSize,
-            style = Stroke(width = strokeWidth, cap = StrokeCap.Round)
-        )
-    } else {
-        drawArc(
-            color = PRIMARY_YELLOW,
-            startAngle = startAngle,
-            sweepAngle = progressAngle,
-            useCenter = false,
-            topLeft = topLeft,
-            size = arcSize,
-            style = Stroke(width = strokeWidth, cap = StrokeCap.Round)
-        )
-    }
-}
-
-
-private fun DrawScope.drawArcSliderOuterCircle(
-    workoutsCompleted: Int,
-    workoutGoal: Int,
-    gradientBrush: Brush,
-    dotRadius: Float,
-    x: Float,
-    y: Float
-) {
-    when (workoutsCompleted) {
-        workoutGoal -> {
-            drawCircle(
-                brush = gradientBrush,
-                radius = dotRadius,
-                center = Offset(x, y)
-            )
-        }
-
-        0 -> {
-            drawCircle(
-                color = GRAY03,
-                radius = dotRadius,
-                center = Offset(x, y)
-            )
-        }
-
-        else -> {
-            drawCircle(
-                color = PRIMARY_YELLOW,
-                radius = dotRadius,
-                center = Offset(x, y)
-            )
-        }
     }
 }
 

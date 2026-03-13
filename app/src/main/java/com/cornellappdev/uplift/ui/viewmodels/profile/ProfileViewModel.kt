@@ -10,6 +10,7 @@ import com.cornellappdev.uplift.ui.UpliftRootRoute
 import com.cornellappdev.uplift.ui.components.profile.workouts.HistoryItem
 import com.cornellappdev.uplift.ui.nav.RootNavigationRepository
 import com.cornellappdev.uplift.ui.viewmodels.UpliftViewModel
+import com.cornellappdev.uplift.util.timeAgoString
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -69,15 +70,17 @@ class ProfileViewModel @Inject constructor(
             return@launch
         }
         val historyItems = profile.workouts.map {
+            val workoutInstant = Instant.ofEpochMilli(it.timestamp)
+            val calendar = java.util.Calendar.getInstance().apply {
+                timeInMillis = it.timestamp
+            }
             HistoryItem(
                 gymName = it.gymName,
-                time = formatTime.format(
-                    Instant.ofEpochMilli(it.timestamp)
-                ),
-                date = formatDate.format(
-                    Instant.ofEpochMilli(it.timestamp)
-                ),
-                timestamp = it.timestamp
+                time = formatTime.format(workoutInstant),
+                date = formatDate.format(workoutInstant),
+                timestamp = it.timestamp,
+                dayOfWeek = formatDayOfWeek.format(workoutInstant),
+                ago = calendar.timeAgoString()
             )
         }
 
@@ -149,4 +152,10 @@ class ProfileViewModel @Inject constructor(
         .ofPattern("MMMM d, yyyy")
         .withLocale(Locale.US)
         .withZone(ZoneId.systemDefault())
+
+    private val formatDayOfWeek = DateTimeFormatter
+        .ofPattern("EEE")
+        .withLocale(Locale.US)
+        .withZone(ZoneId.systemDefault())
 }
+

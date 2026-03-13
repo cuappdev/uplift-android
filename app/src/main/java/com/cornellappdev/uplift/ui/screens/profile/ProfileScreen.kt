@@ -176,20 +176,13 @@ private fun ProfileScreenContentPreview() {
         uiState = ProfileUiState(
             name = "Melissa Velasquez",
             netId = "mv477",
-            totalGymDays = 42,
-            activeStreak = 5,
+            totalGymDays = 0,
+            activeStreak = 0,
             workoutGoal = 4,
-            historyItems = listOf(
-                HistoryItem(
-                    gymName = "Teagle",
-                    time = "10:00 AM",
-                    date = "March 29, 2024",
-                    timestamp = 0L
-                )
-            ),
+            historyItems = emptyList(),
             daysOfMonth = listOf(10, 11, 12, 13, 14, 15, 16),
-            completedDays = listOf(true, false, true, false, true, false, false),
-            workoutsCompleted = 3
+            completedDays = listOf(false, false, false, false, false, false, false),
+            workoutsCompleted = 0
         ),
         {},
         {},

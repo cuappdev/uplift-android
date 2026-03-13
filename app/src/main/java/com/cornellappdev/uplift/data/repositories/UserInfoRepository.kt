@@ -64,7 +64,14 @@ class UserInfoRepository @Inject constructor(
             else {
                 Log.d("UserInfoRepository", "Skipping goal upload")
             }
-            storeUserFields(id, name, netId, email, skip, goal)
+            storeUserFields(
+                id = userFields.id,
+                username = userFields.name,
+                netId = userFields.netId,
+                email = userFields.email ?: email,
+                skip = skip,
+                goal = goal
+            )
             Log.d("UserInfoRepositoryImpl", "User created successfully")
             return true
         } catch (e: Exception) {
@@ -111,11 +118,14 @@ class UserInfoRepository @Inject constructor(
         return try {
             val user = getUserByNetId(netId) ?: return false
 
-            storeId(user.id)
-            storeNetId(user.netId)
-            storeUsername(user.name)
-            storeEmail(user.email)
-            storeSkip(false)
+            storeUserFields(
+                id = user.id,
+                username = user.name,
+                netId = user.netId,
+                email = user.email,
+                skip = false,
+                goal = user.workoutGoal ?: 0
+            )
 
             Log.d("UserInfoRepositoryImpl", "Synced existing user to DataStore: ${user.id}")
             true
@@ -170,36 +180,6 @@ class UserInfoRepository @Inject constructor(
 
     fun signOut() {
         firebaseAuth.signOut()
-    }
-
-    private suspend fun storeId(id: String) {
-        dataStore.edit { preferences ->
-            preferences[PreferencesKeys.ID] = id
-        }
-    }
-
-    private suspend fun storeUsername(username: String) {
-        dataStore.edit { preferences ->
-            preferences[PreferencesKeys.USERNAME] = username
-        }
-    }
-
-    private suspend fun storeNetId(netId: String) {
-        dataStore.edit { preferences ->
-            preferences[PreferencesKeys.NETID] = netId
-        }
-    }
-
-    private suspend fun storeEmail(email: String) {
-        dataStore.edit { preferences ->
-            preferences[PreferencesKeys.EMAIL] = email
-        }
-    }
-
-    private suspend fun storeGoal(goal: Int) {
-        dataStore.edit { preferences ->
-            preferences[PreferencesKeys.GOAL] = goal
-        }
     }
 
     suspend fun storeSkip(skip: Boolean) {

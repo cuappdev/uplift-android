@@ -18,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -35,7 +36,8 @@ data class HistoryItem(
     val gymName: String,
     val time: String,
     val date: String,
-    val timestamp: Long
+    val timestamp: Long,
+    val ago: String
 )
 
 @Composable
@@ -51,20 +53,14 @@ fun HistorySection(
         SectionTitleText("My Workout History", onClick)
         Spacer(modifier = Modifier.height(12.dp))
         if (historyItems.isNotEmpty()) {
-            Column(
+            HistoryList(
+                historyItems = historyItems,
                 modifier = Modifier
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
-            ) {
-                HistoryList(historyItems)
-            }
+            )
         } else {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                EmptyHistorySection()
-            }
+            EmptyHistorySection()
         }
     }
 
@@ -72,8 +68,11 @@ fun HistorySection(
 }
 
 @Composable
-private fun HistoryList(historyItems: List<HistoryItem>) {
-    Column {
+private fun HistoryList(
+    historyItems: List<HistoryItem>,
+    modifier: Modifier = Modifier
+) {
+    Column(modifier = modifier) {
         historyItems.take(5).forEachIndexed { index, historyItem ->
             HistoryItemRow(historyItem = historyItem)
             if (index != historyItems.size - 1) {
@@ -90,10 +89,7 @@ private fun HistoryItemRow(
     val gymName = historyItem.gymName
     val time = historyItem.time
     val date = historyItem.date
-    val calendar = Calendar.getInstance().apply {
-        timeInMillis = historyItem.timestamp
-    }
-    val ago = calendar.timeAgoString()
+    val ago = historyItem.ago
 
     Row(
         modifier = Modifier
@@ -138,8 +134,8 @@ private fun EmptyHistorySection(){
             painter = painterResource(id = R.drawable.ic_dufflebag),
             contentDescription = null,
             modifier = Modifier
-                .width(64.99967.dp)
-                .height(50.8181.dp)
+                .width(65.dp)
+                .height(51.dp)
 
         )
         Spacer(modifier = Modifier.height(12.dp))
@@ -165,11 +161,11 @@ private fun EmptyHistorySection(){
 private fun HistorySectionPreview() {
     val now = System.currentTimeMillis()
     val historyItems = listOf(
-        HistoryItem("Morrison", "11:00 PM",  "March 29, 2024", now - (1 * 24 * 60 * 60 * 1000) ),
-        HistoryItem("Noyes", "1:00 PM", "March 29, 2024", now - (3 * 24 * 60 * 60 * 1000)),
-        HistoryItem("Teagle Up", "2:00 PM",  "March 29, 2024", now - (7 * 24 * 60 * 60 * 1000)),
-        HistoryItem("Teagle Down", "12:00 PM",  "March 29, 2024", now - (15 * 24 * 60 * 60 * 1000)),
-        HistoryItem("Helen Newman", "10:00 AM",  "March 29, 2024", now),
+        HistoryItem("Morrison", "11:00 PM",  "March 29, 2024", now - (1 * 24 * 60 * 60 * 1000), "1 day ago"),
+        HistoryItem("Noyes", "1:00 PM", "March 29, 2024", now - (3 * 24 * 60 * 60 * 1000), "2 days ago"),
+        HistoryItem("Teagle Up", "2:00 PM",  "March 29, 2024", now - (7 * 24 * 60 * 60 * 1000), "1 day ago"),
+        HistoryItem("Teagle Down", "12:00 PM",  "March 29, 2024", now - (15 * 24 * 60 * 60 * 1000), "1 day ago"),
+        HistoryItem("Helen Newman", "10:00 AM",  "March 29, 2024", now, "Today"),
     )
     Column(
         modifier = Modifier
