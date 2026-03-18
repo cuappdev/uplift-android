@@ -87,7 +87,7 @@ class UserInfoRepository @Inject constructor(
         }
         val goalResponse = apolloClient.mutation(
             SetWorkoutGoalsMutation(
-                id = id,
+                userId = id,
                 workoutGoal = goal
             )
         )
@@ -114,8 +114,36 @@ class UserInfoRepository @Inject constructor(
         }
     }
 
+    suspend fun loginAndStoreTokens(netId: String): Boolean {
+        return try {
+            val loginResponse = apolloClient.mutation(
+                LoginUserMutation(netId = netId)
+            ).execute()
+
+            val loginData = loginResponse.data?.loginUser
+            if (loginResponse.hasErrors() ||
+                loginData?.accessToken == null ||
+                loginData.refreshToken == null
+            ) {
+                Log.e("UserInfoRepository", "Login failed: ${loginResponse.errors}")
+                return false
+            }
+
+            tokenManager.saveTokens(
+                loginData.accessToken,
+                loginData.refreshToken
+            )
+            Log.d("UserInfoRepository", "Saved backend tokens successfully")
+            true
+        } catch (e: Exception) {
+            Log.e("UserInfoRepository", "Error logging in user", e)
+            false
+        }
+    }
+
     suspend fun syncUserToDataStore(netId: String): Boolean {
         return try {
+            if (!loginAndStoreTokens(netId)) return false
             val user = getUserByNetId(netId) ?: return false
 
             storeUserFields(

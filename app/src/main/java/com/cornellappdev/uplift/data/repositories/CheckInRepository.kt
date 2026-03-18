@@ -162,7 +162,13 @@ class CheckInRepository @Inject constructor(
 
         return try {
             val response = apolloClient
-                .mutation(LogWorkoutMutation(facilityId = gymId, workoutTime = time, id = userId ))
+                .mutation(
+                    LogWorkoutMutation(
+                        facilityId = gymId,
+                        workoutTime = time,
+                        userId = userId
+                    )
+                )
                 .execute()
 
             val ok = response.data?.logWorkout?.workoutFields != null && !response.hasErrors()

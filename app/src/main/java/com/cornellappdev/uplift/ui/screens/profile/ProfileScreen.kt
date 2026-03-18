@@ -172,17 +172,25 @@ private fun ProfileScreenTopBar(
 @Preview
 @Composable
 private fun ProfileScreenContentPreview() {
+    val now = System.currentTimeMillis()
+    val historyItems = listOf(
+        HistoryItem("Morrison", "11:00 PM",  "March 29, 2024", now - (1 * 24 * 60 * 60 * 1000), "1 day ago"),
+        HistoryItem("Noyes", "1:00 PM", "March 29, 2024", now - (3 * 24 * 60 * 60 * 1000), "2 days ago"),
+        HistoryItem("Teagle Up", "2:00 PM",  "March 29, 2024", now - (7 * 24 * 60 * 60 * 1000), "1 day ago"),
+        HistoryItem("Teagle Down", "12:00 PM",  "March 29, 2024", now - (15 * 24 * 60 * 60 * 1000), "1 day ago"),
+        HistoryItem("Helen Newman", "10:00 AM",  "March 29, 2024", now, "Today"),
+    )
     ProfileScreenContent(
         uiState = ProfileUiState(
             name = "Melissa Velasquez",
             netId = "mv477",
-            totalGymDays = 0,
+            totalGymDays = 1,
             activeStreak = 0,
             workoutGoal = 4,
-            historyItems = emptyList(),
+            historyItems = historyItems,
             daysOfMonth = listOf(10, 11, 12, 13, 14, 15, 16),
-            completedDays = listOf(false, false, false, false, false, false, false),
-            workoutsCompleted = 0
+            completedDays = listOf(true, false, false, false, false, false, false),
+            workoutsCompleted = 1
         ),
         {},
         {},
