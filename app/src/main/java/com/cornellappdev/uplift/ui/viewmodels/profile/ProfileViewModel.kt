@@ -79,7 +79,6 @@ class ProfileViewModel @Inject constructor(
                 time = formatTime.format(workoutInstant),
                 date = formatDate.format(workoutInstant),
                 timestamp = it.timestamp,
-                dayOfWeek = formatDayOfWeek.format(workoutInstant),
                 ago = calendar.timeAgoString()
             )
         }
