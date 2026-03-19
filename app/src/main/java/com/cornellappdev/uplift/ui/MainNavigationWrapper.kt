@@ -53,7 +53,6 @@ import com.cornellappdev.uplift.ui.viewmodels.classes.ClassDetailViewModel
 import com.cornellappdev.uplift.ui.viewmodels.gyms.GymDetailViewModel
 import com.cornellappdev.uplift.ui.viewmodels.nav.RootNavigationViewModel
 import com.cornellappdev.uplift.ui.viewmodels.profile.CheckInViewModel
-import com.cornellappdev.uplift.util.ONBOARDING_FLAG
 import com.cornellappdev.uplift.ui.viewmodels.profile.ConfettiViewModel
 import com.cornellappdev.uplift.util.CHECK_IN_FLAG
 import com.cornellappdev.uplift.util.PRIMARY_BLACK
@@ -77,8 +76,7 @@ fun MainNavigationWrapper(
     classDetailViewModel: ClassDetailViewModel = hiltViewModel(),
     rootNavigationViewModel: RootNavigationViewModel = hiltViewModel(),
 
-    ) {
-
+) {
     val rootNavigationUiState = rootNavigationViewModel.collectUiStateValue()
     val startDestination = rootNavigationUiState.startDestination
 
@@ -97,7 +95,7 @@ fun MainNavigationWrapper(
     val items = listOfNotNull(
         BottomNavScreens.Home,
         BottomNavScreens.Classes,
-        BottomNavScreens.Profile.takeIf { ONBOARDING_FLAG }
+        BottomNavScreens.Profile
     )
 
     systemUiController.setStatusBarColor(PRIMARY_YELLOW)

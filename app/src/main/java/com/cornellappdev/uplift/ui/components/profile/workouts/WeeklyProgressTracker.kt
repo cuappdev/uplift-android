@@ -48,15 +48,23 @@ fun WeeklyProgressTracker(
     completedDays: List<Boolean>
 ) {
     val daysOfWeek = listOf("M", "T", "W", "Th", "F", "Sa", "Su")
-    val paddedCompletedDays = if (completedDays.size < daysOfWeek.size) {
-        completedDays + List(daysOfWeek.size - completedDays.size) { false }
-    } else {
-        completedDays
+
+    if (daysOfMonth.size < daysOfWeek.size) {
+        return
     }
+
+    val paddedCompletedDays =
+        if (completedDays.size < daysOfWeek.size) {
+            completedDays + List(daysOfWeek.size - completedDays.size) { false }
+        } else {
+            completedDays
+        }
+
     val lastCompletedIndex = paddedCompletedDays.indexOfLast { it }
 
     Box(modifier = Modifier.fillMaxWidth()) {
         ConnectingLines(daysOfWeek, lastCompletedIndex)
+
         DayProgressCirclesRow(
             dayProgressList = daysOfWeek.mapIndexed { index, dayOfWeek ->
                 DayProgress(

@@ -150,7 +150,12 @@ class CheckInViewModel @Inject constructor(
                 )
             }
             confettiRepository.showConfetti(ConfettiViewModel.ConfettiUiState())
-            checkInRepository.logWorkoutFromCheckIn(gymIdInt)
+            val logged = checkInRepository.logWorkoutFromCheckIn(gymIdInt)
+            if (logged) {
+                Log.d(tag, "Workout successfully logged to backend")
+            } else {
+                Log.e(tag, "Workout failed to log to backend")
+            }
         } catch (e: Exception) {
             Log.e(tag, "Error checking in", e)
         }

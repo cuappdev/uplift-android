@@ -24,7 +24,6 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -52,9 +51,16 @@ fun WorkoutProgressArc(
     workoutsCompleted: Int,
     workoutGoal: Int,
 ) {
-    // Calculate progress percentage
-    val progress = (workoutsCompleted.toFloat() / workoutGoal.toFloat()).coerceIn(0f, 1f)
+    val isZero = workoutsCompleted <= 0 || workoutGoal <= 0
+    val isComplete = workoutGoal in 1..workoutsCompleted
 
+    // Calculate progress percentage
+    val progress = when {
+        workoutGoal <= 0 -> 0f
+        workoutsCompleted <= 0 -> 0f
+        else -> (workoutsCompleted.toFloat() / workoutGoal.toFloat())
+            .coerceIn(0f, 1f)
+    }
     // Setup animation
     val animatedProgress = remember { Animatable(0f) }
 
@@ -74,16 +80,16 @@ fun WorkoutProgressArc(
             .height(132.dp)
     ) {
         // Draw the progress arc
-        ProgressArc(animatedProgress, workoutsCompleted, workoutGoal)
-        WorkoutFractionTextSection(workoutsCompleted, workoutGoal)
+        ProgressArc(animatedProgress, isZero, isComplete)
+        WorkoutFractionTextSection(workoutsCompleted, workoutGoal, isComplete)
     }
 }
 
 @Composable
 private fun ProgressArc(
     animatedProgress: Animatable<Float, AnimationVector1D>,
-    workoutsCompleted: Int,
-    workoutGoal: Int
+    isZero: Boolean,
+    isComplete: Boolean
 ) {
     val startAngle = 180f;
     val maxSweepAngle = 180f;
@@ -112,16 +118,29 @@ private fun ProgressArc(
 
         // Progress arc
         val progressAngle = maxSweepAngle * animatedProgress.value
-        drawProgressArc(
-            workoutsCompleted,
-            workoutGoal,
-            gradientBrush,
-            startAngle,
-            progressAngle,
-            topLeft,
-            arcSize,
-            strokeWidth
-        )
+        if (progressAngle > 0f) {
+            if (isComplete) {
+                drawArc(
+                    brush = gradientBrush,
+                    startAngle = startAngle,
+                    sweepAngle = progressAngle,
+                    useCenter = false,
+                    topLeft = topLeft,
+                    size = arcSize,
+                    style = Stroke(width = strokeWidth, cap = StrokeCap.Round)
+                )
+            } else {
+                drawArc(
+                    color = PRIMARY_YELLOW,
+                    startAngle = startAngle,
+                    sweepAngle = progressAngle,
+                    useCenter = false,
+                    topLeft = topLeft,
+                    size = arcSize,
+                    style = Stroke(width = strokeWidth, cap = StrokeCap.Round)
+                )
+            }
+        }
 
         // Progress arc circle
         val angle = Math.toRadians((startAngle + progressAngle).toDouble())
@@ -134,7 +153,29 @@ private fun ProgressArc(
         val y = arcCenterY + (radius * sin(angle)).toFloat()
 
         // Outer circle
-        drawArcSliderOuterCircle(workoutsCompleted, workoutGoal, gradientBrush, dotRadius, x, y)
+        when {
+            isComplete -> {
+                drawCircle(
+                    brush = gradientBrush,
+                    radius = dotRadius,
+                    center = Offset(x, y)
+                )
+            }
+            isZero -> {
+                drawCircle(
+                    color = GRAY03,
+                    radius = dotRadius,
+                    center = Offset(x, y)
+                )
+            }
+            else -> {
+                drawCircle(
+                    color = PRIMARY_YELLOW,
+                    radius = dotRadius,
+                    center = Offset(x, y)
+                )
+            }
+        }
 
         // Inner circle
         drawCircle(
@@ -145,77 +186,8 @@ private fun ProgressArc(
     }
 }
 
-private fun DrawScope.drawProgressArc(
-    workoutsCompleted: Int,
-    workoutGoal: Int,
-    gradientBrush: Brush,
-    startAngle: Float,
-    progressAngle: Float,
-    topLeft: Offset,
-    arcSize: Size,
-    strokeWidth: Float
-) {
-    if (workoutsCompleted == workoutGoal) {
-        drawArc(
-            brush = gradientBrush,
-            startAngle = startAngle,
-            sweepAngle = progressAngle,
-            useCenter = false,
-            topLeft = topLeft,
-            size = arcSize,
-            style = Stroke(width = strokeWidth, cap = StrokeCap.Round)
-        )
-    } else {
-        drawArc(
-            color = PRIMARY_YELLOW,
-            startAngle = startAngle,
-            sweepAngle = progressAngle,
-            useCenter = false,
-            topLeft = topLeft,
-            size = arcSize,
-            style = Stroke(width = strokeWidth, cap = StrokeCap.Round)
-        )
-    }
-}
-
-
-private fun DrawScope.drawArcSliderOuterCircle(
-    workoutsCompleted: Int,
-    workoutGoal: Int,
-    gradientBrush: Brush,
-    dotRadius: Float,
-    x: Float,
-    y: Float
-) {
-    when (workoutsCompleted) {
-        workoutGoal -> {
-            drawCircle(
-                brush = gradientBrush,
-                radius = dotRadius,
-                center = Offset(x, y)
-            )
-        }
-
-        0 -> {
-            drawCircle(
-                color = GRAY03,
-                radius = dotRadius,
-                center = Offset(x, y)
-            )
-        }
-
-        else -> {
-            drawCircle(
-                color = PRIMARY_YELLOW,
-                radius = dotRadius,
-                center = Offset(x, y)
-            )
-        }
-    }
-}
-
 @Composable
-private fun WorkoutFractionTextSection(workoutsCompleted: Int, workoutGoal: Int) {
+private fun WorkoutFractionTextSection(workoutsCompleted: Int, workoutGoal: Int, isComplete: Boolean) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -225,7 +197,7 @@ private fun WorkoutFractionTextSection(workoutsCompleted: Int, workoutGoal: Int)
             verticalAlignment = Alignment.Bottom,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            WorkoutsCompletedText(workoutsCompleted, workoutGoal)
+            WorkoutsCompletedText(workoutsCompleted, isComplete)
 
             Text(
                 text = "/ $workoutGoal",
@@ -237,7 +209,7 @@ private fun WorkoutFractionTextSection(workoutsCompleted: Int, workoutGoal: Int)
             )
         }
         Text(
-            text = "Workouts this week",
+            text = "Days this week",
             fontSize = 14.sp,
             color = GRAY04,
             fontFamily = montserratFamily
@@ -246,8 +218,8 @@ private fun WorkoutFractionTextSection(workoutsCompleted: Int, workoutGoal: Int)
 }
 
 @Composable
-private fun WorkoutsCompletedText(workoutsCompleted: Int, workoutGoal: Int) {
-    if (workoutsCompleted == workoutGoal) {
+private fun WorkoutsCompletedText(workoutsCompleted: Int, isComplete: Boolean) {
+    if (isComplete) {
         Text(
             text = "$workoutsCompleted",
             fontSize = 64.sp,

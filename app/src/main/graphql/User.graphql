@@ -1,14 +1,27 @@
 fragment userFields on User {
     id
     email
-    name
     netId
+    name
+    encodedImage
+    activeStreak
+    maxStreak
+    streakStart
+    workoutGoal
+    lastGoalChange
+    lastStreak
+    totalGymDays
+    workoutHistory {
+        ...workoutFields
+    }
 }
 
 fragment workoutFields on Workout {
     id
     workoutTime
     userId
+    facilityId
+    gymName
 }
 
 mutation CreateUser($email: String!, $name: String!, $netId: String!) {
@@ -33,14 +46,14 @@ query getUserByNetId($netId: String!) {
     }
 }
 
-mutation SetWorkoutGoals($id: Int!, $workoutGoal: Int!) {
-    setWorkoutGoals(userId: $id, workoutGoal: $workoutGoal) {
+mutation SetWorkoutGoals($userId: Int!, $workoutGoal: Int!) {
+    setWorkoutGoals(userId: $userId, workoutGoal: $workoutGoal) {
         ...userFields
     }
 }
 
-mutation LogWorkout($facilityId: Int!, $workoutTime: DateTime!, $id: Int!) {
-    logWorkout(facilityId: $facilityId, userId: $id, workoutTime: $workoutTime) {
+mutation LogWorkout($facilityId: Int!, $workoutTime: DateTime!, $userId: Int!) {
+    logWorkout(facilityId: $facilityId, userId: $userId, workoutTime: $workoutTime) {
         ...workoutFields
     }
 }

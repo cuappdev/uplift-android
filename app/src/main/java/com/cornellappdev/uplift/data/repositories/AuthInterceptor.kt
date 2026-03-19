@@ -11,6 +11,7 @@ class AuthInterceptor @Inject constructor(
 ) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val token = tokenManager.getAccessToken()
+        android.util.Log.d("AuthInterceptor", "token present = ${token != null}")
         val request = chain.request().newBuilder().apply {
             if (token != null) {
                 addHeader("Authorization", "Bearer $token")

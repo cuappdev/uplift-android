@@ -378,9 +378,11 @@ type User {
   totalGymDays: Int!
 
   """
-  The start date of the most recent active streak, up until the current date.
+  The start datetime of the most recent active streak (midnight of the day in local timezone), up until the current date.
   """
-  streakStart: Date
+  streakStart: DateTime
+
+  workoutHistory: [Workout]
 }
 
 type Giveaway {
@@ -420,13 +422,6 @@ type Friendship {
 
   friend: User
 }
-
-"""
-The `Date` scalar type represents a Date
-value as specified by
-[iso8601](https://en.wikipedia.org/wiki/ISO_8601).
-"""
-scalar Date
 
 type Workout {
   id: ID!
