@@ -210,11 +210,9 @@ fun Calendar.timeAgoString(): String {
         diffWeeks in 2L..4L -> "$diffWeeks weeks ago"
 
         diffMonths == 1L -> "1 month ago"
-        diffMonths in 2L..11L -> "$diffMonths months ago"
+        diffMonths in 2L..12L -> "$diffMonths months ago"
 
         diffYears == 1L -> "1 year ago"
-        diffYears > 1L -> "$diffYears years ago"
-
-        else -> "Today"
+        else  ->  "$diffYears years ago"
     }
 }

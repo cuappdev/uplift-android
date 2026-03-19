@@ -88,10 +88,8 @@ private fun ProfileScreenContent(
                 workoutGoal = uiState.workoutGoal,
                 daysOfMonth = uiState.daysOfMonth,
                 completedDays = uiState.completedDays,
-                reminderItems= emptyList(), //implement
                 historyItems = uiState.historyItems,
                 navigateToGoalsSection = toGoals,
-                navigateToRemindersSection = { /* TODO: Replace {} with viewmodel nav call */ },
                 navigateToHistorySection = toHistory
             )
 
@@ -105,10 +103,8 @@ private fun WorkoutsSectionContent(
     workoutGoal: Int,
     daysOfMonth: List<Int>,
     completedDays: List<Boolean>,
-    reminderItems: List<ReminderItem>,
     historyItems: List<HistoryItem>,
     navigateToGoalsSection: () -> Unit,
-    navigateToRemindersSection: () -> Unit,
     navigateToHistorySection: () -> Unit
 ) {
     Column(

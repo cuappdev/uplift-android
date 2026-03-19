@@ -26,7 +26,7 @@ object PreferencesKeys {
     val NETID = stringPreferencesKey("netId")
     val EMAIL = stringPreferencesKey("email")
     val GOAL = intPreferencesKey("workoutGoal")
-    val SKIP = booleanPreferencesKey("skip")
+    val GOAL_SETTING_SKIPPED = booleanPreferencesKey("goalSkip")
     val FCM_TOKEN = stringPreferencesKey("fcmToken")
     val DECLINED_NOTIFICATION_PERMISSION =
         booleanPreferencesKey("declinedNotificationPermission")
