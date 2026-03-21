@@ -12,6 +12,7 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,6 +32,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.cornellappdev.uplift.data.repositories.SessionManager
 import com.cornellappdev.uplift.ui.components.general.CheckInPopUp
 import com.cornellappdev.uplift.ui.components.general.ConfettiBurst
 import com.cornellappdev.uplift.ui.nav.BottomNavScreens
@@ -68,7 +70,7 @@ import kotlinx.serialization.Serializable
 
 /**
  * The main navigation controller for the app.
- */
+*/
 @Composable
 fun MainNavigationWrapper(
     // Note: For future view models, please add them to the screen they are used in instead of here.
@@ -76,6 +78,9 @@ fun MainNavigationWrapper(
     gymDetailViewModel: GymDetailViewModel = hiltViewModel(),
     classDetailViewModel: ClassDetailViewModel = hiltViewModel(),
     rootNavigationViewModel: RootNavigationViewModel = hiltViewModel(),
+    sessionManager: SessionManager = hiltViewModel<RootNavigationViewModel>().let {
+        hiltViewModel<RootNavigationViewModel>().sessionManager
+    }
 
     ) {
 
@@ -101,6 +106,16 @@ fun MainNavigationWrapper(
     )
 
     systemUiController.setStatusBarColor(PRIMARY_YELLOW)
+
+    val isLoggedIn by sessionManager.isLoggedIn.collectAsState()
+
+    LaunchedEffect(isLoggedIn) {
+        if (!isLoggedIn && ONBOARDING_FLAG) {
+            navController.navigate(UpliftRootRoute.Onboarding) {
+                popUpTo(0)
+            }
+        }
+    }
 
     //TODO: Try to consolidate launched effects into one with consumeIn function that takes in coroutine scope
     LaunchedEffect(rootNavigationUiState.navEvent) {

@@ -5,6 +5,7 @@ import androidx.credentials.Credential
 import androidx.credentials.CustomCredential
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.cornellappdev.uplift.data.repositories.SessionManager
 import com.cornellappdev.uplift.data.repositories.UserInfoRepository
 import com.cornellappdev.uplift.ui.UpliftRootRoute
 import com.cornellappdev.uplift.ui.nav.RootNavigationRepository
@@ -19,6 +20,7 @@ import javax.inject.Inject
 class LoginViewModel @Inject constructor(
     private val userInfoRepository: UserInfoRepository,
     private val rootNavigationRepository: RootNavigationRepository,
+    private val sessionManager: SessionManager
 ) : ViewModel() {
 
     fun onSignInWithGoogle(credential: Credential) {
@@ -42,13 +44,17 @@ class LoginViewModel @Inject constructor(
                 return@launch
             }
             when {
-                userInfoRepository.hasUser(netId) -> rootNavigationRepository.navigate(
-                    UpliftRootRoute.Home
-                )
-
-                userInfoRepository.hasFirebaseUser() -> rootNavigationRepository.navigate(
-                    UpliftRootRoute.ProfileCreation
-                )
+                userInfoRepository.hasUser(netId) -> {
+                    val success = userInfoRepository.loginUser(netId)
+                    if (success) {
+                        Log.d("LoginViewModel", "User logged in successfully")
+                    } else {
+                        userInfoRepository.signOut()
+                    }
+                }
+                userInfoRepository.hasFirebaseUser() -> {
+                    rootNavigationRepository.navigate(UpliftRootRoute.ProfileCreation)
+                }
                 //TODO: Handle error
                 else -> {
                     Log.e("Error", "Unexpected credential")

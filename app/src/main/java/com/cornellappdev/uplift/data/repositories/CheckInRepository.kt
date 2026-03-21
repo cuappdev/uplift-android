@@ -30,13 +30,14 @@ import com.apollographql.apollo.ApolloClient
 import com.cornellappdev.uplift.LogWorkoutMutation
 import java.time.Instant
 import javax.inject.Inject
+import javax.inject.Named
 import javax.inject.Singleton
 
 @Singleton
 class CheckInRepository @Inject constructor(
     val upliftApiRepository: UpliftApiRepository,
     private val dataStore: DataStore<Preferences>,
-    private val apolloClient: ApolloClient,
+    @Named("main") private val apolloClient: ApolloClient,
     private val userInfoRepository: UserInfoRepository
     ){
     private val _nearestGymFlow = MutableStateFlow<UpliftGym?>(null)

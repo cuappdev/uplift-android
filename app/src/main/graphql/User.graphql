@@ -57,3 +57,15 @@ mutation LoginUser($netId: String!) {
         refreshToken
     }
 }
+
+mutation LogoutUser {
+    logoutUser {
+        success
+    }
+}
+
+mutation RefreshAccessToken {
+    refreshAccessToken {
+        newAccessToken
+    }
+}

@@ -62,4 +62,15 @@ class TokenManager @Inject constructor(@ApplicationContext private val context: 
     fun clearTokens() {
         sharedPreferences?.edit { clear() }
     }
+
+    fun saveUserSession(userId: Int, username: String, userEmail: String) {
+        sharedPreferences?.edit {
+            putInt("user_id", userId)
+            putString("username", username)
+            putString("user_email", userEmail)
+        }
+    }
+
+    fun getUserId(): Int? = sharedPreferences?.getInt("user_id", -1) // Use when userID is needed
+
 }

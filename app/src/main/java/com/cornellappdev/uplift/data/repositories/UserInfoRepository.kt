@@ -18,13 +18,14 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import kotlinx.coroutines.tasks.await
+import javax.inject.Named
 
 @Singleton
 class UserInfoRepository @Inject constructor(
     private val firebaseAuth: FirebaseAuth,
-    private val apolloClient: ApolloClient,
+    @Named("main") private val apolloClient: ApolloClient,
     private val dataStore: DataStore<Preferences>,
-    private val tokenManager: TokenManager
+    private val sessionManager: SessionManager
 ){
 
     suspend fun createUser(email: String, name: String, netId: String, skip: Boolean, goal: Int): Boolean {
@@ -54,7 +55,13 @@ class UserInfoRepository @Inject constructor(
             }
             val accessToken = loginData.accessToken
             val refreshToken = loginData.refreshToken
-            tokenManager.saveTokens(accessToken, refreshToken)
+            sessionManager.startSession(
+                userId = id.toIntOrNull() ?: -1,
+                name = name,
+                email = email,
+                access = accessToken,
+                refresh = refreshToken
+            )
             if (!skip) {
                 val numericId = id.toIntOrNull()
                 if (!uploadGoal(numericId, goal)) {
@@ -70,6 +77,34 @@ class UserInfoRepository @Inject constructor(
         } catch (e: Exception) {
             Log.e("UserInfoRepositoryImpl", "Error creating user: $e")
             return false
+        }
+    }
+
+    suspend fun loginUser(netId: String) : Boolean {
+        return try {
+            val loginResponse = apolloClient.mutation(
+                LoginUserMutation(
+                    netId = netId
+                )
+            ).execute()
+            val loginData = loginResponse.data?.loginUser
+            val userInfo = getUserByNetId(netId)
+            if (loginData?.accessToken != null && loginData?.refreshToken != null && userInfo != null) {
+                sessionManager.startSession(
+                    userId = userInfo.id.toIntOrNull() ?: -1,
+                    name = userInfo.name,
+                    email = userInfo.email,
+                    access = loginData.accessToken,
+                    refresh = loginData.refreshToken
+                )
+                true
+            } else {
+                Log.e("UserInfoRepository", "Login failed: Missing tokens or user info;  ${loginResponse.errors}")
+                false
+            }
+        } catch (e: Exception) {
+            Log.e("UserInfoRepository", "Error logging in: $e")
+            false
         }
     }
 
