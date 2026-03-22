@@ -20,7 +20,6 @@ import javax.inject.Inject
 class LoginViewModel @Inject constructor(
     private val userInfoRepository: UserInfoRepository,
     private val rootNavigationRepository: RootNavigationRepository,
-    private val sessionManager: SessionManager
 ) : ViewModel() {
 
     fun onSignInWithGoogle(credential: Credential) {

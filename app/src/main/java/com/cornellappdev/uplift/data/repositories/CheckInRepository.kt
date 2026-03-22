@@ -151,12 +151,25 @@ class CheckInRepository @Inject constructor(
      * Logs a completed workout to the backend. Returns true if the mutation succeeded, false otherwise.
      */
     suspend fun logWorkoutFromCheckIn(gymId: Int): Boolean {
-        val userId = userInfoRepository.getUserIdFromDataStore()?.toIntOrNull() ?: return false
+        val userIdString = userInfoRepository.getUserIdFromDataStore()
+        val userId = userIdString?.toIntOrNull()
+
+        if (userId == null) {
+            Log.e("CheckInRepository", "Missing or invalid userId in DataStore: $userIdString")
+            return false
+        }
+
         val time = Instant.now().toString()
 
         return try {
             val response = apolloClient
-                .mutation(LogWorkoutMutation(facilityId = gymId, workoutTime = time, id = userId ))
+                .mutation(
+                    LogWorkoutMutation(
+                        facilityId = gymId,
+                        workoutTime = time,
+                        userId = userId
+                    )
+                )
                 .execute()
 
             val ok = response.data?.logWorkout?.workoutFields != null && !response.hasErrors()

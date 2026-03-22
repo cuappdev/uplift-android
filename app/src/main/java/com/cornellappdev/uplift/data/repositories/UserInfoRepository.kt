@@ -71,7 +71,14 @@ class UserInfoRepository @Inject constructor(
             else {
                 Log.d("UserInfoRepository", "Skipping goal upload")
             }
-            storeUserFields(id, name, netId, email, skip, goal)
+            storeUserFields(
+                id = userFields.id,
+                username = userFields.name,
+                netId = userFields.netId,
+                email = userFields.email ?: email,
+                goalSkip = skip,
+                goal = goal
+            )
             Log.d("UserInfoRepositoryImpl", "User created successfully")
             return true
         } catch (e: Exception) {
@@ -115,7 +122,7 @@ class UserInfoRepository @Inject constructor(
         }
         val goalResponse = apolloClient.mutation(
             SetWorkoutGoalsMutation(
-                id = id,
+                userId = id,
                 workoutGoal = goal
             )
         )
@@ -129,14 +136,14 @@ class UserInfoRepository @Inject constructor(
     }
 
 
-    suspend fun storeUserFields(id: String, username: String, netId: String, email: String, skip: Boolean, goal: Int) {
+    suspend fun storeUserFields(id: String, username: String, netId: String, email: String, goalSkip: Boolean, goal: Int) {
         dataStore.edit { preferences ->
             preferences[PreferencesKeys.ID] = id
             preferences[PreferencesKeys.NETID] = netId
             preferences[PreferencesKeys.USERNAME] = username
             preferences[PreferencesKeys.EMAIL] = email
-            preferences[PreferencesKeys.SKIP] = skip
-            if (!skip) {
+            preferences[PreferencesKeys.GOAL_SETTING_SKIPPED] = goalSkip
+            if (!goalSkip) {
                 preferences[PreferencesKeys.GOAL] = goal
             }
         }
@@ -155,6 +162,12 @@ class UserInfoRepository @Inject constructor(
                 name = user.name,
                 email = user.email ?: "",
                 netId = user.netId,
+                encodedImage = user.encodedImage,
+                activeStreak = user.activeStreak,
+                maxStreak = user.maxStreak,
+                workoutGoal = user.workoutGoal,
+                streakStart = user.streakStart?.toString(),
+                totalGymDays = user.totalGymDays
             )
         } catch (e: Exception) {
             Log.e("UserInfoRepositoryImpl", "Error getting user by netId: $e")
@@ -183,46 +196,16 @@ class UserInfoRepository @Inject constructor(
         firebaseAuth.signOut()
     }
 
-    private suspend fun storeId(id: String) {
-        dataStore.edit { preferences ->
-            preferences[PreferencesKeys.ID] = id
-        }
-    }
-
-    private suspend fun storeUsername(username: String) {
-        dataStore.edit { preferences ->
-            preferences[PreferencesKeys.USERNAME] = username
-        }
-    }
-
-    private suspend fun storeNetId(netId: String) {
-        dataStore.edit { preferences ->
-            preferences[PreferencesKeys.NETID] = netId
-        }
-    }
-
-    private suspend fun storeEmail(email: String) {
-        dataStore.edit { preferences ->
-            preferences[PreferencesKeys.EMAIL] = email
-        }
-    }
-
-    private suspend fun storeGoal(goal: Int) {
-        dataStore.edit { preferences ->
-            preferences[PreferencesKeys.GOAL] = goal
-        }
-    }
-
     suspend fun storeSkip(skip: Boolean) {
         dataStore.edit { preferences ->
-            preferences[PreferencesKeys.SKIP] = skip
+            preferences[PreferencesKeys.GOAL_SETTING_SKIPPED] = skip
         }
     }
 
 
     suspend fun getSkipFromDataStore(): Boolean {
         return dataStore.data.map { preferences ->
-            preferences[PreferencesKeys.SKIP]
+            preferences[PreferencesKeys.GOAL_SETTING_SKIPPED]
         }.firstOrNull() ?: false
     }
 
