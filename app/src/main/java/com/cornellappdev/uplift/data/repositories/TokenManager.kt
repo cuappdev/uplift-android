@@ -71,6 +71,6 @@ class TokenManager @Inject constructor(@ApplicationContext private val context: 
         }
     }
 
-    fun getUserId(): Int? = sharedPreferences?.getInt("user_id", -1) // Use when userID is needed
+    fun getUserId(): Int? = sharedPreferences?.takeIf { it.contains("user_id") }?.getInt("user_id", -1)
 
 }

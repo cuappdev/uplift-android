@@ -1,5 +1,6 @@
 package com.cornellappdev.uplift.data.repositories
 
+import android.util.Log
 import com.apollographql.apollo.ApolloClient
 import com.cornellappdev.uplift.RefreshAccessTokenMutation
 import kotlinx.coroutines.runBlocking
@@ -57,6 +58,8 @@ class TokenAuthenticator @Inject constructor(
                     }
                 } catch (e: Exception) {
                     // Network error or server down during refresh
+                    Log.e("TokenAuthenticator", "Error refreshing token", e)
+                    sessionManager.logout()
                     null
                 }
             }

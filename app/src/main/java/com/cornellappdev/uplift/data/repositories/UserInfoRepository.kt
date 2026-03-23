@@ -47,7 +47,11 @@ class UserInfoRepository @Inject constructor(
                     netId = netId
                 )
             ).execute()
-            val id = userFields.id
+            val id = userFields.id.toIntOrNull()
+            if (id == null) {
+                Log.e("UserInfoRepository", "Failed to set goal: non-numeric user ID '$id'")
+                return false
+            }
             val loginData = loginResponse.data?.loginUser
             if (loginData?.accessToken == null || loginData.refreshToken == null) {
                 Log.e("UserInfoRepository", "Login failed after creation: ${loginResponse.errors}")
@@ -56,15 +60,14 @@ class UserInfoRepository @Inject constructor(
             val accessToken = loginData.accessToken
             val refreshToken = loginData.refreshToken
             sessionManager.startSession(
-                userId = id.toIntOrNull() ?: -1,
+                userId = id,
                 name = name,
                 email = email,
                 access = accessToken,
                 refresh = refreshToken
             )
             if (!skip) {
-                val numericId = id.toIntOrNull()
-                if (!uploadGoal(numericId, goal)) {
+                if (!uploadGoal(id, goal)) {
                     return false
                 }
             }
@@ -96,9 +99,14 @@ class UserInfoRepository @Inject constructor(
             ).execute()
             val loginData = loginResponse.data?.loginUser
             val userInfo = getUserByNetId(netId)
-            if (loginData?.accessToken != null && loginData?.refreshToken != null && userInfo != null) {
+            if (loginData?.accessToken != null && loginData.refreshToken != null && userInfo != null) {
+                val id = userInfo.id.toIntOrNull()
+                if (id == null) {
+                    Log.e("UserInfoRepository", "Failed to log in: non-numeric user ID '$id'")
+                    return false
+                }
                 sessionManager.startSession(
-                    userId = userInfo.id.toIntOrNull() ?: -1,
+                    userId = id,
                     name = userInfo.name,
                     email = userInfo.email,
                     access = loginData.accessToken,
