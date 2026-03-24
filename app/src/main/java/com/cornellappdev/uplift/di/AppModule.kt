@@ -10,6 +10,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
+import java.util.concurrent.TimeUnit
 import javax.inject.Named
 import javax.inject.Singleton
 
@@ -23,7 +24,10 @@ object AppModule {
     @Named("refresh") // Use a named annotation to distinguish them
     fun provideRefreshApolloClient(): ApolloClient {
         // This client does NOT have interceptors to avoid loops
-        val okHttpClient = OkHttpClient.Builder().build()
+        val okHttpClient = OkHttpClient.Builder()
+            .connectTimeout(5, TimeUnit.SECONDS)
+            .readTimeout(5, TimeUnit.SECONDS)
+            .build()
 
         return ApolloClient.Builder()
             .serverUrl(BuildConfig.BACKEND_URL)

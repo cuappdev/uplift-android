@@ -6,6 +6,7 @@ import com.cornellappdev.uplift.RefreshAccessTokenMutation
 import com.cornellappdev.uplift.data.auth.SessionManager
 import com.cornellappdev.uplift.data.auth.TokenManager
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withTimeout
 import okhttp3.Authenticator
 import okhttp3.Request
 import okhttp3.Response
@@ -26,7 +27,7 @@ class TokenAuthenticator @Inject constructor(
             // Check if the token was already refreshed by another thread
             // while this request was waiting for the lock.
             val currentToken = tokenManager.getAccessToken()
-            val requestToken = response.request.header("Authorization")?.removePrefix("Bearer ")
+            val requestToken = response.request.header("Authorization")?.substringAfter("Bearer ")
 
             if (currentToken != requestToken && currentToken != null) {
                 return response.request.newBuilder()
@@ -38,11 +39,13 @@ class TokenAuthenticator @Inject constructor(
             // we use runBlocking to wait for the refresh mutation result.
             return runBlocking {
                 try {
-                    val mutationResponse = apolloClient.mutation(RefreshAccessTokenMutation())
-                        // We manually add the Refresh Token to this specific call
-                        // because the "refresh" ApolloClient has no interceptor.
-                        .addHttpHeader("Authorization", "Bearer $refreshToken")
-                        .execute()
+                    val mutationResponse = withTimeout(10000L) {
+                        apolloClient.mutation(RefreshAccessTokenMutation())
+                            // We manually add the Refresh Token to this specific call
+                            // because the "refresh" ApolloClient has no interceptor.
+                            .addHttpHeader("Authorization", "Bearer $refreshToken")
+                            .execute()
+                    }
 
                     val newAccessToken = mutationResponse.data?.refreshAccessToken?.newAccessToken
 
@@ -60,7 +63,7 @@ class TokenAuthenticator @Inject constructor(
                     }
                 } catch (e: Exception) {
                     // Network error or server down during refresh
-                    Log.e("TokenAuthenticator", "Error refreshing token", e)
+                    Log.e("TokenAuthenticator", "Refresh timed out or failed", e)
                     sessionManager.logout()
                     null
                 }
