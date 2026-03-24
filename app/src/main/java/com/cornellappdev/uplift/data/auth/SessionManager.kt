@@ -1,4 +1,4 @@
-package com.cornellappdev.uplift.data.repositories
+package com.cornellappdev.uplift.data.auth
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

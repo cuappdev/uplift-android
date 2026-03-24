@@ -3,8 +3,8 @@ package com.cornellappdev.uplift.di
 import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.network.okHttpClient
 import com.cornellappdev.uplift.BuildConfig
-import com.cornellappdev.uplift.data.repositories.AuthInterceptor
-import com.cornellappdev.uplift.data.repositories.TokenAuthenticator
+import com.cornellappdev.uplift.data.auth.AuthInterceptor
+import com.cornellappdev.uplift.data.auth.TokenAuthenticator
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

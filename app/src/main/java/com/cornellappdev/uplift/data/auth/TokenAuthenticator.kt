@@ -1,8 +1,10 @@
-package com.cornellappdev.uplift.data.repositories
+package com.cornellappdev.uplift.data.auth
 
 import android.util.Log
 import com.apollographql.apollo.ApolloClient
 import com.cornellappdev.uplift.RefreshAccessTokenMutation
+import com.cornellappdev.uplift.data.auth.SessionManager
+import com.cornellappdev.uplift.data.auth.TokenManager
 import kotlinx.coroutines.runBlocking
 import okhttp3.Authenticator
 import okhttp3.Request

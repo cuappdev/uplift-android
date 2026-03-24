@@ -32,7 +32,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.cornellappdev.uplift.data.repositories.SessionManager
+import com.cornellappdev.uplift.data.auth.SessionManager
 import com.cornellappdev.uplift.ui.components.general.CheckInPopUp
 import com.cornellappdev.uplift.ui.components.general.ConfettiBurst
 import com.cornellappdev.uplift.ui.nav.BottomNavScreens
