@@ -48,7 +48,7 @@ class ProfileCreationViewModel @Inject constructor(
         val isSkipped = state.isGoalSkipped
         val goal = if (isSkipped) 0 else state.goal.toInt()
         if (userInfoRepository.createUser(email, name, netId, isSkipped, goal)) {
-            navigateToHome()
+            Log.d("ProfileCreationViewModel", "User created successfully")
         } else {
             //TODO: Add error handling
             Log.e("Error", "User not created")

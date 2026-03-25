@@ -1,12 +1,14 @@
-package com.cornellappdev.uplift.data.repositories
+package com.cornellappdev.uplift.data.auth
 
 import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
+import androidx.core.content.edit
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
-import androidx.core.content.edit
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -34,6 +36,9 @@ class TokenManager @Inject constructor(@ApplicationContext private val context: 
         }
     }
 
+    private val _tokenFlow = MutableStateFlow(getAccessToken())
+    val tokenFlow = _tokenFlow.asStateFlow()
+
     private fun createEncryptedPrefs(): SharedPreferences {
         val masterKey = MasterKey.Builder(context)
             .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
@@ -53,13 +58,26 @@ class TokenManager @Inject constructor(@ApplicationContext private val context: 
             putString("access_token", accessToken)
             putString("refresh_token", refreshToken)
         }
+        _tokenFlow.value = accessToken
     }
 
     fun getAccessToken(): String? = sharedPreferences?.getString("access_token", null)
 
     fun getRefreshToken(): String? = sharedPreferences?.getString("refresh_token", null)
 
-    fun clearTokens() {
+    fun clearTokensAndUserInfo() {
         sharedPreferences?.edit { clear() }
+        _tokenFlow.value = null
     }
+
+    fun saveUserSession(userId: Int, username: String, userEmail: String) {
+        sharedPreferences?.edit {
+            putInt("user_id", userId)
+            putString("username", username)
+            putString("user_email", userEmail)
+        }
+    }
+
+    fun getUserId(): Int? = sharedPreferences?.takeIf { it.contains("user_id") }?.getInt("user_id", -1)
+
 }

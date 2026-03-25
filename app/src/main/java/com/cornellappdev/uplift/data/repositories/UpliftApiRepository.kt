@@ -23,6 +23,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
+import javax.inject.Named
 
 /**
  * A repository dealing with all API backend connection in Uplift.
@@ -31,7 +32,7 @@ import javax.inject.Singleton
  */
 @Singleton
 class UpliftApiRepository @Inject constructor(
-    private val apolloClient: ApolloClient
+    @Named("main") private val apolloClient: ApolloClient
 ) {
     private val gymQuery = apolloClient.query(GymListQuery())
     private val classQuery = apolloClient.query(ClassListQuery())

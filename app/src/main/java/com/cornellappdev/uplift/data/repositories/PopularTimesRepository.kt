@@ -4,11 +4,12 @@ import com.apollographql.apollo.ApolloClient
 import com.cornellappdev.uplift.PopularTimesQuery
 import com.cornellappdev.uplift.data.mappers.toResult
 import javax.inject.Inject
+import javax.inject.Named
 import javax.inject.Singleton
 
 @Singleton
 class PopularTimesRepository @Inject constructor(
-    private val apolloClient: ApolloClient
+    @Named("main") private val apolloClient: ApolloClient
 ) {
     suspend fun getPopularTimes(facilityId: Int): Result<PopularTimesQuery.Data> {
         return apolloClient.query(

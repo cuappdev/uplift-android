@@ -4,6 +4,7 @@ import com.apollographql.apollo.ApolloClient
 import com.cornellappdev.uplift.CreateReportMutation
 import com.cornellappdev.uplift.data.mappers.toResult
 import javax.inject.Inject
+import javax.inject.Named
 import javax.inject.Singleton
 
 /**
@@ -12,7 +13,7 @@ import javax.inject.Singleton
  */
 @Singleton
 class ReportRepository @Inject constructor(
-    private val apolloClient: ApolloClient
+    @Named("main") private val apolloClient: ApolloClient
 ) {
     /**
      * @param createdAt The time the report was created.

@@ -9,13 +9,14 @@ import com.cornellappdev.uplift.data.models.ProfileData
 import com.cornellappdev.uplift.data.models.WorkoutDomain
 import java.time.Instant
 import javax.inject.Inject
+import javax.inject.Named
 import javax.inject.Singleton
 
 
 @Singleton
 class ProfileRepository @Inject constructor(
     private val userInfoRepository: UserInfoRepository,
-    private val apolloClient: ApolloClient
+    @Named("main") private val apolloClient: ApolloClient
 ) {
     suspend fun getProfile(): Result<ProfileData> = runCatching {
         val netId = userInfoRepository.getNetIdFromDataStore()

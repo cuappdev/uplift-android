@@ -1,5 +1,6 @@
-package com.cornellappdev.uplift.data.repositories
+package com.cornellappdev.uplift.data.auth
 
+import android.util.Log
 import okhttp3.Interceptor
 import okhttp3.Response
 import javax.inject.Inject
@@ -11,10 +12,10 @@ class AuthInterceptor @Inject constructor(
 ) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val token = tokenManager.getAccessToken()
-        android.util.Log.d("AuthInterceptor", "token present = ${token != null}")
+        Log.d("AuthInterceptor", "token present = ${token != null}")
         val request = chain.request().newBuilder().apply {
             if (token != null) {
-                addHeader("Authorization", "Bearer $token")
+                header("Authorization", "Bearer $token")
             }
         }.build()
         return chain.proceed(request)

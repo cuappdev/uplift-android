@@ -7,12 +7,13 @@ import com.cornellappdev.uplift.DeleteCapacityReminderMutation
 import com.cornellappdev.uplift.EditCapacityReminderMutation
 import com.cornellappdev.uplift.data.mappers.toResult
 import javax.inject.Inject
+import javax.inject.Named
 import javax.inject.Singleton
 
 
 @Singleton
 class CapacityRemindersRepository @Inject constructor(
-    private val apolloClient: ApolloClient,
+    @Named("main") private val apolloClient: ApolloClient,
     private val dataStoreRepository: DatastoreRepository,
 ) {
     /**

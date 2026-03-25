@@ -11,21 +11,22 @@ import com.cornellappdev.uplift.CreateUserMutation
 import com.cornellappdev.uplift.GetUserByNetIdQuery
 import com.cornellappdev.uplift.LoginUserMutation
 import com.cornellappdev.uplift.SetWorkoutGoalsMutation
+import com.cornellappdev.uplift.data.auth.SessionManager
 import kotlinx.coroutines.flow.map;
 import kotlinx.coroutines.flow.firstOrNull
 import com.cornellappdev.uplift.data.models.UserInfo
-import com.google.common.collect.Iterables.skip
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import kotlinx.coroutines.tasks.await
+import javax.inject.Named
 
 @Singleton
 class UserInfoRepository @Inject constructor(
     private val firebaseAuth: FirebaseAuth,
-    private val apolloClient: ApolloClient,
+    @Named("main") private val apolloClient: ApolloClient,
     private val dataStore: DataStore<Preferences>,
-    private val tokenManager: TokenManager
+    private val sessionManager: SessionManager
 ){
 
     suspend fun createUser(email: String, name: String, netId: String, skip: Boolean, goal: Int): Boolean {
@@ -47,7 +48,11 @@ class UserInfoRepository @Inject constructor(
                     netId = netId
                 )
             ).execute()
-            val id = userFields.id
+            val id = userFields.id.toIntOrNull()
+            if (id == null) {
+                Log.e("UserInfoRepository", "Failed to set goal: non-numeric user ID '${userFields.id}'")
+                return false
+            }
             val loginData = loginResponse.data?.loginUser
             if (loginData?.accessToken == null || loginData.refreshToken == null) {
                 Log.e("UserInfoRepository", "Login failed after creation: ${loginResponse.errors}")
@@ -55,10 +60,8 @@ class UserInfoRepository @Inject constructor(
             }
             val accessToken = loginData.accessToken
             val refreshToken = loginData.refreshToken
-            tokenManager.saveTokens(accessToken, refreshToken)
             if (!skip) {
-                val numericId = id.toIntOrNull()
-                if (!uploadGoal(numericId, goal)) {
+                if (!uploadGoal(id, goal, accessToken)) {
                     return false
                 }
             }
@@ -73,6 +76,13 @@ class UserInfoRepository @Inject constructor(
                 goalSkip = skip,
                 goal = goal
             )
+            sessionManager.startSession(
+                userId = id,
+                name = name,
+                email = email,
+                access = accessToken,
+                refresh = refreshToken
+            )
             Log.d("UserInfoRepositoryImpl", "User created successfully")
             return true
         } catch (e: Exception) {
@@ -81,18 +91,54 @@ class UserInfoRepository @Inject constructor(
         }
     }
 
-    suspend fun uploadGoal(id:Int?, goal: Int): Boolean {
+    suspend fun loginUser(netId: String) : Boolean {
+        return try {
+            val loginResponse = apolloClient.mutation(
+                LoginUserMutation(
+                    netId = netId
+                )
+            ).execute()
+            val loginData = loginResponse.data?.loginUser
+            val userInfo = getUserByNetId(netId)
+            if (loginData?.accessToken != null && loginData.refreshToken != null && userInfo != null) {
+                val id = userInfo.id.toIntOrNull()
+                if (id == null) {
+                    Log.e("UserInfoRepository", "Failed to log in: non-numeric user ID resulting in null '${userInfo.id}'")
+                    return false
+                }
+                sessionManager.startSession(
+                    userId = id,
+                    name = userInfo.name,
+                    email = userInfo.email,
+                    access = loginData.accessToken,
+                    refresh = loginData.refreshToken
+                )
+                true
+            } else {
+                Log.e("UserInfoRepository", "Login failed: Missing tokens or user info;  ${loginResponse.errors}")
+                false
+            }
+        } catch (e: Exception) {
+            Log.e("UserInfoRepository", "Error logging in: $e")
+            false
+        }
+    }
+
+    suspend fun uploadGoal(id:Int?, goal: Int, manualToken: String? = null): Boolean {
         if (id == null) {
             Log.e("UserInfoRepository", "Failed to set goal: non-numeric user ID '$id'")
             return false
         }
-        val goalResponse = apolloClient.mutation(
+        val call = apolloClient.mutation(
             SetWorkoutGoalsMutation(
                 userId = id,
                 workoutGoal = goal
             )
         )
-            .execute()
+        if (manualToken != null) {
+            call.addHttpHeader("Authorization", "Bearer $manualToken")
+        }
+        val goalResponse = call.execute()
         if (goalResponse.hasErrors()) {
             Log.e("UserInfoRepository", "Failed to set goal: ${goalResponse.errors}")
             return false
@@ -112,55 +158,6 @@ class UserInfoRepository @Inject constructor(
             if (!goalSkip) {
                 preferences[PreferencesKeys.GOAL] = goal
             }
-        }
-    }
-
-    suspend fun loginAndStoreTokens(netId: String): Boolean {
-        return try {
-            val loginResponse = apolloClient.mutation(
-                LoginUserMutation(netId = netId)
-            ).execute()
-
-            val loginData = loginResponse.data?.loginUser
-            if (loginResponse.hasErrors() ||
-                loginData?.accessToken == null ||
-                loginData.refreshToken == null
-            ) {
-                Log.e("UserInfoRepository", "Login failed: ${loginResponse.errors}")
-                return false
-            }
-
-            tokenManager.saveTokens(
-                loginData.accessToken,
-                loginData.refreshToken
-            )
-            Log.d("UserInfoRepository", "Saved backend tokens successfully")
-            true
-        } catch (e: Exception) {
-            Log.e("UserInfoRepository", "Error logging in user", e)
-            false
-        }
-    }
-
-    suspend fun syncUserToDataStore(netId: String): Boolean {
-        return try {
-            if (!loginAndStoreTokens(netId)) return false
-            val user = getUserByNetId(netId) ?: return false
-
-            storeUserFields(
-                id = user.id,
-                username = user.name,
-                netId = user.netId,
-                email = user.email,
-                goalSkip = user.workoutGoal == null,
-                goal = user.workoutGoal ?: 0
-            )
-
-            Log.d("UserInfoRepositoryImpl", "Synced existing user to DataStore: ${user.id}")
-            true
-        } catch (e: Exception) {
-            Log.e("UserInfoRepositoryImpl", "Error syncing user to DataStore", e)
-            false
         }
     }
 

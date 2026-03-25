@@ -43,19 +43,17 @@ class LoginViewModel @Inject constructor(
             }
             when {
                 userInfoRepository.hasUser(netId) -> {
-                    val synced = userInfoRepository.syncUserToDataStore(netId)
-                    if (synced) {
-                        rootNavigationRepository.navigate(UpliftRootRoute.Home)
+                    val success = userInfoRepository.loginUser(netId)
+                    if (success) {
+                        Log.d("LoginViewModel", "User logged in successfully")
                     } else {
-                        Log.e("Error", "Failed to sync existing user")
                         userInfoRepository.signOut()
                     }
                 }
-
-                userInfoRepository.hasFirebaseUser() -> rootNavigationRepository.navigate(
-                    UpliftRootRoute.ProfileCreation
-                )
-
+                userInfoRepository.hasFirebaseUser() -> {
+                    rootNavigationRepository.navigate(UpliftRootRoute.ProfileCreation)
+                }
+                //TODO: Handle error
                 else -> {
                     Log.e("Error", "Unexpected credential")
                     userInfoRepository.signOut()

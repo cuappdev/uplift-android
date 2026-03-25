@@ -1,6 +1,7 @@
 package com.cornellappdev.uplift.ui.viewmodels.nav
 
 import androidx.lifecycle.viewModelScope
+import com.cornellappdev.uplift.data.auth.SessionManager
 import com.cornellappdev.uplift.data.repositories.UserInfoRepository
 import com.cornellappdev.uplift.ui.UpliftRootRoute
 import com.cornellappdev.uplift.ui.nav.RootNavigationRepository
@@ -14,15 +15,27 @@ import javax.inject.Inject
 @HiltViewModel
 class RootNavigationViewModel @Inject constructor(
     rootNavigationRepository: RootNavigationRepository,
-    private val userInfoRepository: UserInfoRepository
+    private val userInfoRepository: UserInfoRepository,
+    val sessionManager: SessionManager
 ) : UpliftViewModel<RootNavigationViewModel.RootNavigationUiState>(
-    initialUiState = RootNavigationUiState()
+    initialUiState = RootNavigationUiState(
+        isLoggedIn = sessionManager.isLoggedIn.value,
+        startDestination = if (!ONBOARDING_FLAG) {
+            UpliftRootRoute.Home
+        } else if (sessionManager.isLoggedIn.value) {
+            UpliftRootRoute.Home
+        }
+        else {
+            UpliftRootRoute.Onboarding
+        }
+    )
 ) {
     data class RootNavigationUiState(
+        val isLoggedIn: Boolean = false,
         val navEvent: UIEvent<UpliftRootRoute>? = null,
         val popBackStack: UIEvent<Unit>? = null,
         val navigateUp: UIEvent<Unit>? = null,
-        val startDestination: UpliftRootRoute = UpliftRootRoute.Home
+        val startDestination: UpliftRootRoute = if (ONBOARDING_FLAG) UpliftRootRoute.Onboarding else UpliftRootRoute.Home
     )
 
     init {
@@ -46,18 +59,18 @@ class RootNavigationViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
-            val hasSkipped = userInfoRepository.getSkipFromDataStore()
-            var hasUser = false
-            if (userInfoRepository.hasFirebaseUser()) {
-                val user = userInfoRepository.getFirebaseUser()
-                val email = user?.email
-                val netId = email?.substringBefore('@')
-                hasUser = netId?.let { userInfoRepository.hasUser(it) } ?: false
-            }
-            applyMutation {
-                copy(
-                    startDestination = if (hasSkipped || hasUser || !ONBOARDING_FLAG) UpliftRootRoute.Home else UpliftRootRoute.Onboarding
-                )
+            sessionManager.isLoggedIn.collect { loggedIn ->
+                applyMutation {
+                    copy(isLoggedIn = loggedIn)
+                }
+
+                val hasSkipped = userInfoRepository.getSkipFromDataStore()
+                val shouldShowHome = loggedIn || hasSkipped || !ONBOARDING_FLAG
+                applyMutation {
+                    copy(
+                        startDestination = if (shouldShowHome) UpliftRootRoute.Home else UpliftRootRoute.Onboarding
+                    )
+                }
             }
         }
     }
