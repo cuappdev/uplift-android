@@ -65,7 +65,7 @@ class TokenManager @Inject constructor(@ApplicationContext private val context: 
 
     fun getRefreshToken(): String? = sharedPreferences?.getString("refresh_token", null)
 
-    fun clearTokens() {
+    fun clearTokensAndUserInfo() {
         sharedPreferences?.edit { clear() }
         _tokenFlow.value = null
     }

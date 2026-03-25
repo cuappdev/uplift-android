@@ -31,7 +31,7 @@ class SessionManager @Inject constructor(
 
     // Call this for manual logout or when refresh fails
     fun logout() {
-        tokenManager.clearTokens()
+        tokenManager.clearTokensAndUserInfo()
     }
 
     val userId: Int? get() = tokenManager.getUserId()
