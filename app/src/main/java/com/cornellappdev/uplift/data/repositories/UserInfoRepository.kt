@@ -50,7 +50,7 @@ class UserInfoRepository @Inject constructor(
             ).execute()
             val id = userFields.id.toIntOrNull()
             if (id == null) {
-                Log.e("UserInfoRepository", "Failed to set goal: non-numeric user ID '$userFields.id'")
+                Log.e("UserInfoRepository", "Failed to set goal: non-numeric user ID '${userFields.id}'")
                 return false
             }
             val loginData = loginResponse.data?.loginUser
@@ -103,7 +103,7 @@ class UserInfoRepository @Inject constructor(
             if (loginData?.accessToken != null && loginData.refreshToken != null && userInfo != null) {
                 val id = userInfo.id.toIntOrNull()
                 if (id == null) {
-                    Log.e("UserInfoRepository", "Failed to log in: non-numeric user ID '$userInfo.id'")
+                    Log.e("UserInfoRepository", "Failed to log in: non-numeric user ID resulting in null '${userInfo.id}'")
                     return false
                 }
                 sessionManager.startSession(

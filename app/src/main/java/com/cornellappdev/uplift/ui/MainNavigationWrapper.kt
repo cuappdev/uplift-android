@@ -103,7 +103,7 @@ fun MainNavigationWrapper(
 
     systemUiController.setStatusBarColor(PRIMARY_YELLOW)
 
-    val isLoggedIn = rootNavigationViewModel.collectUiStateValue().isLoggedIn
+    val isLoggedIn = rootNavigationUiState.isLoggedIn
     var wasLoggedIn by rememberSaveable { mutableStateOf(isLoggedIn) }
 
     LaunchedEffect(isLoggedIn) {
