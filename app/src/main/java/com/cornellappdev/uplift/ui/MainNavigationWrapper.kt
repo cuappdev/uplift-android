@@ -12,7 +12,6 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,7 +31,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.cornellappdev.uplift.data.auth.SessionManager
 import com.cornellappdev.uplift.ui.components.general.CheckInPopUp
 import com.cornellappdev.uplift.ui.components.general.ConfettiBurst
 import com.cornellappdev.uplift.ui.nav.BottomNavScreens
@@ -78,13 +76,11 @@ fun MainNavigationWrapper(
     gymDetailViewModel: GymDetailViewModel = hiltViewModel(),
     classDetailViewModel: ClassDetailViewModel = hiltViewModel(),
     rootNavigationViewModel: RootNavigationViewModel = hiltViewModel(),
-    sessionManager: SessionManager = hiltViewModel<RootNavigationViewModel>().let {
-        hiltViewModel<RootNavigationViewModel>().sessionManager
-    }
-
 ) {
     val rootNavigationUiState = rootNavigationViewModel.collectUiStateValue()
     val startDestination = rootNavigationUiState.startDestination
+
+    val sessionManager = rootNavigationViewModel.sessionManager
 
     val navController = rememberNavController()
     val systemUiController: SystemUiController = rememberSystemUiController()
@@ -106,7 +102,7 @@ fun MainNavigationWrapper(
 
     systemUiController.setStatusBarColor(PRIMARY_YELLOW)
 
-    val isLoggedIn by sessionManager.isLoggedIn.collectAsState()
+    val isLoggedIn = rootNavigationViewModel.collectUiStateValue().isLoggedIn
 
     LaunchedEffect(isLoggedIn) {
         if (!isLoggedIn && ONBOARDING_FLAG) {

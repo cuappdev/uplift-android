@@ -3,8 +3,6 @@ package com.cornellappdev.uplift.data.auth
 import android.util.Log
 import com.apollographql.apollo.ApolloClient
 import com.cornellappdev.uplift.RefreshAccessTokenMutation
-import com.cornellappdev.uplift.data.auth.SessionManager
-import com.cornellappdev.uplift.data.auth.TokenManager
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
 import okhttp3.Authenticator
@@ -21,6 +19,10 @@ class TokenAuthenticator @Inject constructor(
 ) : Authenticator {
 
     override fun authenticate(route: Route?, response: Response): Request? {
+        if (responseCount(response) >= 2) {
+            return null
+        }
+        
         val refreshToken = tokenManager.getRefreshToken() ?: return null
 
         synchronized(this) {
@@ -29,7 +31,7 @@ class TokenAuthenticator @Inject constructor(
             val currentToken = tokenManager.getAccessToken()
             val requestToken = response.request.header("Authorization")?.substringAfter("Bearer ")
 
-            if (currentToken != requestToken && currentToken != null) {
+            if (currentToken != null && currentToken != requestToken ) {
                 return response.request.newBuilder()
                     .header("Authorization", "Bearer $currentToken")
                     .build()
@@ -49,7 +51,7 @@ class TokenAuthenticator @Inject constructor(
 
                     val newAccessToken = mutationResponse.data?.refreshAccessToken?.newAccessToken
 
-                    if (newAccessToken != null) {
+                    if (newAccessToken != null && newAccessToken != requestToken) {
                         tokenManager.saveTokens(newAccessToken, refreshToken)
 
                         // Retry the original request with the new Access Token
@@ -69,5 +71,14 @@ class TokenAuthenticator @Inject constructor(
                 }
             }
         }
+    }
+
+    private fun responseCount(response: Response?): Int {
+        var result = 1
+        // Traverse the chain of prior responses
+        while (response?.priorResponse != null) {
+            result++
+        }
+        return result
     }
 }

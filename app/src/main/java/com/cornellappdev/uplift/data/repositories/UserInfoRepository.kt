@@ -50,7 +50,7 @@ class UserInfoRepository @Inject constructor(
             ).execute()
             val id = userFields.id.toIntOrNull()
             if (id == null) {
-                Log.e("UserInfoRepository", "Failed to set goal: non-numeric user ID '$id'")
+                Log.e("UserInfoRepository", "Failed to set goal: non-numeric user ID '$userFields.id'")
                 return false
             }
             val loginData = loginResponse.data?.loginUser
@@ -60,15 +60,8 @@ class UserInfoRepository @Inject constructor(
             }
             val accessToken = loginData.accessToken
             val refreshToken = loginData.refreshToken
-            sessionManager.startSession(
-                userId = id,
-                name = name,
-                email = email,
-                access = accessToken,
-                refresh = refreshToken
-            )
             if (!skip) {
-                if (!uploadGoal(id, goal)) {
+                if (!uploadGoal(id, goal, accessToken)) {
                     return false
                 }
             }
@@ -82,6 +75,13 @@ class UserInfoRepository @Inject constructor(
                 email = userFields.email ?: email,
                 goalSkip = skip,
                 goal = goal
+            )
+            sessionManager.startSession(
+                userId = id,
+                name = name,
+                email = email,
+                access = accessToken,
+                refresh = refreshToken
             )
             Log.d("UserInfoRepositoryImpl", "User created successfully")
             return true
@@ -103,7 +103,7 @@ class UserInfoRepository @Inject constructor(
             if (loginData?.accessToken != null && loginData.refreshToken != null && userInfo != null) {
                 val id = userInfo.id.toIntOrNull()
                 if (id == null) {
-                    Log.e("UserInfoRepository", "Failed to log in: non-numeric user ID '$id'")
+                    Log.e("UserInfoRepository", "Failed to log in: non-numeric user ID '$userInfo.id'")
                     return false
                 }
                 sessionManager.startSession(
@@ -124,18 +124,21 @@ class UserInfoRepository @Inject constructor(
         }
     }
 
-    suspend fun uploadGoal(id:Int?, goal: Int): Boolean {
+    suspend fun uploadGoal(id:Int?, goal: Int, manualToken: String? = null): Boolean {
         if (id == null) {
             Log.e("UserInfoRepository", "Failed to set goal: non-numeric user ID '$id'")
             return false
         }
-        val goalResponse = apolloClient.mutation(
+        val call = apolloClient.mutation(
             SetWorkoutGoalsMutation(
                 userId = id,
                 workoutGoal = goal
             )
         )
-            .execute()
+        if (manualToken != null) {
+            call.addHttpHeader("Authorization", "Bearer $manualToken")
+        }
+        val goalResponse = call.execute()
         if (goalResponse.hasErrors()) {
             Log.e("UserInfoRepository", "Failed to set goal: ${goalResponse.errors}")
             return false

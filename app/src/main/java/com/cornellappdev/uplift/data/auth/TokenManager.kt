@@ -7,6 +7,8 @@ import androidx.core.content.edit
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -34,6 +36,9 @@ class TokenManager @Inject constructor(@ApplicationContext private val context: 
         }
     }
 
+    private val _tokenFlow = MutableStateFlow(getAccessToken())
+    val tokenFlow = _tokenFlow.asStateFlow()
+
     private fun createEncryptedPrefs(): SharedPreferences {
         val masterKey = MasterKey.Builder(context)
             .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
@@ -53,6 +58,7 @@ class TokenManager @Inject constructor(@ApplicationContext private val context: 
             putString("access_token", accessToken)
             putString("refresh_token", refreshToken)
         }
+        _tokenFlow.value = accessToken
     }
 
     fun getAccessToken(): String? = sharedPreferences?.getString("access_token", null)
@@ -61,6 +67,7 @@ class TokenManager @Inject constructor(@ApplicationContext private val context: 
 
     fun clearTokens() {
         sharedPreferences?.edit { clear() }
+        _tokenFlow.value = null
     }
 
     fun saveUserSession(userId: Int, username: String, userEmail: String) {

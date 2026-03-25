@@ -18,9 +18,20 @@ class RootNavigationViewModel @Inject constructor(
     private val userInfoRepository: UserInfoRepository,
     val sessionManager: SessionManager
 ) : UpliftViewModel<RootNavigationViewModel.RootNavigationUiState>(
-    initialUiState = RootNavigationUiState()
+    initialUiState = RootNavigationUiState(
+        isLoggedIn = sessionManager.isLoggedIn.value,
+        startDestination = if (!ONBOARDING_FLAG) {
+            UpliftRootRoute.Home
+        } else if (sessionManager.isLoggedIn.value) {
+            UpliftRootRoute.Home
+        }
+        else {
+            UpliftRootRoute.Onboarding
+        }
+    )
 ) {
     data class RootNavigationUiState(
+        val isLoggedIn: Boolean = false,
         val navEvent: UIEvent<UpliftRootRoute>? = null,
         val popBackStack: UIEvent<Unit>? = null,
         val navigateUp: UIEvent<Unit>? = null,
@@ -49,6 +60,10 @@ class RootNavigationViewModel @Inject constructor(
 
         viewModelScope.launch {
             sessionManager.isLoggedIn.collect { loggedIn ->
+                applyMutation {
+                    copy(isLoggedIn = loggedIn)
+                }
+
                 val hasSkipped = userInfoRepository.getSkipFromDataStore()
                 val shouldShowHome = loggedIn || hasSkipped || !ONBOARDING_FLAG
                 applyMutation {
