@@ -11,7 +11,9 @@ import okhttp3.Response
 import okhttp3.Route
 import javax.inject.Inject
 import javax.inject.Named
+import javax.inject.Singleton
 
+@Singleton
 class TokenAuthenticator @Inject constructor(
     private val tokenManager: TokenManager,
     private val sessionManager: SessionManager,
@@ -75,10 +77,12 @@ class TokenAuthenticator @Inject constructor(
 
     private fun responseCount(response: Response?): Int {
         var result = 1
+        var current = response
         // Traverse the chain of prior responses
-        while (response?.priorResponse != null) {
-            result++
+            while (current?.priorResponse != null) {
+                result++
+                current = current.priorResponse
+            }
+            return result
         }
-        return result
-    }
 }

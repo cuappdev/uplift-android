@@ -13,6 +13,9 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -80,8 +83,6 @@ fun MainNavigationWrapper(
     val rootNavigationUiState = rootNavigationViewModel.collectUiStateValue()
     val startDestination = rootNavigationUiState.startDestination
 
-    val sessionManager = rootNavigationViewModel.sessionManager
-
     val navController = rememberNavController()
     val systemUiController: SystemUiController = rememberSystemUiController()
 
@@ -103,13 +104,15 @@ fun MainNavigationWrapper(
     systemUiController.setStatusBarColor(PRIMARY_YELLOW)
 
     val isLoggedIn = rootNavigationViewModel.collectUiStateValue().isLoggedIn
+    var wasLoggedIn by rememberSaveable { mutableStateOf(isLoggedIn) }
 
     LaunchedEffect(isLoggedIn) {
-        if (!isLoggedIn && ONBOARDING_FLAG) {
+        if (wasLoggedIn && !isLoggedIn && ONBOARDING_FLAG) {
             navController.navigate(UpliftRootRoute.Onboarding) {
                 popUpTo(0)
             }
         }
+        wasLoggedIn = isLoggedIn
     }
 
     //TODO: Try to consolidate launched effects into one with consumeIn function that takes in coroutine scope
