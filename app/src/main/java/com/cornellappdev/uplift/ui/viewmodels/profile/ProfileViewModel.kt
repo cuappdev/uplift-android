@@ -3,9 +3,7 @@ package com.cornellappdev.uplift.ui.viewmodels.profile
 import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.viewModelScope
-import coil.util.CoilUtils.result
 import com.cornellappdev.uplift.data.repositories.ProfileRepository
-import com.cornellappdev.uplift.data.repositories.UserInfoRepository
 import com.cornellappdev.uplift.ui.UpliftRootRoute
 import com.cornellappdev.uplift.ui.components.profile.workouts.HistoryItem
 import com.cornellappdev.uplift.ui.nav.RootNavigationRepository
@@ -137,7 +135,7 @@ class ProfileViewModel @Inject constructor(
     }
 
     fun toHistory() {
-        // replace with the actual route once history exists
+        rootNavigationRepository.navigate(UpliftRootRoute.WorkoutHistory)
     }
 
 
@@ -157,4 +155,3 @@ class ProfileViewModel @Inject constructor(
         .withLocale(Locale.US)
         .withZone(ZoneId.systemDefault())
 }
-

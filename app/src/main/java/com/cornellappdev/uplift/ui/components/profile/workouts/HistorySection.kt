@@ -2,7 +2,6 @@ package com.cornellappdev.uplift.ui.components.profile.workouts
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -18,7 +17,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -28,9 +26,9 @@ import androidx.compose.ui.unit.sp
 import com.cornellappdev.uplift.R
 import com.cornellappdev.uplift.ui.components.profile.SectionTitleText
 import com.cornellappdev.uplift.util.GRAY01
+import com.cornellappdev.uplift.util.GRAY04
+import com.cornellappdev.uplift.util.PRIMARY_BLACK
 import com.cornellappdev.uplift.util.montserratFamily
-import com.cornellappdev.uplift.util.timeAgoString
-import java.util.Calendar
 
 data class HistoryItem(
     val gymName: String,
@@ -68,7 +66,7 @@ fun HistorySection(
 }
 
 @Composable
-private fun HistoryList(
+fun HistoryList(
     historyItems: List<HistoryItem>,
     modifier: Modifier = Modifier
 ) {
@@ -76,14 +74,14 @@ private fun HistoryList(
         historyItems.take(5).forEachIndexed { index, historyItem ->
             HistoryItemRow(historyItem = historyItem)
             if (index != historyItems.size - 1) {
-                HorizontalDivider(color = GRAY01)
+                HorizontalDivider(color = GRAY01, thickness = 1.dp)
             }
         }
     }
 }
 
 @Composable
-private fun HistoryItemRow(
+fun HistoryItemRow(
     historyItem: HistoryItem
 ) {
     val gymName = historyItem.gymName
@@ -94,23 +92,28 @@ private fun HistoryItemRow(
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .height(60.dp)
             .padding(vertical = 12.dp),
-        horizontalArrangement = Arrangement.SpaceBetween
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.Bottom
     ) {
-        Column(){
+        Column(
+            modifier = Modifier.weight(1f),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
+        ){
             Text(
                 text = gymName,
                 fontFamily = montserratFamily,
-                fontSize = 14.sp,
+                fontSize = 12.sp,
                 fontWeight = FontWeight.Medium,
-                color = Color.Black
+                color = PRIMARY_BLACK
             )
             Text(
                 text = "$date · $time",
                 fontFamily = montserratFamily,
                 fontSize = 12.sp,
-                fontWeight = FontWeight.Light,
-                color = Color.Gray
+                fontWeight = FontWeight.Medium,
+                color = GRAY04
             )
         }
         Text(
@@ -124,7 +127,7 @@ private fun HistoryItemRow(
 }
 
 @Composable
-private fun EmptyHistorySection(){
+fun EmptyHistorySection(){
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
