@@ -40,9 +40,9 @@ fun SettingsScreen(
         isLoggedIn = settingsUiState.isLoggedIn,
         onBackClick = settingsViewModel::onBack,
         onAboutPressed = settingsViewModel::onAboutPressed,
-        onRemindersPressed = settingsViewModel::onRemindersPressed,
         onReportPressed = settingsViewModel::onReportPressed,
-        onLogOut = settingsViewModel::onLogOut
+        onLogOut = settingsViewModel::onLogOut,
+        onDeletePress = {} // Implement delete account
     )
 }
 
@@ -51,9 +51,9 @@ private fun SettingsScreenContent(
     isLoggedIn: Boolean,
     onBackClick: () -> Unit,
     onAboutPressed: () -> Unit,
-    onRemindersPressed: () -> Unit,
     onReportPressed: () -> Unit,
-    onLogOut: () -> Unit
+    onLogOut: () -> Unit,
+    onDeletePress: () -> Unit
 ) {
     Scaffold(topBar = {
         UpliftTopBarWithBack(title = "Settings", onBackClick = onBackClick)
@@ -76,12 +76,6 @@ private fun SettingsScreenContent(
             )
             Divider(color = GRAY01)
             SettingsOption(
-                icon = R.drawable.ic_reminders_clock,
-                title = "Reminders",
-                onClick = onRemindersPressed,
-            )
-            Divider(color = GRAY01)
-            SettingsOption(
                 icon = R.drawable.ic_report,
                 title = "Report an Issue",
                 onClick = onReportPressed,
@@ -90,7 +84,7 @@ private fun SettingsScreenContent(
             if (isLoggedIn) {
                 LogOutButton(onLogOut)
                 Divider(color = GRAY01)
-                DeleteAccountButton {  } // Add delete account logic
+                DeleteAccountButton(onDeletePress)
             }
         }
     }
@@ -124,11 +118,11 @@ private fun LogOutButton(
 
 @Composable
 private fun DeleteAccountButton(
-    onLogOut: () -> Unit,
+    onDeletePress: () -> Unit,
 ){
     Row(
         modifier = Modifier.clickable(
-            onClick = onLogOut
+            onClick = onDeletePress
         ),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -192,8 +186,8 @@ private fun SettingsScreenPreview() {
         isLoggedIn = true,
         onBackClick = {},
         onAboutPressed = {},
-        onRemindersPressed = {},
         onReportPressed = {},
-        onLogOut = {}
+        onLogOut = {},
+        onDeletePress = {}
     )
 }
