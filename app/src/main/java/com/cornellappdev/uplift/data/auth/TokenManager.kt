@@ -70,14 +70,17 @@ class TokenManager @Inject constructor(@ApplicationContext private val context: 
         _tokenFlow.value = null
     }
 
-    fun saveUserSession(userId: Int, username: String, userEmail: String) {
+    fun saveUserSession(userId: Int, username: String, userEmail: String, netId: String) {
         sharedPreferences?.edit {
             putInt("user_id", userId)
             putString("username", username)
             putString("user_email", userEmail)
+            putString("net_id", netId)
         }
     }
 
     fun getUserId(): Int? = sharedPreferences?.takeIf { it.contains("user_id") }?.getInt("user_id", -1)
+
+    fun getNetId(): String? = sharedPreferences?.getString("net_id", null)
 
 }

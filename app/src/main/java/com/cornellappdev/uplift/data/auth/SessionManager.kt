@@ -24,9 +24,9 @@ class SessionManager @Inject constructor(
         )
 
     // Call this after LoginUser or CreateUser mutations succeed
-    fun startSession(userId: Int, name: String, email: String, access: String, refresh: String) {
+    fun startSession(userId: Int, name: String, email: String, netId: String, access: String, refresh: String) {
         tokenManager.saveTokens(access, refresh)
-        tokenManager.saveUserSession(userId, name, email)
+        tokenManager.saveUserSession(userId, name, email, netId)
     }
 
     // Call this for manual logout or when refresh fails
@@ -35,4 +35,6 @@ class SessionManager @Inject constructor(
     }
 
     val userId: Int? get() = tokenManager.getUserId()
+
+    val netId: String? get() = tokenManager.getNetId()
 }

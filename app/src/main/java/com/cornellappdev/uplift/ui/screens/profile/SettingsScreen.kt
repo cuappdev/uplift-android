@@ -14,6 +14,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -25,6 +29,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.cornellappdev.uplift.R
 import com.cornellappdev.uplift.ui.components.general.UpliftTopBarWithBack
+import com.cornellappdev.uplift.ui.components.profile.DeleteAccountConfirmationDialog
 import com.cornellappdev.uplift.ui.viewmodels.profile.SettingsViewModel
 import com.cornellappdev.uplift.util.GRAY01
 import com.cornellappdev.uplift.util.GRAY03
@@ -36,14 +41,26 @@ fun SettingsScreen(
     settingsViewModel: SettingsViewModel = hiltViewModel(),
 ) {
     val settingsUiState = settingsViewModel.collectUiStateValue()
+    var showDeleteDialog by remember { mutableStateOf(false)}
     SettingsScreenContent(
         isLoggedIn = settingsUiState.isLoggedIn,
         onBackClick = settingsViewModel::onBack,
         onAboutPressed = settingsViewModel::onAboutPressed,
-        onRemindersPressed = settingsViewModel::onRemindersPressed,
         onReportPressed = settingsViewModel::onReportPressed,
-        onLogOut = settingsViewModel::onLogOut
+        onLogOut = settingsViewModel::onLogOut,
+        onDeletePress = { showDeleteDialog = true },
     )
+    if (showDeleteDialog) {
+        DeleteAccountConfirmationDialog(
+            onDismiss = {
+                showDeleteDialog = false
+            },
+            onConfirm = {
+                showDeleteDialog = false
+                settingsViewModel.onDeleteAccount()
+            }
+        )
+    }
 }
 
 @Composable
@@ -51,9 +68,9 @@ private fun SettingsScreenContent(
     isLoggedIn: Boolean,
     onBackClick: () -> Unit,
     onAboutPressed: () -> Unit,
-    onRemindersPressed: () -> Unit,
     onReportPressed: () -> Unit,
-    onLogOut: () -> Unit
+    onLogOut: () -> Unit,
+    onDeletePress: () -> Unit,
 ) {
     Scaffold(topBar = {
         UpliftTopBarWithBack(title = "Settings", onBackClick = onBackClick)
@@ -76,12 +93,6 @@ private fun SettingsScreenContent(
             )
             Divider(color = GRAY01)
             SettingsOption(
-                icon = R.drawable.ic_reminders_clock,
-                title = "Reminders",
-                onClick = onRemindersPressed,
-            )
-            Divider(color = GRAY01)
-            SettingsOption(
                 icon = R.drawable.ic_report,
                 title = "Report an Issue",
                 onClick = onReportPressed,
@@ -89,6 +100,8 @@ private fun SettingsScreenContent(
             Divider(color = GRAY01)
             if (isLoggedIn) {
                 LogOutButton(onLogOut)
+                Divider(color = GRAY01)
+                DeleteAccountButton(onDeletePress)
             }
         }
     }
@@ -112,6 +125,32 @@ private fun LogOutButton(
         )
         Text(
             text = "Log out",
+            fontSize = 16.sp,
+            fontFamily = montserratFamily,
+            fontWeight = FontWeight.Medium,
+            color = Color(0xFFFE1313)
+        )
+    }
+}
+
+@Composable
+private fun DeleteAccountButton(
+    onDeletePress: () -> Unit,
+){
+    Row(
+        modifier = Modifier.clickable(
+            onClick = onDeletePress
+        ),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ){
+        Icon(
+            painterResource(id = R.drawable.ic_trash),
+            contentDescription = "Delete account",
+            tint = Color(0xFFFE1313)
+        )
+        Text(
+            text = "Delete account",
             fontSize = 16.sp,
             fontFamily = montserratFamily,
             fontWeight = FontWeight.Medium,
@@ -164,8 +203,8 @@ private fun SettingsScreenPreview() {
         isLoggedIn = true,
         onBackClick = {},
         onAboutPressed = {},
-        onRemindersPressed = {},
         onReportPressed = {},
-        onLogOut = {}
+        onLogOut = {},
+        onDeletePress = {},
     )
 }
