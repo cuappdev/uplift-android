@@ -89,6 +89,8 @@ private fun SettingsScreenContent(
             Divider(color = GRAY01)
             if (isLoggedIn) {
                 LogOutButton(onLogOut)
+                Divider(color = GRAY01)
+                DeleteAccountButton {  } // Add delete account logic
             }
         }
     }
@@ -112,6 +114,32 @@ private fun LogOutButton(
         )
         Text(
             text = "Log out",
+            fontSize = 16.sp,
+            fontFamily = montserratFamily,
+            fontWeight = FontWeight.Medium,
+            color = Color(0xFFFE1313)
+        )
+    }
+}
+
+@Composable
+private fun DeleteAccountButton(
+    onLogOut: () -> Unit,
+){
+    Row(
+        modifier = Modifier.clickable(
+            onClick = onLogOut
+        ),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ){
+        Icon(
+            painterResource(id = R.drawable.ic_trash),
+            contentDescription = "Delete account",
+            tint = Color(0xFFFE1313)
+        )
+        Text(
+            text = "Delete account",
             fontSize = 16.sp,
             fontFamily = montserratFamily,
             fontWeight = FontWeight.Medium,
