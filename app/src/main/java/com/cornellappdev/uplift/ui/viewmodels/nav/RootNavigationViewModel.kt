@@ -67,11 +67,19 @@ class RootNavigationViewModel @Inject constructor(
                 val hasSkipped = userInfoRepository.getSkipFromDataStore()
                 val shouldShowHome = loggedIn || hasSkipped || !ONBOARDING_FLAG
                 val newRoute = if (shouldShowHome) UpliftRootRoute.Home else UpliftRootRoute.Onboarding
-                applyMutation {
-                    copy(
-                        startDestination = newRoute,
-                        navEvent = UIEvent(newRoute)
-                    )
+                if (newRoute != uiStateFlow.value.startDestination || loggedIn != uiStateFlow.value.isLoggedIn) {
+                    applyMutation {
+                        copy(
+                            isLoggedIn = loggedIn,
+                            startDestination = newRoute,
+                            navEvent = UIEvent(newRoute)
+                        )
+                    }
+                }
+                else {
+                    applyMutation {
+                        copy(isLoggedIn = loggedIn)
+                    }
                 }
             }
         }
