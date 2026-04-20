@@ -243,6 +243,7 @@ class UserInfoRepository @Inject constructor(
             // Want to log out no matter if the firebase deletes or not
             try {
                 firebaseAuth.currentUser?.delete()?.await()
+                Log.d("UserInfoRepository", "Firebase account deleted successfully")
             } catch (e: Exception) {
                 Log.e("UserInfoRepository", "Firebase delete failed (User may need to re-login): $e")
             }
@@ -250,7 +251,7 @@ class UserInfoRepository @Inject constructor(
             sessionManager.logout()
             dataStore.edit { it.clear() }
 
-            Log.d("UserInfoRepository", "Account deleted successfully")
+            Log.d("UserInfoRepository", "Successfully signed out")
             true
         } catch (e: Exception) {
             Log.e("UserInfoRepository", "Error deleting account: $e")

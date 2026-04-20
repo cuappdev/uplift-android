@@ -31,6 +31,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -69,7 +70,15 @@ fun DeleteDialog(
                 Box(
                     modifier = Modifier.fillMaxSize(),
                 ) {
-                    CloseButton(onDismiss)
+                    CloseButton(modifier = Modifier
+                        .size(32.dp).
+                        clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null
+                    ) {
+                        onDismiss()
+                    }
+                        .offset(x = 206.dp, y = 12.dp))
                     MainDialogColumn(onConfirm, onDismiss)
                 }
             }
@@ -115,20 +124,13 @@ private fun MainDialogColumn(onConfirm: () -> Unit, onDismiss: () -> Unit) {
 }
 
 @Composable
-private fun CloseButton(onDismiss: () -> Unit) {
+fun CloseButton(modifier: Modifier = Modifier,
+                tint: Color = PRIMARY_BLACK) {
     Icon(
         imageVector = Icons.Default.Close,
         contentDescription = "Close",
-        tint = PRIMARY_BLACK,
-        modifier = Modifier
-            .size(32.dp)
-            .offset(x = 206.dp, y = 12.dp)
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null
-            ) {
-                onDismiss()
-            }
+        tint = tint,
+        modifier = modifier
     )
 }
 
@@ -154,4 +156,13 @@ private fun ConfirmButton(onConfirm: () -> Unit) {
             textAlign = TextAlign.Center
         )
     }
+}
+
+@Preview
+@Composable
+private fun DeleteDialogPreview() {
+    DeleteDialog(
+        deleteDialogOpen = true ,
+        onConfirm = {}
+    ) { }
 }

@@ -1,30 +1,25 @@
 package com.cornellappdev.uplift.ui.components.profile
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -32,6 +27,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.cornellappdev.uplift.R
+import com.cornellappdev.uplift.ui.components.general.UpliftButton
+import com.cornellappdev.uplift.ui.components.goalsetting.CloseButton
 import com.cornellappdev.uplift.ui.theme.AppColors
 import com.cornellappdev.uplift.util.montserratFamily
 
@@ -47,25 +44,29 @@ fun DeleteAccountConfirmationDialog(
             modifier = Modifier.width(250.dp)
         ) {
             Box(
-                modifier = Modifier.padding(20.dp)
+                modifier = Modifier.fillMaxWidth()
             ) {
-                // Top-right Close Button
-                Icon(
-                    imageVector = Icons.Default.Close,
-                    contentDescription = "Close",
+                CloseButton(
+                    tint = AppColors.Black.copy(alpha = 0.4f),
                     modifier = Modifier
                         .align(Alignment.TopEnd)
-                        .clickable { onDismiss() }
-                        .size(24.dp),
-                    tint = AppColors.Black.copy(alpha = 0.4f)
+                        .padding(top = 12.dp, end = 12.dp)
+                        .size(24.dp)
+                        .clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null
+                        ) {
+                            onDismiss()
+                        },
                 )
 
                 Column(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(20.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(20.dp)
                 ) {
-                    // Top Center Trash Icon
                     Icon(
                         painter = painterResource(id = R.drawable.ic_trash_2),
                         contentDescription = "Delete account",
@@ -107,41 +108,26 @@ fun DeleteAccountConfirmationDialog(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        // Delete Button (Black Pill)
-                        Button(
+                        UpliftButton(
                             onClick = onConfirm,
+                            text = "Delete",
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .height(41.dp),
-                            shape = RoundedCornerShape(38.dp),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = AppColors.Black,
-                                contentColor = AppColors.White
-                            ),
-                            elevation = ButtonDefaults.buttonElevation(defaultElevation = 0.dp)
-                        ) {
-                            Text(
-                                text = "Delete",
-                                style = TextStyle(
-                                    fontFamily = montserratFamily,
-                                    fontSize = 16.sp,
-                                    fontWeight = FontWeight.Bold
-                                )
-                            )
-                        }
+                                .fillMaxWidth(),
+                            height = 41.dp,
+                            containerColor = AppColors.Black,
+                            contentColor = AppColors.White,
+                            fontSize = 16f,
+                            elevation = 0.dp
+                        )
 
-                        // Back Button
-                        Text(
+                        UpliftButton(
+                            onClick = onDismiss,
                             text = "Back",
-                            modifier = Modifier
-                                .clickable { onDismiss() }
-                                .padding(vertical = 4.dp),
-                            style = TextStyle(
-                                fontFamily = montserratFamily,
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = AppColors.Black
-                            )
+                            modifier = Modifier.align(Alignment.CenterHorizontally),
+                            containerColor = Color.Transparent,
+                            contentColor = AppColors.Black,
+                            fontSize = 14f,
+                            elevation = 0.dp
                         )
                     }
                 }

@@ -30,6 +30,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.cornellappdev.uplift.R
 import com.cornellappdev.uplift.ui.components.general.UpliftTopBarWithBack
 import com.cornellappdev.uplift.ui.components.profile.DeleteAccountConfirmationDialog
+import com.cornellappdev.uplift.ui.theme.AppColors
 import com.cornellappdev.uplift.ui.viewmodels.profile.SettingsViewModel
 import com.cornellappdev.uplift.util.GRAY01
 import com.cornellappdev.uplift.util.GRAY03
@@ -48,7 +49,7 @@ fun SettingsScreen(
         onAboutPressed = settingsViewModel::onAboutPressed,
         onReportPressed = settingsViewModel::onReportPressed,
         onLogOut = settingsViewModel::onLogOut,
-        onDeletePress = { showDeleteDialog = true },
+        onDeleteClick = { showDeleteDialog = true },
     )
     if (showDeleteDialog) {
         DeleteAccountConfirmationDialog(
@@ -70,7 +71,7 @@ private fun SettingsScreenContent(
     onAboutPressed: () -> Unit,
     onReportPressed: () -> Unit,
     onLogOut: () -> Unit,
-    onDeletePress: () -> Unit,
+    onDeleteClick: () -> Unit,
 ) {
     Scaffold(topBar = {
         UpliftTopBarWithBack(title = "Settings", onBackClick = onBackClick)
@@ -101,7 +102,7 @@ private fun SettingsScreenContent(
             if (isLoggedIn) {
                 LogOutButton(onLogOut)
                 Divider(color = GRAY01)
-                DeleteAccountButton(onDeletePress)
+                DeleteAccountButton(onDeleteClick)
             }
         }
     }
@@ -128,18 +129,18 @@ private fun LogOutButton(
             fontSize = 16.sp,
             fontFamily = montserratFamily,
             fontWeight = FontWeight.Medium,
-            color = Color(0xFFFE1313)
+            color = AppColors.Red
         )
     }
 }
 
 @Composable
 private fun DeleteAccountButton(
-    onDeletePress: () -> Unit,
+    onDeleteClick: () -> Unit,
 ){
     Row(
         modifier = Modifier.clickable(
-            onClick = onDeletePress
+            onClick = onDeleteClick
         ),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -147,14 +148,14 @@ private fun DeleteAccountButton(
         Icon(
             painterResource(id = R.drawable.ic_trash),
             contentDescription = "Delete account",
-            tint = Color(0xFFFE1313)
+            tint = AppColors.Red
         )
         Text(
             text = "Delete account",
             fontSize = 16.sp,
             fontFamily = montserratFamily,
             fontWeight = FontWeight.Medium,
-            color = Color(0xFFFE1313)
+            color = AppColors.Red
         )
     }
 }
@@ -205,6 +206,6 @@ private fun SettingsScreenPreview() {
         onAboutPressed = {},
         onReportPressed = {},
         onLogOut = {},
-        onDeletePress = {},
+        onDeleteClick = {},
     )
 }

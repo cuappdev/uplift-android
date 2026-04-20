@@ -66,9 +66,11 @@ class RootNavigationViewModel @Inject constructor(
 
                 val hasSkipped = userInfoRepository.getSkipFromDataStore()
                 val shouldShowHome = loggedIn || hasSkipped || !ONBOARDING_FLAG
+                val newRoute = if (shouldShowHome) UpliftRootRoute.Home else UpliftRootRoute.Onboarding
                 applyMutation {
                     copy(
-                        startDestination = if (shouldShowHome) UpliftRootRoute.Home else UpliftRootRoute.Onboarding
+                        startDestination = newRoute,
+                        navEvent = UIEvent(newRoute)
                     )
                 }
             }
