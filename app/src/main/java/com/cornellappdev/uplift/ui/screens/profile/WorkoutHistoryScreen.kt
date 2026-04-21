@@ -1,5 +1,6 @@
 package com.cornellappdev.uplift.ui.screens.profile
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -13,18 +14,22 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -63,7 +68,7 @@ fun WorkoutHistoryScreen(
     viewModel: ProfileViewModel = hiltViewModel(),
     onBack: () -> Unit
 ) {
-    val uiState by viewModel.uiStateFlow.collectAsState()
+    val uiState = viewModel.collectUiStateValue()
     WorkoutHistoryScreenContent(uiState = uiState, onBack = onBack)
 }
 
@@ -72,7 +77,7 @@ fun WorkoutHistoryScreenContent(
     uiState: ProfileUiState,
     onBack: () -> Unit
 ) {
-    var selectedTab by remember { mutableStateOf(0) }
+    var selectedTab by remember { mutableIntStateOf(0) }
 
     Column(
         modifier = Modifier
@@ -92,9 +97,11 @@ fun WorkoutHistoryScreenContent(
                 EmptyHistorySection()
             }
         } else {
-            when (selectedTab) {
-                0 -> WorkoutHistoryCalendarView(historyItems = uiState.historyItems)
-                1 -> WorkoutHistoryListView(historyItems = uiState.historyItems)
+            AnimatedContent(targetState = selectedTab, label = "historyTabContent") { tab ->
+                when (tab) {
+                    0 -> WorkoutHistoryCalendarView(historyItems = uiState.historyItems)
+                    1 -> WorkoutHistoryListView(historyItems = uiState.historyItems)
+                }
             }
         }
     }
@@ -106,18 +113,23 @@ private fun WorkoutHistoryHeader(onBack: () -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .background(LIGHT_GRAY)
+            .statusBarsPadding()
             .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Icon(
-            painter = painterResource(id = R.drawable.ic_back_arrow),
-            contentDescription = "Back",
-            modifier = Modifier
-                .size(24.dp)
-                .clickable { onBack() },
-            tint = PRIMARY_BLACK
-        )
+        IconButton(
+            onClick = { onBack() },
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_back_arrow),
+                contentDescription = "Back",
+                modifier = Modifier
+                    .size(24.dp),
+                tint = PRIMARY_BLACK
+            )
+        }
+
         Text(
             text = "History",
             fontFamily = montserratFamily,
@@ -130,14 +142,42 @@ private fun WorkoutHistoryHeader(onBack: () -> Unit) {
     }
 }
 
+private sealed class HistoryListItem {
+    data class Header(val month: String) : HistoryListItem()
+    data class Workout(
+        val item: HistoryItem,
+        val showDivider: Boolean
+    ) : HistoryListItem()
+    data class SpacerItem(val month: String) : HistoryListItem()
+}
+
 @Composable
 private fun WorkoutHistoryListView(historyItems: List<HistoryItem>) {
     val groupedItems = remember(historyItems) {
-        historyItems.groupBy {
-            val date = Instant.ofEpochMilli(it.timestamp)
-                .atZone(ZoneId.systemDefault())
-                .toLocalDate()
-            date.format(DateTimeFormatter.ofPattern("MMMM yyyy", Locale.US))
+        historyItems
+            .sortedByDescending { it.timestamp }
+            .groupBy { historyItem ->
+                Instant.ofEpochMilli(historyItem.timestamp)
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDate()
+                    .format(DateTimeFormatter.ofPattern("MMMM yyyy", Locale.US))
+            }
+    }
+
+    val listItems = remember(groupedItems) {
+        buildList {
+            groupedItems.forEach { (month, items) ->
+                add(HistoryListItem.Header(month))
+                items.forEachIndexed { index, item ->
+                    add(
+                        HistoryListItem.Workout(
+                            item = item,
+                            showDivider = index < items.lastIndex
+                        )
+                    )
+                }
+                add(HistoryListItem.SpacerItem(month))
+            }
         }
     }
 
@@ -146,28 +186,46 @@ private fun WorkoutHistoryListView(historyItems: List<HistoryItem>) {
             .fillMaxSize()
             .padding(horizontal = 16.dp),
     ) {
-        item { Spacer(modifier = Modifier.height(8.dp)) }
-
-        groupedItems.forEach { (month, items) ->
-            item {
-                Text(
-                    text = month,
-                    fontFamily = montserratFamily,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.Black,
-                    modifier = Modifier.padding(top = 8.dp)
-                )
-            }
-            itemsIndexed(items) { index, item ->
-                HistoryItemRow(historyItem = item)
-                if (index < items.size - 1) {
-                    HorizontalDivider(color = GRAY01, thickness = 1.dp)
-                }
-            }
-            item { Spacer(modifier = Modifier.height(24.dp)) }
+        item(key = "top_spacer") {
+            Spacer(modifier = Modifier.height(8.dp))
         }
 
+        items(
+            items = listItems,
+            key = { listItem ->
+                when (listItem) {
+                    is HistoryListItem.Header -> "header_${listItem.month}"
+                    is HistoryListItem.Workout -> "workout_${listItem.item.timestamp}"
+                    is HistoryListItem.SpacerItem -> "spacer_${listItem.month}"
+                }
+            }
+        ) { listItem ->
+            when (listItem) {
+                is HistoryListItem.Header -> {
+                    Text(
+                        text = listItem.month,
+                        fontFamily = montserratFamily,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.Black,
+                        modifier = Modifier.padding(top = 8.dp)
+                    )
+                }
+
+                is HistoryListItem.Workout -> {
+                    Column {
+                        HistoryItemRow(historyItem = listItem.item)
+                        if (listItem.showDivider) {
+                            HorizontalDivider(color = GRAY01, thickness = 1.dp)
+                        }
+                    }
+                }
+
+                is HistoryListItem.SpacerItem -> {
+                    Spacer(modifier = Modifier.height(24.dp))
+                }
+            }
+        }
     }
 }
 
@@ -191,7 +249,10 @@ private fun WorkoutHistoryCalendarView(historyItems: List<HistoryItem>) {
         // Month Selector
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center,
+            horizontalArrangement = Arrangement.spacedBy(
+                24.dp,
+                Alignment.CenterHorizontally
+            ),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
@@ -202,7 +263,6 @@ private fun WorkoutHistoryCalendarView(historyItems: List<HistoryItem>) {
                     .clickable { currentMonth = currentMonth.minusMonths(1) },
                 tint = PRIMARY_BLACK
             )
-            Spacer(modifier = Modifier.width(24.dp))
             Text(
                 text = currentMonth.format(DateTimeFormatter.ofPattern("MMM yyyy", Locale.US)),
                 fontFamily = montserratFamily,
@@ -212,7 +272,6 @@ private fun WorkoutHistoryCalendarView(historyItems: List<HistoryItem>) {
                 modifier = Modifier.width(100.dp),
                 textAlign = TextAlign.Center
             )
-            Spacer(modifier = Modifier.width(24.dp))
             Icon(
                 painter = painterResource(id = R.drawable.ic_advance_month),
                 contentDescription = "Next Month",
