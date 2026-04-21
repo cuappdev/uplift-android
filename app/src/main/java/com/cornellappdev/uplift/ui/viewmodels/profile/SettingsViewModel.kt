@@ -44,10 +44,6 @@ class SettingsViewModel @Inject constructor(
         //TODO: Add route nav after implement About screen
     }
 
-    fun onRemindersPressed() {
-        rootNavigationRepository.navigate(UpliftRootRoute.Reminders)
-    }
-
     fun onReportPressed() {
         rootNavigationRepository.navigate(UpliftRootRoute.ReportIssue)
     }
@@ -55,7 +51,19 @@ class SettingsViewModel @Inject constructor(
     fun onLogOut() {
         viewModelScope.launch {
             userInfoRepository.signOut()
-            rootNavigationRepository.navigate(UpliftRootRoute.Profile)
+            rootNavigationRepository.navigate(UpliftRootRoute.Onboarding)
+        }
+    }
+
+    fun onDeleteAccount() {
+        viewModelScope.launch {
+            val success = userInfoRepository.deleteAccount()
+            if (success) {
+                rootNavigationRepository.navigate(UpliftRootRoute.Onboarding)
+            }
+            else {
+                /* TODO: Add error handling */
+            }
         }
     }
 

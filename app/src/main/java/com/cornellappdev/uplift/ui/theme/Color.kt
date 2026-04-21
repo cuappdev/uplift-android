@@ -14,6 +14,7 @@ object AppColors {
     val LightYellow = Color(0xFFFCF5A4)
     val TextPrimary = Color(0xFF1B1F23)
     val Gray01 = Color(0xFFE5ECED)
+    val Red = Color(0xFFFE1313)
 }
 
 object ConfettiColors{

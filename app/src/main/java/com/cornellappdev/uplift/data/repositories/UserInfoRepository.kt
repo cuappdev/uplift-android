@@ -8,6 +8,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.Preferences
 import com.apollographql.apollo.ApolloClient
 import com.cornellappdev.uplift.CreateUserMutation
+import com.cornellappdev.uplift.DeleteUserMutation
 import com.cornellappdev.uplift.GetUserByNetIdQuery
 import com.cornellappdev.uplift.LoginUserMutation
 import com.cornellappdev.uplift.SetWorkoutGoalsMutation
@@ -80,6 +81,7 @@ class UserInfoRepository @Inject constructor(
                 userId = id,
                 name = name,
                 email = email,
+                netId = netId,
                 access = accessToken,
                 refresh = refreshToken
             )
@@ -106,10 +108,19 @@ class UserInfoRepository @Inject constructor(
                     Log.e("UserInfoRepository", "Failed to log in: non-numeric user ID resulting in null '${userInfo.id}'")
                     return false
                 }
+                storeUserFields(
+                    id = userInfo.id,
+                    username = userInfo.name,
+                    netId = netId,
+                    email = userInfo.email,
+                    goalSkip = false, // Defaulting to false on login if not known
+                    goal = userInfo.workoutGoal ?: 0
+                )
                 sessionManager.startSession(
                     userId = id,
                     name = userInfo.name,
                     email = userInfo.email,
+                    netId = netId,
                     access = loginData.accessToken,
                     refresh = loginData.refreshToken
                 )
@@ -204,8 +215,48 @@ class UserInfoRepository @Inject constructor(
         firebaseAuth.signInWithCredential(firebaseCredential).await()
     }
 
-    fun signOut() {
-        firebaseAuth.signOut()
+    suspend fun signOut() {
+        try {
+            firebaseAuth.signOut()
+        } catch (e: Exception) {
+            Log.e("UserInfoRepository", "Firebase signout failed: $e")
+        } finally {
+            sessionManager.logout()
+            dataStore.edit { it.clear() }
+        }
+    }
+
+    suspend fun deleteAccount(): Boolean {
+        return try {
+            val userId = sessionManager.userId
+            if (userId == null) {
+                Log.e("UserInfoRepository", "Delete account failed: No user ID found in session")
+                return false
+            }
+
+            val response = apolloClient.mutation(DeleteUserMutation(userId = userId)).execute()
+            if (response.hasErrors()) {
+                Log.e("UserInfoRepository", "Server error during delete: ${response.errors}")
+                return false
+            }
+
+            // Want to log out no matter if the firebase deletes or not
+            try {
+                firebaseAuth.currentUser?.delete()?.await()
+                Log.d("UserInfoRepository", "Firebase account deleted successfully")
+            } catch (e: Exception) {
+                Log.e("UserInfoRepository", "Firebase delete failed (User may need to re-login): $e")
+            }
+
+            sessionManager.logout()
+            dataStore.edit { it.clear() }
+
+            Log.d("UserInfoRepository", "Successfully signed out")
+            true
+        } catch (e: Exception) {
+            Log.e("UserInfoRepository", "Error deleting account: $e")
+            false
+        }
     }
 
     suspend fun storeSkip(skip: Boolean) {
@@ -236,7 +287,7 @@ class UserInfoRepository @Inject constructor(
     suspend fun getNetIdFromDataStore(): String? {
         return dataStore.data.map { preferences ->
             preferences[PreferencesKeys.NETID]
-        }.firstOrNull()
+        }.firstOrNull() ?: sessionManager.netId
     }
 
     suspend fun getEmailFromDataStore(): String? {
