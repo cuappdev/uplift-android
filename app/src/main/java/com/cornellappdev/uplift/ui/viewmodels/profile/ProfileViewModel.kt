@@ -200,7 +200,7 @@ class ProfileViewModel @Inject constructor(
         .withZone(ZoneId.systemDefault())
 
     private val shortDateFormatter = DateTimeFormatter
-        .ofPattern("MMM, d")
+        .ofPattern("MMM d")
         .withLocale(Locale.US)
         .withZone(ZoneId.systemDefault())
 }
