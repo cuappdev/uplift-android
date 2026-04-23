@@ -17,6 +17,7 @@ import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.time.temporal.TemporalQueries.localDate
 import java.util.Locale
 import javax.inject.Inject
 
@@ -87,7 +88,8 @@ class ProfileViewModel @Inject constructor(
                 time = formatTime.format(workoutInstant),
                 date = formatDate.format(workoutInstant),
                 timestamp = it.timestamp,
-                ago = calendar.timeAgoString()
+                ago = calendar.timeAgoString(),
+                shortDate = shortDateFormatter.format(workoutInstant)
             )
         }
 
@@ -194,6 +196,11 @@ class ProfileViewModel @Inject constructor(
 
     private val formatDayOfWeek = DateTimeFormatter
         .ofPattern("EEE")
+        .withLocale(Locale.US)
+        .withZone(ZoneId.systemDefault())
+
+    private val shortDateFormatter = DateTimeFormatter
+        .ofPattern("MMM, d")
         .withLocale(Locale.US)
         .withZone(ZoneId.systemDefault())
 }

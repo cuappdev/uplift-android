@@ -35,7 +35,8 @@ data class HistoryItem(
     val time: String,
     val date: String,
     val timestamp: Long,
-    val ago: String
+    val ago: String,
+    val shortDate: String
 )
 
 @Composable
@@ -164,11 +165,11 @@ fun EmptyHistorySection(){
 private fun HistorySectionPreview() {
     val now = System.currentTimeMillis()
     val historyItems = listOf(
-        HistoryItem("Morrison", "11:00 PM",  "March 29, 2024", now - (1 * 24 * 60 * 60 * 1000), "1 day ago"),
-        HistoryItem("Noyes", "1:00 PM", "March 29, 2024", now - (3 * 24 * 60 * 60 * 1000), "2 days ago"),
-        HistoryItem("Teagle Up", "2:00 PM",  "March 29, 2024", now - (7 * 24 * 60 * 60 * 1000), "1 day ago"),
-        HistoryItem("Teagle Down", "12:00 PM",  "March 29, 2024", now - (15 * 24 * 60 * 60 * 1000), "1 day ago"),
-        HistoryItem("Helen Newman", "10:00 AM",  "March 29, 2024", now, "Today"),
+        HistoryItem("Morrison", "11:00 PM", "March 29, 2024", now - (1 * 24 * 60 * 60 * 1000), "1 day ago", "Mar 28"),
+        HistoryItem("Noyes", "1:00 PM", "March 29, 2024", now - (3 * 24 * 60 * 60 * 1000), "2 days ago", "Mar 26"),
+        HistoryItem("Teagle Up", "2:00 PM", "March 29, 2024", now - (7 * 24 * 60 * 60 * 1000), "1 week ago", "Mar 22"),
+        HistoryItem("Teagle Down", "12:00 PM", "March 29, 2024", now - (15 * 24 * 60 * 60 * 1000), "2 weeks ago", "Mar 14"),
+        HistoryItem("Helen Newman", "10:00 AM", "March 29, 2024", now, "Today", "Mar 29"),
     )
     Column(
         modifier = Modifier

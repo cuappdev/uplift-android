@@ -2,10 +2,14 @@ package com.cornellappdev.uplift.ui.screens.profile
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -332,7 +336,6 @@ private fun WorkoutHistoryCalendarView(workoutDates: Map<LocalDate,List<HistoryI
                                 if (date != null) {
                                     val hasWorkout = workoutDates.containsKey(date)
                                     val isToday = date == LocalDate.now()
-                                    val isSelected = selectedDate == date
 
                                     CalendarDayCell(
                                         day = date.dayOfMonth.toString(),
@@ -352,26 +355,40 @@ private fun WorkoutHistoryCalendarView(workoutDates: Map<LocalDate,List<HistoryI
                         // Dropdown
                         val selectedInThisWeek = week.find { it == selectedDate }
 
-                        AnimatedVisibility(
-                            visible = selectedInThisWeek != null,
-                            enter = fadeIn() + expandVertically(),
-                            exit = fadeOut() + shrinkVertically()
+                        Column(
+                            modifier = Modifier.animateContentSize(
+                                animationSpec = tween(450)
+                            )
                         ) {
-                            selectedInThisWeek?.let { selected ->
-                                val workouts = workoutDates[selected] ?: emptyList()
-                                val dayOfWeekIndex = week.indexOf(selected)
+                            AnimatedVisibility(
+                                visible = selectedInThisWeek != null,
+                                enter = fadeIn(tween(300)) + expandVertically(
+                                    expandFrom = Alignment.Top,
+                                    animationSpec = tween(350)
+                                ),
+                                exit = fadeOut(tween(800)) + shrinkVertically(
+                                    shrinkTowards = Alignment.Top,
+                                    animationSpec = tween(700)
+                                )
+                            ) {
+                                selectedInThisWeek?.let { selected ->
+                                    val workouts = workoutDates[selected] ?: emptyList()
+                                    val dayOfWeekIndex = week.indexOf(selected)
 
-                                Column {
-                                    Spacer(modifier = Modifier.height(12.dp))
-                                    workouts.forEach { workout ->
-                                        WorkoutCalendarDropdown(
-                                            historyItem = workout,
-                                            dayOfWeekIndex = dayOfWeekIndex
-                                        )
+                                    Column {
+                                        Spacer(modifier = Modifier.height(12.dp))
+
+                                        workouts.forEach { workout ->
+                                            WorkoutCalendarDropdown(
+                                                historyItem = workout,
+                                                dayOfWeekIndex = dayOfWeekIndex
+                                            )
+                                        }
                                     }
                                 }
                             }
                         }
+
                     }
                 }
             }
@@ -380,7 +397,7 @@ private fun WorkoutHistoryCalendarView(workoutDates: Map<LocalDate,List<HistoryI
 }
 
 
-        @Composable
+@Composable
 private fun WorkoutCalendarDropdown(
     historyItem: HistoryItem,
     dayOfWeekIndex: Int
@@ -476,14 +493,9 @@ private fun WorkoutCalendarDropdown(
                             .background(GRAY04, CircleShape)
                     )
                     Spacer(modifier = Modifier.width(4.dp))
-                    val shortDate = remember(historyItem.timestamp) {
-                        Instant.ofEpochMilli(historyItem.timestamp)
-                            .atZone(ZoneId.systemDefault())
-                            .toLocalDate()
-                            .format(DateTimeFormatter.ofPattern("MMM d", Locale.US))
-                    }
+
                     Text(
-                        text = shortDate,
+                        text = historyItem.shortDate,
                         fontFamily = montserratFamily,
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Medium,
@@ -553,11 +565,11 @@ private fun CalendarDayCell(
 private fun WorkoutHistoryScreenPreview() {
     val now = System.currentTimeMillis()
     val historyItems = listOf(
-        HistoryItem("Morrison", "11:00 PM", "March 29, 2024", now, "Today"),
-        HistoryItem("Noyes", "1:00 PM", "March 28, 2024", now - 86400000L, "Yesterday"),
-        HistoryItem("Teagle Up", "2:00 PM", "February 15, 2024", now - 4000000000L, "1 month ago"),
-        HistoryItem("Helen Newman", "9:30 AM", "February 10, 2024", now - 4430000000L, "1 month ago"),
-        HistoryItem("Morrison", "6:45 PM", "February 3, 2024", now - 5030000000L, "1 month ago")
+        HistoryItem("Morrison", "11:00 PM", "March 29, 2024", now, "Today", "Mar 29"),
+        HistoryItem("Noyes", "1:00 PM", "March 28, 2024", now - 86400000L, "Yesterday", "Mar 28"),
+        HistoryItem("Teagle Up", "2:00 PM", "February 15, 2024", now - 4000000000L, "1 month ago", "Feb 15"),
+        HistoryItem("Helen Newman", "9:30 AM", "February 10, 2024", now - 4430000000L, "1 month ago", "Feb 10"),
+        HistoryItem("Morrison", "6:45 PM", "February 3, 2024", now - 5030000000L, "1 month ago", "Feb 3")
     )
 
     val listItems = buildList {
