@@ -3,9 +3,7 @@ package com.cornellappdev.uplift.ui.viewmodels.profile
 import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.viewModelScope
-import coil.util.CoilUtils.result
 import com.cornellappdev.uplift.data.repositories.ProfileRepository
-import com.cornellappdev.uplift.data.repositories.UserInfoRepository
 import com.cornellappdev.uplift.ui.UpliftRootRoute
 import com.cornellappdev.uplift.ui.components.profile.workouts.HistoryItem
 import com.cornellappdev.uplift.ui.nav.RootNavigationRepository
@@ -19,9 +17,18 @@ import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.time.temporal.TemporalQueries.localDate
 import java.util.Locale
 import javax.inject.Inject
 
+sealed class HistoryListItem {
+    data class Header(val month: String) : HistoryListItem()
+    data class Workout(
+        val item: HistoryItem,
+        val showDivider: Boolean
+    ) : HistoryListItem()
+    data class SpacerItem(val month: String) : HistoryListItem()
+}
 data class ProfileUiState(
     val loading: Boolean = false,
     val error: Boolean = false,
@@ -36,7 +43,9 @@ data class ProfileUiState(
     val historyItems: List<HistoryItem> = emptyList(),
     val daysOfMonth: List<Int> = emptyList(),
     val completedDays: List<Boolean> = emptyList(),
-    val workoutsCompleted: Int = 0
+    val workoutsCompleted: Int = 0,
+    val historyListItems: List<HistoryListItem> = emptyList(),
+    val workoutDates: Map<LocalDate, List<HistoryItem>> = emptyMap()
 )
 
 @HiltViewModel
@@ -79,7 +88,8 @@ class ProfileViewModel @Inject constructor(
                 time = formatTime.format(workoutInstant),
                 date = formatDate.format(workoutInstant),
                 timestamp = it.timestamp,
-                ago = calendar.timeAgoString()
+                ago = calendar.timeAgoString(),
+                shortDate = shortDateFormatter.format(workoutInstant)
             )
         }
 
@@ -98,6 +108,36 @@ class ProfileViewModel @Inject constructor(
 
         val workoutsCompleted = profile.weeklyWorkoutDays.size
 
+        val grouped = historyItems
+            .sortedByDescending { it.timestamp }
+            .groupBy {
+                Instant.ofEpochMilli(it.timestamp)
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDate()
+                    .format(DateTimeFormatter.ofPattern("MMMM yyyy", Locale.US))
+            }
+
+        val historyListItems = buildList{
+            grouped.forEach { (month, items) ->
+                add(HistoryListItem.Header(month))
+                items.forEachIndexed { index, item ->
+                    add(
+                        HistoryListItem.Workout(
+                            item = item,
+                            showDivider = index < items.lastIndex
+                        )
+                    )
+                }
+                add(HistoryListItem.SpacerItem(month))
+            }
+        }
+
+        val workoutDates = historyItems.groupBy {
+            Instant.ofEpochMilli(it.timestamp)
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate()
+        }
+
         applyMutation {
             copy(
                 loading = false,
@@ -112,7 +152,9 @@ class ProfileViewModel @Inject constructor(
                 historyItems = historyItems,
                 daysOfMonth = daysOfMonth,
                 completedDays = completedDays,
-                workoutsCompleted = workoutsCompleted
+                workoutsCompleted = workoutsCompleted,
+                historyListItems = historyListItems,
+                workoutDates = workoutDates
             )
 
         }
@@ -137,7 +179,7 @@ class ProfileViewModel @Inject constructor(
     }
 
     fun toHistory() {
-        // replace with the actual route once history exists
+        rootNavigationRepository.navigate(UpliftRootRoute.WorkoutHistory)
     }
 
 
@@ -156,5 +198,9 @@ class ProfileViewModel @Inject constructor(
         .ofPattern("EEE")
         .withLocale(Locale.US)
         .withZone(ZoneId.systemDefault())
-}
 
+    private val shortDateFormatter = DateTimeFormatter
+        .ofPattern("MMM d")
+        .withLocale(Locale.US)
+        .withZone(ZoneId.systemDefault())
+}

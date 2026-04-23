@@ -170,11 +170,11 @@ private fun ProfileScreenTopBar(
 private fun ProfileScreenContentPreview() {
     val now = System.currentTimeMillis()
     val historyItems = listOf(
-        HistoryItem("Morrison", "11:00 PM",  "March 29, 2024", now - (1 * 24 * 60 * 60 * 1000), "1 day ago"),
-        HistoryItem("Noyes", "1:00 PM", "March 29, 2024", now - (3 * 24 * 60 * 60 * 1000), "2 days ago"),
-        HistoryItem("Teagle Up", "2:00 PM",  "March 29, 2024", now - (7 * 24 * 60 * 60 * 1000), "1 day ago"),
-        HistoryItem("Teagle Down", "12:00 PM",  "March 29, 2024", now - (15 * 24 * 60 * 60 * 1000), "1 day ago"),
-        HistoryItem("Helen Newman", "10:00 AM",  "March 29, 2024", now, "Today"),
+        HistoryItem("Morrison", "11:00 PM", "March 29, 2024", now, "Today", "Mar 29"),
+        HistoryItem("Noyes", "1:00 PM", "March 28, 2024", now - 86400000L, "Yesterday", "Mar 28"),
+        HistoryItem("Teagle Up", "2:00 PM", "February 15, 2024", now - 4000000000L, "1 month ago", "Feb 15"),
+        HistoryItem("Helen Newman", "9:30 AM", "February 10, 2024", now - 4430000000L, "1 month ago", "Feb 10"),
+        HistoryItem("Morrison", "6:45 PM", "February 3, 2024", now - 5030000000L, "1 month ago", "Feb 3")
     )
     ProfileScreenContent(
         uiState = ProfileUiState(
