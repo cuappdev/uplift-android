@@ -11,7 +11,6 @@ import com.apollographql.apollo.interceptor.ApolloInterceptorChain
 import com.cornellappdev.uplift.RefreshAccessTokenMutation
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emitAll
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -44,58 +43,72 @@ class ApolloAuthInterceptor @Inject constructor(
         request: ApolloRequest<D>,
         chain: ApolloInterceptorChain
     ): Flow<ApolloResponse<D>> = flow {
-        val response = chain.proceed(request).first()
+        val accessToken = tokenManager.getAccessToken()
+        val requestWithToken = if (accessToken != null) {
+            request.newBuilder()
+                .addHttpHeader("Authorization", "Bearer $accessToken")
+                .build()
+        } else {
+            request
+        }
 
         val retryCount = request.executionContext[RetryContext]?.retryCount ?: 0
+        var isRetrying = false
 
-        // TODO: replace string check with explicit error codes if backend implements
-        if (response.errors?.any { it.message.contains("Signature has expired") } == true && retryCount < 1) {
-            val refreshToken = tokenManager.getRefreshToken()
-            if (refreshToken != null) {
-                val newAccessToken = mutex.withLock {
-                    // Check if another request already refreshed the token while we were waiting for the lock
-                    val currentAccessToken = tokenManager.getAccessToken()
-                    val requestToken = request.httpHeaders?.find { it.name == "Authorization" }?.value?.substringAfter("Bearer ")
+        chain.proceed(requestWithToken).collect { response ->
+            // Check for "Signature has expired" GraphQL error
+            if (!isRetrying && response.errors?.any { it.message.contains("Signature has expired") } == true && retryCount < 1) {
+                isRetrying = true
+                val refreshToken = tokenManager.getRefreshToken()
+                if (refreshToken != null) {
+                    val newAccessToken = mutex.withLock {
+                        // Check if another request already refreshed the token while we were waiting for the lock
+                        val currentAccessToken = tokenManager.getAccessToken()
+                        val requestToken = requestWithToken.httpHeaders?.find { it.name == "Authorization" }?.value?.substringAfter("Bearer ")
 
-                    if (currentAccessToken != null && currentAccessToken != requestToken) {
-                        currentAccessToken
-                    } else {
-                        try {
-                            val mutationResponse = refreshClient.mutation(RefreshAccessTokenMutation())
-                                .addHttpHeader("Authorization", "Bearer $refreshToken")
-                                .execute()
+                        if (currentAccessToken != null && requestToken != null && currentAccessToken != requestToken) {
+                            currentAccessToken
+                        } else {
+                            try {
+                                val mutationResponse = refreshClient.mutation(RefreshAccessTokenMutation())
+                                    .addHttpHeader("Authorization", "Bearer $refreshToken")
+                                    .execute()
 
-                            val refreshedToken = mutationResponse.data?.refreshAccessToken?.newAccessToken
-                            if (refreshedToken != null) {
-                                tokenManager.saveTokens(refreshedToken, refreshToken)
-                                refreshedToken
-                            } else {
-                                Log.e("ApolloAuthInterceptor", "Refresh token mutation returned null access token")
+                                val refreshedToken = mutationResponse.data?.refreshAccessToken?.newAccessToken
+                                if (refreshedToken != null) {
+                                    tokenManager.saveTokens(refreshedToken, refreshToken)
+                                    refreshedToken
+                                } else {
+                                    Log.e("ApolloAuthInterceptor", "Refresh token mutation returned null access token")
+                                    sessionManager.logout()
+                                    null
+                                }
+                            } catch (e: Exception) {
+                                Log.e("ApolloAuthInterceptor", "Token refresh failed with exception", e)
                                 sessionManager.logout()
                                 null
                             }
-                        } catch (e: Exception) {
-                            Log.e("ApolloAuthInterceptor", "Token refresh failed with exception", e)
-                            sessionManager.logout()
-                            null
                         }
                     }
-                }
 
-                if (newAccessToken != null) {
-                    // Retry the request with the new token
-                    val newRequest = request.newBuilder()
-                        .addExecutionContext(RetryContext(retryCount + 1))
-                        .build()
-                    emitAll(chain.proceed(newRequest))
-                    return@flow
+                    if (newAccessToken != null) {
+                        // Retry the request with the new token
+                        val newRequest = request.newBuilder()
+                            .addExecutionContext(RetryContext(retryCount + 1))
+                            .build()
+                        emitAll(chain.proceed(newRequest))
+                    } else {
+                        // If refresh failed, emit the original error response
+                        emit(response)
+                    }
+                } else {
+                    Log.d("ApolloAuthInterceptor", "No refresh token available, logging out")
+                    sessionManager.logout()
+                    emit(response)
                 }
-            } else {
-                Log.d("ApolloAuthInterceptor", "No refresh token available, logging out")
-                sessionManager.logout()
+            } else if (!isRetrying) {
+                emit(response)
             }
         }
-
-        emit(response)
     }
 }
