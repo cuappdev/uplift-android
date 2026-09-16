@@ -45,6 +45,7 @@ import com.cornellappdev.uplift.ui.screens.gyms.GymDetailScreen
 import com.cornellappdev.uplift.ui.screens.gyms.HomeScreen
 import com.cornellappdev.uplift.ui.screens.onboarding.ProfileCreationScreen
 import com.cornellappdev.uplift.ui.screens.onboarding.SignInPromptScreen
+import com.cornellappdev.uplift.ui.screens.profile.GuestProfileScreen
 import com.cornellappdev.uplift.ui.screens.profile.ProfileScreen
 import com.cornellappdev.uplift.ui.screens.profile.SettingsScreen
 import com.cornellappdev.uplift.ui.screens.profile.WorkoutHistoryScreen
@@ -118,8 +119,14 @@ fun MainNavigationWrapper(
 
     //TODO: Try to consolidate launched effects into one with consumeIn function that takes in coroutine scope
     LaunchedEffect(rootNavigationUiState.navEvent) {
-        rootNavigationUiState.navEvent?.consumeSuspend {
-            navController.navigate(it)
+        rootNavigationUiState.navEvent?.consumeSuspend { route ->
+            navController.navigate(route) {
+                if (route == UpliftRootRoute.Home) {
+                    // Finish skip/login/onboarding without leaving those screens on Back.
+                    popUpTo(0)
+                    launchSingleTop = true
+                }
+            }
         }
     }
     LaunchedEffect(rootNavigationUiState.popBackStack) {
@@ -258,7 +265,11 @@ fun MainNavigationWrapper(
                     CapacityReminderScreen()
                 }
                 composable<UpliftRootRoute.Profile> {
-                    ProfileScreen()
+                    if (isLoggedIn) {
+                        ProfileScreen()
+                    } else {
+                        GuestProfileScreen()
+                    }
                 }
                 composable<UpliftRootRoute.Reminders> {
                     MainReminderScreen()

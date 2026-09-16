@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.credentials.Credential
@@ -16,7 +17,10 @@ import com.cornellappdev.uplift.ui.components.general.UpliftButton
 import kotlinx.coroutines.launch
 
 @Composable
-fun LogInButton(onRequestResult: (Credential) -> Unit) {
+fun LogInButton(
+    onRequestResult: (Credential) -> Unit,
+    modifier: Modifier = Modifier
+) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     UpliftButton(
@@ -32,7 +36,8 @@ fun LogInButton(onRequestResult: (Credential) -> Unit) {
         width = 144.dp,
         height = 44.dp,
         fontSize = 16f,
-        elevation = 2.dp
+        elevation = 2.dp,
+        modifier = modifier
     )
 }
 

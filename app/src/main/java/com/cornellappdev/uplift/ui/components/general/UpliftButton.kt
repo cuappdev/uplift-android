@@ -90,7 +90,7 @@ fun UpliftButton(
                 fontSize = fontSize.sp,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
-                modifier = modifier.wrapContentSize()
+                modifier = Modifier.wrapContentSize()
             )
         }
     }
