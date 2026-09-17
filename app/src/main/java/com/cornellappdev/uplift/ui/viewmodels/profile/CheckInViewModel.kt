@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.cornellappdev.uplift.data.repositories.CheckInRepository
 import com.cornellappdev.uplift.data.repositories.ConfettiRepository
 import com.cornellappdev.uplift.data.repositories.LocationRepository
+import com.cornellappdev.uplift.data.repositories.WorkoutLogRepository
 import com.cornellappdev.uplift.ui.viewmodels.UpliftViewModel
 import com.cornellappdev.uplift.util.isOpen
 import com.cornellappdev.uplift.util.todayIndex
@@ -46,7 +47,8 @@ data class CheckInUiState(
 @HiltViewModel
 class CheckInViewModel @Inject constructor(
     private val checkInRepository: CheckInRepository,
-    private val confettiRepository: ConfettiRepository
+    private val confettiRepository: ConfettiRepository,
+    private val workoutLogRepository: WorkoutLogRepository
 ) : UpliftViewModel<CheckInUiState>(CheckInUiState()) {
 
     private var locationJob: Job? = null
@@ -68,7 +70,7 @@ class CheckInViewModel @Inject constructor(
                                 showPopUp = true,
                                 mode = if (inComplete) CheckInMode.Complete else CheckInMode.Prompt,
                                 gymName = gym.name,
-                                gymId = gym.id,
+                                gymId = gym.facilityId,
                                 timeText = checkInRepository.formatTime(System.currentTimeMillis())
                             )
                         }
