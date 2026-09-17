@@ -20,6 +20,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.cornellappdev.uplift.ui.components.profile.checkin.CheckInComplete
+import com.cornellappdev.uplift.ui.components.profile.checkin.CheckInFailed
 import com.cornellappdev.uplift.ui.components.profile.checkin.CheckInPrompt
 import com.cornellappdev.uplift.ui.theme.AppColors
 import com.cornellappdev.uplift.ui.viewmodels.profile.CheckInMode
@@ -64,6 +65,10 @@ fun CheckInPopUp(
                     onDismiss = onDismiss
                 )
                 CheckInMode.Complete -> CheckInComplete(
+                    onClosePopUp = onClosePopUp
+                )
+                CheckInMode.Failed -> CheckInFailed(
+                    onRetry = onCheckIn,
                     onClosePopUp = onClosePopUp
                 )
             }
