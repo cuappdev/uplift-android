@@ -129,8 +129,9 @@ class CheckInViewModel @Inject constructor(
     }
 
     /**
-     * Logs a workout via [checkInRepository]. Only on a successful mutation does this mark the
-     * user as checked in for the day (triggering the end-of-day cooldown), transition the UI into
+     * Logs a workout via [checkInRepository]. Only on a successful mutation marks the
+     * user as checked in for the day (triggering the end-of-day cooldown, awaited and retried once
+     * if the write fails; the workout mutation itself is never retried), transition the UI into
      * [CheckInMode.Complete], and burst confetti through [confettiRepository] and notify
      * [workoutLogRepository] so screens showing history/streaks can refresh.
      *
@@ -149,7 +150,9 @@ class CheckInViewModel @Inject constructor(
             val logged = checkInRepository.logWorkoutFromCheckIn(gymIdInt)
             if (logged) {
                 Log.d(tag, "Workout successfully logged to backend")
-                checkInRepository.markCheckInToday()
+                if (!checkInRepository.markCheckInToday() && !checkInRepository.markCheckInToday()) {
+                    Log.e(tag, "Workout logged but check-in cooldown could not be persisted")
+                }
                 applyMutation {
                     copy(
                         showPopUp = true,
