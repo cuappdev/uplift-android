@@ -32,11 +32,26 @@ class RootNavigationViewModel @Inject constructor(
 ) {
     data class RootNavigationUiState(
         val isLoggedIn: Boolean = false,
+        // The initial destination is temporary until the saved skip preference has been read.
+        val isStartupReady: Boolean = false,
         val navEvent: UIEvent<UpliftRootRoute>? = null,
         val popBackStack: UIEvent<Unit>? = null,
         val navigateUp: UIEvent<Unit>? = null,
         val startDestination: UpliftRootRoute = if (ONBOARDING_FLAG) UpliftRootRoute.Onboarding else UpliftRootRoute.Home
-    )
+    ) {
+        // Determines the guest-to-authenticated transition
+        internal fun withSession(loggedIn: Boolean, destination: UpliftRootRoute): RootNavigationUiState {
+            // On startup, NavHost opens the resolved destination directly.
+            val shouldNavigate = isStartupReady &&
+                (destination != startDestination || loggedIn != isLoggedIn)
+            return copy(
+                isLoggedIn = loggedIn,
+                isStartupReady = true,
+                startDestination = destination,
+                navEvent = if (shouldNavigate) UIEvent(destination) else navEvent
+            )
+        }
+    }
 
     init {
 
@@ -60,23 +75,14 @@ class RootNavigationViewModel @Inject constructor(
 
         viewModelScope.launch {
             sessionManager.isLoggedIn.collect { loggedIn ->
-                applyMutation {
-                    copy(isLoggedIn = loggedIn)
-                }
-
                 val hasSkipped = userInfoRepository.getSkipFromDataStore()
                 val shouldShowHome = loggedIn || hasSkipped || !ONBOARDING_FLAG
                 val newRoute = if (shouldShowHome) UpliftRootRoute.Home else UpliftRootRoute.Onboarding
 
                 applyMutation {
-                    // Only attach a navEvent if we are actually changing the destination compared to what was set during initialization.
-                    val shouldNav = newRoute != startDestination || loggedIn != isLoggedIn
-
-                    copy(
-                        isLoggedIn = loggedIn,
-                        startDestination = newRoute,
-                        navEvent = if (shouldNav) UIEvent(newRoute) else navEvent
-                    )
+                    // Compare against the previous session before updating it: guest login
+                    // must finish onboarding even when Home is already the start destination.
+                    withSession(loggedIn, newRoute)
                 }
             }
         }

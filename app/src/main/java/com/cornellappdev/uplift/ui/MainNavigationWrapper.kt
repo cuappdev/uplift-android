@@ -1,6 +1,7 @@
 package com.cornellappdev.uplift.ui
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -45,6 +46,7 @@ import com.cornellappdev.uplift.ui.screens.gyms.GymDetailScreen
 import com.cornellappdev.uplift.ui.screens.gyms.HomeScreen
 import com.cornellappdev.uplift.ui.screens.onboarding.ProfileCreationScreen
 import com.cornellappdev.uplift.ui.screens.onboarding.SignInPromptScreen
+import com.cornellappdev.uplift.ui.screens.profile.GuestProfileScreen
 import com.cornellappdev.uplift.ui.screens.profile.ProfileScreen
 import com.cornellappdev.uplift.ui.screens.profile.SettingsScreen
 import com.cornellappdev.uplift.ui.screens.profile.WorkoutHistoryScreen
@@ -82,6 +84,14 @@ fun MainNavigationWrapper(
     rootNavigationViewModel: RootNavigationViewModel = hiltViewModel(),
 ) {
     val rootNavigationUiState = rootNavigationViewModel.collectUiStateValue()
+
+    // Wait for the saved skip-login preference before creating the graph or consuming navigation
+    // events. Otherwise a returning guest briefly sees Onboarding before being sent to Home.
+    if (!rootNavigationUiState.isStartupReady) {
+        Box(Modifier.fillMaxSize().background(Color.White))
+        return
+    }
+
     val startDestination = rootNavigationUiState.startDestination
 
     val navController = rememberNavController()
@@ -118,8 +128,14 @@ fun MainNavigationWrapper(
 
     //TODO: Try to consolidate launched effects into one with consumeIn function that takes in coroutine scope
     LaunchedEffect(rootNavigationUiState.navEvent) {
-        rootNavigationUiState.navEvent?.consumeSuspend {
-            navController.navigate(it)
+        rootNavigationUiState.navEvent?.consumeSuspend { route ->
+            navController.navigate(route) {
+                if (route == UpliftRootRoute.Home) {
+                    // Finish skip/login/onboarding so pressing back won't bring the user back into the onboarding flow.
+                    popUpTo(0)
+                    launchSingleTop = true
+                }
+            }
         }
     }
     LaunchedEffect(rootNavigationUiState.popBackStack) {
@@ -258,7 +274,11 @@ fun MainNavigationWrapper(
                     CapacityReminderScreen()
                 }
                 composable<UpliftRootRoute.Profile> {
-                    ProfileScreen()
+                    if (isLoggedIn) {
+                        ProfileScreen(loadingShimmer = shimmer)
+                    } else {
+                        GuestProfileScreen()
+                    }
                 }
                 composable<UpliftRootRoute.Reminders> {
                     MainReminderScreen()
