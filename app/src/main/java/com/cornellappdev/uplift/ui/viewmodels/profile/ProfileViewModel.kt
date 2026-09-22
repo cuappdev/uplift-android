@@ -4,6 +4,7 @@ import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.cornellappdev.uplift.data.repositories.ProfileRepository
+import com.cornellappdev.uplift.data.repositories.WorkoutLogRepository
 import com.cornellappdev.uplift.ui.UpliftRootRoute
 import com.cornellappdev.uplift.ui.components.profile.workouts.HistoryItem
 import com.cornellappdev.uplift.ui.nav.RootNavigationRepository
@@ -12,6 +13,7 @@ import com.cornellappdev.uplift.util.timeAgoString
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.collectLatest
 import java.time.DayOfWeek
 import java.time.Instant
 import java.time.LocalDate
@@ -52,12 +54,18 @@ data class ProfileUiState(
 class ProfileViewModel @Inject constructor(
     private val profileRepository: ProfileRepository,
     private val rootNavigationRepository: RootNavigationRepository,
+    private val workoutLogRepository: WorkoutLogRepository,
 ) : UpliftViewModel<ProfileUiState>(ProfileUiState()) {
 
     private var loadingJob: Job? = null
 
     init {
         reload()
+        viewModelScope.launch {
+            workoutLogRepository.workoutLoggedEvent.collectLatest {
+                reload()
+            }
+        }
     }
 
     fun reload() {
