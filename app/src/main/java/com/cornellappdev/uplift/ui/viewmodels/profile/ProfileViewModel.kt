@@ -48,11 +48,12 @@ data class ProfileUiState(
     val workoutDates: Map<LocalDate, List<HistoryItem>> = emptyMap()
 )
 
+// Start in loading before the reload coroutine runs, preventing an initial empty-profile frame.
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
     private val profileRepository: ProfileRepository,
     private val rootNavigationRepository: RootNavigationRepository,
-) : UpliftViewModel<ProfileUiState>(ProfileUiState()) {
+) : UpliftViewModel<ProfileUiState>(ProfileUiState(loading = true)) {
 
     private var loadingJob: Job? = null
 

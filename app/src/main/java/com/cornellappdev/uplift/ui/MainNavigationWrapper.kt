@@ -1,6 +1,7 @@
 package com.cornellappdev.uplift.ui
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -83,6 +84,14 @@ fun MainNavigationWrapper(
     rootNavigationViewModel: RootNavigationViewModel = hiltViewModel(),
 ) {
     val rootNavigationUiState = rootNavigationViewModel.collectUiStateValue()
+
+    // Wait for the saved skip-login preference before creating the graph or consuming navigation
+    // events. Otherwise a returning guest briefly sees Onboarding before being sent to Home.
+    if (!rootNavigationUiState.isStartupReady) {
+        Box(Modifier.fillMaxSize().background(Color.White))
+        return
+    }
+
     val startDestination = rootNavigationUiState.startDestination
 
     val navController = rememberNavController()
@@ -122,7 +131,7 @@ fun MainNavigationWrapper(
         rootNavigationUiState.navEvent?.consumeSuspend { route ->
             navController.navigate(route) {
                 if (route == UpliftRootRoute.Home) {
-                    // Finish skip/login/onboarding without leaving those screens on Back.
+                    // Finish skip/login/onboarding so pressing back won't bring the user back into the onboarding flow.
                     popUpTo(0)
                     launchSingleTop = true
                 }
@@ -266,7 +275,7 @@ fun MainNavigationWrapper(
                 }
                 composable<UpliftRootRoute.Profile> {
                     if (isLoggedIn) {
-                        ProfileScreen()
+                        ProfileScreen(loadingShimmer = shimmer)
                     } else {
                         GuestProfileScreen()
                     }
