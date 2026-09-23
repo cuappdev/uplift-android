@@ -57,7 +57,7 @@ fun MyGoalsScreen(
     lockedUntilDate: String = "5/12/26",
     lockedDaysRemaining: Int = 30
 ) {
-    var currentGoal by remember { mutableFloatStateOf(initialGoalValue.toFloat()) }
+    var currentGoal by remember(initialGoalValue) { mutableFloatStateOf(initialGoalValue.toFloat()) }
     val hasChanged = currentGoal.roundToInt() != initialGoalValue
     
     var isSaved by remember { mutableStateOf(value = false) }

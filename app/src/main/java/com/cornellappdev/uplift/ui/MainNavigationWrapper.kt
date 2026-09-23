@@ -45,6 +45,7 @@ import com.cornellappdev.uplift.ui.screens.gyms.GymDetailScreen
 import com.cornellappdev.uplift.ui.screens.gyms.HomeScreen
 import com.cornellappdev.uplift.ui.screens.onboarding.ProfileCreationScreen
 import com.cornellappdev.uplift.ui.screens.onboarding.SignInPromptScreen
+import com.cornellappdev.uplift.ui.screens.profile.MyGoalsScreen
 import com.cornellappdev.uplift.ui.screens.profile.ProfileScreen
 import com.cornellappdev.uplift.ui.screens.profile.SettingsScreen
 import com.cornellappdev.uplift.ui.screens.profile.WorkoutHistoryScreen
@@ -58,6 +59,7 @@ import com.cornellappdev.uplift.ui.viewmodels.gyms.GymDetailViewModel
 import com.cornellappdev.uplift.ui.viewmodels.nav.RootNavigationViewModel
 import com.cornellappdev.uplift.ui.viewmodels.profile.CheckInViewModel
 import com.cornellappdev.uplift.ui.viewmodels.profile.ConfettiViewModel
+import com.cornellappdev.uplift.ui.viewmodels.profile.ProfileViewModel
 import com.cornellappdev.uplift.util.CHECK_IN_FLAG
 import com.cornellappdev.uplift.util.ONBOARDING_FLAG
 import com.cornellappdev.uplift.util.PRIMARY_BLACK
@@ -271,6 +273,15 @@ fun MainNavigationWrapper(
                         onBack = { navController.popBackStack() }
                     )
                 }
+                composable<UpliftRootRoute.Goals> {
+                    val profileViewModel: ProfileViewModel = hiltViewModel()
+                    val profileUiState = profileViewModel.collectUiStateValue()
+                    MyGoalsScreen(
+                        initialGoalValue = profileUiState.workoutGoal,
+                        onBackClick = { navController.popBackStack() },
+                        onSaveGoal = { profileViewModel.updateWorkoutGoal(it) }
+                    )
+                }
                 composable<UpliftRootRoute.Sports> {}
                 composable<UpliftRootRoute.Favorites> {}
             }
@@ -372,4 +383,7 @@ sealed class UpliftRootRoute {
 
     @Serializable
     data object WorkoutHistory : UpliftRootRoute()
+
+    @Serializable
+    data object Goals : UpliftRootRoute()
 }
