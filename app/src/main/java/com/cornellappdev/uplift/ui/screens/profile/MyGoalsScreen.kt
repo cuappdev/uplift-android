@@ -92,7 +92,8 @@ fun MyGoalsScreen(
                         currentGoal = it
                         isSaved = false
                     }
-                }
+                },
+                isOnboarding = false
             )
 
             Spacer(modifier = Modifier.height(48.dp))

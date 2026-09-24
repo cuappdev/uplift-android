@@ -1,5 +1,6 @@
 package com.cornellappdev.uplift.ui.components.goalsetting
 
+import android.R.attr.end
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -45,18 +46,12 @@ private const val MAX_DAYS = 7
 private val ThumbSize = 26.dp
 private val LabelEdgeInset = 5.dp
 
-/**
- * @param value the current value of the slider
- * @param onValueChange a callback that is called when the value of the slider changes
- * @return composable that displays a slider for the user to select the number of days they
- * would like to work out in a week.
- * @sample GoalSlider(3f) {}
- */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GoalSlider(
     value: Float,
-    onValueChange: (Float) -> Unit
+    onValueChange: (Float) -> Unit,
+    isOnboarding: Boolean
 ) {
     Column(
         modifier = Modifier
@@ -64,31 +59,43 @@ fun GoalSlider(
             .padding(vertical = 24.dp, horizontal = 18.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-        Text(
-            buildAnnotatedString {
-                withStyle(
-                    style = SpanStyle(
-                        fontFamily = montserratFamily,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = PRIMARY_BLACK
-                    )
-                ) {
-                    append("Let's set a plan! ")
-                }
-                withStyle(
-                    style = SpanStyle(
-                        fontFamily = montserratFamily,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = PRIMARY_BLACK
-                    )
-                ) {
-                    append("How many days a week would you like to work out?")
-                }
-            },
-            modifier = Modifier.padding(end = 30.dp)
-        )
+        if (!isOnboarding) {
+            Text(
+                buildAnnotatedString {
+                    withStyle(
+                        style = SpanStyle(
+                            fontFamily = montserratFamily,
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = PRIMARY_BLACK
+                        )
+                    ) {
+                        append("Let's set a plan! ")
+                    }
+                    withStyle(
+                        style = SpanStyle(
+                            fontFamily = montserratFamily,
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = PRIMARY_BLACK
+                        )
+                    ) {
+                        append("How many days a week would you like to work out?")
+                    }
+                },
+                modifier = Modifier.padding(end = 30.dp)
+            )
+        } else {
+            Text(
+                text = "How many days a week would you like to work out?",
+                fontFamily = montserratFamily,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = PRIMARY_BLACK,
+                modifier = Modifier.padding(end = 30.dp)
+            )
+
+        }
         Row(
             modifier = Modifier
                 .fillMaxWidth()

@@ -44,6 +44,7 @@ import com.cornellappdev.uplift.ui.screens.classes.ClassScreen
 import com.cornellappdev.uplift.ui.screens.gyms.GymDetailScreen
 import com.cornellappdev.uplift.ui.screens.gyms.HomeScreen
 import com.cornellappdev.uplift.ui.screens.onboarding.ProfileCreationScreen
+import com.cornellappdev.uplift.ui.screens.onboarding.GoalsOnboardingScreen
 import com.cornellappdev.uplift.ui.screens.onboarding.SignInPromptScreen
 import com.cornellappdev.uplift.ui.screens.profile.MyGoalsScreen
 import com.cornellappdev.uplift.ui.screens.profile.ProfileScreen
@@ -51,7 +52,6 @@ import com.cornellappdev.uplift.ui.screens.profile.SettingsScreen
 import com.cornellappdev.uplift.ui.screens.profile.WorkoutHistoryScreen
 import com.cornellappdev.uplift.ui.screens.reminders.CapacityReminderScreen
 import com.cornellappdev.uplift.ui.screens.reminders.MainReminderScreen
-import com.cornellappdev.uplift.ui.screens.onboarding.WorkoutReminderOnboardingScreen
 import com.cornellappdev.uplift.ui.screens.report.ReportIssueScreen
 import com.cornellappdev.uplift.ui.screens.report.ReportSubmittedScreen
 import com.cornellappdev.uplift.ui.viewmodels.classes.ClassDetailViewModel
@@ -254,7 +254,7 @@ fun MainNavigationWrapper(
                     ProfileCreationScreen()
                 }
                 composable<UpliftRootRoute.GoalsOnboarding> {
-                    WorkoutReminderOnboardingScreen()
+                    GoalsOnboardingScreen()
                 }
                 composable<UpliftRootRoute.CapacityReminders> {
                     CapacityReminderScreen()

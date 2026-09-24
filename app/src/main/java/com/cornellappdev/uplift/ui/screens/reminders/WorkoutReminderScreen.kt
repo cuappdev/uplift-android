@@ -147,7 +147,7 @@ private fun WorkoutReminderContent(
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
         ) {
-            GoalSlider(value = goalValue, onValueChange = onGoalValueChange)
+            GoalSlider(value = goalValue, onValueChange = onGoalValueChange, isOnboarding = true)
 
             if (!isOnboarding) {
                 WorkoutReminders(
@@ -181,7 +181,7 @@ private fun WorkoutReminderContent(
 }
 
 @Composable
-private fun OnboardingButtons(onNext: () -> Unit, onSkip: () -> Unit) {
+fun OnboardingButtons(onNext: () -> Unit, onSkip: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
