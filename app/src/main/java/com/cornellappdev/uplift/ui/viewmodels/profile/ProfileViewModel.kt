@@ -29,9 +29,14 @@ sealed class HistoryListItem {
     ) : HistoryListItem()
     data class SpacerItem(val month: String) : HistoryListItem()
 }
+sealed class ProfileLoadState {
+    data object Loading : ProfileLoadState()
+    data object Error : ProfileLoadState()
+    data object Loaded : ProfileLoadState()
+}
+
 data class ProfileUiState(
-    val loading: Boolean = false,
-    val error: Boolean = false,
+    val loadState: ProfileLoadState = ProfileLoadState.Loading,
     val name: String = "",
     val netId: String = "",
     val profileImage: Uri? = null,
@@ -53,7 +58,7 @@ data class ProfileUiState(
 class ProfileViewModel @Inject constructor(
     private val profileRepository: ProfileRepository,
     private val rootNavigationRepository: RootNavigationRepository,
-) : UpliftViewModel<ProfileUiState>(ProfileUiState(loading = true)) {
+) : UpliftViewModel<ProfileUiState>(ProfileUiState()) {
 
     private var loadingJob: Job? = null
 
@@ -69,14 +74,14 @@ class ProfileViewModel @Inject constructor(
 
 
     private fun loadProfile(): Job = viewModelScope.launch {
-        applyMutation { copy(loading = true, error = false) }
+        applyMutation { copy(loadState = ProfileLoadState.Loading) }
 
         val result = profileRepository.getProfile()
 
         val profile = result.getOrNull()
         if (profile == null) {
             Log.e("profile VM", "Failed to load profile", result.exceptionOrNull())
-            applyMutation { copy(loading = false, error = true) }
+            applyMutation { copy(loadState = ProfileLoadState.Error) }
             return@launch
         }
         val historyItems = profile.workouts.map {
@@ -141,7 +146,7 @@ class ProfileViewModel @Inject constructor(
 
         applyMutation {
             copy(
-                loading = false,
+                loadState = ProfileLoadState.Loaded,
                 name = profile.name,
                 netId = profile.netId,
                 profileImage = profile.encodedImage?.let(Uri::parse),

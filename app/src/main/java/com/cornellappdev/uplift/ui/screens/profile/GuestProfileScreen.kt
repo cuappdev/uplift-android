@@ -18,6 +18,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
@@ -33,7 +34,8 @@ import androidx.compose.ui.unit.sp
 import androidx.credentials.Credential
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.cornellappdev.uplift.R
-import com.cornellappdev.uplift.ui.components.onboarding.auth.LogInButton
+import com.cornellappdev.uplift.ui.components.onboarding.auth.LoginButton
+import com.cornellappdev.uplift.ui.theme.UpliftTheme
 import com.cornellappdev.uplift.ui.viewmodels.onboarding.LoginViewModel
 import com.cornellappdev.uplift.util.LIGHT_YELLOW
 import com.cornellappdev.uplift.util.PRIMARY_BLACK
@@ -77,7 +79,7 @@ private fun GuestProfileScreenContent(onSignIn: (Credential) -> Unit) {
                 Spacer(Modifier.height(136.dp * headerScale))
                 Image(
                     painter = painterResource(R.drawable.ic_main_logo),
-                    contentDescription = "Uplift logo",
+                    contentDescription = stringResource(R.string.uplift_logo),
                     modifier = Modifier
                         .width(207.dp * headerScale)
                         .height(183.dp * headerScale)
@@ -85,7 +87,7 @@ private fun GuestProfileScreenContent(onSignIn: (Credential) -> Unit) {
             }
             Spacer(Modifier.height(24.dp))
             Text(
-                text = "Create your Uplift profile.",
+                text = stringResource(R.string.guest_profile_title),
                 modifier = Modifier.padding(horizontal = 16.dp),
                 fontFamily = montserratFamily,
                 fontWeight = FontWeight.Bold,
@@ -96,12 +98,12 @@ private fun GuestProfileScreenContent(onSignIn: (Credential) -> Unit) {
             )
             Spacer(Modifier.height(24.dp))
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                GuestProfileBenefit(R.drawable.guest_profile_goal, "Create fitness goals")
-                GuestProfileBenefit(R.drawable.gym_simple, "Track fitness progress")
-                GuestProfileBenefit(R.drawable.history, "View workout history")
+                GuestProfileBenefit(R.drawable.guest_profile_goal, stringResource(R.string.guest_profile_goals))
+                GuestProfileBenefit(R.drawable.gym_simple, stringResource(R.string.guest_profile_progress))
+                GuestProfileBenefit(R.drawable.history, stringResource(R.string.guest_profile_history))
             }
             Spacer(Modifier.height(48.dp))
-            LogInButton(
+            LoginButton(
                 onRequestResult = onSignIn,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -140,5 +142,7 @@ private fun GuestProfileBenefit(@DrawableRes icon: Int, text: String) {
 @Preview(showBackground = true, widthDp = 393, heightDp = 769)
 @Composable
 private fun GuestProfilePreview() {
-    GuestProfileScreenContent {}
+    UpliftTheme {
+        GuestProfileScreenContent {}
+    }
 }

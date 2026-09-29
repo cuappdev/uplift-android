@@ -16,22 +16,29 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.ProgressBarRangeInfo
 import androidx.compose.ui.semantics.progressBarRangeInfo
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.cornellappdev.uplift.R
 import com.cornellappdev.uplift.ui.components.general.LoadingPlaceholder
+import com.cornellappdev.uplift.ui.theme.UpliftTheme
 import com.valentinilk.shimmer.Shimmer
+import com.valentinilk.shimmer.ShimmerBounds
+import com.valentinilk.shimmer.rememberShimmer
 
 @Composable
 internal fun ProfileLoading(shimmer: Shimmer) {
+    val loadingDescription = stringResource(R.string.profile_loading)
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(start = 16.dp, end = 16.dp, top = 24.dp)
             .clearAndSetSemantics {
-                contentDescription = "Loading profile"
+                contentDescription = loadingDescription
                 progressBarRangeInfo = ProgressBarRangeInfo.Indeterminate
             }
     ) {
@@ -93,5 +100,13 @@ internal fun ProfileLoading(shimmer: Shimmer) {
                 }
             }
         }
+    }
+}
+
+@Preview
+@Composable
+private fun ProfileLoadingPreview() {
+    UpliftTheme {
+        ProfileLoading(shimmer = rememberShimmer(ShimmerBounds.Window))
     }
 }

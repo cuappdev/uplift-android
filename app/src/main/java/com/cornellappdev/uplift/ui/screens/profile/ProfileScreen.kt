@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -33,6 +34,7 @@ import com.cornellappdev.uplift.ui.components.profile.workouts.HistorySection
 import com.cornellappdev.uplift.ui.components.profile.ProfileHeaderSection
 import com.cornellappdev.uplift.ui.screens.gyms.subscreens.MainError
 import com.cornellappdev.uplift.ui.viewmodels.profile.ProfileUiState
+import com.cornellappdev.uplift.ui.viewmodels.profile.ProfileLoadState
 import com.cornellappdev.uplift.ui.viewmodels.profile.ProfileViewModel
 import com.cornellappdev.uplift.util.GRAY01
 import com.cornellappdev.uplift.util.montserratFamily
@@ -57,8 +59,6 @@ fun ProfileScreen(
     )
 }
 
-private enum class ProfileContentState { Loading, Error, Loaded }
-
 @Composable
 private fun ProfileScreenContent(
     uiState: ProfileUiState,
@@ -76,21 +76,16 @@ private fun ProfileScreenContent(
     ) { innerPadding ->
         // Render placeholders before data arrives instead of flashing empty names and zero stats.
         // Keep the toolbar stable and crossfade on loading/error/content changes.
-        val contentState = when {
-            uiState.loading -> ProfileContentState.Loading
-            uiState.error -> ProfileContentState.Error
-            else -> ProfileContentState.Loaded
-        }
         Crossfade(
-            targetState = contentState,
+            targetState = uiState.loadState,
             modifier = Modifier.fillMaxSize().padding(innerPadding),
             label = "Profile"
         ) { state ->
             when (state) {
-                ProfileContentState.Loading -> ProfileLoading(loadingShimmer)
+                ProfileLoadState.Loading -> ProfileLoading(loadingShimmer)
                 // Reuse the existing retry UI so a failed request does not look like an empty profile.
-                ProfileContentState.Error -> MainError(reload = onRetry)
-                ProfileContentState.Loaded ->
+                ProfileLoadState.Error -> MainError(onReload = onRetry)
+                ProfileLoadState.Loaded ->
                     Column(
                         verticalArrangement = Arrangement.spacedBy(12.dp),
                         modifier = Modifier
@@ -168,7 +163,7 @@ private fun ProfileScreenTopBar(
     TopAppBar(
         title = {
             Text(
-                text = "Profile",
+                text = stringResource(R.string.profile_title),
                 fontFamily = montserratFamily,
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold
@@ -186,7 +181,7 @@ private fun ProfileScreenTopBar(
             IconButton(onClick = navigateToSettings) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_settings),
-                    contentDescription = "Profile Settings"
+                    contentDescription = stringResource(R.string.profile_settings)
                 )
             }
         }
@@ -206,6 +201,7 @@ private fun ProfileScreenContentPreview() {
     )
     ProfileScreenContent(
         uiState = ProfileUiState(
+            loadState = ProfileLoadState.Loaded,
             name = "Melissa Velasquez",
             netId = "mv477",
             totalGymDays = 1,

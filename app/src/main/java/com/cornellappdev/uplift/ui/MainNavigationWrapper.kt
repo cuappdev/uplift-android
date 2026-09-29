@@ -1,7 +1,6 @@
 package com.cornellappdev.uplift.ui
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -85,10 +84,10 @@ fun MainNavigationWrapper(
 ) {
     val rootNavigationUiState = rootNavigationViewModel.collectUiStateValue()
 
-    // Wait for the saved skip-login preference before creating the graph or consuming navigation
-    // events. Otherwise a returning guest briefly sees Onboarding before being sent to Home.
+    // Wait for the saved skip-login preference (with a splash screen) before creating the graph
+    // or consuming navigation events. Other-wise a returning guest briefly sees Onboarding before
+    // being sent to Home.
     if (!rootNavigationUiState.isStartupReady) {
-        Box(Modifier.fillMaxSize().background(Color.White))
         return
     }
 

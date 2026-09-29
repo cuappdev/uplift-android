@@ -12,6 +12,7 @@ import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -25,7 +26,7 @@ import com.cornellappdev.uplift.util.montserratFamily
 
 @Composable
 fun MainError(
-    reload: () -> Unit
+    onReload: () -> Unit
 ) {
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -34,14 +35,14 @@ fun MainError(
     ) {
         Image(
             painter = painterResource(id = R.drawable.img_no_internet),
-            contentDescription = "No internet",
+            contentDescription = stringResource(R.string.no_internet),
             modifier = Modifier.size(86.dp)
         )
 
         Spacer(Modifier.height(24.dp))
 
         Text(
-            text = "No connection",
+            text = stringResource(R.string.no_connection),
             fontFamily = montserratFamily,
             fontSize = 24.sp,
             fontWeight = FontWeight(700),
@@ -49,7 +50,7 @@ fun MainError(
         )
 
         Text(
-            text = "Could not connect to Uplift...",
+            text = stringResource(R.string.connection_error_message),
             fontFamily = montserratFamily,
             fontSize = 14.sp,
             fontWeight = FontWeight(400),
@@ -60,12 +61,12 @@ fun MainError(
 
         Button(
             shape = RoundedCornerShape(24.dp),
-            onClick = reload,
+            onClick = onReload,
             colors = ButtonDefaults.buttonColors(backgroundColor = PRIMARY_YELLOW),
             elevation = ButtonDefaults.elevation(0.dp)
         ) {
             Text(
-                text = "RETRY",
+                text = stringResource(R.string.retry),
                 fontFamily = montserratFamily,
                 fontSize = 14.sp,
                 fontWeight = FontWeight(700),

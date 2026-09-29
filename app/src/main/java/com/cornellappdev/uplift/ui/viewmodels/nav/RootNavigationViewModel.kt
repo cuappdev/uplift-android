@@ -32,7 +32,6 @@ class RootNavigationViewModel @Inject constructor(
 ) {
     data class RootNavigationUiState(
         val isLoggedIn: Boolean = false,
-        // The initial destination is temporary until the saved skip preference has been read.
         val isStartupReady: Boolean = false,
         val navEvent: UIEvent<UpliftRootRoute>? = null,
         val popBackStack: UIEvent<Unit>? = null,
@@ -40,7 +39,7 @@ class RootNavigationViewModel @Inject constructor(
         val startDestination: UpliftRootRoute = if (ONBOARDING_FLAG) UpliftRootRoute.Onboarding else UpliftRootRoute.Home
     ) {
         // Determines the guest-to-authenticated transition
-        internal fun withSession(loggedIn: Boolean, destination: UpliftRootRoute): RootNavigationUiState {
+        internal fun updateSessionNavigation(loggedIn: Boolean, destination: UpliftRootRoute): RootNavigationUiState {
             // On startup, NavHost opens the resolved destination directly.
             val shouldNavigate = isStartupReady &&
                 (destination != startDestination || loggedIn != isLoggedIn)
@@ -82,7 +81,7 @@ class RootNavigationViewModel @Inject constructor(
                 applyMutation {
                     // Compare against the previous session before updating it: guest login
                     // must finish onboarding even when Home is already the start destination.
-                    withSession(loggedIn, newRoute)
+                    updateSessionNavigation(loggedIn, newRoute)
                 }
             }
         }
