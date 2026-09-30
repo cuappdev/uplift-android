@@ -175,7 +175,7 @@ class ProfileViewModel @Inject constructor(
     }
 
     fun toGoals() {
-        // replace with the actual route once goals exists
+        rootNavigationRepository.navigate(UpliftRootRoute.Goals)
     }
 
     fun toHistory() {

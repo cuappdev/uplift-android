@@ -17,7 +17,7 @@ data class ProfileCreationUiState(
     val name: String = "",
     val imageUri: Uri? = null,
     val isGoalSkipped: Boolean = false,
-    val goal: Float = 0.0f // Goal slider val is stored as float but we could change this
+    val goal: Float = 1.0f // Goal slider val is stored as float but we could change this
 )
 
 @HiltViewModel

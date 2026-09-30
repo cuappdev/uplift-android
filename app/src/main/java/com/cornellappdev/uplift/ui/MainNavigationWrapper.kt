@@ -44,13 +44,14 @@ import com.cornellappdev.uplift.ui.screens.classes.ClassScreen
 import com.cornellappdev.uplift.ui.screens.gyms.GymDetailScreen
 import com.cornellappdev.uplift.ui.screens.gyms.HomeScreen
 import com.cornellappdev.uplift.ui.screens.onboarding.ProfileCreationScreen
+import com.cornellappdev.uplift.ui.screens.onboarding.GoalsOnboardingScreen
 import com.cornellappdev.uplift.ui.screens.onboarding.SignInPromptScreen
+import com.cornellappdev.uplift.ui.screens.profile.MyGoalsScreen
 import com.cornellappdev.uplift.ui.screens.profile.ProfileScreen
 import com.cornellappdev.uplift.ui.screens.profile.SettingsScreen
 import com.cornellappdev.uplift.ui.screens.profile.WorkoutHistoryScreen
 import com.cornellappdev.uplift.ui.screens.reminders.CapacityReminderScreen
 import com.cornellappdev.uplift.ui.screens.reminders.MainReminderScreen
-import com.cornellappdev.uplift.ui.screens.onboarding.WorkoutReminderOnboardingScreen
 import com.cornellappdev.uplift.ui.screens.report.ReportIssueScreen
 import com.cornellappdev.uplift.ui.screens.report.ReportSubmittedScreen
 import com.cornellappdev.uplift.ui.viewmodels.classes.ClassDetailViewModel
@@ -58,6 +59,7 @@ import com.cornellappdev.uplift.ui.viewmodels.gyms.GymDetailViewModel
 import com.cornellappdev.uplift.ui.viewmodels.nav.RootNavigationViewModel
 import com.cornellappdev.uplift.ui.viewmodels.profile.CheckInViewModel
 import com.cornellappdev.uplift.ui.viewmodels.profile.ConfettiViewModel
+import com.cornellappdev.uplift.ui.viewmodels.profile.ProfileViewModel
 import com.cornellappdev.uplift.util.CHECK_IN_FLAG
 import com.cornellappdev.uplift.util.ONBOARDING_FLAG
 import com.cornellappdev.uplift.util.PRIMARY_BLACK
@@ -252,7 +254,7 @@ fun MainNavigationWrapper(
                     ProfileCreationScreen()
                 }
                 composable<UpliftRootRoute.GoalsOnboarding> {
-                    WorkoutReminderOnboardingScreen()
+                    GoalsOnboardingScreen()
                 }
                 composable<UpliftRootRoute.CapacityReminders> {
                     CapacityReminderScreen()
@@ -269,6 +271,15 @@ fun MainNavigationWrapper(
                 composable<UpliftRootRoute.WorkoutHistory> {
                     WorkoutHistoryScreen(
                         onBack = { navController.popBackStack() }
+                    )
+                }
+                composable<UpliftRootRoute.Goals> {
+                    val profileViewModel: ProfileViewModel = hiltViewModel()
+                    val profileUiState = profileViewModel.collectUiStateValue()
+                    MyGoalsScreen(
+                        initialGoalValue = profileUiState.workoutGoal,
+                        onBackClick = { navController.popBackStack() },
+                        onSaveGoal = { profileViewModel.updateWorkoutGoal(it) }
                     )
                 }
                 composable<UpliftRootRoute.Sports> {}
@@ -372,4 +383,7 @@ sealed class UpliftRootRoute {
 
     @Serializable
     data object WorkoutHistory : UpliftRootRoute()
+
+    @Serializable
+    data object Goals : UpliftRootRoute()
 }
