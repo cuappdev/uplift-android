@@ -42,6 +42,7 @@ class SettingsViewModel @Inject constructor(
 
     fun onAboutPressed() {
         //TODO: Add route nav after implement About screen
+        rootNavigationRepository.navigate(UpliftRootRoute.About)
     }
 
     fun onReportPressed() {
