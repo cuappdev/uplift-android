@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.cornellappdev.uplift.data.repositories.CheckInRepository
 import com.cornellappdev.uplift.data.repositories.ConfettiRepository
 import com.cornellappdev.uplift.data.repositories.LocationRepository
+import com.cornellappdev.uplift.data.repositories.WorkoutLogRepository
 import com.cornellappdev.uplift.ui.viewmodels.UpliftViewModel
 import com.cornellappdev.uplift.util.isOpen
 import com.cornellappdev.uplift.util.todayIndex
@@ -20,8 +21,9 @@ private const val tag = "CheckInVM"
  * UI mode for the Check-In pop up.
  * - [Prompt]: user is near an open gym and can choose to check in.
  * -[Complete]: a check in was just logged and the confirmation/congratulation state is shown.
+ * -[Failed]: the log workout mutation failed and the user can retry or dismiss.
  */
-enum class CheckInMode {Prompt, Complete}
+enum class CheckInMode {Prompt, Complete, Failed}
 
 /**
  * UI state backing the Check-In pop-up
@@ -45,7 +47,8 @@ data class CheckInUiState(
 @HiltViewModel
 class CheckInViewModel @Inject constructor(
     private val checkInRepository: CheckInRepository,
-    private val confettiRepository: ConfettiRepository
+    private val confettiRepository: ConfettiRepository,
+    private val workoutLogRepository: WorkoutLogRepository
 ) : UpliftViewModel<CheckInUiState>(CheckInUiState()) {
 
     private var locationJob: Job? = null
@@ -67,7 +70,7 @@ class CheckInViewModel @Inject constructor(
                                 showPopUp = true,
                                 mode = if (inComplete) CheckInMode.Complete else CheckInMode.Prompt,
                                 gymName = gym.name,
-                                gymId = gym.id,
+                                gymId = gym.facilityId,
                                 timeText = checkInRepository.formatTime(System.currentTimeMillis())
                             )
                         }
@@ -126,12 +129,14 @@ class CheckInViewModel @Inject constructor(
     }
 
     /**
-     * Marks the user as checked in for the day, triggering a cooldown til the end of day and a
-     * logworkout mutation through [checkInRepository]. On a successful call, transitions UI into
-     * [CheckInMode.Complete] and bursts confetti from popup through a [confettiRepository].
+     * Logs a workout via [checkInRepository]. Only on a successful mutation marks the
+     * user as checked in for the day (triggering the end-of-day cooldown, awaited and retried once
+     * if the write fails; the workout mutation itself is never retried), transition the UI into
+     * [CheckInMode.Complete], and burst confetti through [confettiRepository] and notify
+     * [workoutLogRepository] so screens showing history/streaks can refresh.
      *
-     * Note: Temporarily skips over failed backend log workout call to keep functionality while auth and
-     * sign in are not working.
+     * If the mutation fails, the UI transitions into [CheckInMode.Failed] instead, so the user
+     * knows the workout wasn't recorded and can retry rather than seeing a false success state.
      */
     fun onCheckIn() = viewModelScope.launch {
         val currentGymId = uiStateFlow.value.gymId
@@ -142,22 +147,37 @@ class CheckInViewModel @Inject constructor(
             return@launch
         }
         try {
-            checkInRepository.markCheckInToday()
-            applyMutation {
-                copy(
-                    showPopUp = true,
-                    mode = CheckInMode.Complete
-                )
-            }
-            confettiRepository.showConfetti(ConfettiViewModel.ConfettiUiState())
             val logged = checkInRepository.logWorkoutFromCheckIn(gymIdInt)
             if (logged) {
                 Log.d(tag, "Workout successfully logged to backend")
+                if (!checkInRepository.markCheckInToday() && !checkInRepository.markCheckInToday()) {
+                    Log.e(tag, "Workout logged but check-in cooldown could not be persisted")
+                }
+                applyMutation {
+                    copy(
+                        showPopUp = true,
+                        mode = CheckInMode.Complete
+                    )
+                }
+                confettiRepository.showConfetti(ConfettiViewModel.ConfettiUiState())
+                workoutLogRepository.notifyWorkoutLogged()
             } else {
                 Log.e(tag, "Workout failed to log to backend")
+                applyMutation {
+                    copy(
+                        showPopUp = true,
+                        mode = CheckInMode.Failed
+                    )
+                }
             }
         } catch (e: Exception) {
             Log.e(tag, "Error checking in", e)
+            applyMutation {
+                copy(
+                    showPopUp = true,
+                    mode = CheckInMode.Failed
+                )
+            }
         }
     }
 

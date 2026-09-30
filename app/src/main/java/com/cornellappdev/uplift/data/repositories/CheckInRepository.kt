@@ -9,6 +9,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import com.cornellappdev.uplift.data.models.ApiResponse
 import com.cornellappdev.uplift.data.models.gymdetail.UpliftGym
 import com.cornellappdev.uplift.util.getDistanceBetween
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,6 +20,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.ZoneId
@@ -135,15 +137,19 @@ class CheckInRepository @Inject constructor(
     /**
      * Records that the user has completed a check-in today by storing the current date in the
      * DataStore. Used to prevent additional prompts for the remainder of the day after a check in.
+     *
+     * Suspends until the write completes. Returns true if the date was persisted, false otherwise.
      */
-    fun markCheckInToday() {
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                val today = LocalDate.now(zone).toString()
-                dataStore.edit { it[KEY_CHECKIN_LAST_DATE] = today }
-            } catch (e: Exception){
-                Log.e("CheckInRepository", "Failed to write check-in date", e)
-            }
+    suspend fun markCheckInToday(): Boolean = withContext(Dispatchers.IO) {
+        try {
+            val today = LocalDate.now(zone).toString()
+            dataStore.edit { it[KEY_CHECKIN_LAST_DATE] = today }
+            true
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Log.e("CheckInRepository", "Failed to write check-in date", e)
+            false
         }
     }
 
