@@ -19,7 +19,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -33,7 +32,7 @@ import androidx.compose.ui.unit.sp
 import androidx.credentials.Credential
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.cornellappdev.uplift.R
-import com.cornellappdev.uplift.ui.components.onboarding.auth.LogInButton
+import com.cornellappdev.uplift.ui.components.onboarding.auth.LoginButton
 import com.cornellappdev.uplift.ui.viewmodels.onboarding.LoginViewModel
 import com.cornellappdev.uplift.util.GRAY01
 import com.cornellappdev.uplift.util.GRAY04
@@ -101,7 +100,7 @@ private fun SignInPromptScreenContent(
 
         Spacer(modifier = Modifier.weight(0.16f))
 
-        LogInButton(onRequestResult = onSignInWithGoogle)
+        LoginButton(onRequestResult = onSignInWithGoogle)
 
         Spacer(modifier = Modifier.weight(0.02f))
 

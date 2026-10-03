@@ -3,7 +3,9 @@ package com.cornellappdev.uplift.ui.components.onboarding.auth
 import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.credentials.Credential
@@ -12,11 +14,15 @@ import androidx.credentials.GetCredentialRequest
 import androidx.credentials.exceptions.NoCredentialException
 import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption
 import com.cornellappdev.uplift.BuildConfig
+import com.cornellappdev.uplift.R
 import com.cornellappdev.uplift.ui.components.general.UpliftButton
 import kotlinx.coroutines.launch
 
 @Composable
-fun LogInButton(onRequestResult: (Credential) -> Unit) {
+fun LoginButton(
+    onRequestResult: (Credential) -> Unit,
+    modifier: Modifier = Modifier
+) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     UpliftButton(
@@ -28,11 +34,12 @@ fun LogInButton(onRequestResult: (Credential) -> Unit) {
                 )
             }
         },
-        text = "Log in",
+        text = stringResource(R.string.log_in),
         width = 144.dp,
         height = 44.dp,
         fontSize = 16f,
-        elevation = 2.dp
+        elevation = 2.dp,
+        modifier = modifier
     )
 }
 

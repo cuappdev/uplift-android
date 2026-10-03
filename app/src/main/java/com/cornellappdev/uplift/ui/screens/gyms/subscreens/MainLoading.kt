@@ -15,16 +15,14 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.cornellappdev.uplift.ui.components.general.LoadingTopBar
-import com.cornellappdev.uplift.util.GRAY01
+import com.cornellappdev.uplift.ui.components.general.LoadingPlaceholder
 import com.valentinilk.shimmer.Shimmer
-import com.valentinilk.shimmer.shimmer
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -140,14 +138,13 @@ private fun LoadingBlob(
     cornerRadius: Dp,
     paddingValues: PaddingValues = PaddingValues()
 ) {
-    Surface(
-        color = GRAY01,
+    LoadingPlaceholder(
+        shimmer = shimmerInstance,
         modifier = Modifier
             .padding(paddingValues)
-            .size(width = width, height = height)
-            .shimmer(shimmerInstance),
+            .size(width = width, height = height),
         shape = RoundedCornerShape(cornerRadius)
-    ) {}
+    )
 }
 
 /**
@@ -161,13 +158,12 @@ private fun LoadingBlob(
     cornerRadius: Dp,
     paddingValues: PaddingValues = PaddingValues()
 ) {
-    Surface(
-        color = GRAY01,
+    LoadingPlaceholder(
+        shimmer = shimmerInstance,
         modifier = Modifier
             .padding(paddingValues)
             .height(height)
-            .shimmer(shimmerInstance)
             .fillMaxWidth(),
         shape = RoundedCornerShape(cornerRadius)
-    ) {}
+    )
 }
