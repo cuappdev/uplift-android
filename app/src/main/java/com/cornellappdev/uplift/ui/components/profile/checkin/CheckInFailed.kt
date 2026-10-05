@@ -17,11 +17,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.cornellappdev.uplift.R
 import com.cornellappdev.uplift.ui.theme.AppColors
 import com.cornellappdev.uplift.ui.theme.AppTextStyles
+import com.cornellappdev.uplift.ui.theme.UpliftTheme
 
 @Composable
 fun CheckInFailed(
@@ -34,7 +36,7 @@ fun CheckInFailed(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = "Couldn't log your workout.",
+            text = stringResource(R.string.check_in_failed_message),
             style = AppTextStyles.BodySemibold,
             color = AppColors.Black
         )
@@ -56,7 +58,7 @@ fun CheckInFailed(
                 onClick = onRetry
             ) {
                 Text(
-                    text = "Retry",
+                    text = stringResource(R.string.check_in_retry),
                     style = AppTextStyles.LabelBig,
                     color = AppColors.Black
                 )
@@ -64,7 +66,7 @@ fun CheckInFailed(
 
             Image(
                 painter = painterResource(id = R.drawable.ic_close),
-                contentDescription = "close pop up",
+                contentDescription = stringResource(R.string.check_in_close_pop_up),
                 contentScale = ContentScale.None,
                 modifier = Modifier.clickable { onClosePopUp() }
             )
@@ -75,5 +77,7 @@ fun CheckInFailed(
 @Preview(showBackground = true)
 @Composable
 private fun CheckInFailedPreview() {
-    CheckInFailed({}, {})
+    UpliftTheme {
+        CheckInFailed({}, {})
+    }
 }

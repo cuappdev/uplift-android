@@ -3,4 +3,9 @@
     <string name="default_notification_channel_id">fcm_default_channel</string>
     <string name="default_notification_channel_name">Notifications</string>
     <string name="notification_channel_description">App notifications</string>
+
+    <!-- Check-in pop-up -->
+    <string name="check_in_failed_message">Couldn\'t log your workout.</string>
+    <string name="check_in_retry">Retry</string>
+    <string name="check_in_close_pop_up">close pop up</string>
 </resources>

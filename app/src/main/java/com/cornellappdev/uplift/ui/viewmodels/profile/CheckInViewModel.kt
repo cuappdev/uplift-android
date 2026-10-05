@@ -150,6 +150,9 @@ class CheckInViewModel @Inject constructor(
             val logged = checkInRepository.logWorkoutFromCheckIn(gymIdInt)
             if (logged) {
                 Log.d(tag, "Workout successfully logged to backend")
+                // saves today's date so the pop-up doesn't come back today. The second
+                // call only runs if the first save fails (&& short-circuits), so it's a retry. If both
+                // fail, the workout is still logged, so we still show Complete.
                 if (!checkInRepository.markCheckInToday() && !checkInRepository.markCheckInToday()) {
                     Log.e(tag, "Workout logged but check-in cooldown could not be persisted")
                 }
