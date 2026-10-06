@@ -21,4 +21,23 @@
     <string name="no_connection">No connection</string>
     <string name="connection_error_message">Could not connect to Uplift...</string>
     <string name="retry">RETRY</string>
+
+    <!-- Goals -->
+    <string name="goals_onboarding_title">Set your Goals.</string>
+    <string name="goals_title">Goals</string>
+    <string name="goals_set_a_plan">Let\'s set a plan! </string>
+    <string name="goals_days_per_week_question">How many days a week would you like to work out?</string>
+    <string name="goals_unchangeable_notice">This goal will be unchangeable for 1 month.</string>
+    <string name="goals_saved">Saved</string>
+    <string name="goals_save_changes">Save Changes</string>
+    <string name="goals_save_warning">Warning: Goals can only be changed again after 1 month, do you want to continue to save?</string>
+    <string name="goals_continue">Continue</string>
+    <string name="goals_back">Back</string>
+    <string name="goals_locked_message">Goals can only be changed after 1 month. The next time you can edit your goal is on %1$s.</string>
+    <string name="goals_change_in">You can change your goal in:</string>
+    <plurals name="goals_days_remaining">
+        <item quantity="one">%d Day</item>
+        <item quantity="other">%d Days</item>
+    </plurals>
+    <string name="close">Close</string>
 </resources>
