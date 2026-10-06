@@ -11,6 +11,7 @@ import com.cornellappdev.uplift.data.repositories.DatastoreRepository
 import com.cornellappdev.uplift.data.repositories.LocationRepository
 import com.cornellappdev.uplift.ui.MainNavigationWrapper
 import com.cornellappdev.uplift.ui.theme.UpliftTheme
+import com.cornellappdev.uplift.ui.viewmodels.nav.RootNavigationViewModel
 import com.cornellappdev.uplift.ui.viewmodels.profile.CheckInViewModel
 import com.cornellappdev.uplift.util.CHECK_IN_FLAG
 import com.cornellappdev.uplift.util.LockScreenOrientation
@@ -26,17 +27,21 @@ class MainActivity : ComponentActivity() {
 
 
     private val checkInViewModel: CheckInViewModel by viewModels()
+    private val rootNavigationViewModel: RootNavigationViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
-        installSplashScreen()
+        splashScreen.setKeepOnScreenCondition {
+            !rootNavigationViewModel.uiStateFlow.value.isStartupReady
+        }
 
         datastoreRepository = injectedDatastoreRepository
 
         setContent {
             UpliftTheme {
                 LockScreenOrientation(orientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
-                MainNavigationWrapper()
+                MainNavigationWrapper(rootNavigationViewModel = rootNavigationViewModel)
             }
         }
     }

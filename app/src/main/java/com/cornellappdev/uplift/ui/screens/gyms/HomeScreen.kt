@@ -70,7 +70,7 @@ fun HomeScreen(
         Crossfade(targetState = gymsState, label = "Main") {
             when {
                 gymsLoading -> MainLoading(loadingShimmer)
-                gymsError -> MainError(reload = homeViewModel::reload)
+                gymsError -> MainError(onReload = homeViewModel::reload)
                 gymsState.isNotEmpty() -> MainLoaded(
                     openGym = openGym,
                     gymsList = gymsState,
