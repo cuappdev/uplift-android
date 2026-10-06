@@ -3,4 +3,22 @@
     <string name="default_notification_channel_id">fcm_default_channel</string>
     <string name="default_notification_channel_name">Notifications</string>
     <string name="notification_channel_description">App notifications</string>
+
+    <!-- Check-in pop-up -->
+    <string name="check_in_failed_message">Couldn\'t log your workout.</string>
+    <string name="check_in_retry">Retry</string>
+    <string name="check_in_close_pop_up">close pop up</string>
+    <string name="profile_title">Profile</string>
+    <string name="profile_settings">Profile Settings</string>
+    <string name="profile_loading">Loading profile</string>
+    <string name="uplift_logo">Uplift logo</string>
+    <string name="guest_profile_title">Create your Uplift profile.</string>
+    <string name="guest_profile_goals">Create fitness goals</string>
+    <string name="guest_profile_progress">Track fitness progress</string>
+    <string name="guest_profile_history">View workout history</string>
+    <string name="log_in">Log in</string>
+    <string name="no_internet">No internet</string>
+    <string name="no_connection">No connection</string>
+    <string name="connection_error_message">Could not connect to Uplift...</string>
+    <string name="retry">RETRY</string>
 </resources>

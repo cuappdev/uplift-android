@@ -4,6 +4,7 @@ import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.cornellappdev.uplift.data.repositories.ProfileRepository
+import com.cornellappdev.uplift.data.repositories.WorkoutLogRepository
 import com.cornellappdev.uplift.ui.UpliftRootRoute
 import com.cornellappdev.uplift.ui.components.profile.workouts.HistoryItem
 import com.cornellappdev.uplift.ui.nav.RootNavigationRepository
@@ -12,6 +13,7 @@ import com.cornellappdev.uplift.util.timeAgoString
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.collectLatest
 import java.time.DayOfWeek
 import java.time.Instant
 import java.time.LocalDate
@@ -29,9 +31,14 @@ sealed class HistoryListItem {
     ) : HistoryListItem()
     data class SpacerItem(val month: String) : HistoryListItem()
 }
+sealed class ProfileLoadState {
+    data object Loading : ProfileLoadState()
+    data object Error : ProfileLoadState()
+    data object Loaded : ProfileLoadState()
+}
+
 data class ProfileUiState(
-    val loading: Boolean = false,
-    val error: Boolean = false,
+    val loadState: ProfileLoadState = ProfileLoadState.Loading,
     val name: String = "",
     val netId: String = "",
     val profileImage: Uri? = null,
@@ -48,16 +55,23 @@ data class ProfileUiState(
     val workoutDates: Map<LocalDate, List<HistoryItem>> = emptyMap()
 )
 
+// Start in loading before the reload coroutine runs, preventing an initial empty-profile frame.
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
     private val profileRepository: ProfileRepository,
     private val rootNavigationRepository: RootNavigationRepository,
+    private val workoutLogRepository: WorkoutLogRepository,
 ) : UpliftViewModel<ProfileUiState>(ProfileUiState()) {
 
     private var loadingJob: Job? = null
 
     init {
         reload()
+        viewModelScope.launch {
+            workoutLogRepository.workoutLoggedEvent.collectLatest {
+                reload()
+            }
+        }
     }
 
     fun reload() {
@@ -68,14 +82,14 @@ class ProfileViewModel @Inject constructor(
 
 
     private fun loadProfile(): Job = viewModelScope.launch {
-        applyMutation { copy(loading = true, error = false) }
+        applyMutation { copy(loadState = ProfileLoadState.Loading) }
 
         val result = profileRepository.getProfile()
 
         val profile = result.getOrNull()
         if (profile == null) {
             Log.e("profile VM", "Failed to load profile", result.exceptionOrNull())
-            applyMutation { copy(loading = false, error = true) }
+            applyMutation { copy(loadState = ProfileLoadState.Error) }
             return@launch
         }
         val historyItems = profile.workouts.map {
@@ -140,7 +154,7 @@ class ProfileViewModel @Inject constructor(
 
         applyMutation {
             copy(
-                loading = false,
+                loadState = ProfileLoadState.Loaded,
                 name = profile.name,
                 netId = profile.netId,
                 profileImage = profile.encodedImage?.let(Uri::parse),

@@ -46,6 +46,7 @@ import com.cornellappdev.uplift.ui.screens.gyms.HomeScreen
 import com.cornellappdev.uplift.ui.screens.onboarding.ProfileCreationScreen
 import com.cornellappdev.uplift.ui.screens.onboarding.GoalsOnboardingScreen
 import com.cornellappdev.uplift.ui.screens.onboarding.SignInPromptScreen
+import com.cornellappdev.uplift.ui.screens.profile.GuestProfileScreen
 import com.cornellappdev.uplift.ui.screens.profile.MyGoalsScreen
 import com.cornellappdev.uplift.ui.screens.profile.ProfileScreen
 import com.cornellappdev.uplift.ui.screens.profile.SettingsScreen
@@ -84,6 +85,14 @@ fun MainNavigationWrapper(
     rootNavigationViewModel: RootNavigationViewModel = hiltViewModel(),
 ) {
     val rootNavigationUiState = rootNavigationViewModel.collectUiStateValue()
+
+    // Wait for the saved skip-login preference (with a splash screen) before creating the graph
+    // or consuming navigation events. Other-wise a returning guest briefly sees Onboarding before
+    // being sent to Home.
+    if (!rootNavigationUiState.isStartupReady) {
+        return
+    }
+
     val startDestination = rootNavigationUiState.startDestination
 
     val navController = rememberNavController()
@@ -120,8 +129,14 @@ fun MainNavigationWrapper(
 
     //TODO: Try to consolidate launched effects into one with consumeIn function that takes in coroutine scope
     LaunchedEffect(rootNavigationUiState.navEvent) {
-        rootNavigationUiState.navEvent?.consumeSuspend {
-            navController.navigate(it)
+        rootNavigationUiState.navEvent?.consumeSuspend { route ->
+            navController.navigate(route) {
+                if (route == UpliftRootRoute.Home) {
+                    // Finish skip/login/onboarding so pressing back won't bring the user back into the onboarding flow.
+                    popUpTo(0)
+                    launchSingleTop = true
+                }
+            }
         }
     }
     LaunchedEffect(rootNavigationUiState.popBackStack) {
@@ -260,7 +275,11 @@ fun MainNavigationWrapper(
                     CapacityReminderScreen()
                 }
                 composable<UpliftRootRoute.Profile> {
-                    ProfileScreen()
+                    if (isLoggedIn) {
+                        ProfileScreen(loadingShimmer = shimmer)
+                    } else {
+                        GuestProfileScreen()
+                    }
                 }
                 composable<UpliftRootRoute.Reminders> {
                     MainReminderScreen()
