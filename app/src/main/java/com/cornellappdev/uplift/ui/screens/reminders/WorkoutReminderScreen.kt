@@ -147,7 +147,7 @@ private fun WorkoutReminderContent(
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
         ) {
-            GoalSlider(value = goalValue, onValueChange = onGoalValueChange, isOnboarding = true)
+            GoalSlider(value = goalValue, onValueChange = onGoalValueChange, isOnboarding = isOnboarding)
 
             if (!isOnboarding) {
                 WorkoutReminders(
