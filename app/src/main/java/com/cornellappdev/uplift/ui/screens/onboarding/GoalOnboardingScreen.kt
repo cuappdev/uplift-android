@@ -15,12 +15,15 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.cornellappdev.uplift.R
 import com.cornellappdev.uplift.ui.components.general.UpliftTopBar
 import com.cornellappdev.uplift.ui.components.goalsetting.GoalSlider
 import com.cornellappdev.uplift.ui.screens.reminders.OnboardingButtons
+import com.cornellappdev.uplift.ui.theme.UpliftTheme
 import com.cornellappdev.uplift.ui.viewmodels.onboarding.ProfileCreationViewModel
 
 @Composable
@@ -46,7 +49,7 @@ private fun GoalsOnboardingScreenContent(
     Scaffold(
         topBar = {
             UpliftTopBar(
-                title = "Set your Goals.",
+                title = stringResource(R.string.goals_onboarding_title),
             )
         },
         bottomBar = {
@@ -71,12 +74,14 @@ private fun GoalsOnboardingScreenContent(
 
 @Preview(showBackground = true)
 @Composable
-private fun GoalsScreenPreview() {
-    var sliderVal by remember { mutableFloatStateOf(3f) }
-    GoalsOnboardingScreenContent(
-        goalValue = sliderVal,
-        onGoalValueChange = { sliderVal = it },
-        onNext = {},
-        onSkip = {}
-    )
+private fun GoalsOnboardingScreenPreview() {
+    UpliftTheme{
+        var sliderVal by remember { mutableFloatStateOf(3f) }
+        GoalsOnboardingScreenContent(
+            goalValue = sliderVal,
+            onGoalValueChange = { sliderVal = it },
+            onNext = {},
+            onSkip = {}
+        )
+    }
 }

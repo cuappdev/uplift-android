@@ -32,6 +32,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -41,6 +43,7 @@ import com.cornellappdev.uplift.R
 import com.cornellappdev.uplift.ui.components.general.UpliftButton
 import com.cornellappdev.uplift.ui.components.general.UpliftTopBarWithBack
 import com.cornellappdev.uplift.ui.components.goalsetting.GoalSlider
+import com.cornellappdev.uplift.ui.theme.UpliftTheme
 import com.cornellappdev.uplift.util.GRAY01
 import com.cornellappdev.uplift.util.GRAY04
 import com.cornellappdev.uplift.util.PRIMARY_BLACK
@@ -67,7 +70,7 @@ fun MyGoalsScreen(
     Scaffold(
         topBar = {
             UpliftTopBarWithBack(
-                title = "Goals",
+                title = stringResource(R.string.goals_title),
                 onBackClick = onBackClick,
                 withBack = true
             )
@@ -102,7 +105,7 @@ fun MyGoalsScreen(
                 UpliftButton(
                     onClick = {},
                     enabled = false,
-                    text = "Saved",
+                    text = stringResource(R.string.goals_saved),
                     width = 165.dp,
                     height = 41.dp,
                     fontSize = 16f,
@@ -125,7 +128,7 @@ fun MyGoalsScreen(
                         }
                     },
                     enabled = hasChanged && !isInitiallyLocked,
-                    text = "Save Changes",
+                    text = stringResource(R.string.goals_save_changes),
                     width = 165.dp,
                     height = 41.dp,
                     fontSize = 16f,
@@ -153,7 +156,7 @@ fun MyGoalsScreen(
                         ) {
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_close),
-                                contentDescription = "Close",
+                                contentDescription = stringResource(R.string.close),
                                 tint = PRIMARY_BLACK
                             )
                         }
@@ -171,7 +174,7 @@ fun MyGoalsScreen(
                                 modifier = Modifier.size(36.dp)
                             )
                             Text(
-                                text = "Warning: Goals can only be changed again after 1 month, do you want to continue to save?",
+                                text = stringResource(R.string.goals_save_warning),
                                 fontFamily = montserratFamily,
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.SemiBold,
@@ -189,7 +192,7 @@ fun MyGoalsScreen(
                                         isSaved = true
                                         onSaveGoal(currentGoal.roundToInt())
                                     },
-                                    text = "Continue",
+                                    text = stringResource(R.string.goals_continue),
                                     width = 160.dp,
                                     height = 41.dp,
                                     fontSize = 14f,
@@ -197,7 +200,7 @@ fun MyGoalsScreen(
                                     contentColor = Color.White
                                 )
                                 Text(
-                                    text = "Back",
+                                    text = stringResource(R.string.goals_back),
                                     fontFamily = montserratFamily,
                                     fontSize = 14.sp,
                                     fontWeight = FontWeight.Medium,
@@ -231,7 +234,7 @@ fun MyGoalsScreen(
                         ) {
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_close),
-                                contentDescription = "Close",
+                                contentDescription = stringResource(R.string.close),
                                 tint = PRIMARY_BLACK
                             )
                         }
@@ -249,7 +252,7 @@ fun MyGoalsScreen(
                                 modifier = Modifier.size(33.dp)
                             )
                             Text(
-                                text = "Goals can only be changed after 1 month. The next time you can edit your goal is on $lockedUntilDate.",
+                                text = stringResource(R.string.goals_locked_message, lockedUntilDate),
                                 fontFamily = montserratFamily,
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.SemiBold,
@@ -262,7 +265,7 @@ fun MyGoalsScreen(
                                 verticalArrangement = Arrangement.spacedBy(4.dp)
                             ) {
                                 Text(
-                                    text = "You can change your goal in:",
+                                    text = stringResource(R.string.goals_change_in),
                                     fontFamily = montserratFamily,
                                     fontSize = 12.sp,
                                     fontWeight = FontWeight.Medium,
@@ -273,7 +276,11 @@ fun MyGoalsScreen(
                                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                                 ) {
                                     Text(
-                                        text = "${lockedDaysRemaining} Days",
+                                        text = pluralStringResource(
+                                            R.plurals.goals_days_remaining,
+                                            lockedDaysRemaining,
+                                            lockedDaysRemaining
+                                        ),
                                         fontFamily = bebasNeueFamily,
                                         fontSize = 32.sp,
                                         color = PRIMARY_BLACK
@@ -291,22 +298,26 @@ fun MyGoalsScreen(
 @Preview(showBackground = true, name = "Initial State")
 @Composable
 fun MyGoalsScreenInitialPreview() {
-    MyGoalsScreen(
-        initialGoalValue = 3,
-        onBackClick = {},
-        onSaveGoal = {}
-    )
+    UpliftTheme{
+        MyGoalsScreen(
+            initialGoalValue = 3,
+            onBackClick = {},
+            onSaveGoal = {}
+        )
+    }
 }
 
 @Preview(showBackground = true, name = "Locked State Dialog")
 @Composable
 fun MyGoalsScreenLockedPreview() {
-    MyGoalsScreen(
-        initialGoalValue = 5,
-        onBackClick = {},
-        onSaveGoal = {},
-        isInitiallyLocked = true,
-        lockedUntilDate = "5/12/26",
-        lockedDaysRemaining = 30
-    )
+    UpliftTheme{
+        MyGoalsScreen(
+            initialGoalValue = 5,
+            onBackClick = {},
+            onSaveGoal = {},
+            isInitiallyLocked = true,
+            lockedUntilDate = "5/12/26",
+            lockedDaysRemaining = 30
+        )
+    }
 }

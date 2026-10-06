@@ -28,12 +28,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.layout
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.cornellappdev.uplift.R
 import com.cornellappdev.uplift.util.GRAY01
 import com.cornellappdev.uplift.util.GRAY04
 import com.cornellappdev.uplift.util.PRIMARY_BLACK
@@ -59,7 +61,9 @@ fun GoalSlider(
             .padding(vertical = 24.dp, horizontal = 18.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
+        val daysPerWeekQuestion = stringResource(R.string.goals_days_per_week_question)
         if (!isOnboarding) {
+            val setAPlan = stringResource(R.string.goals_set_a_plan)
             Text(
                 buildAnnotatedString {
                     withStyle(
@@ -70,7 +74,7 @@ fun GoalSlider(
                             color = PRIMARY_BLACK
                         )
                     ) {
-                        append("Let's set a plan! ")
+                        append(setAPlan)
                     }
                     withStyle(
                         style = SpanStyle(
@@ -80,14 +84,14 @@ fun GoalSlider(
                             color = PRIMARY_BLACK
                         )
                     ) {
-                        append("How many days a week would you like to work out?")
+                        append(daysPerWeekQuestion)
                     }
                 },
                 modifier = Modifier.padding(end = 30.dp)
             )
         } else {
             Text(
-                text = "How many days a week would you like to work out?",
+                text = daysPerWeekQuestion,
                 fontFamily = montserratFamily,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.SemiBold,
@@ -110,7 +114,7 @@ fun GoalSlider(
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
-                text = "This goal will be unchangeable for 1 month.",
+                text = stringResource(R.string.goals_unchangeable_notice),
                 fontFamily = montserratFamily,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Medium,
