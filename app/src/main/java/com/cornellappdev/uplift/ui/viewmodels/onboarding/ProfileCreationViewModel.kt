@@ -38,6 +38,7 @@ class ProfileCreationViewModel @Inject constructor(
         val user = state.user
         val name = user?.displayName ?: ""
         val email = user?.email
+        val imageUri = state.imageUri
         if (email.isNullOrBlank()) {
             Log.e("Error", "Cannot create user: missing or blank email")
             userInfoRepository.signOut()
@@ -47,7 +48,7 @@ class ProfileCreationViewModel @Inject constructor(
         val netId = email.substringBefore("@")
         val isSkipped = state.isGoalSkipped
         val goal = if (isSkipped) 0 else state.goal.toInt()
-        if (userInfoRepository.createUser(email, name, netId, isSkipped, goal)) {
+        if (userInfoRepository.createUser(email, name, netId, isSkipped, goal, imageUri)) {
             Log.d("ProfileCreationViewModel", "User created successfully")
         } else {
             //TODO: Add error handling
@@ -57,7 +58,6 @@ class ProfileCreationViewModel @Inject constructor(
     }
 
     fun onPhotoSelected(uri: Uri) {
-        //TODO: Once backend finishes image upload endpoint, add call here
         applyMutation {
             copy(imageUri = uri)
         }
