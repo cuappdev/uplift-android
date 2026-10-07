@@ -78,7 +78,7 @@ fun PhotoPicker(
     val sizes = getPhotoPickerSizes(screenType)
 
     // State to store the selected image URI
-    var selectedImageUri by rememberSaveable { mutableStateOf(imageUri) }
+    var selectedImageUri by rememberSaveable(imageUri) { mutableStateOf(imageUri) }
 
     // Registers a photo picker activity launcher in single-select mode.
     val pickMedia =

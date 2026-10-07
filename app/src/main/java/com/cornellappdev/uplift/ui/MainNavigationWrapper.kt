@@ -39,11 +39,11 @@ import com.cornellappdev.uplift.ui.components.general.ConfettiBurst
 import com.cornellappdev.uplift.ui.nav.BottomNavScreens
 import com.cornellappdev.uplift.ui.nav.popBackClass
 import com.cornellappdev.uplift.ui.nav.popBackGym
+import com.cornellappdev.uplift.ui.nav.profileOnboardingGraph
 import com.cornellappdev.uplift.ui.screens.classes.ClassDetailScreen
 import com.cornellappdev.uplift.ui.screens.classes.ClassScreen
 import com.cornellappdev.uplift.ui.screens.gyms.GymDetailScreen
 import com.cornellappdev.uplift.ui.screens.gyms.HomeScreen
-import com.cornellappdev.uplift.ui.screens.onboarding.ProfileCreationScreen
 import com.cornellappdev.uplift.ui.screens.onboarding.SignInPromptScreen
 import com.cornellappdev.uplift.ui.screens.profile.GuestProfileScreen
 import com.cornellappdev.uplift.ui.screens.profile.ProfileScreen
@@ -51,7 +51,6 @@ import com.cornellappdev.uplift.ui.screens.profile.SettingsScreen
 import com.cornellappdev.uplift.ui.screens.profile.WorkoutHistoryScreen
 import com.cornellappdev.uplift.ui.screens.reminders.CapacityReminderScreen
 import com.cornellappdev.uplift.ui.screens.reminders.MainReminderScreen
-import com.cornellappdev.uplift.ui.screens.onboarding.WorkoutReminderOnboardingScreen
 import com.cornellappdev.uplift.ui.screens.report.ReportIssueScreen
 import com.cornellappdev.uplift.ui.screens.report.ReportSubmittedScreen
 import com.cornellappdev.uplift.ui.viewmodels.classes.ClassDetailViewModel
@@ -263,12 +262,8 @@ fun MainNavigationWrapper(
                 composable<UpliftRootRoute.Onboarding> {
                     SignInPromptScreen()
                 }
-                composable<UpliftRootRoute.ProfileCreation> {
-                    ProfileCreationScreen()
-                }
-                composable<UpliftRootRoute.GoalsOnboarding> {
-                    WorkoutReminderOnboardingScreen()
-                }
+                // Extracted function that handles profile onboarding destinations and their shared viewmodel.
+                profileOnboardingGraph(navController)
                 composable<UpliftRootRoute.CapacityReminders> {
                     CapacityReminderScreen()
                 }

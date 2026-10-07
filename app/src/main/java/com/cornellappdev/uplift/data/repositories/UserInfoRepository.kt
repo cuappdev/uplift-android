@@ -1,6 +1,18 @@
 package com.cornellappdev.uplift.data.repositories;
 
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.ImageDecoder
+import android.net.Uri
+import android.util.Base64
 import android.util.Log
+import com.apollographql.apollo.api.Optional
+import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import java.io.ByteArrayOutputStream
+import kotlin.math.roundToInt
 import javax.inject.Inject
 import javax.inject.Singleton
 import androidx.datastore.core.DataStore
@@ -27,16 +39,27 @@ class UserInfoRepository @Inject constructor(
     private val firebaseAuth: FirebaseAuth,
     @Named("main") private val apolloClient: ApolloClient,
     private val dataStore: DataStore<Preferences>,
-    private val sessionManager: SessionManager
+    private val sessionManager: SessionManager,
+    @ApplicationContext private val context: Context
 ){
 
-    suspend fun createUser(email: String, name: String, netId: String, skip: Boolean, goal: Int): Boolean {
+    suspend fun createUser(
+        email: String,
+        name: String,
+        netId: String,
+        skip: Boolean,
+        goal: Int,
+        imageUri: Uri? = null
+    ): Boolean {
         try{
+            // Encode before creating the account so a photo-read failure cannot silently lose it
+            val encodedImage = imageUri?.let { encodeProfileImage(it) }
             val response = apolloClient.mutation(
                 CreateUserMutation(
                     email = email,
                     name = name,
                     netId = netId,
+                    encodedImage = Optional.presentIfNotNull(encodedImage),
                 )
             ).execute()
             val userFields = response.data?.createUser?.userFields
@@ -87,9 +110,37 @@ class UserInfoRepository @Inject constructor(
             )
             Log.d("UserInfoRepositoryImpl", "User created successfully")
             return true
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             Log.e("UserInfoRepositoryImpl", "Error creating user: $e")
             return false
+        }
+    }
+
+    private suspend fun encodeProfileImage(uri: Uri): String = withContext(Dispatchers.IO) {
+        val source = ImageDecoder.createSource(context.contentResolver, uri)
+        // preserves aspect ratio, caps the longest side at 300px, and use 20% JPEG
+        val bitmap = ImageDecoder.decodeBitmap(source) { decoder, info, _ ->
+            decoder.allocator = ImageDecoder.ALLOCATOR_SOFTWARE
+            val longestSide = maxOf(info.size.width, info.size.height)
+            if (longestSide > 300) {
+                val scale = 300.0 / longestSide
+                decoder.setTargetSize(
+                    (info.size.width * scale).roundToInt().coerceAtLeast(1),
+                    (info.size.height * scale).roundToInt().coerceAtLeast(1)
+                )
+            }
+        }
+        try {
+            ByteArrayOutputStream().use { output ->
+                check(bitmap.compress(Bitmap.CompressFormat.JPEG, 20, output)) {
+                    "Failed to compress profile image"
+                }
+                Base64.encodeToString(output.toByteArray(), Base64.NO_WRAP)
+            }
+        } finally {
+            bitmap.recycle()
         }
     }
 

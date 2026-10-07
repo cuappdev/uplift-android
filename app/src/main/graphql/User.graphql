@@ -24,8 +24,8 @@ fragment workoutFields on Workout {
     gymName
 }
 
-mutation CreateUser($email: String!, $name: String!, $netId: String!) {
-    createUser(email: $email, name: $name, netId: $netId) {
+mutation CreateUser($email: String!, $name: String!, $netId: String!, $encodedImage: String) {
+    createUser(email: $email, name: $name, netId: $netId, encodedImage: $encodedImage) {
         ...userFields
     }
 }
