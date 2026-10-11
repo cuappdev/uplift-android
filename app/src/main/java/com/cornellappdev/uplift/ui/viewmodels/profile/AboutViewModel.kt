@@ -57,7 +57,7 @@ private val TEAMS_LIST: Map<String, List<TeamMember>> = mapOf(
 
 private const val ALL_SEMESTERS = "All Semesters"
 
-private val SEMESTERS = TEAMS_LIST.keys.toList() + ALL_SEMESTERS
+private val SEMESTERS = listOf(ALL_SEMESTERS) + TEAMS_LIST.keys
 
 
 data class AboutUiState(
