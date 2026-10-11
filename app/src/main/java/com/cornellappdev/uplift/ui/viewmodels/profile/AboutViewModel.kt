@@ -12,55 +12,68 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import java.time.LocalDate
 import javax.inject.Inject
-/** SEMESTERS is a hardcoded list of relevant semesters **/
-private val SEMESTERS = listOf("Fall 2026", "Spring 2026")
-
 data class TeamMember(
     val name: String,
     val role: String,
     @DrawableRes val imageRes: Int
 )
 
-/** ALL_SEMESTERS_TEAMS is a hardcoded mapping of relevant semesters and their teams **/
-private val ALL_SEMESTERS_TEAMS: Map<String, List<TeamMember>> = mapOf(
+data class Team(
+    val semester: String,
+    val members: List<TeamMember>
+)
+
+/** TEAMS_LIST is a hardcoded mapping of relevant semesters and their teams **/
+private val TEAMS_LIST: Map<String, List<TeamMember>> = mapOf(
     "Fall 2026" to listOf(
-        TeamMember("Nina", "Pod Lead",  R.drawable.ic_appdev),
-        TeamMember("Katie", "Design",  R.drawable.ic_appdev),
-        TeamMember("Zoe", "Design",  R.drawable.ic_appdev),
-        TeamMember("Anatoli", "IOS",  R.drawable.ic_appdev),
-        TeamMember("Kaylee", "IOS",  R.drawable.ic_appdev),
-        TeamMember("Sandy", "IOS",  R.drawable.ic_appdev),
-        TeamMember("Tran", "Backend",  R.drawable.ic_appdev),
-        TeamMember("Wyatt", "Backend",  R.drawable.ic_appdev),
-        TeamMember("Melissa", "Android",  R.drawable.ic_appdev),
-        TeamMember("Connie", "Android",  R.drawable.ic_appdev),
-        TeamMember("Cinnie", "Android",  R.drawable.ic_appdev),
-        TeamMember("Wendy", "Marketing",  R.drawable.ic_appdev)
+        TeamMember("Nina", "Pod Lead",  R.drawable.nina_img),
+        TeamMember("Katie", "Design",  R.drawable.katie_img),
+        TeamMember("Zoe", "Design",  R.drawable.zoe_img),
+        TeamMember("Anatoli", "IOS",  R.drawable.anatoli_img),
+        TeamMember("Kaylee", "IOS",  R.drawable.kaylee_img),
+        TeamMember("Sandy", "IOS",  R.drawable.sandy_img),
+        TeamMember("Tran", "Backend",  R.drawable.tran_img),
+        TeamMember("Wyatt", "Backend",  R.drawable.wyatt_img),
+        TeamMember("Melissa", "Android",  R.drawable.melissa_img),
+        TeamMember("Connie", "Android",  R.drawable.connie_img),
+        TeamMember("Cinnie", "Android",  R.drawable.cinnie_img),
+        TeamMember("Wendy", "Marketing",  R.drawable.wendy_img)
     ),
     "Spring 2026" to listOf(
-        TeamMember("Angela", "Pod Lead",  R.drawable.ic_appdev),
-        TeamMember("Enzo", "APL",  R.drawable.ic_appdev),
-        TeamMember("Selena", "Design",  R.drawable.ic_appdev),
-        TeamMember("Caitlyn", "IOS",  R.drawable.ic_appdev),
-        TeamMember("Jiwon", "IOS",  R.drawable.ic_appdev),
-        TeamMember("Anatoli", "IOS",  R.drawable.ic_appdev),
-        TeamMember("Sophie", "Backend",  R.drawable.ic_appdev),
-        TeamMember("Chimdi", "Backend",  R.drawable.ic_appdev),
-        TeamMember("Yitbrek", "Backend",  R.drawable.ic_appdev),
-        TeamMember("Melissa", "Android",  R.drawable.ic_appdev),
-        TeamMember("Preston", "Android",  R.drawable.ic_appdev),
-        TeamMember("Wendy", "Marketing",  R.drawable.ic_appdev)
+        TeamMember("Angela", "Pod Lead",  R.drawable.angela_img),
+        TeamMember("Enzo", "APL",  R.drawable.enzo_img),
+        TeamMember("Selena", "Design",  R.drawable.selena_img),
+        TeamMember("Caitlyn", "IOS",  R.drawable.caitlyn_img),
+        TeamMember("Jiwon", "IOS",  R.drawable.jiwon_img),
+        TeamMember("Anatoli", "IOS",  R.drawable.anatoli_img),
+        TeamMember("Sophie", "Backend",  R.drawable.sophie_img),
+        TeamMember("Chimdi", "Backend",  R.drawable.chimdi_img),
+        TeamMember("Yitbrek", "Backend",  R.drawable.yitbrek_img),
+        TeamMember("Melissa", "Android",  R.drawable.melissa_img),
+        TeamMember("Preston", "Android",  R.drawable.preston_img),
+        TeamMember("Wendy", "Marketing",  R.drawable.wendy_img)
     ),
 )
 
+private const val ALL_SEMESTERS = "All Semesters"
+
+private val SEMESTERS = TEAMS_LIST.keys.toList() + ALL_SEMESTERS
+
 
 data class AboutUiState(
-    val semesters: List<String> = SEMESTERS, // list of all semesters
-    var selectedSemester: String = SEMESTERS.first(), // the currently selected semester
+    val semesters: List<String> = SEMESTERS,
+    val selectedSemester: String = SEMESTERS.first(),
     val errorState: Boolean = false
 ) {
-    val members: List<TeamMember> // gets all members of the selected semester
-        get() = ALL_SEMESTERS_TEAMS[selectedSemester] ?: emptyList()
+    val isAll: Boolean
+        get() = selectedSemester == ALL_SEMESTERS
+
+    val sections: List<Team>
+        get() = if (isAll) {
+            TEAMS_LIST.map { (semester, members) -> Team(semester, members) }
+        } else {
+            listOf(Team(selectedSemester, TEAMS_LIST[selectedSemester].orEmpty()))
+        }
 }
 
 @HiltViewModel
