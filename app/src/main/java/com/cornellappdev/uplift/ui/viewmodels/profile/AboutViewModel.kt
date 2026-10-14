@@ -1,17 +1,11 @@
 package com.cornellappdev.uplift.ui.viewmodels.profile
 
 import androidx.annotation.DrawableRes
-import androidx.compose.ui.semantics.Role
-import androidx.lifecycle.ViewModel
 import com.cornellappdev.uplift.R
 import com.cornellappdev.uplift.ui.viewmodels.UpliftViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
-import java.time.LocalDate
 import javax.inject.Inject
+
 data class TeamMember(
     val name: String,
     val role: String,
