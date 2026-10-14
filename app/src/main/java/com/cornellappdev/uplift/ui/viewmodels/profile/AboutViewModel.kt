@@ -59,11 +59,8 @@ data class AboutUiState(
     val selectedSemester: String = SEMESTERS.first(),
     val errorState: Boolean = false
 ) {
-    val isAll: Boolean
-        get() = selectedSemester == ALL_SEMESTERS
-
     val sections: List<Team>
-        get() = if (isAll) {
+        get() = if (selectedSemester == ALL_SEMESTERS) {
             TEAMS_LIST.map { (semester, members) -> Team(semester, members) }
         } else {
             listOf(Team(selectedSemester, TEAMS_LIST[selectedSemester].orEmpty()))
