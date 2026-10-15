@@ -16,13 +16,8 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -32,8 +27,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.cornellappdev.uplift.R
+import com.cornellappdev.uplift.ui.components.general.UpliftDropdown
 import com.cornellappdev.uplift.ui.components.general.UpliftTopBarWithBack
-import com.cornellappdev.uplift.ui.components.reporting.ReportDropdown
 import com.cornellappdev.uplift.ui.theme.AppTextStyles
 import com.cornellappdev.uplift.ui.viewmodels.profile.AboutUiState
 import com.cornellappdev.uplift.ui.viewmodels.profile.AboutViewModel
@@ -51,8 +46,6 @@ fun AboutScreen(
         onBackClick = onBackClick,
         onSemesterSelected = aboutViewModel::onSemesterSelected
     )
-    // TODO: Implement error handling
-    var AboutErrorState by remember { mutableStateOf(false) }
 }
 
 @Composable
@@ -84,7 +77,7 @@ private fun AboutScreenContent(
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.appdev_rocket),
-                    contentDescription = "appdev rocket",
+                    contentDescription = "Appdev Rocket",
                     modifier = Modifier
                         .size(95.6.dp)
                 )
@@ -102,20 +95,18 @@ private fun AboutScreenContent(
 
             }
 
-            ReportDropdown(
+            UpliftDropdown(
                 title = "Semester",
                 selectedOption = uiState.selectedSemester,
                 onSelect = onSemesterSelected,
-                options = uiState.semesters,
-                // TODO: Implement Error handling soon?
-                onErrorStateChange = {}
+                options = uiState.semesters
             )
 
             LazyVerticalGrid(
                 columns = GridCells.Fixed(3),
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
                 verticalArrangement = Arrangement.spacedBy(24.dp),
-                contentPadding = PaddingValues(bottom = 32.dp),
+                contentPadding = PaddingValues(bottom = 32.dp, top = 32.dp),
                 modifier = Modifier.weight(1f)
             ) {
                 uiState.sections.forEachIndexed { index, section ->
