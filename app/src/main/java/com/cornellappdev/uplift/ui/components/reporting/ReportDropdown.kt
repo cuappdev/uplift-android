@@ -2,6 +2,8 @@ package com.cornellappdev.uplift.ui.components.reporting
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
+import com.cornellappdev.uplift.type.Report
 import com.cornellappdev.uplift.ui.components.general.UpliftDropdown
 
 /**
@@ -29,5 +31,18 @@ fun ReportDropdown(
         options = options,
         errorState = errorState,
         errorMessage = "This is a required field.",
+    )
+}
+
+@Preview
+@Composable
+private fun ReportDropdownPreview() {
+    ReportDropdown (
+        title = "Test Dropdown",
+        onSelect = {},
+        selectedOption = "Choose an option ...",
+        options = listOf("Option 1", "Option 2", "Option 3"),
+        errorState = true,
+        onErrorStateChange = {}
     )
 }

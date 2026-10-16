@@ -38,6 +38,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cornellappdev.uplift.util.GRAY01
@@ -169,4 +170,16 @@ fun UpliftDropdown(
         // Add a Spacer to create the necessary gap when the dropdown is expanded
         Spacer(modifier = Modifier.height(if (expanded) 44.dp else 0.dp))
     }
+}
+
+@Preview
+@Composable
+private fun UpliftDropdownPreview() {
+    UpliftDropdown(
+        "Test Dropdown",
+        onSelect = {},
+        selectedOption = "Choose an option ...",
+        options = listOf("Option 1", "Option 2", "Option 3"),
+        errorState = false
+    )
 }
