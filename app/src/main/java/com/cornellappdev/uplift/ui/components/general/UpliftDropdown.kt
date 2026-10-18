@@ -12,6 +12,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -178,14 +179,23 @@ fun UpliftDropdown(
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 private fun UpliftDropdownPreview() {
-    UpliftDropdown(
-        "Test Dropdown",
-        onSelect = {},
-        selectedOption = "Choose an option ...",
-        options = listOf("Option 1", "Option 2", "Option 3"),
-        errorState = false
-    )
+    var selectedOption by remember { mutableStateOf("Choose an option ...") }
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(250.dp)
+            .padding(16.dp)
+    ) {
+        UpliftDropdown(
+            title = "Test Dropdown",
+            onSelect = {selectedOption = it},
+            selectedOption = selectedOption,
+            options = listOf("Option 1", "Option 2", "Option 3"),
+            errorState = false
+        )
+    }
 }
