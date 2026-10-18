@@ -1,6 +1,7 @@
 package com.cornellappdev.uplift.ui.components.general
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
@@ -63,6 +64,11 @@ fun UpliftDropdown(
     errorMessage: String? = null
 ) {
     var expanded by remember { mutableStateOf(false) }
+    val spacerHeight by animateDpAsState(
+        targetValue = if (expanded) 44.dp else 0.dp,
+        animationSpec = tween(300),
+        label = "spacer height"
+    )
     val alpha by animateFloatAsState(
         targetValue = if (errorState && !expanded) 1f else 0f,
         label = "error text"
@@ -168,7 +174,7 @@ fun UpliftDropdown(
         }
 
         // Add a Spacer to create the necessary gap when the dropdown is expanded
-        Spacer(modifier = Modifier.height(if (expanded) 44.dp else 0.dp))
+        Spacer(modifier = Modifier.height(spacerHeight))
     }
 }
 
