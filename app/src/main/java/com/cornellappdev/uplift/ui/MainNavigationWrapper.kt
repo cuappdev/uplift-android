@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -39,12 +40,13 @@ import com.cornellappdev.uplift.ui.components.general.ConfettiBurst
 import com.cornellappdev.uplift.ui.nav.BottomNavScreens
 import com.cornellappdev.uplift.ui.nav.popBackClass
 import com.cornellappdev.uplift.ui.nav.popBackGym
-import com.cornellappdev.uplift.ui.nav.profileOnboardingGraph
 import com.cornellappdev.uplift.ui.screens.classes.ClassDetailScreen
 import com.cornellappdev.uplift.ui.screens.classes.ClassScreen
 import com.cornellappdev.uplift.ui.screens.gyms.GymDetailScreen
 import com.cornellappdev.uplift.ui.screens.gyms.HomeScreen
+import com.cornellappdev.uplift.ui.screens.onboarding.ProfileCreationScreen
 import com.cornellappdev.uplift.ui.screens.onboarding.SignInPromptScreen
+import com.cornellappdev.uplift.ui.screens.onboarding.WorkoutReminderOnboardingScreen
 import com.cornellappdev.uplift.ui.screens.profile.GuestProfileScreen
 import com.cornellappdev.uplift.ui.screens.profile.ProfileScreen
 import com.cornellappdev.uplift.ui.screens.profile.SettingsScreen
@@ -56,6 +58,7 @@ import com.cornellappdev.uplift.ui.screens.report.ReportSubmittedScreen
 import com.cornellappdev.uplift.ui.viewmodels.classes.ClassDetailViewModel
 import com.cornellappdev.uplift.ui.viewmodels.gyms.GymDetailViewModel
 import com.cornellappdev.uplift.ui.viewmodels.nav.RootNavigationViewModel
+import com.cornellappdev.uplift.ui.viewmodels.onboarding.ProfileCreationViewModel
 import com.cornellappdev.uplift.ui.viewmodels.profile.CheckInViewModel
 import com.cornellappdev.uplift.ui.viewmodels.profile.ConfettiViewModel
 import com.cornellappdev.uplift.util.CHECK_IN_FLAG
@@ -262,8 +265,18 @@ fun MainNavigationWrapper(
                 composable<UpliftRootRoute.Onboarding> {
                     SignInPromptScreen()
                 }
-                // Extracted function that handles profile onboarding destinations and their shared viewmodel.
-                profileOnboardingGraph(navController)
+                composable<UpliftRootRoute.ProfileCreation> {
+                    ProfileCreationScreen()
+                }
+
+                composable<UpliftRootRoute.GoalsOnboarding> { backStackEntry ->
+                    // Share the photo screen's viewmodel so account creation includes the selected photo.
+                    val profileCreationEntry = remember(backStackEntry) {
+                        navController.getBackStackEntry(UpliftRootRoute.ProfileCreation)
+                    }
+                    val viewModel: ProfileCreationViewModel = hiltViewModel(profileCreationEntry)
+                    WorkoutReminderOnboardingScreen(viewModel = viewModel)
+                }
                 composable<UpliftRootRoute.CapacityReminders> {
                     CapacityReminderScreen()
                 }

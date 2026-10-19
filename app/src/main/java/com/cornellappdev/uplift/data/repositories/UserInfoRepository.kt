@@ -24,6 +24,7 @@ import com.cornellappdev.uplift.DeleteUserMutation
 import com.cornellappdev.uplift.GetUserByNetIdQuery
 import com.cornellappdev.uplift.LoginUserMutation
 import com.cornellappdev.uplift.SetWorkoutGoalsMutation
+import com.cornellappdev.uplift.UpdateProfilePhotoMutation
 import com.cornellappdev.uplift.data.auth.SessionManager
 import kotlinx.coroutines.flow.map;
 import kotlinx.coroutines.flow.firstOrNull
@@ -42,6 +43,9 @@ class UserInfoRepository @Inject constructor(
     private val sessionManager: SessionManager,
     @ApplicationContext private val context: Context
 ){
+    private companion object {
+        const val TAG = "UserInfoRepository"
+    }
 
     suspend fun createUser(
         email: String,
@@ -64,7 +68,7 @@ class UserInfoRepository @Inject constructor(
             ).execute()
             val userFields = response.data?.createUser?.userFields
             if (response.hasErrors() || userFields == null) {
-                Log.e("UserInfoRepository", "Server error: ${response.errors}")
+                Log.e(TAG, "Server error: ${response.errors}")
                 return false
             }
             val loginResponse = apolloClient.mutation(
@@ -74,12 +78,12 @@ class UserInfoRepository @Inject constructor(
             ).execute()
             val id = userFields.id.toIntOrNull()
             if (id == null) {
-                Log.e("UserInfoRepository", "Failed to set goal: non-numeric user ID '${userFields.id}'")
+                Log.e(TAG, "Failed to set goal: non-numeric user ID '${userFields.id}'")
                 return false
             }
             val loginData = loginResponse.data?.loginUser
             if (loginData?.accessToken == null || loginData.refreshToken == null) {
-                Log.e("UserInfoRepository", "Login failed after creation: ${loginResponse.errors}")
+                Log.e(TAG, "Login failed after creation: ${loginResponse.errors}")
                 return false
             }
             val accessToken = loginData.accessToken
@@ -90,7 +94,7 @@ class UserInfoRepository @Inject constructor(
                 }
             }
             else {
-                Log.d("UserInfoRepository", "Skipping goal upload")
+                Log.d(TAG, "Skipping goal upload")
             }
             storeUserFields(
                 id = userFields.id,
@@ -108,13 +112,35 @@ class UserInfoRepository @Inject constructor(
                 access = accessToken,
                 refresh = refreshToken
             )
-            Log.d("UserInfoRepositoryImpl", "User created successfully")
+            Log.d(TAG, "User created successfully")
             return true
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
-            Log.e("UserInfoRepositoryImpl", "Error creating user: $e")
+            Log.e(TAG, "Error creating user: $e")
             return false
+        }
+    }
+
+    suspend fun updateProfilePhoto(uri: Uri): Result<Uri> {
+        return try {
+            val userId = getUserIdFromDataStore()?.toIntOrNull()
+                ?: throw IllegalStateException("Missing or invalid user ID")
+            val encodedImage = encodeProfileImage(uri)
+            val response = apolloClient.mutation(
+                UpdateProfilePhotoMutation(userId = userId, encodedImage = encodedImage)
+            ).execute()
+            check(!response.hasErrors()) { "Profile photo update failed" }
+            val updatedUser = response.data?.editUser
+                ?: throw IllegalStateException("Profile photo update returned no user")
+            val imageUrl = updatedUser.encodedImage
+            check(!imageUrl.isNullOrBlank()) { "Updated profile photo URL missing" }
+            Result.success(Uri.parse(imageUrl))
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to update profile photo", e)
+            Result.failure(e)
         }
     }
 
@@ -133,11 +159,11 @@ class UserInfoRepository @Inject constructor(
             }
         }
         try {
-            ByteArrayOutputStream().use { output ->
-                check(bitmap.compress(Bitmap.CompressFormat.JPEG, 20, output)) {
+            ByteArrayOutputStream().use { outputStream ->
+                check(bitmap.compress(Bitmap.CompressFormat.JPEG, 20, outputStream)) {
                     "Failed to compress profile image"
                 }
-                Base64.encodeToString(output.toByteArray(), Base64.NO_WRAP)
+                Base64.encodeToString(outputStream.toByteArray(), Base64.NO_WRAP)
             }
         } finally {
             bitmap.recycle()
@@ -156,7 +182,7 @@ class UserInfoRepository @Inject constructor(
             if (loginData?.accessToken != null && loginData.refreshToken != null && userInfo != null) {
                 val id = userInfo.id.toIntOrNull()
                 if (id == null) {
-                    Log.e("UserInfoRepository", "Failed to log in: non-numeric user ID resulting in null '${userInfo.id}'")
+                    Log.e(TAG, "Failed to log in: non-numeric user ID resulting in null '${userInfo.id}'")
                     return false
                 }
                 storeUserFields(
@@ -177,18 +203,18 @@ class UserInfoRepository @Inject constructor(
                 )
                 true
             } else {
-                Log.e("UserInfoRepository", "Login failed: Missing tokens or user info;  ${loginResponse.errors}")
+                Log.e(TAG, "Login failed: Missing tokens or user info;  ${loginResponse.errors}")
                 false
             }
         } catch (e: Exception) {
-            Log.e("UserInfoRepository", "Error logging in: $e")
+            Log.e(TAG, "Error logging in: $e")
             false
         }
     }
 
     suspend fun uploadGoal(id:Int?, goal: Int, manualToken: String? = null): Boolean {
         if (id == null) {
-            Log.e("UserInfoRepository", "Failed to set goal: non-numeric user ID '$id'")
+            Log.e(TAG, "Failed to set goal: non-numeric user ID '$id'")
             return false
         }
         val call = apolloClient.mutation(
@@ -202,10 +228,10 @@ class UserInfoRepository @Inject constructor(
         }
         val goalResponse = call.execute()
         if (goalResponse.hasErrors()) {
-            Log.e("UserInfoRepository", "Failed to set goal: ${goalResponse.errors}")
+            Log.e(TAG, "Failed to set goal: ${goalResponse.errors}")
             return false
         }
-        Log.d("UserInfoRepository", "Goal set successfully: $goal")
+        Log.d(TAG, "Goal set successfully: $goal")
         return true
     }
 
@@ -244,7 +270,7 @@ class UserInfoRepository @Inject constructor(
                 totalGymDays = user.totalGymDays
             )
         } catch (e: Exception) {
-            Log.e("UserInfoRepositoryImpl", "Error getting user by netId: $e")
+            Log.e(TAG, "Error getting user by netId: $e")
             return null
         }
     }
@@ -270,7 +296,7 @@ class UserInfoRepository @Inject constructor(
         try {
             firebaseAuth.signOut()
         } catch (e: Exception) {
-            Log.e("UserInfoRepository", "Firebase signout failed: $e")
+            Log.e(TAG, "Firebase signout failed: $e")
         } finally {
             sessionManager.logout()
             dataStore.edit { it.clear() }
@@ -281,31 +307,31 @@ class UserInfoRepository @Inject constructor(
         return try {
             val userId = sessionManager.userId
             if (userId == null) {
-                Log.e("UserInfoRepository", "Delete account failed: No user ID found in session")
+                Log.e(TAG, "Delete account failed: No user ID found in session")
                 return false
             }
 
             val response = apolloClient.mutation(DeleteUserMutation(userId = userId)).execute()
             if (response.hasErrors()) {
-                Log.e("UserInfoRepository", "Server error during delete: ${response.errors}")
+                Log.e(TAG, "Server error during delete: ${response.errors}")
                 return false
             }
 
             // Want to log out no matter if the firebase deletes or not
             try {
                 firebaseAuth.currentUser?.delete()?.await()
-                Log.d("UserInfoRepository", "Firebase account deleted successfully")
+                Log.d(TAG, "Firebase account deleted successfully")
             } catch (e: Exception) {
-                Log.e("UserInfoRepository", "Firebase delete failed (User may need to re-login): $e")
+                Log.e(TAG, "Firebase delete failed (User may need to re-login): $e")
             }
 
             sessionManager.logout()
             dataStore.edit { it.clear() }
 
-            Log.d("UserInfoRepository", "Successfully signed out")
+            Log.d(TAG, "Successfully signed out")
             true
         } catch (e: Exception) {
-            Log.e("UserInfoRepository", "Error deleting account: $e")
+            Log.e(TAG, "Error deleting account: $e")
             false
         }
     }

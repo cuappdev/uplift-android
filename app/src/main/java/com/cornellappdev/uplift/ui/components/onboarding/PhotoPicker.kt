@@ -17,20 +17,19 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import coil.request.CachePolicy
+import coil.request.ImageRequest
 import coil.compose.rememberAsyncImagePainter
 import com.cornellappdev.uplift.util.GRAY01
 import com.cornellappdev.uplift.R
@@ -77,14 +76,10 @@ fun PhotoPicker(
 ) {
     val sizes = getPhotoPickerSizes(screenType)
 
-    // State to store the selected image URI
-    var selectedImageUri by rememberSaveable(imageUri) { mutableStateOf(imageUri) }
-
-    // Registers a photo picker activity launcher in single-select mode.
+    // Report selections to the caller, which owns the displayed photo and upload state.
     val pickMedia =
         rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
             if (uri != null) {
-                selectedImageUri = uri
                 onPhotoSelected(uri)
             }
         }
@@ -109,9 +104,20 @@ fun PhotoPicker(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                if (selectedImageUri != null) {
+                if (imageUri != null) {
+                    // Profile uploads replace the bytes at the same backend URL.
+                    val imageRequest = ImageRequest.Builder(LocalContext.current)
+                        .data(imageUri)
+                        .apply {
+                            if (screenType == ScreenType.PROFILE) {
+                                memoryCachePolicy(CachePolicy.DISABLED)
+                                diskCachePolicy(CachePolicy.DISABLED)
+                                addHeader("Cache-Control", "no-cache")
+                            }
+                        }
+                        .build()
                     Image(
-                        painter = rememberAsyncImagePainter(selectedImageUri),
+                        painter = rememberAsyncImagePainter(imageRequest),
                         contentDescription = null,
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
@@ -136,7 +142,7 @@ fun PhotoPicker(
                 }
             }
         }
-        if (selectedImageUri != null || screenType == ScreenType.PROFILE) {
+        if (imageUri != null || screenType == ScreenType.PROFILE) {
             Image(
                 painter = painterResource(id = R.drawable.ic_camera_circle),
                 contentDescription = null,

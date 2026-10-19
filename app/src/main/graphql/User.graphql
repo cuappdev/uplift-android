@@ -34,6 +34,12 @@ query GetWeeklyWorkoutDays($id: Int!) {
     getWeeklyWorkoutDays(id: $id)
 }
 
+mutation UpdateProfilePhoto($userId: Int!, $encodedImage: String!) {
+    editUser(userId: $userId, encodedImage: $encodedImage) {
+        encodedImage
+    }
+}
+
 query GetWorkoutsById($id: Int!) {
     getWorkoutsById(id: $id) {
         ...workoutFields
