@@ -52,6 +52,7 @@ import com.cornellappdev.uplift.ui.screens.profile.WorkoutHistoryScreen
 import com.cornellappdev.uplift.ui.screens.reminders.CapacityReminderScreen
 import com.cornellappdev.uplift.ui.screens.reminders.MainReminderScreen
 import com.cornellappdev.uplift.ui.screens.onboarding.WorkoutReminderOnboardingScreen
+import com.cornellappdev.uplift.ui.screens.profile.AboutScreen
 import com.cornellappdev.uplift.ui.screens.report.ReportIssueScreen
 import com.cornellappdev.uplift.ui.screens.report.ReportSubmittedScreen
 import com.cornellappdev.uplift.ui.viewmodels.classes.ClassDetailViewModel
@@ -285,6 +286,11 @@ fun MainNavigationWrapper(
                 composable<UpliftRootRoute.Settings> {
                     SettingsScreen()
                 }
+                composable<UpliftRootRoute.About> {
+                    AboutScreen(
+                        onBackClick = { navController.popBackStack() }
+                    )
+                }
                 composable<UpliftRootRoute.WorkoutHistory> {
                     WorkoutHistoryScreen(
                         onBack = { navController.popBackStack() }
@@ -389,6 +395,8 @@ sealed class UpliftRootRoute {
     @Serializable
     data object Settings : UpliftRootRoute()
 
+    @Serializable
+    data object About : UpliftRootRoute()
     @Serializable
     data object WorkoutHistory : UpliftRootRoute()
 }
