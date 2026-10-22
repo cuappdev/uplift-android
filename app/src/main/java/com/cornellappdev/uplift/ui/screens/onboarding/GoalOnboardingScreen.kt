@@ -1,6 +1,7 @@
 package com.cornellappdev.uplift.ui.screens.onboarding
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -11,16 +12,18 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.cornellappdev.uplift.R
 import com.cornellappdev.uplift.ui.components.general.UpliftTopBar
+import com.cornellappdev.uplift.ui.components.goalsetting.GoalSettingHeader
 import com.cornellappdev.uplift.ui.components.goalsetting.GoalSlider
 import com.cornellappdev.uplift.ui.screens.reminders.OnboardingButtons
 import com.cornellappdev.uplift.ui.theme.UpliftTheme
@@ -41,8 +44,8 @@ fun GoalsOnboardingScreen(
 
 @Composable
 private fun GoalsOnboardingScreenContent(
-    goalValue: Float,
-    onGoalValueChange: (Float) -> Unit,
+    goalValue: Int,
+    onGoalValueChange: (Int) -> Unit,
     onNext: () -> Unit,
     onSkip: () -> Unit
 ) {
@@ -66,8 +69,11 @@ private fun GoalsOnboardingScreenContent(
                 .padding(padding)
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
+                .padding(vertical = 24.dp, horizontal = 18.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            GoalSlider(value = goalValue, onValueChange = onGoalValueChange, isOnboarding = true)
+            GoalSettingHeader(isOnboarding = true)
+            GoalSlider(value = goalValue, onValueChange = onGoalValueChange)
         }
     }
 }
@@ -76,7 +82,7 @@ private fun GoalsOnboardingScreenContent(
 @Composable
 private fun GoalsOnboardingScreenPreview() {
     UpliftTheme{
-        var sliderVal by remember { mutableFloatStateOf(3f) }
+        var sliderVal by remember { mutableIntStateOf(3) }
         GoalsOnboardingScreenContent(
             goalValue = sliderVal,
             onGoalValueChange = { sliderVal = it },

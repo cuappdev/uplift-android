@@ -25,7 +25,7 @@
     <!-- Goals -->
     <string name="goals_onboarding_title">Set your Goals.</string>
     <string name="goals_title">Goals</string>
-    <string name="goals_set_a_plan">Let\'s set a plan! </string>
+    <string name="goals_set_a_plan">"Let\'s set a plan! "</string>
     <string name="goals_days_per_week_question">How many days a week would you like to work out?</string>
     <string name="goals_unchangeable_notice">This goal will be unchangeable for 1 month.</string>
     <string name="goals_saved">Saved</string>

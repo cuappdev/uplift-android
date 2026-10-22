@@ -13,7 +13,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.cornellappdev.uplift.ui.components.general.UpliftTopBarWithBack
 import com.cornellappdev.uplift.ui.components.goalsetting.DeleteDialog
+import com.cornellappdev.uplift.ui.components.goalsetting.GoalSettingHeader
 import com.cornellappdev.uplift.ui.components.goalsetting.GoalSlider
 import com.cornellappdev.uplift.ui.components.goalsetting.WorkoutReminders
 import com.cornellappdev.uplift.ui.components.general.UpliftButton
@@ -51,7 +52,7 @@ fun WorkoutReminderSettingsScreen(
 ) {
     /* TODO: Connect to view model */
     WorkoutReminderScreen(
-        goalValue = 1.0f,
+        goalValue = 1,
         isOnboarding = false,
         // Pass callbacks to update the state defined above
         onGoalValueChange = {},
@@ -73,8 +74,8 @@ fun WorkoutReminderSettingsScreen(
 @Composable
 fun WorkoutReminderScreen(
     /* TODO: Add view model calls */
-    goalValue: Float,
-    onGoalValueChange: (Float) -> Unit,
+    goalValue: Int,
+    onGoalValueChange: (Int) -> Unit,
     reminders: List<Reminder> = emptyList(),
     onRemindersChange: (List<Reminder>) -> Unit = {},
     onBackClick: () -> Unit,
@@ -114,13 +115,13 @@ private fun WorkoutReminderContent(
     selectedReminder: Reminder?,
     addNewReminderState: Boolean,
     deleteDialogOpen: Boolean,
-    goalValue: Float,
+    goalValue: Int,
     isOnboarding: Boolean,
     onSelectedReminderChange: (Reminder?) -> Unit,
     onAddNewReminderStateChange: (Boolean) -> Unit,
     onDeleteDialogOpenChange: (Boolean) -> Unit,
     onRemindersChange: (List<Reminder>) -> Unit,
-    onGoalValueChange: (Float) -> Unit = {},
+    onGoalValueChange: (Int) -> Unit = {},
     onBackClick: () -> Unit,
     onNext: () -> Unit = {},
     onSkip: () -> Unit = {}
@@ -147,7 +148,13 @@ private fun WorkoutReminderContent(
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
         ) {
-            GoalSlider(value = goalValue, onValueChange = onGoalValueChange, isOnboarding = isOnboarding)
+            Column(
+                modifier = Modifier.padding(vertical = 24.dp, horizontal = 18.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                GoalSettingHeader(isOnboarding = isOnboarding)
+                GoalSlider(value = goalValue, onValueChange = onGoalValueChange)
+            }
 
             if (!isOnboarding) {
                 WorkoutReminders(
@@ -212,7 +219,7 @@ fun OnboardingButtons(onNext: () -> Unit, onSkip: () -> Unit) {
 @Preview(showBackground = true)
 @Composable
 fun WorkoutReminderScreenPreview() {
-    var sliderVal by remember { mutableFloatStateOf(1f) }
+    var sliderVal by remember { mutableIntStateOf(1) }
     val reminders = remember {
         mutableStateListOf(
             Reminder(time = "9:00 AM", days = setOf("M", "T", "W", "Th", "F"), enabled = true),

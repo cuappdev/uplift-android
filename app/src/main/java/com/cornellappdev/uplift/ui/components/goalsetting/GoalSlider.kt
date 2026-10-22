@@ -1,19 +1,12 @@
 package com.cornellappdev.uplift.ui.components.goalsetting
 
-import android.R.attr.end
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Slider
@@ -22,22 +15,20 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.layout
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.cornellappdev.uplift.R
+import com.cornellappdev.uplift.ui.theme.UpliftTheme
 import com.cornellappdev.uplift.util.GRAY01
-import com.cornellappdev.uplift.util.GRAY04
 import com.cornellappdev.uplift.util.PRIMARY_BLACK
 import com.cornellappdev.uplift.util.PRIMARY_YELLOW
 import com.cornellappdev.uplift.util.montserratFamily
@@ -51,76 +42,14 @@ private val LabelEdgeInset = 5.dp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GoalSlider(
-    value: Float,
-    onValueChange: (Float) -> Unit,
-    isOnboarding: Boolean
+    value: Int,
+    onValueChange: (Int) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 24.dp, horizontal = 18.dp),
+        modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-        val daysPerWeekQuestion = stringResource(R.string.goals_days_per_week_question)
-        if (!isOnboarding) {
-            val setAPlan = stringResource(R.string.goals_set_a_plan)
-            Text(
-                buildAnnotatedString {
-                    withStyle(
-                        style = SpanStyle(
-                            fontFamily = montserratFamily,
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = PRIMARY_BLACK
-                        )
-                    ) {
-                        append(setAPlan)
-                    }
-                    withStyle(
-                        style = SpanStyle(
-                            fontFamily = montserratFamily,
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            color = PRIMARY_BLACK
-                        )
-                    ) {
-                        append(daysPerWeekQuestion)
-                    }
-                },
-                modifier = Modifier.padding(end = 30.dp)
-            )
-        } else {
-            Text(
-                text = daysPerWeekQuestion,
-                fontFamily = montserratFamily,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = PRIMARY_BLACK,
-                modifier = Modifier.padding(end = 30.dp)
-            )
-
-        }
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(IntrinsicSize.Min),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Box(
-                modifier = Modifier
-                    .width(3.dp)
-                    .fillMaxHeight()
-                    .background(PRIMARY_YELLOW)
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(
-                text = stringResource(R.string.goals_unchangeable_notice),
-                fontFamily = montserratFamily,
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Medium,
-                color = PRIMARY_BLACK
-            )
-        }
         Slider(
             modifier = Modifier
                 .fillMaxWidth()
@@ -136,11 +65,11 @@ fun GoalSlider(
                         placeable.place(-thumbPx / 2, 0)
                     }
                 },
-            value = value,
+            value = value.toFloat(),
             valueRange = MIN_DAYS.toFloat()..MAX_DAYS.toFloat(),
             steps = MAX_DAYS - MIN_DAYS - 1,
             onValueChange = {
-                onValueChange(it)
+                onValueChange(it.roundToInt())
             },
             thumb = {
                 Surface(
@@ -214,5 +143,14 @@ private fun StepLabels() {
                 placeable.place((centerX - placeable.width / 2f).roundToInt(), 0)
             }
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun GoalSliderPreview() {
+    UpliftTheme {
+        var goal by remember { mutableIntStateOf(3) }
+        GoalSlider(value = goal, onValueChange = { goal = it })
     }
 }
