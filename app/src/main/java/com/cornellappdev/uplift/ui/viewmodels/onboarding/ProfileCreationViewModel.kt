@@ -17,7 +17,7 @@ data class ProfileCreationUiState(
     val name: String = "",
     val imageUri: Uri? = null,
     val isGoalSkipped: Boolean = false,
-    val goal: Float = 0.0f // Goal slider val is stored as float but we could change this
+    val goal: Int = 1
 )
 
 @HiltViewModel
@@ -46,7 +46,7 @@ class ProfileCreationViewModel @Inject constructor(
 
         val netId = email.substringBefore("@")
         val isSkipped = state.isGoalSkipped
-        val goal = if (isSkipped) 0 else state.goal.toInt()
+        val goal = if (isSkipped) 0 else state.goal
         if (userInfoRepository.createUser(email, name, netId, isSkipped, goal)) {
             Log.d("ProfileCreationViewModel", "User created successfully")
         } else {
@@ -67,7 +67,7 @@ class ProfileCreationViewModel @Inject constructor(
         rootNavigationRepository.navigateUp()
     }
 
-    fun updateGoals(newGoal: Float) {
+    fun updateGoals(newGoal: Int) {
         applyMutation {
             copy(goal = newGoal)
         }
