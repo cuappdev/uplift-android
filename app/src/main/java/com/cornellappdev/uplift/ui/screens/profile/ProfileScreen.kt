@@ -1,5 +1,7 @@
 package com.cornellappdev.uplift.ui.screens.profile
 
+import android.net.Uri
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Column
@@ -55,6 +57,7 @@ fun ProfileScreen(
         toGoals = viewModel::toGoals,
         toHistory = viewModel::toHistory,
         onRetry = viewModel::reload,
+        onPhotoSelected = viewModel::onPhotoSelected,
         loadingShimmer = loadingShimmer
     )
 }
@@ -66,7 +69,8 @@ private fun ProfileScreenContent(
     toGoals: () -> Unit,
     toHistory: () -> Unit,
     onRetry: () -> Unit,
-    loadingShimmer: Shimmer
+    loadingShimmer: Shimmer,
+    onPhotoSelected: (Uri) -> Unit
 ) {
     Scaffold(
         containerColor = Color.White,
@@ -101,7 +105,7 @@ private fun ProfileScreenContent(
                             gymDays = uiState.totalGymDays,
                             streaks = uiState.activeStreak,
                             profilePictureUri = uiState.profileImage,
-                            onPhotoSelected = {},
+                            onPhotoSelected = onPhotoSelected,
                             netId = uiState.netId
                         )
                         WorkoutsSectionContent(
@@ -216,6 +220,7 @@ private fun ProfileScreenContentPreview() {
         {},
         {},
         onRetry = {},
+        onPhotoSelected = {},
         loadingShimmer = rememberShimmer(ShimmerBounds.Window)
     )
 }
