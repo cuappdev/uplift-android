@@ -319,7 +319,7 @@ private fun GoalsAlertDialog(
 
 @Preview(showBackground = true, name = "Initial State")
 @Composable
-fun MyGoalsScreenInitialPreview() {
+private fun MyGoalsScreenInitialPreview() {
     UpliftTheme{
         MyGoalsScreen(
             initialGoalValue = 3,
@@ -331,7 +331,7 @@ fun MyGoalsScreenInitialPreview() {
 
 @Preview(showBackground = true, name = "Locked State Dialog")
 @Composable
-fun MyGoalsScreenLockedPreview() {
+private fun MyGoalsScreenLockedPreview() {
     UpliftTheme{
         MyGoalsScreen(
             initialGoalValue = 5,

@@ -218,7 +218,7 @@ fun OnboardingButtons(onNext: () -> Unit, onSkip: () -> Unit) {
 
 @Preview(showBackground = true)
 @Composable
-fun WorkoutReminderScreenPreview() {
+private fun WorkoutReminderScreenPreview() {
     var sliderVal by remember { mutableIntStateOf(1) }
     val reminders = remember {
         mutableStateListOf(
