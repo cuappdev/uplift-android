@@ -28,12 +28,6 @@ sealed class GoalSaveState {
     data object Error : GoalSaveState()
 }
 
-/**
- * @param savedGoal the goal stored on the backend, or null if the user hasn't set one
- * @param selectedGoal the goal currently selected on the slider
- * @param lockedUntilDate formatted date the goal can next be changed, or null if it isn't locked
- * @param lockedDaysRemaining days until the goal can next be changed
- */
 data class MyGoalsUiState(
     val loadState: GoalsLoadState = GoalsLoadState.Loading,
     val savedGoal: Int? = null,

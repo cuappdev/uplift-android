@@ -35,6 +35,8 @@
     <string name="goals_back">Back</string>
     <string name="goals_locked_message">Goals can only be changed after 1 month. The next time you can edit your goal is on %1$s.</string>
     <string name="goals_change_in">You can change your goal in:</string>
+    <string name="goals_load_error">Couldn\'t load your goal. Please try again later.</string>
+    <string name="goals_save_error">Couldn\'t save your goal. Please try again.</string>
     <plurals name="goals_days_remaining">
         <item quantity="one">%d Day</item>
         <item quantity="other">%d Days</item>

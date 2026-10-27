@@ -23,11 +23,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -40,12 +35,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.cornellappdev.uplift.R
 import com.cornellappdev.uplift.ui.components.general.UpliftButton
 import com.cornellappdev.uplift.ui.components.general.UpliftTopBarWithBack
 import com.cornellappdev.uplift.ui.components.goalsetting.GoalSettingHeader
 import com.cornellappdev.uplift.ui.components.goalsetting.GoalSlider
+import com.cornellappdev.uplift.ui.theme.AppTextStyles
 import com.cornellappdev.uplift.ui.theme.UpliftTheme
+import com.cornellappdev.uplift.ui.viewmodels.profile.GoalSaveState
+import com.cornellappdev.uplift.ui.viewmodels.profile.GoalsLoadState
+import com.cornellappdev.uplift.ui.viewmodels.profile.MyGoalsUiState
+import com.cornellappdev.uplift.ui.viewmodels.profile.MyGoalsViewModel
 import com.cornellappdev.uplift.util.GRAY01
 import com.cornellappdev.uplift.util.GRAY04
 import com.cornellappdev.uplift.util.PRIMARY_BLACK
@@ -54,20 +55,31 @@ import com.cornellappdev.uplift.util.montserratFamily
 
 @Composable
 fun MyGoalsScreen(
-    initialGoalValue: Int,
     onBackClick: () -> Unit,
-    onSaveGoal: (Int) -> Unit,
-    isInitiallyLocked: Boolean = false,
-    lockedUntilDate: String = "5/12/26",
-    lockedDaysRemaining: Int = 30
+    viewModel: MyGoalsViewModel = hiltViewModel()
 ) {
-    var currentGoal by remember(initialGoalValue) { mutableIntStateOf(initialGoalValue) }
-    val hasChanged = currentGoal != initialGoalValue
+    val uiState = viewModel.collectUiStateValue()
+    MyGoalsScreenContent(
+        uiState = uiState,
+        onBackClick = onBackClick,
+        onGoalChange = viewModel::onGoalChange,
+        onSaveClick = viewModel::onSaveClick,
+        onConfirmSave = viewModel::onConfirmSave,
+        onDismissConfirmation = viewModel::onDismissConfirmation,
+        onDismissLocked = viewModel::onDismissLocked
+    )
+}
 
-    var isSaved by remember { mutableStateOf(value = false) }
-    var showConfirmationDialog by remember { mutableStateOf(value = false) }
-    var showLockedDialog by remember { mutableStateOf(value = isInitiallyLocked) }
-
+@Composable
+private fun MyGoalsScreenContent(
+    uiState: MyGoalsUiState,
+    onBackClick: () -> Unit,
+    onGoalChange: (Int) -> Unit,
+    onSaveClick: () -> Unit,
+    onConfirmSave: () -> Unit,
+    onDismissConfirmation: () -> Unit,
+    onDismissLocked: () -> Unit
+) {
     Scaffold(
         topBar = {
             UpliftTopBarWithBack(
@@ -93,43 +105,48 @@ fun MyGoalsScreen(
             ) {
                 GoalSettingHeader(isOnboarding = false)
                 GoalSlider(
-                    value = currentGoal,
-                    onValueChange = {
-                        if (isInitiallyLocked) {
-                            showLockedDialog = true
-                        } else {
-                            currentGoal = it
-                            isSaved = false
-                        }
-                    }
+                    value = uiState.selectedGoal,
+                    onValueChange = onGoalChange
                 )
             }
 
             Spacer(modifier = Modifier.height(48.dp))
 
             SaveGoalButton(
-                isSaved = isSaved,
-                enabled = hasChanged && !isInitiallyLocked,
-                onClick = { showConfirmationDialog = true }
+                isSaved = uiState.saveState == GoalSaveState.Saved,
+                enabled = uiState.canSave,
+                onClick = onSaveClick
             )
+
+            val errorMessage = when {
+                uiState.loadState == GoalsLoadState.Error -> stringResource(R.string.goals_load_error)
+                uiState.saveState == GoalSaveState.Error -> stringResource(R.string.goals_save_error)
+                else -> null
+            }
+            if (errorMessage != null) {
+                Text(
+                    text = errorMessage,
+                    style = AppTextStyles.LabelMedium,
+                    color = Color.Red,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(top = 12.dp, start = 24.dp, end = 24.dp)
+                )
+            }
         }
 
-        if (showConfirmationDialog) {
+        if (uiState.showConfirmationDialog) {
             SaveGoalConfirmationDialog(
-                onDismiss = { showConfirmationDialog = false },
-                onConfirm = {
-                    showConfirmationDialog = false
-                    isSaved = true
-                    onSaveGoal(currentGoal)
-                }
+                onDismiss = onDismissConfirmation,
+                onConfirm = onConfirmSave
             )
         }
 
-        if (showLockedDialog) {
+        val lockedUntilDate = uiState.lockedUntilDate
+        if (uiState.showLockedDialog && lockedUntilDate != null) {
             GoalLockedDialog(
                 lockedUntilDate = lockedUntilDate,
-                lockedDaysRemaining = lockedDaysRemaining,
-                onDismiss = { showLockedDialog = false }
+                lockedDaysRemaining = uiState.lockedDaysRemaining,
+                onDismiss = onDismissLocked
             )
         }
     }
@@ -317,29 +334,53 @@ private fun GoalsAlertDialog(
     )
 }
 
+@Composable
+private fun MyGoalsScreenPreview(uiState: MyGoalsUiState) {
+    UpliftTheme {
+        MyGoalsScreenContent(
+            uiState = uiState,
+            onBackClick = {},
+            onGoalChange = {},
+            onSaveClick = {},
+            onConfirmSave = {},
+            onDismissConfirmation = {},
+            onDismissLocked = {}
+        )
+    }
+}
+
 @Preview(showBackground = true, name = "Initial State")
 @Composable
 private fun MyGoalsScreenInitialPreview() {
-    UpliftTheme{
-        MyGoalsScreen(
-            initialGoalValue = 3,
-            onBackClick = {},
-            onSaveGoal = {}
-        )
-    }
+    MyGoalsScreenPreview(
+        MyGoalsUiState(loadState = GoalsLoadState.Loaded, savedGoal = 3, selectedGoal = 3)
+    )
 }
 
 @Preview(showBackground = true, name = "Locked State Dialog")
 @Composable
 private fun MyGoalsScreenLockedPreview() {
-    UpliftTheme{
-        MyGoalsScreen(
-            initialGoalValue = 5,
-            onBackClick = {},
-            onSaveGoal = {},
-            isInitiallyLocked = true,
+    MyGoalsScreenPreview(
+        MyGoalsUiState(
+            loadState = GoalsLoadState.Loaded,
+            savedGoal = 5,
+            selectedGoal = 5,
             lockedUntilDate = "5/12/26",
-            lockedDaysRemaining = 30
+            lockedDaysRemaining = 30,
+            showLockedDialog = true
         )
-    }
+    )
+}
+
+@Preview(showBackground = true, name = "Save Error")
+@Composable
+private fun MyGoalsScreenSaveErrorPreview() {
+    MyGoalsScreenPreview(
+        MyGoalsUiState(
+            loadState = GoalsLoadState.Loaded,
+            savedGoal = 3,
+            selectedGoal = 5,
+            saveState = GoalSaveState.Error
+        )
+    )
 }
