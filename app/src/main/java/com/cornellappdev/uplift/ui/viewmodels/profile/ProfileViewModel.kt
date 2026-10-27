@@ -72,6 +72,11 @@ class ProfileViewModel @Inject constructor(
                 reload()
             }
         }
+        viewModelScope.launch {
+            profileRepository.goalUpdatedEvent.collectLatest {
+                reload()
+            }
+        }
     }
 
     fun reload() {
@@ -174,22 +179,12 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    fun updateWorkoutGoal(goal: Int) = viewModelScope.launch {
-        val result = profileRepository.setWorkoutGoal(goal)
-
-        if (result.isSuccess) {
-            reload()
-        } else {
-            Log.e("profile VM", "Failed to update workout goal", result.exceptionOrNull())
-        }
-    }
-
     fun toSettings() {
         rootNavigationRepository.navigate(UpliftRootRoute.Settings)
     }
 
     fun toGoals() {
-        // replace with the actual route once goals exists
+        rootNavigationRepository.navigate(UpliftRootRoute.Goals)
     }
 
     fun toHistory() {
