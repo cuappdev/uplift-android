@@ -34,7 +34,6 @@ import com.cornellappdev.uplift.ui.components.profile.workouts.GoalsSection
 import com.cornellappdev.uplift.ui.components.profile.workouts.HistoryItem
 import com.cornellappdev.uplift.ui.components.profile.workouts.HistorySection
 import com.cornellappdev.uplift.ui.components.profile.ProfileHeaderSection
-import com.cornellappdev.uplift.ui.screens.gyms.subscreens.MainError
 import com.cornellappdev.uplift.ui.viewmodels.profile.ProfileUiState
 import com.cornellappdev.uplift.ui.viewmodels.profile.ProfileLoadState
 import com.cornellappdev.uplift.ui.viewmodels.profile.ProfileViewModel
@@ -87,8 +86,8 @@ private fun ProfileScreenContent(
         ) { state ->
             when (state) {
                 ProfileLoadState.Loading -> ProfileLoading(loadingShimmer)
-                // Reuse the existing retry UI so a failed request does not look like an empty profile.
-                ProfileLoadState.Error -> MainError(onReload = onRetry)
+                // Show a retry UI so a failed request does not look like an empty profile.
+                ProfileLoadState.Error -> ProfileError(onRetry = onRetry)
                 ProfileLoadState.Loaded ->
                     Column(
                         verticalArrangement = Arrangement.spacedBy(12.dp),
