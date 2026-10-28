@@ -124,6 +124,12 @@ private fun SettingsScreenContent(
                 enabled = !isDeleting,
             )
             Divider(color = GRAY01)
+            SettingsOption(
+                icon = R.drawable.ic_bell,
+                title = "Reminders",
+                onClick = onReportPressed,
+            )
+            Divider(color = GRAY01)
             if (isLoggedIn) {
                 LogOutButton(onLogOut, enabled = !isDeleting)
                 Divider(color = GRAY01)
