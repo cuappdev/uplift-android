@@ -60,7 +60,8 @@ fun ProfileCreationScreen(
     ProfileCreationScreenContent(
         profileCreationViewModel::onPhotoSelected,
         profileCreationViewModel::navigateToGoals,
-        name
+        name,
+        imageUri
     )
 }
 
@@ -70,6 +71,7 @@ private fun ProfileCreationScreenContent(
     onPhotoSelected: (Uri) -> Unit,
     navigateToGoals: () -> Unit,
     name: String,
+    imageUri: Uri? = null,
 ) {
     val checkboxColors: CheckboxColors =
         CheckboxDefaults.colors(
@@ -121,7 +123,7 @@ private fun ProfileCreationScreenContent(
         ) {
             Spacer(modifier = Modifier.weight(0.05f))
 
-            PhotoPicker(onPhotoSelected = onPhotoSelected,)
+            PhotoPicker(imageUri = imageUri, onPhotoSelected = onPhotoSelected)
 
             Text(
                 text = name,
