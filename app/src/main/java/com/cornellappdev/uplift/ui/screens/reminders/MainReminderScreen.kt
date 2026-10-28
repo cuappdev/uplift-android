@@ -11,28 +11,30 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cornellappdev.uplift.R
+import com.cornellappdev.uplift.ui.components.general.UpliftTopBarWithBack
 import com.cornellappdev.uplift.util.GRAY01
-import com.cornellappdev.uplift.util.LIGHT_GRAY
 import com.cornellappdev.uplift.util.montserratFamily
 import com.google.accompanist.systemuicontroller.SystemUiController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainReminderScreen() {
+fun MainReminderScreen(
+    onBack: () -> Unit
+) {
     val systemUiController: SystemUiController = rememberSystemUiController()
 
     systemUiController.isStatusBarVisible = false
@@ -40,28 +42,16 @@ fun MainReminderScreen() {
     systemUiController.isSystemBarsVisible = false
 
     Scaffold(topBar = {
-        CenterAlignedTopAppBar(
-            expandedHeight = 40.dp,
-            title = {
-                Text(
-                    text = "Reminders",
-                    fontSize = 16.sp,
-                    lineHeight = 20.sp,
-                    fontFamily = montserratFamily,
-                    fontWeight = FontWeight.Bold
-                )
-            },
-            colors = TopAppBarDefaults.topAppBarColors(containerColor = LIGHT_GRAY),
-            navigationIcon = {
-                IconButton(onClick = {}) {
-                    Icon(painter = painterResource(R.drawable.backarrow), contentDescription = "")
-                }
-            }
-
+        UpliftTopBarWithBack(
+            title = "Reminders",
+            onBackClick = onBack,
+            withBack = true
         )
     }) { innerPadding ->
         Column(modifier = Modifier.padding(innerPadding)) {
             Column(modifier = Modifier.padding(horizontal = 24.dp)) {
+                ReminderListItem("Class Reminders", R.drawable.ic_classes_inactive, {})
+                HorizontalDivider(color = GRAY01)
                 ReminderListItem("Workout Reminders", R.drawable.gym_simple, {})
                 HorizontalDivider(color = GRAY01)
                 ReminderListItem("Capacity Reminders", R.drawable.capacities, {})
@@ -94,4 +84,12 @@ private fun ReminderListItem(txt: String, resourceId: Int, onClick: () -> Unit) 
             Icon(painter = painterResource(R.drawable.chevron_right), contentDescription = "")
         }
     }
+}
+
+@Preview
+@Composable
+private fun MainReminderScreenPreview() {
+    MainReminderScreen(
+        onBack = {}
+    )
 }

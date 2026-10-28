@@ -281,7 +281,9 @@ fun MainNavigationWrapper(
                     }
                 }
                 composable<UpliftRootRoute.Reminders> {
-                    MainReminderScreen()
+                    MainReminderScreen(
+                        onBack = { navController.popBackStack() }
+                    )
                 }
                 composable<UpliftRootRoute.Settings> {
                     SettingsScreen()

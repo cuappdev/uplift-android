@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.cornellappdev.uplift.R
+import com.cornellappdev.uplift.ui.components.general.PageOption
 import com.cornellappdev.uplift.ui.components.general.UpliftTopBarWithBack
 import com.cornellappdev.uplift.ui.components.profile.DeleteAccountConfirmationDialog
 import com.cornellappdev.uplift.ui.theme.AppColors
@@ -48,6 +49,7 @@ fun SettingsScreen(
         onBackClick = settingsViewModel::onBack,
         onAboutPressed = settingsViewModel::onAboutPressed,
         onReportPressed = settingsViewModel::onReportPressed,
+        onRemindersPressed = settingsViewModel::onRemindersPressed,
         onLogOut = settingsViewModel::onLogOut,
         onDeleteClick = { showDeleteDialog = true },
     )
@@ -70,6 +72,7 @@ private fun SettingsScreenContent(
     onBackClick: () -> Unit,
     onAboutPressed: () -> Unit,
     onReportPressed: () -> Unit,
+    onRemindersPressed: () -> Unit,
     onLogOut: () -> Unit,
     onDeleteClick: () -> Unit,
 ) {
@@ -87,22 +90,22 @@ private fun SettingsScreenContent(
                 ),
             verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
-            SettingsOption(
+            PageOption(
                 icon = R.drawable.ic_appdev,
                 title = "About Uplift",
                 onClick = onAboutPressed,
             )
             Divider(color = GRAY01)
-            SettingsOption(
+            PageOption(
                 icon = R.drawable.ic_report,
                 title = "Report an Issue",
                 onClick = onReportPressed,
             )
             Divider(color = GRAY01)
-            SettingsOption(
+            PageOption(
                 icon = R.drawable.ic_bell,
                 title = "Reminders",
-                onClick = onReportPressed,
+                onClick = onRemindersPressed,
             )
             Divider(color = GRAY01)
             if (isLoggedIn) {
@@ -166,42 +169,6 @@ private fun DeleteAccountButton(
     }
 }
 
-@Composable
-private fun SettingsOption(
-    @DrawableRes icon: Int,
-    title: String,
-    onClick: () -> Unit,
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(
-                onClick = onClick,
-            ),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(painterResource(id = icon), contentDescription = title, tint = Color.Unspecified)
-            Text(
-                text = title,
-                fontSize = 16.sp,
-                fontFamily = montserratFamily,
-                fontWeight = FontWeight.Medium,
-                color = PRIMARY_BLACK
-            )
-        }
-        Icon(
-            painterResource(id = R.drawable.chevron_right),
-            contentDescription = null,
-            tint = GRAY03
-        )
-    }
-}
-
 
 @Preview
 @Composable
@@ -211,6 +178,7 @@ private fun SettingsScreenPreview() {
         onBackClick = {},
         onAboutPressed = {},
         onReportPressed = {},
+        onRemindersPressed = {},
         onLogOut = {},
         onDeleteClick = {},
     )
