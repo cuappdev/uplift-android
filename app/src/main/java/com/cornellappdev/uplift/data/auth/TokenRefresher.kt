@@ -10,6 +10,7 @@ import kotlinx.coroutines.withTimeout
 import javax.inject.Inject
 import javax.inject.Named
 import javax.inject.Singleton
+import kotlin.time.Duration.Companion.seconds
 
 /**
  * Shared access token refresh logic, used by both [TokenAuthenticator] (HTTP 401s) and
@@ -38,7 +39,7 @@ class TokenRefresher @Inject constructor(
         }
 
         val newAccessToken = try {
-            val mutationResponse = withTimeout(10000L) {
+            val mutationResponse = withTimeout(10.seconds) {
                 apolloClient.mutation(RefreshAccessTokenMutation())
                     // We manually add the Refresh Token to this specific call
                     // because the "refresh" ApolloClient has no interceptor.
