@@ -56,6 +56,10 @@ class SettingsViewModel @Inject constructor(
         rootNavigationRepository.navigate(UpliftRootRoute.ReportIssue)
     }
 
+    fun onRemindersPressed() {
+        rootNavigationRepository.navigate(UpliftRootRoute.Reminders)
+    }
+
     fun onLogOut() {
         if (getStateValue().isDeleting) return
         viewModelScope.launch {
