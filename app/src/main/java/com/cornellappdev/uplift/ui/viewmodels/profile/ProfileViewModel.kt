@@ -19,7 +19,6 @@ import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
-import java.time.temporal.TemporalQueries.localDate
 import java.util.Locale
 import javax.inject.Inject
 
@@ -64,6 +63,7 @@ class ProfileViewModel @Inject constructor(
 ) : UpliftViewModel<ProfileUiState>(ProfileUiState()) {
 
     private var loadingJob: Job? = null
+    private var photoUpdateJob: Job? = null
 
     init {
         reload()
@@ -80,7 +80,7 @@ class ProfileViewModel @Inject constructor(
     }
 
     fun reload() {
-        if (loadingJob?.isActive == true) return
+        if (loadingJob?.isActive == true || photoUpdateJob?.isActive == true) return
         loadingJob = loadProfile()
 
     }
@@ -176,6 +176,19 @@ class ProfileViewModel @Inject constructor(
                 workoutDates = workoutDates
             )
 
+        }
+    }
+
+    fun onPhotoSelected(uri: Uri) {
+        val previousUpdate = photoUpdateJob
+        photoUpdateJob = viewModelScope.launch {
+            // Save selections in order so an older upload cannot replace a newer one.
+            previousUpdate?.join()
+            loadingJob?.join()
+            val result = profileRepository.updateProfilePhoto(uri)
+            if (result.isSuccess) {
+                applyMutation { copy(profileImage = uri) }
+            }
         }
     }
 

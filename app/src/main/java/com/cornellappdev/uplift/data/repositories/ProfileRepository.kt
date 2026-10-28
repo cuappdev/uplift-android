@@ -1,5 +1,6 @@
 package com.cornellappdev.uplift.data.repositories
 
+import android.net.Uri
 import android.util.Log
 import com.apollographql.apollo.ApolloClient
 import com.cornellappdev.uplift.GetUserByNetIdQuery
@@ -32,6 +33,8 @@ class ProfileRepository @Inject constructor(
     private val _goalUpdatedEvent = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
 
     val goalUpdatedEvent: SharedFlow<Unit> = _goalUpdatedEvent.asSharedFlow()
+
+    suspend fun updateProfilePhoto(uri: Uri): Result<Uri> = userInfoRepository.updateProfilePhoto(uri)
 
     suspend fun getProfile(): Result<ProfileData> = runCatching {
         val user = fetchCurrentUser()
