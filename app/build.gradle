@@ -3,8 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.apollo)
     alias(libs.plugins.google.services)
-    alias(libs.plugins.kotlin.kapt)
-    alias(libs.plugins.ksp) // Use KSP instead of kapt for now to avoid kapt stub build error
+    alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.kotlin.compose)
