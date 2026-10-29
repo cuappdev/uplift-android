@@ -1,4 +1,4 @@
-package com.cornellappdev.uplift.ui.components.capacityreminder
+package com.cornellappdev.uplift.ui.components.reminders.capacityreminder
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
@@ -24,7 +24,6 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -40,10 +39,6 @@ import com.cornellappdev.uplift.util.GRAY03
 import com.cornellappdev.uplift.util.GRAY04
 import com.cornellappdev.uplift.util.PRIMARY_YELLOW
 import com.cornellappdev.uplift.util.montserratFamily
-import kotlin.div
-import kotlin.math.min
-import kotlin.text.toInt
-import kotlin.times
 
 /**
  * Section with slider to set the capacity threshold for the capacity reminder feature.

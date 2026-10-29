@@ -1,4 +1,4 @@
-package com.cornellappdev.uplift.ui.components.capacityreminder
+package com.cornellappdev.uplift.ui.components.reminders.capacityreminder
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween

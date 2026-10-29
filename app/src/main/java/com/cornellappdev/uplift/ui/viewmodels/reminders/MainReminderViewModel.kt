@@ -13,7 +13,9 @@ data class MainReminderUiState(
 @HiltViewModel
 class MainReminderViewModel @Inject constructor(
     private val rootNavigationRepository: RootNavigationRepository
-) : UpliftViewModel<MainReminderUiState>(MainReminderUiState()) {
+)
+    : UpliftViewModel<MainReminderUiState>(MainReminderUiState())
+{
 
     fun onBack() {
         rootNavigationRepository.navigateUp()
