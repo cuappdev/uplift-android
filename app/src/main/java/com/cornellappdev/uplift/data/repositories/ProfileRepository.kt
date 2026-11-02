@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import java.time.Instant
 import java.time.LocalDateTime
+import java.time.OffsetDateTime
 import java.time.ZoneOffset
 import javax.inject.Inject
 import javax.inject.Named
@@ -135,9 +136,11 @@ class ProfileRepository @Inject constructor(
 
     private fun UserFields.toWorkoutGoal(): WorkoutGoal = WorkoutGoal(
         goal = workoutGoal,
-        // The backend stores this in UTC and sends it without an offset
+        // The backend stores this in UTC and normally sends it without an offset
         lastGoalChange = lastGoalChange?.let {
-            LocalDateTime.parse(it.toString()).toInstant(ZoneOffset.UTC)
+            val value = it.toString()
+            runCatching { OffsetDateTime.parse(value).toInstant() }
+                .getOrElse { LocalDateTime.parse(value).toInstant(ZoneOffset.UTC) }
         }
     )
 

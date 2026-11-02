@@ -106,7 +106,8 @@ private fun MyGoalsScreenContent(
                 GoalSettingHeader(isOnboarding = false)
                 GoalSlider(
                     value = uiState.selectedGoal,
-                    onValueChange = onGoalChange
+                    onValueChange = onGoalChange,
+                    enabled = uiState.loadState == GoalsLoadState.Loaded
                 )
             }
 

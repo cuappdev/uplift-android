@@ -12,6 +12,7 @@ import com.cornellappdev.uplift.ui.viewmodels.UpliftViewModel
 import com.cornellappdev.uplift.util.timeAgoString
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.collectLatest
 import java.time.DayOfWeek
@@ -74,6 +75,8 @@ class ProfileViewModel @Inject constructor(
         }
         viewModelScope.launch {
             profileRepository.goalUpdatedEvent.collectLatest {
+                // reload() is a no-op during an active load, which could show the old goal
+                listOfNotNull(loadingJob, photoUpdateJob).joinAll()
                 reload()
             }
         }

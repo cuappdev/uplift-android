@@ -24,14 +24,14 @@ data class WorkoutGoal(
     fun lockAt(now: Instant): GoalLock? {
         val unlocksAt = lastGoalChange?.plus(GOAL_LOCK_DURATION) ?: return null
         if (!unlocksAt.isAfter(now)) return null
-        val remainingMillis = Duration.between(now, unlocksAt).toMillis()
+        val remainingNanos = Duration.between(now, unlocksAt).toNanos()
         // Round up so a partial day still counts, e.g. 29.5 days left shows as 30
-        val daysRemaining = (remainingMillis + DAY_MILLIS - 1) / DAY_MILLIS
+        val daysRemaining = (remainingNanos + DAY_NANOS - 1) / DAY_NANOS
         return GoalLock(unlocksAt = unlocksAt, daysRemaining = daysRemaining.toInt())
     }
 
     private companion object {
-        val DAY_MILLIS = Duration.ofDays(1).toMillis()
+        val DAY_NANOS = Duration.ofDays(1).toNanos()
     }
 }
 
