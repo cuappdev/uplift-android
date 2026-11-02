@@ -12,6 +12,7 @@ import com.cornellappdev.uplift.ui.viewmodels.UpliftViewModel
 import com.cornellappdev.uplift.util.timeAgoString
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.collectLatest
 import java.time.DayOfWeek
@@ -69,6 +70,13 @@ class ProfileViewModel @Inject constructor(
         reload()
         viewModelScope.launch {
             workoutLogRepository.workoutLoggedEvent.collectLatest {
+                reload()
+            }
+        }
+        viewModelScope.launch {
+            profileRepository.goalUpdatedEvent.collectLatest {
+                // reload() is a no-op during an active load, which could show the old goal
+                listOfNotNull(loadingJob, photoUpdateJob).joinAll()
                 reload()
             }
         }
@@ -187,22 +195,12 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    fun updateWorkoutGoal(goal: Int) = viewModelScope.launch {
-        val result = profileRepository.setWorkoutGoal(goal)
-
-        if (result.isSuccess) {
-            reload()
-        } else {
-            Log.e("profile VM", "Failed to update workout goal", result.exceptionOrNull())
-        }
-    }
-
     fun toSettings() {
         rootNavigationRepository.navigate(UpliftRootRoute.Settings)
     }
 
     fun toGoals() {
-        // replace with the actual route once goals exists
+        rootNavigationRepository.navigate(UpliftRootRoute.Goals)
     }
 
     fun toHistory() {
