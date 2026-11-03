@@ -112,6 +112,7 @@ private fun ClassRemindersSettings() {
     var checkedButton by remember { mutableIntStateOf(1) }
     var userInputHours by remember { mutableStateOf("") }
     var userInputMinutes by remember { mutableStateOf("") }
+    var isMinutesError = userInputMinutes.toIntOrNull() != null && userInputMinutes.toInt() > 59
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -119,7 +120,7 @@ private fun ClassRemindersSettings() {
         horizontalAlignment = Alignment.Start
     ) {
         Column(
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
             horizontalAlignment = Alignment.Start
         ) {
             Text(
@@ -153,31 +154,53 @@ private fun ClassRemindersSettings() {
                 onButtonSelected = { checkedButton = 3 }
             )
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
+            Column(
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+                horizontalAlignment = Alignment.Start
             ) {
-                ClassReminderInput(
-                    label = "hours",
-                    placeholder = "0",
-                    enabled = checkedButton == 3,
-                    textValue = userInputHours,
-                    onValueChange = {userInputHours = it},
-                    errorState = false,
-                    onErrorStateChange = {}
-                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    ClassReminderInput(
+                        label = "hours",
+                        placeholder = "0",
+                        enabled = checkedButton == 3,
+                        textValue = userInputHours,
+                        onValueChange = { input ->
+                            if (input.all { it.isDigit() } && input.length <= 2) {
+                                userInputHours = input
+                            }
+                        },
+                        errorState = false,
+                        onErrorStateChange = {}
+                    )
 
-                ClassReminderInput(
-                    label = "minutes",
-                    placeholder = "0",
-                    enabled = checkedButton == 3,
-                    textValue = userInputMinutes,
-                    onValueChange = {userInputMinutes = it},
-                    errorState = false,
-                    onErrorStateChange = {}
-                )
+                    ClassReminderInput(
+                        label = "minutes",
+                        placeholder = "0",
+                        enabled = checkedButton == 3,
+                        textValue = userInputMinutes,
+                        onValueChange = { input ->
+                            if (input.all { it.isDigit() } && input.length <= 2) {
+                                userInputMinutes = input
+                            }
+                        },
+                        errorState = isMinutesError,
+                        onErrorStateChange = {}
+                    )
+                }
+
+                if (isMinutesError && checkedButton == 3) {
+                    Text(
+                        text = "Invalid minutes input",
+                        color = Color.Red,
+                        fontFamily = montserratFamily,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Medium
+                    )
+                }
             }
-
 
         }
 

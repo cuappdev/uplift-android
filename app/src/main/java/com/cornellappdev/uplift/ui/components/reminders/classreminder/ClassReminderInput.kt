@@ -52,6 +52,7 @@ fun ClassReminderInput(
     val interactionSource = remember { MutableInteractionSource() }
     val isFocused by interactionSource.collectIsFocusedAsState()
     val contentColor = if (enabled) PRIMARY_BLACK else GRAY02
+    val errorColor = if (errorState) Color.Red else contentColor
 
     Row(
         horizontalArrangement = Arrangement.spacedBy(6.dp, Alignment.CenterHorizontally),
@@ -66,7 +67,7 @@ fun ClassReminderInput(
                 .height(32.dp)
                 .border(
                     width = 1.dp,
-                    color = if (errorState && enabled) Color.Red else contentColor,
+                    color = errorColor,
                     shape = RoundedCornerShape(8.dp)
                 ),
             textStyle = TextStyle(
@@ -107,7 +108,7 @@ fun ClassReminderInput(
 
         Text(
             text = label,
-            color = contentColor,
+            color = errorColor,
             fontSize = 16.sp,
             fontFamily = montserratFamily,
             fontWeight = FontWeight.Bold
