@@ -16,7 +16,7 @@ import com.cornellappdev.uplift.util.GRAY04
 import com.cornellappdev.uplift.util.montserratFamily
 
 /**
- * A switch that toggles capacity reminders on and off.
+ * A component containing a title and a switch that toggles reminders on and off.
  */
 @Composable
 fun DescriptionReminderSwitch(

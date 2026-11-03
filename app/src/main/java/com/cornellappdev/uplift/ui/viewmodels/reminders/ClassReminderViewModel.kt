@@ -18,6 +18,7 @@ data class ClassReminderUiState(
 
 @HiltViewModel
 class ClassReminderViewModel @Inject constructor(
+    // TODO: Check if these are needed
 //    private val classRemindersRepository: ClassRemindersRepository,
 //    private val dataStoreRepository: DatastoreRepository,
     private val rootNavigationRepository: RootNavigationRepository
