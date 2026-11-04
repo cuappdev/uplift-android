@@ -28,6 +28,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.cornellappdev.uplift.ui.components.general.NotificationPermissionHandler
 import com.cornellappdev.uplift.ui.components.general.RadioCheckButton
 import com.cornellappdev.uplift.ui.components.general.UpliftTopBarWithBack
 import com.cornellappdev.uplift.ui.components.reminders.ClassReminderInput
