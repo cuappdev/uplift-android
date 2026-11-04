@@ -25,9 +25,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.cornellappdev.uplift.ui.components.general.UpliftTopBarWithBack
-import com.cornellappdev.uplift.ui.components.goalsetting.DeleteDialog
-import com.cornellappdev.uplift.ui.components.goalsetting.GoalSlider
-import com.cornellappdev.uplift.ui.components.goalsetting.WorkoutReminders
+import com.cornellappdev.uplift.ui.components.reminders.goalsetting.DeleteDialog
+import com.cornellappdev.uplift.ui.components.reminders.goalsetting.GoalSlider
+import com.cornellappdev.uplift.ui.components.reminders.WorkoutReminders
 import com.cornellappdev.uplift.ui.components.general.UpliftButton
 import com.cornellappdev.uplift.ui.viewmodels.profile.SettingsViewModel
 import com.cornellappdev.uplift.util.GRAY04

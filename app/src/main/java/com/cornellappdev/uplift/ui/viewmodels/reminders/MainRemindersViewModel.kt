@@ -6,15 +6,15 @@ import com.cornellappdev.uplift.ui.viewmodels.UpliftViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
-data class MainReminderUiState(
+data class MainRemindersUiState(
     val toggledItem: Boolean = false,
 )
 
 @HiltViewModel
-class MainReminderViewModel @Inject constructor(
+class MainRemindersViewModel @Inject constructor(
     private val rootNavigationRepository: RootNavigationRepository
 )
-    : UpliftViewModel<MainReminderUiState>(MainReminderUiState())
+    : UpliftViewModel<MainRemindersUiState>(MainRemindersUiState())
 {
 
     fun onBack() {

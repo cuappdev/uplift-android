@@ -16,20 +16,20 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.cornellappdev.uplift.R
 import com.cornellappdev.uplift.ui.components.general.PageOption
 import com.cornellappdev.uplift.ui.components.general.UpliftTopBarWithBack
-import com.cornellappdev.uplift.ui.viewmodels.reminders.MainReminderViewModel
+import com.cornellappdev.uplift.ui.viewmodels.reminders.MainRemindersViewModel
 import com.cornellappdev.uplift.util.GRAY01
 import com.google.accompanist.systemuicontroller.SystemUiController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 @Composable
-fun MainReminderScreen(
-    mainReminderViewModel: MainReminderViewModel = hiltViewModel(),
+fun MainRemindersScreen(
+    mainRemindersViewModel: MainRemindersViewModel = hiltViewModel(),
 ) {
     MainReminderContent(
-        onBack = mainReminderViewModel::onBack,
-        onClassReminderPressed = mainReminderViewModel::onClassReminderPressed,
-        onWorkoutRemindersPressed = mainReminderViewModel::onWorkoutRemindersPressed,
-        onCapacityRemindersPressed = mainReminderViewModel::onCapacityRemindersPressed,
+        onBack = mainRemindersViewModel::onBack,
+        onClassReminderPressed = mainRemindersViewModel::onClassReminderPressed,
+        onWorkoutRemindersPressed = mainRemindersViewModel::onWorkoutRemindersPressed,
+        onCapacityRemindersPressed = mainRemindersViewModel::onCapacityRemindersPressed,
     )
 }
 
