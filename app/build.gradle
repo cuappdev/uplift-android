@@ -1,13 +1,12 @@
 plugins {
-    id 'com.android.application'
-    id 'org.jetbrains.kotlin.android'
-    id("com.apollographql.apollo") version "4.1.1"
-    id 'com.google.gms.google-services'
-    id 'kotlin-kapt'
-    id("com.google.devtools.ksp") // Use KSP instead of kapt for now to avoid kapt stub build error
-    id("com.google.dagger.hilt.android")
-    id 'org.jetbrains.kotlin.plugin.serialization' version '2.0.20'
-    id("org.jetbrains.kotlin.plugin.compose") version "2.0.10"
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.apollo)
+    alias(libs.plugins.google.services)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.hilt)
+    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.kotlin.compose)
 }
 def secretsPropertiesFile = rootProject.file('secrets.properties')
 def secretsProperties = new Properties()
@@ -85,49 +84,46 @@ android {
 }
 
 dependencies {
-    implementation 'androidx.activity:activity-compose:1.10.1'
-    implementation "androidx.compose.ui:ui:$compose_ui_version"
-    implementation "androidx.compose.ui:ui-tooling-preview:$compose_ui_version"
-    implementation 'androidx.core:core-ktx:1.15.0'
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.8.7'
-    implementation 'androidx.activity:activity-compose:1.10.1'
-    implementation "androidx.compose.ui:ui:$compose_ui_version"
-    implementation "androidx.compose.ui:ui-tooling-preview:$compose_ui_version"
-    implementation 'androidx.compose.material:material:1.7.8'
-    implementation('androidx.compose.material3:material3-android:1.3.1')
-    implementation 'androidx.compose.foundation:foundation-layout:1.9.4'
-    implementation 'androidx.compose.animation:animation-core:1.9.4'
-    testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.2.1'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
-    androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_ui_version"
-    debugImplementation "androidx.compose.ui:ui-tooling:$compose_ui_version"
-    debugImplementation "androidx.compose.ui:ui-test-manifest:1.7.8"
-    implementation "io.coil-kt:coil-compose:2.2.2"
-    implementation "androidx.navigation:navigation-compose:2.8.8"
-    implementation "com.google.accompanist:accompanist-systemuicontroller:0.28.0"
-    implementation "com.google.accompanist:accompanist-permissions:0.34.0"
-    implementation("com.apollographql.apollo:apollo-runtime:4.1.1")
-    implementation 'com.valentinilk.shimmer:compose-shimmer:1.0.5'
-    implementation 'com.google.android.gms:play-services-location:21.3.0'
-    implementation 'androidx.core:core-splashscreen:1.0.1'
-    implementation 'androidx.datastore:datastore-preferences:1.1.3'
+    implementation libs.androidx.activity.compose
+    implementation libs.androidx.compose.ui
+    implementation libs.androidx.compose.ui.tooling.preview
+    implementation libs.androidx.core.ktx
+    implementation libs.androidx.lifecycle.runtime.ktx
+    implementation libs.androidx.compose.material
+    implementation libs.androidx.compose.material3.android
+    implementation libs.androidx.compose.foundation.layout
+    implementation libs.androidx.compose.animation.core
+    testImplementation libs.junit
+    androidTestImplementation libs.androidx.test.ext.junit
+    androidTestImplementation libs.androidx.test.espresso.core
+    androidTestImplementation libs.androidx.compose.ui.test.junit4
+    debugImplementation libs.androidx.compose.ui.tooling
+    debugImplementation libs.androidx.compose.ui.test.manifest
+    implementation libs.coil.compose
+    implementation libs.androidx.navigation.compose
+    implementation libs.accompanist.systemuicontroller
+    implementation libs.accompanist.permissions
+    implementation libs.apollo.runtime
+    implementation libs.compose.shimmer
+    implementation libs.play.services.location
+    implementation libs.androidx.core.splashscreen
+    implementation libs.androidx.datastore.preferences
     // Dagger Hilt
-    implementation("com.google.dagger:hilt-android:2.51.1")
-    ksp("com.google.dagger:hilt-compiler:2.51.1")
-    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
+    implementation libs.hilt.android
+    ksp libs.hilt.compiler
+    implementation libs.androidx.hilt.navigation.compose
     // Serialization
-    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3"
+    implementation libs.kotlinx.serialization.json
     // Authentication + Firebase
-    implementation(platform("com.google.firebase:firebase-bom:34.3.0"))
-    implementation "androidx.credentials:credentials:1.5.0"
-    implementation "androidx.credentials:credentials-play-services-auth:1.5.0"
-    implementation "com.google.android.libraries.identity.googleid:googleid:1.1.1"
-    implementation 'com.google.android.gms:play-services-auth:21.3.0'
-    implementation 'com.google.firebase:firebase-auth'
-    implementation 'com.google.firebase:firebase-messaging'
-    implementation("com.google.firebase:firebase-analytics")
-    implementation "androidx.security:security-crypto:1.1.0-alpha06"
+    implementation platform(libs.firebase.bom)
+    implementation libs.androidx.credentials
+    implementation libs.androidx.credentials.play.services.auth
+    implementation libs.googleid
+    implementation libs.play.services.auth
+    implementation libs.firebase.auth
+    implementation libs.firebase.messaging
+    implementation libs.firebase.analytics
+    implementation libs.androidx.security.crypto
 }
 
 apollo {
