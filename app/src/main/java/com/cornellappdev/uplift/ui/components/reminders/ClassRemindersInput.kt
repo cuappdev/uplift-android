@@ -1,4 +1,4 @@
-package com.cornellappdev.uplift.ui.components.reminders.classreminder
+package com.cornellappdev.uplift.ui.components.reminders
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border

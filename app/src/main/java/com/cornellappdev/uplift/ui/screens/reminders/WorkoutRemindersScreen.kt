@@ -30,6 +30,9 @@ import com.cornellappdev.uplift.ui.components.goalsetting.DeleteDialog
 import com.cornellappdev.uplift.ui.components.goalsetting.GoalSettingHeader
 import com.cornellappdev.uplift.ui.components.goalsetting.GoalSlider
 import com.cornellappdev.uplift.ui.components.goalsetting.WorkoutReminders
+import com.cornellappdev.uplift.ui.components.reminders.goalsetting.DeleteDialog
+import com.cornellappdev.uplift.ui.components.reminders.goalsetting.GoalSlider
+import com.cornellappdev.uplift.ui.components.reminders.WorkoutReminders
 import com.cornellappdev.uplift.ui.components.general.UpliftButton
 import com.cornellappdev.uplift.ui.viewmodels.profile.SettingsViewModel
 import com.cornellappdev.uplift.util.GRAY04
