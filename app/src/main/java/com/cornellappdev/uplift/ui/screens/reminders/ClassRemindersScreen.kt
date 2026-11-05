@@ -28,7 +28,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.cornellappdev.uplift.ui.components.general.NotificationPermissionHandler
 import com.cornellappdev.uplift.ui.components.general.RadioCheckButton
 import com.cornellappdev.uplift.ui.components.general.UpliftTopBarWithBack
 import com.cornellappdev.uplift.ui.components.reminders.ClassReminderInput
@@ -212,16 +211,42 @@ private fun ClassRemindersSettings(
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun ClassRemindersContentPreview() {
-    var uiState by remember { mutableStateOf(ClassRemindersUiState(toggledOn = true)) }
+
+    var uiState by remember {
+        mutableStateOf(
+            ClassRemindersUiState(
+                toggledOn = true,
+                timeOption = ReminderTimeOption.CUSTOM,
+                customHours = "1",
+                customMinutes = "30",
+                isMinutesError = false
+            )
+        )
+    }
+
     ClassReminderContent(
         uiState = uiState,
         onBack = {},
         setToggle = { uiState = uiState.copy(toggledOn = it) },
         onOptionSelected = { uiState = uiState.copy(timeOption = it) },
-        onHoursChanged = { uiState = uiState.copy(customHours = it) },
-        onMinutesChanged = { uiState = uiState.copy(customMinutes = it) }
+        onHoursChanged = { input ->
+            if (input.all { it.isDigit() } && input.length <= 2) {
+                uiState = uiState.copy(customHours = input)
+            }
+        },
+        onMinutesChanged = { input ->
+            if (input.all { it.isDigit() } && input.length <= 2) {
+                val minutesInt = input.toIntOrNull()
+                val isError = minutesInt != null && minutesInt > 59
+                uiState = uiState.copy(
+                    customMinutes = input,
+                    isMinutesError = isError
+                )
+            }
+        }
     )
+
 }
