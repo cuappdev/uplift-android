@@ -4,8 +4,10 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.util.Log
+import androidx.annotation.StringRes
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import com.cornellappdev.uplift.R
 import com.cornellappdev.uplift.data.repositories.UserInfoRepository
 import com.cornellappdev.uplift.ui.UpliftRootRoute
 import com.cornellappdev.uplift.ui.nav.RootNavigationRepository
@@ -13,6 +15,8 @@ import com.cornellappdev.uplift.ui.viewmodels.UpliftViewModel
 import com.google.firebase.auth.FirebaseUser
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -21,6 +25,7 @@ data class ProfileCreationUiState(
     val name: String = "",
     val imageUri: Uri? = null,
     val isGoalSkipped: Boolean = false,
+    @StringRes val errorMessage: Int? = null,
     val goal: Int = 1
 )
 
@@ -45,28 +50,57 @@ class ProfileCreationViewModel @Inject constructor(
         const val PHOTO_URI_KEY = "onboardingPhotoUri"
     }
 
-    private fun createUser() = viewModelScope.launch {
-        val state = getStateValue()
-        val user = state.user
-        val name = user?.displayName ?: ""
-        val email = user?.email
-        val imageUri = state.imageUri
-        if (email.isNullOrBlank()) {
-            Log.e(TAG, "Cannot create user: missing or blank email")
-            userInfoRepository.signOut()
-            return@launch
-        }
+    private var creationJob: Job? = null
 
-        val netId = email.substringBefore("@")
-        val isSkipped = state.isGoalSkipped
-        val goal = if (isSkipped) 0 else state.goal
-        if (userInfoRepository.createUser(email, name, netId, isSkipped, goal, imageUri)) {
-            Log.d(TAG, "User created successfully")
-        } else {
-            //TODO: Add error handling
-            Log.e(TAG, "User not created")
-            userInfoRepository.signOut()
+    private fun createUser() {
+        if (creationJob?.isActive == true) return
+        creationJob = viewModelScope.launch {
+            applyMutation { copy(errorMessage = null) }
+            val state = getStateValue()
+            val user = state.user
+            val email = user?.email
+            if (email.isNullOrBlank()) {
+                Log.e(TAG, "Cannot create user: missing or blank email")
+                applyMutation { copy(errorMessage = R.string.profile_sign_in_error_message) }
+                return@launch
+            }
+
+            try {
+                val success = userInfoRepository.createUser(
+                    email = email,
+                    name = user?.displayName.orEmpty(),
+                    netId = email.substringBefore("@"),
+                    skip = state.isGoalSkipped,
+                    goal = if (state.isGoalSkipped) 0 else state.goal,
+                    imageUri = state.imageUri
+                )
+                if (success) {
+                    Log.d(TAG, "User created successfully")
+                } else {
+                    Log.e(TAG, "User not created")
+                    applyMutation { copy(errorMessage = R.string.profile_create_error_message) }
+                }
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                Log.e(TAG, "Account creation failed", e)
+                applyMutation { copy(errorMessage = R.string.profile_create_error_message) }
+            }
         }
+    }
+
+    fun retryOnboarding() {
+        if (creationJob?.isActive == true) return
+        creationJob = viewModelScope.launch {
+            savedStateHandle.remove<String>(PHOTO_URI_KEY)
+            applyMutation { ProfileCreationUiState() }
+            userInfoRepository.signOut()
+            rootNavigationRepository.navigate(UpliftRootRoute.Onboarding)
+        }
+    }
+
+    fun dismissError() {
+        applyMutation { copy(errorMessage = null) }
     }
 
     fun onPhotoSelected(uri: Uri) {
@@ -78,6 +112,7 @@ class ProfileCreationViewModel @Inject constructor(
                 Intent.FLAG_GRANT_READ_URI_PERMISSION
             )
         } catch (e: SecurityException) {
+            applyMutation { copy(errorMessage = R.string.profile_photo_read_error_message) }
             Log.e(TAG, "Cannot retain access to selected profile photo", e)
             return
         }
@@ -98,6 +133,7 @@ class ProfileCreationViewModel @Inject constructor(
     }
 
     fun onSkip() {
+        if (creationJob?.isActive == true) return
         applyMutation {
             copy(isGoalSkipped = true)
         }
@@ -105,6 +141,8 @@ class ProfileCreationViewModel @Inject constructor(
     }
 
     fun onNext() {
+        if (creationJob?.isActive == true) return
+        applyMutation { copy(isGoalSkipped = false) }
         createUser()
     }
 
