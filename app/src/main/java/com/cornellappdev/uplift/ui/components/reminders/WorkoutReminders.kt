@@ -1,4 +1,4 @@
-package com.cornellappdev.uplift.ui.components.goalsetting
+package com.cornellappdev.uplift.ui.components.reminders
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -20,6 +20,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cornellappdev.uplift.R
+import com.cornellappdev.uplift.ui.components.reminders.goalsetting.EditReminderSection
+import com.cornellappdev.uplift.ui.components.reminders.goalsetting.ReminderCardList
 import com.cornellappdev.uplift.ui.screens.reminders.Reminder
 import com.cornellappdev.uplift.util.GRAY04
 import com.cornellappdev.uplift.util.GRAY09

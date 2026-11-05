@@ -1,4 +1,4 @@
-package com.cornellappdev.uplift.ui.components.goalsetting
+package com.cornellappdev.uplift.ui.components.reminders.goalsetting
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable

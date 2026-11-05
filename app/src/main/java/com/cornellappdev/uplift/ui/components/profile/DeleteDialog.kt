@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.cornellappdev.uplift.R
 import com.cornellappdev.uplift.ui.components.general.UpliftButton
-import com.cornellappdev.uplift.ui.components.goalsetting.CloseButton
+import com.cornellappdev.uplift.ui.components.reminders.goalsetting.CloseButton
 import com.cornellappdev.uplift.ui.theme.AppColors
 import com.cornellappdev.uplift.util.montserratFamily
 
