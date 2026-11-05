@@ -13,7 +13,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -56,7 +55,6 @@ fun WorkoutReminderSettingsScreen(
     WorkoutReminderScreen(
         uiState = workoutRemindersUiState,
         isOnboarding = false,
-        onGoalValueChange = workoutRemindersViewModel::onGoalValueChange,
         onRemindersChange = workoutRemindersViewModel::onRemindersChange,
         onSelectedReminderChange = workoutRemindersViewModel::onSelectedReminderChange,
         onAddNewReminderStateChange = workoutRemindersViewModel::onAddNewReminderStateChange,
@@ -71,7 +69,6 @@ fun WorkoutReminderSettingsScreen(
  * @param uiState: UI state containing reminders, goal value, dialog state
  * @param goalValue: the value of the goal slider
  * @param onRemindersChange: callback for when reminders are changed
- * @param onGoalValueChange: callback for when the goal slider value is changed
  * @param onSelectedReminderChange: callback for when selected reminder changes
  * @param onAddNewReminderStateChange: callback for when adding reminder state changes
  * @param onDeleteDialogOpenChange: callback for when delete dialog open state changes
@@ -84,9 +81,8 @@ fun WorkoutReminderSettingsScreen(
  */
 @Composable
 fun WorkoutReminderScreen(
+    goalValue: Int = 1,
     uiState: WorkoutRemindersUiState = WorkoutRemindersUiState(),
-    goalValue: Float = uiState.sliderValue,
-    onGoalValueChange: (Float) -> Unit = {},
     reminders: List<Reminder> = uiState.reminders,
     onRemindersChange: (List<Reminder>) -> Unit = {},
     onSelectedReminderChange: (Reminder?) -> Unit = {},
@@ -154,6 +150,7 @@ private fun WorkoutReminderContent(
                 .padding(padding)
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
+                .padding(vertical = 24.dp),
         ) {
             Column(
                 modifier = Modifier.padding(vertical = 24.dp, horizontal = 18.dp),
@@ -226,7 +223,6 @@ fun OnboardingButtons(
 @Preview(showBackground = true)
 @Composable
 private fun WorkoutReminderScreenPreview() {
-    var sliderVal by remember { mutableFloatStateOf(1f) }
     var selectedReminder by remember { mutableStateOf<Reminder?>(null) }
     var addNewReminderState by remember { mutableStateOf(false) }
     var deleteDialogOpen by remember { mutableStateOf(false) }
@@ -249,7 +245,6 @@ private fun WorkoutReminderScreenPreview() {
     }
 
     val uiState = WorkoutRemindersUiState(
-        sliderValue = sliderVal,
         reminders = reminders,
         selectedReminder = selectedReminder,
         addNewReminderState = addNewReminderState,
@@ -258,7 +253,6 @@ private fun WorkoutReminderScreenPreview() {
 
     WorkoutReminderScreen(
         uiState = uiState,
-        onGoalValueChange = { sliderVal = it },
         onRemindersChange = { updated ->
             reminders.clear()
             reminders.addAll(updated)

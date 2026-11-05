@@ -4,7 +4,6 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
@@ -43,6 +42,7 @@ object PreferencesKeys {
     val CLASS_REMINDERS_HOURS = stringPreferencesKey("classRemindersHours")
     val CLASS_REMINDERS_MINUTES = stringPreferencesKey("classRemindersMinutes")
     val WORKOUT_REMINDERS_TOGGLE = booleanPreferencesKey("workoutRemindersToggle")
+    val WORKOUT_REMINDERS_SLIDER_VALUE = intPreferencesKey("workoutRemindersSliderValue")
     val WORKOUT_REMINDERS_REMINDERS = stringSetPreferencesKey("workoutRemindersReminders")
 }
 
