@@ -131,7 +131,7 @@ private fun WorkoutReminderContent(
     Scaffold(
         topBar = {
             UpliftTopBarWithBack(
-                title = "Goals",
+                title = "WORKOUT REMINDERS",
                 onBackClick = onBackClick,
                 withBack = true
             )
