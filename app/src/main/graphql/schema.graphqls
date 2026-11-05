@@ -525,7 +525,7 @@ type Mutation {
   """
   Edit a new user.
   """
-  editUser(email: String, encodedImage: String, name: String, netId: String!): User
+  editUser(email: String, encodedImage: String, name: String, userId: Int!): User
 
   """
   Enters a user into a giveaway.

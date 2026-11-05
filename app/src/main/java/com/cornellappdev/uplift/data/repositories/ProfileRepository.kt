@@ -1,5 +1,6 @@
 package com.cornellappdev.uplift.data.repositories
 
+import android.net.Uri
 import android.util.Log
 import com.apollographql.apollo.ApolloClient
 import com.cornellappdev.uplift.GetUserByNetIdQuery
@@ -18,6 +19,8 @@ class ProfileRepository @Inject constructor(
     private val userInfoRepository: UserInfoRepository,
     @Named("main") private val apolloClient: ApolloClient
 ) {
+    suspend fun updateProfilePhoto(uri: Uri): Result<Uri> = userInfoRepository.updateProfilePhoto(uri)
+
     suspend fun getProfile(): Result<ProfileData> = runCatching {
         val netId = userInfoRepository.getNetIdFromDataStore()
             ?: throw IllegalStateException("NetId missing")

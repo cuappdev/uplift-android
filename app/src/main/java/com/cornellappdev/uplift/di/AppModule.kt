@@ -5,6 +5,7 @@ import com.apollographql.apollo.network.okHttpClient
 import com.cornellappdev.uplift.BuildConfig
 import com.cornellappdev.uplift.data.auth.AuthInterceptor
 import com.cornellappdev.uplift.data.auth.TokenAuthenticator
+import com.cornellappdev.uplift.data.auth.TokenRefreshInterceptor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -67,10 +68,14 @@ object AppModule {
     @Provides
     @Singleton
     @Named("main")
-    fun provideApolloClient(@Named("main") okHttpClient: OkHttpClient): ApolloClient {
+    fun provideApolloClient(
+        @Named("main") okHttpClient: OkHttpClient,
+        tokenRefreshInterceptor: TokenRefreshInterceptor
+    ): ApolloClient {
         return ApolloClient.Builder()
             .serverUrl(BuildConfig.BACKEND_URL)
             .okHttpClient(okHttpClient)
+            .addInterceptor(tokenRefreshInterceptor)
             .build()
     }
 

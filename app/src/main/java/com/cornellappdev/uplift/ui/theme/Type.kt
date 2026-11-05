@@ -7,6 +7,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.cornellappdev.uplift.R
+import com.cornellappdev.uplift.util.montserratFamily
 
 // Set of Material typography styles to start with
 val Typography = Typography(
@@ -62,5 +63,17 @@ object AppTextStyles {
         fontSize = 14.sp,
         lineHeight = 16.sp,
         fontWeight = FontWeight.Medium
+    )
+
+    val HeadingBold = TextStyle(
+        fontFamily = montserratFamily,
+        fontSize = 16.sp,
+        fontWeight = FontWeight.Bold
+    )
+
+    val HeadingSemibold = TextStyle(
+        fontFamily = montserratFamily,
+        fontSize = 16.sp,
+        fontWeight = FontWeight.SemiBold
     )
 }
