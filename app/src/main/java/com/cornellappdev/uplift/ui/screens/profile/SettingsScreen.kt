@@ -1,5 +1,6 @@
 package com.cornellappdev.uplift.ui.screens.profile
 
+import androidx.activity.compose.BackHandler
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -18,9 +19,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -28,8 +31,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.cornellappdev.uplift.R
+import com.cornellappdev.uplift.ui.components.profile.ProfileErrorDialog
 import com.cornellappdev.uplift.ui.components.general.UpliftTopBarWithBack
 import com.cornellappdev.uplift.ui.components.profile.DeleteAccountConfirmationDialog
+import com.cornellappdev.uplift.ui.theme.UpliftTheme
 import com.cornellappdev.uplift.ui.theme.AppColors
 import com.cornellappdev.uplift.ui.viewmodels.profile.SettingsViewModel
 import com.cornellappdev.uplift.util.GRAY01
@@ -43,15 +48,32 @@ fun SettingsScreen(
 ) {
     val settingsUiState = settingsViewModel.collectUiStateValue()
     var showDeleteDialog by remember { mutableStateOf(false)}
+    BackHandler(enabled = settingsUiState.isDeleting) { }
     SettingsScreenContent(
         isLoggedIn = settingsUiState.isLoggedIn,
+        isDeleting = settingsUiState.isDeleting,
         onBackClick = settingsViewModel::onBack,
         onAboutPressed = settingsViewModel::onAboutPressed,
         onReportPressed = settingsViewModel::onReportPressed,
         onLogOut = settingsViewModel::onLogOut,
-        onDeleteClick = { showDeleteDialog = true },
+        onDeleteClick = {
+            if (!settingsUiState.isDeleting) showDeleteDialog = true
+        },
     )
-    if (showDeleteDialog) {
+    if (settingsUiState.showDeleteError) {
+        ProfileErrorDialog(
+            title = stringResource(R.string.profile_delete_error_title),
+            message = stringResource(R.string.profile_delete_error_message),
+            onDismiss = {
+                showDeleteDialog = false
+                settingsViewModel.dismissError()
+            },
+            onRetry = {
+                showDeleteDialog = false
+                settingsViewModel.onDeleteAccount()
+            }
+        )
+    } else if (showDeleteDialog && !settingsUiState.isDeleting) {
         DeleteAccountConfirmationDialog(
             onDismiss = {
                 showDeleteDialog = false
@@ -72,6 +94,7 @@ private fun SettingsScreenContent(
     onReportPressed: () -> Unit,
     onLogOut: () -> Unit,
     onDeleteClick: () -> Unit,
+    isDeleting: Boolean = false,
 ) {
     Scaffold(topBar = {
         UpliftTopBarWithBack(title = "Settings", onBackClick = onBackClick)
@@ -91,18 +114,20 @@ private fun SettingsScreenContent(
                 icon = R.drawable.ic_appdev,
                 title = "About Uplift",
                 onClick = onAboutPressed,
+                enabled = !isDeleting,
             )
             Divider(color = GRAY01)
             SettingsOption(
                 icon = R.drawable.ic_report,
                 title = "Report an Issue",
                 onClick = onReportPressed,
+                enabled = !isDeleting,
             )
             Divider(color = GRAY01)
             if (isLoggedIn) {
-                LogOutButton(onLogOut)
+                LogOutButton(onLogOut, enabled = !isDeleting)
                 Divider(color = GRAY01)
-                DeleteAccountButton(onDeleteClick)
+                DeleteAccountButton(onDeleteClick, isDeleting = isDeleting)
             }
         }
     }
@@ -111,10 +136,12 @@ private fun SettingsScreenContent(
 @Composable
 private fun LogOutButton(
     onLogOut: () -> Unit,
+    enabled: Boolean = true,
 ){
     Row(
-        modifier = Modifier.clickable(
-            onClick = onLogOut
+        modifier = Modifier.alpha(if (enabled) 1f else 0.5f).clickable(
+            onClick = onLogOut,
+            enabled = enabled
         ),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -137,10 +164,12 @@ private fun LogOutButton(
 @Composable
 private fun DeleteAccountButton(
     onDeleteClick: () -> Unit,
+    isDeleting: Boolean = false,
 ){
     Row(
-        modifier = Modifier.clickable(
-            onClick = onDeleteClick
+        modifier = Modifier.alpha(if (isDeleting) 0.5f else 1f).clickable(
+            onClick = onDeleteClick,
+            enabled = !isDeleting
         ),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -151,7 +180,7 @@ private fun DeleteAccountButton(
             tint = AppColors.Red
         )
         Text(
-            text = "Delete account",
+            text = if (isDeleting) stringResource(R.string.deleting_account) else "Delete account",
             fontSize = 16.sp,
             fontFamily = montserratFamily,
             fontWeight = FontWeight.Medium,
@@ -165,12 +194,15 @@ private fun SettingsOption(
     @DrawableRes icon: Int,
     title: String,
     onClick: () -> Unit,
+    enabled: Boolean = true,
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .alpha(if (enabled) 1f else 0.5f)
             .clickable(
                 onClick = onClick,
+                enabled = enabled,
             ),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
@@ -208,4 +240,20 @@ private fun SettingsScreenPreview() {
         onLogOut = {},
         onDeleteClick = {},
     )
+}
+
+@Preview(name = "Deleting account", showBackground = true)
+@Composable
+private fun SettingsDeletingPreview() {
+    UpliftTheme {
+        SettingsScreenContent(
+            isLoggedIn = true,
+            isDeleting = true,
+            onBackClick = {},
+            onAboutPressed = {},
+            onReportPressed = {},
+            onLogOut = {},
+            onDeleteClick = {},
+        )
+    }
 }

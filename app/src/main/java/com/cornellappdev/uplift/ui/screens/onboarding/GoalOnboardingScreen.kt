@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.cornellappdev.uplift.R
+import com.cornellappdev.uplift.ui.components.profile.ProfileErrorDialog
 import com.cornellappdev.uplift.ui.components.general.UpliftTopBar
 import com.cornellappdev.uplift.ui.components.goalsetting.GoalSettingHeader
 import com.cornellappdev.uplift.ui.components.goalsetting.GoalSlider
@@ -34,6 +35,17 @@ fun GoalsOnboardingScreen(
     viewModel: ProfileCreationViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
+    uiState.errorMessage?.let { message ->
+        ProfileErrorDialog(
+            title = stringResource(
+                if (message == R.string.profile_photo_read_error_message)
+                    R.string.profile_photo_read_error_title else R.string.profile_create_error_title
+            ),
+            message = stringResource(message),
+            onDismiss = viewModel::dismissError,
+            onRetry = viewModel::retryOnboarding
+        )
+    }
     GoalsOnboardingScreenContent(
         goalValue = uiState.goal,
         onGoalValueChange = viewModel::updateGoals,

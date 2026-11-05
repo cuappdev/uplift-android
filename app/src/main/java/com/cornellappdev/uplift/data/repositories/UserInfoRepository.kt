@@ -9,6 +9,7 @@ import android.util.Log
 import com.apollographql.apollo.api.Optional
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.ByteArrayOutputStream
@@ -25,6 +26,7 @@ import com.cornellappdev.uplift.GetUserByNetIdQuery
 import com.cornellappdev.uplift.LoginUserMutation
 import com.cornellappdev.uplift.SetWorkoutGoalsMutation
 import com.cornellappdev.uplift.UpdateProfilePhotoMutation
+import com.cornellappdev.uplift.data.mappers.toResult
 import com.cornellappdev.uplift.data.auth.SessionManager
 import kotlinx.coroutines.flow.map;
 import kotlinx.coroutines.flow.firstOrNull
@@ -226,9 +228,13 @@ class UserInfoRepository @Inject constructor(
         if (manualToken != null) {
             call.addHttpHeader("Authorization", "Bearer $manualToken")
         }
-        val goalResponse = call.execute()
-        if (goalResponse.hasErrors()) {
-            Log.e(TAG, "Failed to set goal: ${goalResponse.errors}")
+        val result = call.execute().toResult()
+        val data = result.getOrElse { error ->
+            Log.e(TAG, "Failed to set goal", error)
+            return false
+        }
+        if (data.setWorkoutGoals == null) {
+            Log.e(TAG, "Goal update returned no updated user")
             return false
         }
         Log.d(TAG, "Goal set successfully: $goal")
@@ -311,25 +317,38 @@ class UserInfoRepository @Inject constructor(
                 return false
             }
 
-            val response = apolloClient.mutation(DeleteUserMutation(userId = userId)).execute()
-            if (response.hasErrors()) {
-                Log.e(TAG, "Server error during delete: ${response.errors}")
+            val firebaseUser = firebaseAuth.currentUser
+            val result = apolloClient.mutation(DeleteUserMutation(userId = userId))
+                .execute()
+                .toResult()
+            val data = result.getOrElse { error ->
+                Log.e(TAG, "Account deletion request failed", error)
+                return false
+            }
+            if (data.deleteUser == null) {
+                Log.e(TAG, "Account deletion returned no deleted user")
                 return false
             }
 
-            // Want to log out no matter if the firebase deletes or not
+            // Once backend deletion succeeds, local cleanup must survive screen cancellation.
             try {
-                firebaseAuth.currentUser?.delete()?.await()
+                firebaseUser?.delete()?.await()
                 Log.d(TAG, "Firebase account deleted successfully")
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
                 Log.e(TAG, "Firebase delete failed (User may need to re-login): $e")
+            } finally {
+                withContext(NonCancellable) {
+                    sessionManager.logout()
+                    dataStore.edit { it.clear() }
+                }
             }
-
-            sessionManager.logout()
-            dataStore.edit { it.clear() }
 
             Log.d(TAG, "Successfully signed out")
             true
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             Log.e(TAG, "Error deleting account: $e")
             false
