@@ -38,6 +38,9 @@ import com.cornellappdev.uplift.ui.viewmodels.reminders.ReminderTimeOption
 import com.cornellappdev.uplift.util.GRAY03
 import com.cornellappdev.uplift.util.montserratFamily
 
+/**
+ * ClassReminderScreen is a composable that displays the class reminder settings screen.
+ */
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun ClassRemindersScreen(

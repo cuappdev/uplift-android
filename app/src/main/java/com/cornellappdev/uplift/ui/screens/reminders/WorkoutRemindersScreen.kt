@@ -46,6 +46,9 @@ data class Reminder(
     val enabled: Boolean
 )
 
+/**
+ *  WorkoutReminderSettingsScreen is a composable that displays the workout reminder settings screen.
+ */
 @Composable
 fun WorkoutReminderSettingsScreen(
     workoutRemindersViewModel: WorkoutRemindersViewModel = hiltViewModel()

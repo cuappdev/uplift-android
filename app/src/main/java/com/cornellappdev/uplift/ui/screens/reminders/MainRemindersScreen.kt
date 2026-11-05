@@ -21,6 +21,9 @@ import com.cornellappdev.uplift.util.GRAY01
 import com.google.accompanist.systemuicontroller.SystemUiController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
+/**
+ * Screen displaying all reminder page options
+ */
 @Composable
 fun MainRemindersScreen(
     mainRemindersViewModel: MainRemindersViewModel = hiltViewModel(),
