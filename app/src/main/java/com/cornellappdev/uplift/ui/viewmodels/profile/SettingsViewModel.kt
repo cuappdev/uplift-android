@@ -8,6 +8,7 @@ import com.cornellappdev.uplift.ui.UpliftRootRoute
 import com.cornellappdev.uplift.ui.nav.RootNavigationRepository
 import com.cornellappdev.uplift.ui.viewmodels.UpliftViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -58,7 +59,13 @@ class SettingsViewModel @Inject constructor(
     fun onLogOut() {
         if (getStateValue().isDeleting) return
         viewModelScope.launch {
-            userInfoRepository.signOut()
+            try {
+                userInfoRepository.signOut()
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                Log.e(TAG, "Sign out failed during logout", e)
+            }
             rootNavigationRepository.navigate(UpliftRootRoute.Onboarding)
         }
     }

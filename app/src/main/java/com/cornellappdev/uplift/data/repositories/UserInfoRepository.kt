@@ -28,6 +28,7 @@ import com.cornellappdev.uplift.SetWorkoutGoalsMutation
 import com.cornellappdev.uplift.UpdateProfilePhotoMutation
 import com.cornellappdev.uplift.data.mappers.toResult
 import com.cornellappdev.uplift.data.auth.SessionManager
+import com.cornellappdev.uplift.fragment.UserFields
 import kotlinx.coroutines.flow.map;
 import kotlinx.coroutines.flow.firstOrNull
 import com.cornellappdev.uplift.data.models.UserInfo
@@ -49,6 +50,9 @@ class UserInfoRepository @Inject constructor(
         const val TAG = "UserInfoRepository"
     }
 
+    // Backend account created during onboarding whose remaining setup has not yet succeeded
+    private var createdUserFields: UserFields? = null
+
     suspend fun createUser(
         email: String,
         name: String,
@@ -58,20 +62,24 @@ class UserInfoRepository @Inject constructor(
         imageUri: Uri? = null
     ): Boolean {
         try{
-            // Encode before creating the account so a photo-read failure cannot silently lose it
-            val encodedImage = imageUri?.let { encodeProfileImage(it) }
-            val response = apolloClient.mutation(
-                CreateUserMutation(
-                    email = email,
-                    name = name,
-                    netId = netId,
-                    encodedImage = Optional.presentIfNotNull(encodedImage),
-                )
-            ).execute()
-            val userFields = response.data?.createUser?.userFields
-            if (response.hasErrors() || userFields == null) {
-                Log.e(TAG, "Server error: ${response.errors}")
-                return false
+            // Resume after a partial failure instead of recreating an account that already exists
+            val userFields = createdUserFields?.takeIf { it.netId == netId } ?: run {
+                // Encode before creating the account so a photo-read failure cannot silently lose it
+                val encodedImage = imageUri?.let { encodeProfileImage(it) }
+                val response = apolloClient.mutation(
+                    CreateUserMutation(
+                        email = email,
+                        name = name,
+                        netId = netId,
+                        encodedImage = Optional.presentIfNotNull(encodedImage),
+                    )
+                ).execute()
+                val fields = response.data?.createUser?.userFields
+                if (response.hasErrors() || fields == null) {
+                    Log.e(TAG, "Server error: ${response.errors}")
+                    return false
+                }
+                fields.also { createdUserFields = it }
             }
             val loginResponse = apolloClient.mutation(
                 LoginUserMutation(
@@ -114,6 +122,7 @@ class UserInfoRepository @Inject constructor(
                 access = accessToken,
                 refresh = refreshToken
             )
+            createdUserFields = null
             Log.d(TAG, "User created successfully")
             return true
         } catch (e: CancellationException) {
@@ -299,6 +308,7 @@ class UserInfoRepository @Inject constructor(
     }
 
     suspend fun signOut() {
+        createdUserFields = null
         try {
             firebaseAuth.signOut()
         } catch (e: Exception) {

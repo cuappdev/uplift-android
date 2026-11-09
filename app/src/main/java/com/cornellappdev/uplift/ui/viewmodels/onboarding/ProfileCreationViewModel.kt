@@ -94,7 +94,13 @@ class ProfileCreationViewModel @Inject constructor(
         creationJob = viewModelScope.launch {
             savedStateHandle.remove<String>(PHOTO_URI_KEY)
             applyMutation { ProfileCreationUiState() }
-            userInfoRepository.signOut()
+            try {
+                userInfoRepository.signOut()
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                Log.e(TAG, "Sign out failed during onboarding retry", e)
+            }
             rootNavigationRepository.navigate(UpliftRootRoute.Onboarding)
         }
     }
