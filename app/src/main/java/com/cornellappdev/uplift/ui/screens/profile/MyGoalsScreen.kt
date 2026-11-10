@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.LifecycleResumeEffect
 import com.cornellappdev.uplift.R
 import com.cornellappdev.uplift.ui.components.general.UpliftButton
 import com.cornellappdev.uplift.ui.components.general.UpliftTopBarWithBack
@@ -59,6 +60,11 @@ fun MyGoalsScreen(
     viewModel: MyGoalsViewModel = hiltViewModel()
 ) {
     val uiState = viewModel.collectUiStateValue()
+    // The lock can expire while the user is away, so recheck it whenever they come back
+    LifecycleResumeEffect(viewModel) {
+        viewModel.refreshLock()
+        onPauseOrDispose { }
+    }
     MyGoalsScreenContent(
         uiState = uiState,
         onBackClick = onBackClick,

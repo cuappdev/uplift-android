@@ -57,6 +57,9 @@ class MyGoalsViewModel @Inject constructor(
 
     private var loadingJob: Job? = null
 
+    // The last goal from the backend, kept so the lock can be recomputed as time passes
+    private var currentGoal: WorkoutGoal? = null
+
     init {
         reload()
     }
@@ -143,20 +146,39 @@ class MyGoalsViewModel @Inject constructor(
             if (isLocked) {
                 copy(saveState = GoalSaveState.Idle, showLockedDialog = true)
             } else {
+                // The backend still says locked, but its own last change date says the lock is
+                // over, so the two disagree (likely a wrong device clock). There's no real date
+                // to show in the locked dialog and retrying would be rejected again, so show the
+                // generic save error and log the mismatch.
                 Log.e("MyGoalsViewModel", "Backend rejected goal as locked but lock date is past")
                 copy(saveState = GoalSaveState.Error)
             }
         }
     }
 
+    /**
+     * Recomputes the lock against the current time, so a lock that expired while the screen was
+     * open (or in the background) is lifted without reloading the goal.
+     */
+    fun refreshLock() {
+        currentGoal?.let(::applyLock)
+    }
+
     private fun applyGoal(goal: WorkoutGoal) {
+        currentGoal = goal
+        applyMutation {
+            copy(savedGoal = goal.goal, selectedGoal = goal.goal ?: DEFAULT_GOAL)
+        }
+        applyLock(goal)
+    }
+
+    private fun applyLock(goal: WorkoutGoal) {
         val lock = goal.lockAt(Instant.now())
         applyMutation {
             copy(
-                savedGoal = goal.goal,
-                selectedGoal = goal.goal ?: DEFAULT_GOAL,
                 lockedUntilDate = lock?.unlocksAt?.let(lockDateFormatter::format),
-                lockedDaysRemaining = lock?.daysRemaining ?: 0
+                lockedDaysRemaining = lock?.daysRemaining ?: 0,
+                showLockedDialog = showLockedDialog && lock != null
             )
         }
     }
