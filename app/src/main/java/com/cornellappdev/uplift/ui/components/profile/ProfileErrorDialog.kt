@@ -104,7 +104,7 @@ private fun ProfileErrorDialogContent(
     }
 }
 
-@Preview(name = "Onboarding restart", showBackground = true)
+@Preview(name = "Profile creation retry", showBackground = true)
 @Composable
 private fun ProfileErrorDialogWithRetryPreview() {
     UpliftTheme {

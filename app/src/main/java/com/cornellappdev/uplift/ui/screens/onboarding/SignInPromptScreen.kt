@@ -32,6 +32,10 @@ import androidx.compose.ui.unit.sp
 import androidx.credentials.Credential
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.cornellappdev.uplift.R
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.cornellappdev.uplift.ui.components.profile.ProfileErrorDialog
 import com.cornellappdev.uplift.ui.components.onboarding.auth.LoginButton
 import com.cornellappdev.uplift.ui.viewmodels.onboarding.LoginViewModel
 import com.cornellappdev.uplift.util.GRAY01
@@ -43,6 +47,14 @@ import com.cornellappdev.uplift.util.montserratFamily
 fun SignInPromptScreen(
     loginViewModel: LoginViewModel = hiltViewModel(),
 ) {
+    val signInErrorMessage by loginViewModel.signInErrorMessage.collectAsStateWithLifecycle()
+    signInErrorMessage?.let { message ->
+        ProfileErrorDialog(
+            title = stringResource(R.string.sign_in_error_title),
+            message = stringResource(message),
+            onDismiss = loginViewModel::dismissSignInError
+        )
+    }
     SignInPromptScreenContent(
         loginViewModel::onSignInWithGoogle,
         loginViewModel::onSkip

@@ -20,6 +20,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.layout
@@ -44,10 +45,11 @@ private val LabelEdgeInset = 5.dp
 fun GoalSlider(
     value: Int,
     onValueChange: (Int) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true
 ) {
     Column(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth().alpha(if (enabled) 1f else 0.5f),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         Slider(
@@ -66,6 +68,7 @@ fun GoalSlider(
                     }
                 },
             value = value.toFloat(),
+            enabled = enabled,
             valueRange = MIN_DAYS.toFloat()..MAX_DAYS.toFloat(),
             steps = MAX_DAYS - MIN_DAYS - 1,
             onValueChange = {

@@ -37,6 +37,7 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import kotlinx.coroutines.tasks.await
 import javax.inject.Named
+import androidx.core.net.toUri
 
 @Singleton
 class UserInfoRepository @Inject constructor(
@@ -52,6 +53,8 @@ class UserInfoRepository @Inject constructor(
 
     // Backend account created during onboarding whose remaining setup has not yet succeeded
     private var createdUserFields: UserFields? = null
+    // Photo the backend account currently has, so a photo changed before resuming can be applied
+    private var createdImageUri: Uri? = null
 
     suspend fun createUser(
         email: String,
@@ -63,24 +66,9 @@ class UserInfoRepository @Inject constructor(
     ): Boolean {
         try{
             // Resume after a partial failure instead of recreating an account that already exists
-            val userFields = createdUserFields?.takeIf { it.netId == netId } ?: run {
-                // Encode before creating the account so a photo-read failure cannot silently lose it
-                val encodedImage = imageUri?.let { encodeProfileImage(it) }
-                val response = apolloClient.mutation(
-                    CreateUserMutation(
-                        email = email,
-                        name = name,
-                        netId = netId,
-                        encodedImage = Optional.presentIfNotNull(encodedImage),
-                    )
-                ).execute()
-                val fields = response.data?.createUser?.userFields
-                if (response.hasErrors() || fields == null) {
-                    Log.e(TAG, "Server error: ${response.errors}")
-                    return false
-                }
-                fields.also { createdUserFields = it }
-            }
+            val userFields = createdUserFields?.takeIf { it.netId == netId }
+                ?: createOrRecoverAccount(email, name, netId, imageUri)
+                ?: return false
             val loginResponse = apolloClient.mutation(
                 LoginUserMutation(
                     netId = netId
@@ -98,6 +86,11 @@ class UserInfoRepository @Inject constructor(
             }
             val accessToken = loginData.accessToken
             val refreshToken = loginData.refreshToken
+
+            if (imageUri != null && imageUri != createdImageUri) {
+                uploadProfilePhoto(id, imageUri, accessToken)
+                createdImageUri = imageUri
+            }
             if (!skip) {
                 if (!uploadGoal(id, goal, accessToken)) {
                     return false
@@ -123,6 +116,7 @@ class UserInfoRepository @Inject constructor(
                 refresh = refreshToken
             )
             createdUserFields = null
+            createdImageUri = null
             Log.d(TAG, "User created successfully")
             return true
         } catch (e: CancellationException) {
@@ -133,26 +127,71 @@ class UserInfoRepository @Inject constructor(
         }
     }
 
+    // Creates the backend account or recovers one an earlier attempt already created
+    private suspend fun createOrRecoverAccount(
+        email: String,
+        name: String,
+        netId: String,
+        imageUri: Uri?
+    ): UserFields? {
+        // Encode before creating the account so a photo-read failure cannot silently lose it
+        val encodedImage = imageUri?.let { encodeProfileImage(it) }
+        val response = apolloClient.mutation(
+            CreateUserMutation(
+                email = email,
+                name = name,
+                netId = netId,
+                encodedImage = Optional.presentIfNotNull(encodedImage),
+            )
+        ).execute()
+        val created = response.data?.createUser?.userFields
+        if (!response.hasErrors() && created != null) {
+            createdUserFields = created
+            createdImageUri = imageUri
+            return created
+        }
+        Log.e(TAG, "Create user failed: ${response.errors}", response.exception)
+
+        val existing = lookUpUserFields(netId).getOrNull() ?: return null
+        Log.w(TAG, "Account for this NetID already exists; resuming setup")
+        createdUserFields = existing
+        // Unknown which photo the existing account has, so the selected one is re-applied
+        createdImageUri = null
+        return existing
+    }
+
     suspend fun updateProfilePhoto(uri: Uri): Result<Uri> {
         return try {
             val userId = getUserIdFromDataStore()?.toIntOrNull()
                 ?: throw IllegalStateException("Missing or invalid user ID")
-            val encodedImage = encodeProfileImage(uri)
-            val response = apolloClient.mutation(
-                UpdateProfilePhotoMutation(userId = userId, encodedImage = encodedImage)
-            ).execute()
-            check(!response.hasErrors()) { "Profile photo update failed" }
-            val updatedUser = response.data?.editUser
-                ?: throw IllegalStateException("Profile photo update returned no user")
-            val imageUrl = updatedUser.encodedImage
-            check(!imageUrl.isNullOrBlank()) { "Updated profile photo URL missing" }
-            Result.success(Uri.parse(imageUrl))
+            Result.success(uploadProfilePhoto(userId, uri))
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
             Log.e(TAG, "Failed to update profile photo", e)
             Result.failure(e)
         }
+    }
+
+    private suspend fun uploadProfilePhoto(
+        userId: Int,
+        uri: Uri,
+        manualToken: String? = null
+    ): Uri {
+        val encodedImage = encodeProfileImage(uri)
+        val call = apolloClient.mutation(
+            UpdateProfilePhotoMutation(userId = userId, encodedImage = encodedImage)
+        )
+        if (manualToken != null) {
+            call.addHttpHeader("Authorization", "Bearer $manualToken")
+        }
+        val response = call.execute()
+        check(!response.hasErrors()) { "Profile photo update failed" }
+        val updatedUser = response.data?.editUser
+            ?: throw IllegalStateException("Profile photo update returned no user")
+        val imageUrl = updatedUser.encodedImage
+        check(!imageUrl.isNullOrBlank()) { "Updated profile photo URL missing" }
+        return imageUrl.toUri()
     }
 
     private suspend fun encodeProfileImage(uri: Uri): String = withContext(Dispatchers.IO) {
@@ -298,8 +337,33 @@ class UserInfoRepository @Inject constructor(
         return firebaseAuth.currentUser
     }
 
-    suspend fun hasUser(netId: String): Boolean {
-        return hasFirebaseUser() && getUserByNetId(netId) != null
+    // Failure means the check couldn't be completed (e.g. offline)
+    suspend fun hasUser(netId: String): Result<Boolean> {
+        if (!hasFirebaseUser()) return Result.success(false)
+        return lookUpUserFields(netId).map { it != null }
+    }
+
+    // Helps check if an account exists or not
+    private suspend fun lookUpUserFields(netId: String): Result<UserFields?> {
+        return try {
+            val response = apolloClient.query(GetUserByNetIdQuery(netId = netId)).execute()
+            val fields = response.data?.getUserByNetId?.firstOrNull()?.userFields
+            val notFound = response.exception == null && (
+                response.errors.orEmpty().any { it.message.contains("does not exist") } ||
+                    (!response.hasErrors() && response.data != null)
+                )
+            when {
+                fields != null -> Result.success(fields)
+                notFound -> Result.success(null)
+                else -> Result.failure(
+                    response.exception ?: IllegalStateException("User lookup failed: ${response.errors}")
+                )
+            }
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
     }
 
     suspend fun signInWithGoogle(idToken: String) {
@@ -309,6 +373,7 @@ class UserInfoRepository @Inject constructor(
 
     suspend fun signOut() {
         createdUserFields = null
+        createdImageUri = null
         try {
             firebaseAuth.signOut()
         } catch (e: Exception) {
@@ -350,6 +415,12 @@ class UserInfoRepository @Inject constructor(
                 Log.e(TAG, "Firebase delete failed (User may need to re-login): $e")
             } finally {
                 withContext(NonCancellable) {
+                    // If delete() failed, Firebase would stay signed in as the deleted user
+                    try {
+                        firebaseAuth.signOut()
+                    } catch (e: Exception) {
+                        Log.e(TAG, "Firebase signout after deletion failed: $e")
+                    }
                     sessionManager.logout()
                     dataStore.edit { it.clear() }
                 }

@@ -67,7 +67,7 @@ fun ProfileCreationScreen(
             ),
             message = stringResource(message),
             onDismiss = profileCreationViewModel::dismissError,
-            onRetry = profileCreationViewModel::retryOnboarding
+            onRetry = if (canRetry) profileCreationViewModel::onErrorRetry else null
         )
     }
     ProfileCreationScreenContent(

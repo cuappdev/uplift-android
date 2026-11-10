@@ -26,7 +26,10 @@ data class ProfileCreationUiState(
     val imageUri: Uri? = null,
     val isGoalSkipped: Boolean = false,
     @StringRes val errorMessage: Int? = null,
-    val goal: Int = 1
+    val goal: Int = 1,
+    val isCreating: Boolean = false,
+    val retryInPlace: Boolean = false,
+    val canRetry: Boolean = true
 )
 
 @HiltViewModel
@@ -55,16 +58,17 @@ class ProfileCreationViewModel @Inject constructor(
     private fun createUser() {
         if (creationJob?.isActive == true) return
         creationJob = viewModelScope.launch {
-            applyMutation { copy(errorMessage = null) }
+            applyMutation { copy(errorMessage = null, retryInPlace = false, canRetry = true) }
             val state = getStateValue()
             val user = state.user
             val email = user?.email
             if (email.isNullOrBlank()) {
                 Log.e(TAG, "Cannot create user: missing or blank email")
-                applyMutation { copy(errorMessage = R.string.profile_sign_in_error_message) }
+                applyMutation { copy(errorMessage = R.string.profile_sign_in_error_message, retryInPlace = false, canRetry = true) }
                 return@launch
             }
 
+            applyMutation { copy(isCreating = true) }
             try {
                 val success = userInfoRepository.createUser(
                     email = email,
@@ -78,18 +82,28 @@ class ProfileCreationViewModel @Inject constructor(
                     Log.d(TAG, "User created successfully")
                 } else {
                     Log.e(TAG, "User not created")
-                    applyMutation { copy(errorMessage = R.string.profile_create_error_message) }
+                    applyMutation { copy(errorMessage = R.string.profile_create_error_message, retryInPlace = true, canRetry = true) }
                 }
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
                 Log.e(TAG, "Account creation failed", e)
-                applyMutation { copy(errorMessage = R.string.profile_create_error_message) }
+                applyMutation { copy(errorMessage = R.string.profile_create_error_message, retryInPlace = true, canRetry = true) }
+            } finally {
+                applyMutation { copy(isCreating = false) }
             }
         }
     }
 
-    fun retryOnboarding() {
+    fun onErrorRetry() {
+        if (getStateValue().retryInPlace) {
+            createUser()
+        } else {
+            retryOnboarding()
+        }
+    }
+
+    private fun retryOnboarding() {
         if (creationJob?.isActive == true) return
         creationJob = viewModelScope.launch {
             savedStateHandle.remove<String>(PHOTO_URI_KEY)
@@ -106,7 +120,7 @@ class ProfileCreationViewModel @Inject constructor(
     }
 
     fun dismissError() {
-        applyMutation { copy(errorMessage = null) }
+        applyMutation { copy(errorMessage = null, retryInPlace = false, canRetry = true) }
     }
 
     fun onPhotoSelected(uri: Uri) {
@@ -118,7 +132,7 @@ class ProfileCreationViewModel @Inject constructor(
                 Intent.FLAG_GRANT_READ_URI_PERMISSION
             )
         } catch (e: SecurityException) {
-            applyMutation { copy(errorMessage = R.string.profile_photo_read_error_message) }
+            applyMutation { copy(errorMessage = R.string.profile_photo_read_error_message, retryInPlace = false, canRetry = false) }
             Log.e(TAG, "Cannot retain access to selected profile photo", e)
             return
         }
@@ -133,6 +147,7 @@ class ProfileCreationViewModel @Inject constructor(
     }
 
     fun updateGoals(newGoal: Int) {
+        if (getStateValue().isCreating) return
         applyMutation {
             copy(goal = newGoal)
         }
