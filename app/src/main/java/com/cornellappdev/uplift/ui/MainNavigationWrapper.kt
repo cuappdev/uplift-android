@@ -392,10 +392,6 @@ sealed class UpliftRootRoute {
     data object GoalsOnboarding : UpliftRootRoute()
 
     @Serializable
-    data object ClassReminder : UpliftRootRoute() {
-    }
-
-    @Serializable
     data object WorkoutReminders : UpliftRootRoute() {
 
     }

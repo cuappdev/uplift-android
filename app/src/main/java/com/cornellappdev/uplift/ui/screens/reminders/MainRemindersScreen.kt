@@ -30,7 +30,6 @@ fun MainRemindersScreen(
 ) {
     MainReminderContent(
         onBack = mainRemindersViewModel::onBack,
-        onClassReminderPressed = mainRemindersViewModel::onClassReminderPressed,
         onWorkoutRemindersPressed = mainRemindersViewModel::onWorkoutRemindersPressed,
         onCapacityRemindersPressed = mainRemindersViewModel::onCapacityRemindersPressed,
     )
@@ -39,7 +38,6 @@ fun MainRemindersScreen(
 @Composable
 fun MainReminderContent(
     onBack: () -> Unit,
-    onClassReminderPressed: () -> Unit,
     onWorkoutRemindersPressed: () -> Unit,
     onCapacityRemindersPressed: () -> Unit
 ) {
@@ -68,12 +66,6 @@ fun MainReminderContent(
             verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
                 PageOption(
-                    icon = R.drawable.ic_classes_inactive,
-                    title = "Class Reminders",
-                    onClick = onClassReminderPressed,
-                )
-                Divider(color = GRAY01)
-                PageOption(
                     icon = R.drawable.gym_simple,
                     title = "Workout Reminders",
                     onClick = onWorkoutRemindersPressed,
@@ -93,7 +85,6 @@ fun MainReminderContent(
 private fun MainReminderScreenPreview() {
     MainReminderContent(
         onBack = {},
-        onClassReminderPressed = {},
         onWorkoutRemindersPressed = {},
         onCapacityRemindersPressed = {},
     )
