@@ -2,12 +2,12 @@ package com.cornellappdev.uplift.ui.screens.reminders
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.runtime.Composable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -31,6 +31,7 @@ fun MainRemindersScreen(
 ) {
     MainReminderContent(
         onBack = mainRemindersViewModel::onBack,
+        onClassReminderPressed = mainRemindersViewModel::onClassReminderPressed,
         onWorkoutRemindersPressed = mainRemindersViewModel::onWorkoutRemindersPressed,
         onCapacityRemindersPressed = mainRemindersViewModel::onCapacityRemindersPressed,
     )
@@ -39,6 +40,7 @@ fun MainRemindersScreen(
 @Composable
 fun MainReminderContent(
     onBack: () -> Unit,
+    onClassReminderPressed: () -> Unit,
     onWorkoutRemindersPressed: () -> Unit,
     onCapacityRemindersPressed: () -> Unit
 ) {
@@ -67,6 +69,12 @@ fun MainReminderContent(
             verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
             PageOption(
+                icon = R.drawable.ic_classes_inactive,
+                title = "Class Reminders",
+                onClick = onClassReminderPressed,
+            )
+            HorizontalDivider(color = GRAY01)
+            PageOption(
                 icon = R.drawable.gym_simple,
                 title = stringResource(id = R.string.workout_reminders_title),
                 onClick = onWorkoutRemindersPressed,
@@ -86,6 +94,7 @@ fun MainReminderContent(
 private fun MainReminderScreenPreview() {
     MainReminderContent(
         onBack = {},
+        onClassReminderPressed = {},
         onWorkoutRemindersPressed = {},
         onCapacityRemindersPressed = {},
     )
