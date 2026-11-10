@@ -21,10 +21,6 @@ class MainRemindersViewModel @Inject constructor(
         rootNavigationRepository.navigateUp()
     }
 
-    fun onClassReminderPressed() {
-        rootNavigationRepository.navigate(UpliftRootRoute.ClassReminder)
-    }
-
     fun onWorkoutRemindersPressed() {
         rootNavigationRepository.navigate(UpliftRootRoute.WorkoutReminders)
     }
