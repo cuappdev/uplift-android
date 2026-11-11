@@ -29,6 +29,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.shadow
@@ -41,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.cornellappdev.uplift.R
+import com.cornellappdev.uplift.ui.components.profile.ProfileErrorDialog
 import com.cornellappdev.uplift.ui.components.general.UpliftButton
 import com.cornellappdev.uplift.ui.components.onboarding.PhotoPicker
 import com.cornellappdev.uplift.ui.viewmodels.onboarding.ProfileCreationViewModel
@@ -57,6 +59,17 @@ import com.cornellappdev.uplift.util.montserratFamily
 fun ProfileCreationScreen(
     profileCreationViewModel: ProfileCreationViewModel = hiltViewModel()
 ) = with(profileCreationViewModel.collectUiStateValue()) {
+    errorMessage?.let { message ->
+        ProfileErrorDialog(
+            title = stringResource(
+                if (message == R.string.profile_photo_read_error_message)
+                    R.string.profile_photo_read_error_title else R.string.profile_create_error_title
+            ),
+            message = stringResource(message),
+            onDismiss = profileCreationViewModel::dismissError,
+            onRetry = if (canRetry) profileCreationViewModel::onErrorRetry else null
+        )
+    }
     ProfileCreationScreenContent(
         profileCreationViewModel::onPhotoSelected,
         profileCreationViewModel::navigateToGoals,

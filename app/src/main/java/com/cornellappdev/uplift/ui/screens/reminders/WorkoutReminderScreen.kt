@@ -20,6 +20,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -188,7 +189,12 @@ private fun WorkoutReminderContent(
 }
 
 @Composable
-fun OnboardingButtons(onNext: () -> Unit, onSkip: () -> Unit) {
+fun OnboardingButtons(
+    onNext: () -> Unit,
+    onSkip: () -> Unit,
+    enabled: Boolean = true,
+    nextText: String = "Next"
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -201,7 +207,8 @@ fun OnboardingButtons(onNext: () -> Unit, onSkip: () -> Unit) {
     ) {
         UpliftButton(
             onClick = onNext,
-            text = "Next",
+            enabled = enabled,
+            text = nextText,
             fontSize = 16f,
             width = 144.dp,
             height = 44.dp
@@ -210,7 +217,9 @@ fun OnboardingButtons(onNext: () -> Unit, onSkip: () -> Unit) {
             text = "Skip",
             fontFamily = montserratFamily,
             color = GRAY04,
-            modifier = Modifier.clickable(onClick = onSkip)
+            modifier = Modifier
+                .alpha(if (enabled) 1f else 0.5f)
+                .clickable(enabled = enabled, onClick = onSkip)
         )
     }
 }

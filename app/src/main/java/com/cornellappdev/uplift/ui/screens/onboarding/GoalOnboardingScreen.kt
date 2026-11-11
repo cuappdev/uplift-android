@@ -1,5 +1,6 @@
 package com.cornellappdev.uplift.ui.screens.onboarding
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -22,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.cornellappdev.uplift.R
+import com.cornellappdev.uplift.ui.components.profile.ProfileErrorDialog
 import com.cornellappdev.uplift.ui.components.general.UpliftTopBar
 import com.cornellappdev.uplift.ui.components.goalsetting.GoalSettingHeader
 import com.cornellappdev.uplift.ui.components.goalsetting.GoalSlider
@@ -34,11 +36,25 @@ fun GoalsOnboardingScreen(
     viewModel: ProfileCreationViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
+    // Block backing while the account is being created
+    BackHandler(enabled = uiState.isCreating) { }
+    uiState.errorMessage?.let { message ->
+        ProfileErrorDialog(
+            title = stringResource(
+                if (message == R.string.profile_photo_read_error_message)
+                    R.string.profile_photo_read_error_title else R.string.profile_create_error_title
+            ),
+            message = stringResource(message),
+            onDismiss = viewModel::dismissError,
+            onRetry = if (uiState.canRetry) viewModel::onErrorRetry else null
+        )
+    }
     GoalsOnboardingScreenContent(
         goalValue = uiState.goal,
         onGoalValueChange = viewModel::updateGoals,
         onNext = viewModel::onNext,
-        onSkip = viewModel::onSkip
+        onSkip = viewModel::onSkip,
+        isCreating = uiState.isCreating
     )
 }
 
@@ -47,7 +63,8 @@ private fun GoalsOnboardingScreenContent(
     goalValue: Int,
     onGoalValueChange: (Int) -> Unit,
     onNext: () -> Unit,
-    onSkip: () -> Unit
+    onSkip: () -> Unit,
+    isCreating: Boolean = false
 ) {
     Scaffold(
         topBar = {
@@ -56,7 +73,12 @@ private fun GoalsOnboardingScreenContent(
             )
         },
         bottomBar = {
-            OnboardingButtons(onNext, onSkip)
+            OnboardingButtons(
+                onNext = onNext,
+                onSkip = onSkip,
+                enabled = !isCreating,
+                nextText = if (isCreating) stringResource(R.string.creating_profile) else "Next"
+            )
         },
         modifier = Modifier
             .fillMaxSize()
@@ -73,7 +95,11 @@ private fun GoalsOnboardingScreenContent(
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             GoalSettingHeader(isOnboarding = true)
-            GoalSlider(value = goalValue, onValueChange = onGoalValueChange)
+            GoalSlider(
+                value = goalValue,
+                onValueChange = onGoalValueChange,
+                enabled = !isCreating
+            )
         }
     }
 }

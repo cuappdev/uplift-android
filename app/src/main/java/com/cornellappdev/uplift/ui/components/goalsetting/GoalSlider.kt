@@ -20,6 +20,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.layout
@@ -48,7 +49,7 @@ fun GoalSlider(
     enabled: Boolean = true
 ) {
     Column(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth().alpha(if (enabled) 1f else 0.5f),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         Slider(

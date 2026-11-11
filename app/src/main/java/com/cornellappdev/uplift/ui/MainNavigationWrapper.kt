@@ -133,8 +133,8 @@ fun MainNavigationWrapper(
     LaunchedEffect(rootNavigationUiState.navEvent) {
         rootNavigationUiState.navEvent?.consumeSuspend { route ->
             navController.navigate(route) {
-                if (route == UpliftRootRoute.Home) {
-                    // Finish skip/login/onboarding so pressing back won't bring the user back into the onboarding flow.
+                if (route == UpliftRootRoute.Home || route == UpliftRootRoute.Onboarding) {
+                    // Finish or restart onboarding without retaining the previous failure states.
                     popUpTo(0)
                     launchSingleTop = true
                 }

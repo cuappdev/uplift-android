@@ -44,4 +44,20 @@
         <item quantity="other">%d Days</item>
     </plurals>
     <string name="close">Close</string>
+
+    <!-- Profile action errors -->
+    <string name="profile_error_dismiss">Dismiss</string>
+    <string name="profile_create_error_title">Can’t create profile</string>
+    <string name="profile_create_error_message">Something went wrong while setting up your profile. Tap Retry to try again.</string>
+    <string name="creating_profile">Creating…</string>
+    <string name="sign_in_error_title">Can’t sign in</string>
+    <string name="sign_in_error_message">We couldn’t sign you in. Check your connection and try again.</string>
+    <string name="sign_in_cornell_error_message">Uplift needs a Cornell account. Sign in with your @cornell.edu Google account.</string>
+    <string name="sign_in_generic_error_message">Something went wrong while signing in. Please try again.</string>
+    <string name="profile_sign_in_error_message">Your sign-in session is missing. Tap Retry to return to sign-in.</string>
+    <string name="profile_photo_read_error_title">Can’t load photo</string>
+    <string name="profile_photo_read_error_message">We couldn’t access that photo. Choose a different one.</string>
+    <string name="profile_delete_error_title">Can’t delete account</string>
+    <string name="profile_delete_error_message">Something went wrong while deleting your account. Tap Retry to try deleting it again.</string>
+    <string name="deleting_account">Deleting account…</string>
 </resources>
