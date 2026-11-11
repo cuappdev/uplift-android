@@ -68,78 +68,68 @@ class UserInfoRepository @Inject constructor(
         goal: Int,
         imageUri: Uri? = null
     ): Boolean {
-        return onboardingMutex.withLock { createUserLocked(email, name, netId, skip, goal, imageUri) }
-    }
-
-    // Caller must hold onboardingMutex
-    private suspend fun createUserLocked(
-        email: String,
-        name: String,
-        netId: String,
-        skip: Boolean,
-        goal: Int,
-        imageUri: Uri?
-    ): Boolean {
-        try{
-            // Resume after a partial failure instead of recreating an account that already exists
-            val userFields = createdUserFields?.takeIf { it.netId == netId }
-                ?: createOrRecoverAccount(email, name, netId, imageUri)
-                ?: return false
-            val loginResponse = apolloClient.mutation(
-                LoginUserMutation(
-                    netId = netId
-                )
-            ).execute()
-            val id = userFields.id.toIntOrNull()
-            if (id == null) {
-                Log.e(TAG, "Failed to set goal: non-numeric user ID '${userFields.id}'")
-                return false
-            }
-            val loginData = loginResponse.data?.loginUser
-            if (loginData?.accessToken == null || loginData.refreshToken == null) {
-                Log.e(TAG, "Login failed after creation: ${loginResponse.errors}")
-                return false
-            }
-            val accessToken = loginData.accessToken
-            val refreshToken = loginData.refreshToken
-
-            if (imageUri != null && imageUri != createdImageUri) {
-                uploadProfilePhoto(id, imageUri, accessToken)
-                createdImageUri = imageUri
-            }
-            if (!skip) {
-                if (!uploadGoal(id, goal, accessToken)) {
+        onboardingMutex.withLock {
+            try{
+                // Resume after a partial failure instead of recreating an account that already exists
+                val userFields = createdUserFields?.takeIf { it.netId == netId }
+                    ?: createOrRecoverAccount(email, name, netId, imageUri)
+                    ?: return false
+                val loginResponse = apolloClient.mutation(
+                    LoginUserMutation(
+                        netId = netId
+                    )
+                ).execute()
+                val id = userFields.id.toIntOrNull()
+                if (id == null) {
+                    Log.e(TAG, "Failed to set goal: non-numeric user ID '${userFields.id}'")
                     return false
                 }
+                val loginData = loginResponse.data?.loginUser
+                if (loginData?.accessToken == null || loginData.refreshToken == null) {
+                    Log.e(TAG, "Login failed after creation: ${loginResponse.errors}")
+                    return false
+                }
+                val accessToken = loginData.accessToken
+                val refreshToken = loginData.refreshToken
+
+                if (imageUri != null && imageUri != createdImageUri) {
+                    uploadProfilePhoto(id, imageUri, accessToken)
+                    createdImageUri = imageUri
+                }
+                if (!skip) {
+                    if (!uploadGoal(id, goal, accessToken)) {
+                        return false
+                    }
+                }
+                else {
+                    Log.d(TAG, "Skipping goal upload")
+                }
+                storeUserFields(
+                    id = userFields.id,
+                    username = userFields.name,
+                    netId = userFields.netId,
+                    email = userFields.email ?: email,
+                    goalSkip = skip,
+                    goal = goal
+                )
+                sessionManager.startSession(
+                    userId = id,
+                    name = name,
+                    email = email,
+                    netId = netId,
+                    access = accessToken,
+                    refresh = refreshToken
+                )
+                createdUserFields = null
+                createdImageUri = null
+                Log.d(TAG, "User created successfully")
+                return true
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                Log.e(TAG, "Error creating user: $e")
+                return false
             }
-            else {
-                Log.d(TAG, "Skipping goal upload")
-            }
-            storeUserFields(
-                id = userFields.id,
-                username = userFields.name,
-                netId = userFields.netId,
-                email = userFields.email ?: email,
-                goalSkip = skip,
-                goal = goal
-            )
-            sessionManager.startSession(
-                userId = id,
-                name = name,
-                email = email,
-                netId = netId,
-                access = accessToken,
-                refresh = refreshToken
-            )
-            createdUserFields = null
-            createdImageUri = null
-            Log.d(TAG, "User created successfully")
-            return true
-        } catch (e: CancellationException) {
-            throw e
-        } catch (e: Exception) {
-            Log.e(TAG, "Error creating user: $e")
-            return false
         }
     }
 
