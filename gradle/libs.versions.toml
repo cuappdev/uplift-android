@@ -4,7 +4,7 @@ kotlin = "2.4.21"
 ksp = "2.3.12"
 hilt = "2.60.1"
 googleServices = "4.4.3"
-apollo = "4.1.1"
+apollo = "5.2.0"
 
 activityCompose = "1.10.1"
 composeUi = "1.5.1"
