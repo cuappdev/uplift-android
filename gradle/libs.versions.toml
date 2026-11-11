@@ -1,7 +1,7 @@
 [versions]
 agp = "9.5.1"
 kotlin = "2.4.21"
-ksp = "2.3.12"
+ksp = "2.3.13"
 hilt = "2.60.1"
 googleServices = "4.4.3"
 apollo = "5.2.0"
