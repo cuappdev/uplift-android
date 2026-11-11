@@ -44,7 +44,8 @@ private val LabelEdgeInset = 5.dp
 fun GoalSlider(
     value: Int,
     onValueChange: (Int) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),
@@ -66,6 +67,7 @@ fun GoalSlider(
                     }
                 },
             value = value.toFloat(),
+            enabled = enabled,
             valueRange = MIN_DAYS.toFloat()..MAX_DAYS.toFloat(),
             steps = MAX_DAYS - MIN_DAYS - 1,
             onValueChange = {
