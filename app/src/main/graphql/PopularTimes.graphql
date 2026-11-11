@@ -1,0 +1,7 @@
+query PopularTimes($facilityId: Int!) {
+  getHourlyAverageCapacitiesByFacilityId(facilityId: $facilityId) {
+      averagePercent,
+      hourOfDay,
+      dayOfWeek
+  }
+}

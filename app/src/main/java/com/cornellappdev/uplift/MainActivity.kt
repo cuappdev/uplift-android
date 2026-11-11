@@ -5,35 +5,60 @@ import android.content.pm.ActivityInfo
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.datastore.preferences.preferencesDataStore
-import com.cornellappdev.uplift.models.DatastoreRepository
+import com.cornellappdev.uplift.data.repositories.DatastoreRepository
+import com.cornellappdev.uplift.data.repositories.LocationRepository
 import com.cornellappdev.uplift.ui.MainNavigationWrapper
 import com.cornellappdev.uplift.ui.theme.UpliftTheme
+import com.cornellappdev.uplift.ui.viewmodels.nav.RootNavigationViewModel
+import com.cornellappdev.uplift.ui.viewmodels.profile.CheckInViewModel
+import com.cornellappdev.uplift.util.CHECK_IN_FLAG
 import com.cornellappdev.uplift.util.LockScreenOrientation
-import com.cornellappdev.uplift.util.PREFERENCES_NAME
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
-// Singleton
-lateinit var datastoreRepository: DatastoreRepository
+lateinit var datastoreRepository : DatastoreRepository
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    val Context.dataStore by preferencesDataStore(
-        name = PREFERENCES_NAME
-    )
+    @Inject
+    lateinit var injectedDatastoreRepository: DatastoreRepository
+
+
+    private val checkInViewModel: CheckInViewModel by viewModels()
+    private val rootNavigationViewModel: RootNavigationViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
-        installSplashScreen()
+        splashScreen.setKeepOnScreenCondition {
+            !rootNavigationViewModel.uiStateFlow.value.isStartupReady
+        }
 
-        // If statement needed to fix crash when datastore initializes twice.
-        if (!::datastoreRepository.isInitialized)
-            datastoreRepository = DatastoreRepository(dataStore)
+        datastoreRepository = injectedDatastoreRepository
 
         setContent {
             UpliftTheme {
                 LockScreenOrientation(orientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
-                MainNavigationWrapper()
+                MainNavigationWrapper(rootNavigationViewModel = rootNavigationViewModel)
             }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        LocationRepository.startLocationUpdates(this)
+        if (CHECK_IN_FLAG){
+            checkInViewModel.startLocationUpdates(this)
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        LocationRepository.stopLocationUpdates()
+        if (CHECK_IN_FLAG){
+            checkInViewModel.stopLocationUpdates()
         }
     }
 }

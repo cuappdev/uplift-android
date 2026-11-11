@@ -1,4 +1,4 @@
-package com.cornellappdev.uplift.ui.components
+package com.cornellappdev.uplift.ui.components.general
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
@@ -10,6 +10,7 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -21,9 +22,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.cornellappdev.uplift.R
-import com.cornellappdev.uplift.models.UpliftClass
-import com.cornellappdev.uplift.nav.navigateToClass
-import com.cornellappdev.uplift.ui.viewmodels.ClassDetailViewModel
+import com.cornellappdev.uplift.data.models.UpliftClass
+import com.cornellappdev.uplift.ui.nav.navigateToClass
 import com.cornellappdev.uplift.util.*
 import java.util.*
 
@@ -35,7 +35,7 @@ import java.util.*
 fun ClassInfoCard(
     thisClass: UpliftClass,
     navController: NavHostController,
-    classDetailViewModel: ClassDetailViewModel
+    openClass: (UpliftClass) -> Unit
 ) {
     val today = Calendar.getInstance()
 
@@ -48,7 +48,7 @@ fun ClassInfoCard(
         color = Color.White,
         onClick = {
             navController.navigateToClass(
-                classDetailViewModel = classDetailViewModel,
+                openClass = openClass,
                 thisClass = thisClass
             )
         },
@@ -132,7 +132,7 @@ fun ClassInfoCard(
                     modifier = Modifier
                         .size(24.dp)
                         .clickable(
-                            interactionSource = MutableInteractionSource(),
+                            interactionSource = remember { MutableInteractionSource() },
                             indication = null
                         ) {
                             thisClass.toggleFavorite()

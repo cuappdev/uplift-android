@@ -1,0 +1,90 @@
+fragment userFields on User {
+    id
+    email
+    netId
+    name
+    encodedImage
+    activeStreak
+    maxStreak
+    streakStart
+    workoutGoal
+    lastGoalChange
+    lastStreak
+    totalGymDays
+    workoutHistory {
+        ...workoutFields
+    }
+}
+
+fragment workoutFields on Workout {
+    id
+    workoutTime
+    userId
+    facilityId
+    gymName
+}
+
+mutation CreateUser($email: String!, $name: String!, $netId: String!, $encodedImage: String) {
+    createUser(email: $email, name: $name, netId: $netId, encodedImage: $encodedImage) {
+        ...userFields
+    }
+}
+
+query GetWeeklyWorkoutDays($id: Int!) {
+    getWeeklyWorkoutDays(id: $id)
+}
+
+mutation UpdateProfilePhoto($userId: Int!, $encodedImage: String!) {
+    editUser(userId: $userId, encodedImage: $encodedImage) {
+        encodedImage
+    }
+}
+
+query GetWorkoutsById($id: Int!) {
+    getWorkoutsById(id: $id) {
+        ...workoutFields
+    }
+}
+
+query getUserByNetId($netId: String!) {
+    getUserByNetId(netId: $netId) {
+        ...userFields
+    }
+}
+
+mutation SetWorkoutGoals($userId: Int!, $workoutGoal: Int!) {
+    setWorkoutGoals(userId: $userId, workoutGoal: $workoutGoal) {
+        ...userFields
+    }
+}
+
+mutation LogWorkout($facilityId: Int!, $workoutTime: DateTime!, $userId: Int!) {
+    logWorkout(facilityId: $facilityId, userId: $userId, workoutTime: $workoutTime) {
+        ...workoutFields
+    }
+}
+
+mutation DeleteUser($userId: Int!) {
+    deleteUser(userId: $userId) {
+        ...userFields
+    }
+}
+
+mutation LoginUser($netId: String!) {
+    loginUser(netId: $netId) {
+        accessToken
+        refreshToken
+    }
+}
+
+mutation LogoutUser {
+    logoutUser {
+        success
+    }
+}
+
+mutation RefreshAccessToken {
+    refreshAccessToken {
+        newAccessToken
+    }
+}

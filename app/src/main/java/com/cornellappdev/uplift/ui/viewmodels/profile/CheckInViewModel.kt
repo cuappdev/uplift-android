@@ -1,0 +1,193 @@
+package com.cornellappdev.uplift.ui.viewmodels.profile
+
+import android.content.Context
+import android.util.Log
+import androidx.lifecycle.viewModelScope
+import com.cornellappdev.uplift.data.repositories.CheckInRepository
+import com.cornellappdev.uplift.data.repositories.ConfettiRepository
+import com.cornellappdev.uplift.data.repositories.LocationRepository
+import com.cornellappdev.uplift.data.repositories.WorkoutLogRepository
+import com.cornellappdev.uplift.ui.viewmodels.UpliftViewModel
+import com.cornellappdev.uplift.util.isOpen
+import com.cornellappdev.uplift.util.todayIndex
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.launch
+import javax.inject.Inject
+
+private const val tag = "CheckInVM"
+/**
+ * UI mode for the Check-In pop up.
+ * - [Prompt]: user is near an open gym and can choose to check in.
+ * -[Complete]: a check in was just logged and the confirmation/congratulation state is shown.
+ * -[Failed]: the log workout mutation failed and the user can retry or dismiss.
+ */
+enum class CheckInMode {Prompt, Complete, Failed}
+
+/**
+ * UI state backing the Check-In pop-up
+ *
+ * @param showPopUp whether the pop-up should be visible on screen
+ * @param mode the current mode of the pop-up
+ * @param gymId the identifier of the nearest open gym (null if unknown or not applicable)
+ * @param gymName the display name of the nearest/open gym
+ * @param timeText a pre-formatted time string to display
+ * @param showConfetti whether a confetti animation should be shown after a successful check-in
+ */
+data class CheckInUiState(
+    val showPopUp: Boolean = false,
+    val mode: CheckInMode = CheckInMode.Prompt,
+    val gymId: String? = "",
+    val gymName: String = "",
+    val timeText: String = ""
+)
+
+/** A [CheckInViewModel] manages state and actions for the Check-In pop-up on main screens. */
+@HiltViewModel
+class CheckInViewModel @Inject constructor(
+    private val checkInRepository: CheckInRepository,
+    private val confettiRepository: ConfettiRepository,
+    private val workoutLogRepository: WorkoutLogRepository
+) : UpliftViewModel<CheckInUiState>(CheckInUiState()) {
+
+    private var locationJob: Job? = null
+    private val day: Int = todayIndex()
+
+    init {
+        viewModelScope.launch {
+            combine(
+                checkInRepository.nearestGymFlow,
+                checkInRepository.checkInPromptAllowed
+            ) { gym, allowed -> Pair(gym, allowed) }
+                .collect { (gym, allowed) ->
+                    val currentMode = uiStateFlow.value.mode
+                    val inComplete = currentMode == CheckInMode.Complete
+
+                    when {
+                         allowed && gym != null && isOpen(gym.hours[day]) -> applyMutation {
+                            copy(
+                                showPopUp = true,
+                                mode = if (inComplete) CheckInMode.Complete else CheckInMode.Prompt,
+                                gymName = gym.name,
+                                gymId = gym.facilityId,
+                                timeText = checkInRepository.formatTime(System.currentTimeMillis())
+                            )
+                        }
+                        !inComplete -> applyMutation { copy(showPopUp = false) }
+                    }
+
+                }
+        }
+    }
+
+    /**
+     * Calls [LocationRepository.startLocationUpdates] to begin location updates and launches a
+     * ViewModel scoped collector that feeds new non-null locations to the proximity evaluation flow.
+     */
+    fun startLocationUpdates(context: Context) {
+        if (locationJob?.isActive == true) return
+        LocationRepository.startLocationUpdates(context)
+        locationJob = viewModelScope.launch {
+            try {
+                LocationRepository.currentLocationFlow.collect{ location ->
+                   try {
+                       if (location != null) {
+                           checkInRepository.evaluateProximity(location)
+                       }
+                   } catch (e: Exception) {
+                       Log.e(tag, "Error evaluating proximity from location update", e)
+                   }
+                }
+            } catch (e: Exception) {
+                Log.e(tag, "Error collecting location flow", e)
+            }
+        }
+    }
+
+    /**
+     * Cancels location collection job and calls [LocationRepository.stopLocationUpdates] to stop
+     * location updates.
+     */
+    fun stopLocationUpdates() {
+        locationJob?.cancel()
+        locationJob = null
+        LocationRepository.stopLocationUpdates()
+    }
+
+    /**
+     * Records a temporary cooldown window by calling [checkInRepository] to mark the user's dismissal
+     * of the pop up.
+     */
+    fun onDismiss() = viewModelScope.launch {
+        try {
+            checkInRepository.markCheckInDismissedFor()
+        } catch (e: Exception) {
+            Log.e(tag, "Error dismissing check-in", e)
+        }
+        onClose()
+    }
+
+    /**
+     * Logs a workout via [checkInRepository]. Only on a successful mutation marks the
+     * user as checked in for the day (triggering the end-of-day cooldown, awaited and retried once
+     * if the write fails; the workout mutation itself is never retried), transition the UI into
+     * [CheckInMode.Complete], and burst confetti through [confettiRepository] and notify
+     * [workoutLogRepository] so screens showing history/streaks can refresh.
+     *
+     * If the mutation fails, the UI transitions into [CheckInMode.Failed] instead, so the user
+     * knows the workout wasn't recorded and can retry rather than seeing a false success state.
+     */
+    fun onCheckIn() = viewModelScope.launch {
+        val currentGymId = uiStateFlow.value.gymId
+        val gymIdInt = currentGymId?.toIntOrNull()
+
+        if (gymIdInt == null) {
+            Log.w(tag, "Invalid or missing gym ID: $currentGymId")
+            return@launch
+        }
+        try {
+            val logged = checkInRepository.logWorkoutFromCheckIn(gymIdInt)
+            if (logged) {
+                Log.d(tag, "Workout successfully logged to backend")
+                // saves today's date so the pop-up doesn't come back today. The second
+                // call only runs if the first save fails (&& short-circuits), so it's a retry. If both
+                // fail, the workout is still logged, so we still show Complete.
+                if (!checkInRepository.markCheckInToday() && !checkInRepository.markCheckInToday()) {
+                    Log.e(tag, "Workout logged but check-in cooldown could not be persisted")
+                }
+                applyMutation {
+                    copy(
+                        showPopUp = true,
+                        mode = CheckInMode.Complete
+                    )
+                }
+                confettiRepository.showConfetti(ConfettiViewModel.ConfettiUiState())
+                workoutLogRepository.notifyWorkoutLogged()
+            } else {
+                Log.e(tag, "Workout failed to log to backend")
+                applyMutation {
+                    copy(
+                        showPopUp = true,
+                        mode = CheckInMode.Failed
+                    )
+                }
+            }
+        } catch (e: Exception) {
+            Log.e(tag, "Error checking in", e)
+            applyMutation {
+                copy(
+                    showPopUp = true,
+                    mode = CheckInMode.Failed
+                )
+            }
+        }
+    }
+
+    /**
+     * Closes the pop-up immediately by not displaying the pop-up.
+     */
+    fun onClose() {
+        applyMutation { copy(showPopUp = false) }
+    }
+}

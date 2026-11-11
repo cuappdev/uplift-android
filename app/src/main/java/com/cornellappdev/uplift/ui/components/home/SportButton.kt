@@ -12,6 +12,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.ripple.rememberRipple
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -42,7 +43,7 @@ fun SportButton(text: String, painter: Painter, onClick: () -> Unit) {
                 .size(64.dp)
                 .clickable(
                     interactionSource = interactionSource,
-                    indication = rememberRipple(radius = 32.dp),
+                    indication = ripple(radius = 32.dp),
                     onClick = onClick
                 )
         ) {

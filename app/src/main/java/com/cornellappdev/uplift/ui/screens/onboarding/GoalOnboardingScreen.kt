@@ -1,0 +1,119 @@
+package com.cornellappdev.uplift.ui.screens.onboarding
+
+import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.cornellappdev.uplift.R
+import com.cornellappdev.uplift.ui.components.profile.ProfileErrorDialog
+import com.cornellappdev.uplift.ui.components.general.UpliftTopBar
+import com.cornellappdev.uplift.ui.components.goalsetting.GoalSettingHeader
+import com.cornellappdev.uplift.ui.components.goalsetting.GoalSlider
+import com.cornellappdev.uplift.ui.screens.reminders.OnboardingButtons
+import com.cornellappdev.uplift.ui.theme.UpliftTheme
+import com.cornellappdev.uplift.ui.viewmodels.onboarding.ProfileCreationViewModel
+
+@Composable
+fun GoalsOnboardingScreen(
+    viewModel: ProfileCreationViewModel = hiltViewModel(),
+) {
+    val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
+    // Block backing while the account is being created
+    BackHandler(enabled = uiState.isCreating) { }
+    uiState.errorMessage?.let { message ->
+        ProfileErrorDialog(
+            title = stringResource(
+                if (message == R.string.profile_photo_read_error_message)
+                    R.string.profile_photo_read_error_title else R.string.profile_create_error_title
+            ),
+            message = stringResource(message),
+            onDismiss = viewModel::dismissError,
+            onRetry = if (uiState.canRetry) viewModel::onErrorRetry else null
+        )
+    }
+    GoalsOnboardingScreenContent(
+        goalValue = uiState.goal,
+        onGoalValueChange = viewModel::updateGoals,
+        onNext = viewModel::onNext,
+        onSkip = viewModel::onSkip,
+        isCreating = uiState.isCreating
+    )
+}
+
+@Composable
+private fun GoalsOnboardingScreenContent(
+    goalValue: Int,
+    onGoalValueChange: (Int) -> Unit,
+    onNext: () -> Unit,
+    onSkip: () -> Unit,
+    isCreating: Boolean = false
+) {
+    Scaffold(
+        topBar = {
+            UpliftTopBar(
+                title = stringResource(R.string.goals_onboarding_title),
+            )
+        },
+        bottomBar = {
+            OnboardingButtons(
+                onNext = onNext,
+                onSkip = onSkip,
+                enabled = !isCreating,
+                nextText = if (isCreating) stringResource(R.string.creating_profile) else "Next"
+            )
+        },
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White)
+            .systemBarsPadding(),
+    ) { padding ->
+        Column(
+            modifier = Modifier
+                .background(color = Color.White)
+                .padding(padding)
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(vertical = 24.dp, horizontal = 18.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            GoalSettingHeader(isOnboarding = true)
+            GoalSlider(
+                value = goalValue,
+                onValueChange = onGoalValueChange,
+                enabled = !isCreating
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun GoalsOnboardingScreenPreview() {
+    UpliftTheme{
+        var sliderVal by remember { mutableIntStateOf(3) }
+        GoalsOnboardingScreenContent(
+            goalValue = sliderVal,
+            onGoalValueChange = { sliderVal = it },
+            onNext = {},
+            onSkip = {}
+        )
+    }
+}

@@ -1,0 +1,172 @@
+package com.cornellappdev.uplift.ui.components.onboarding
+
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedCard
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import coil.request.CachePolicy
+import coil.request.ImageRequest
+import coil.compose.rememberAsyncImagePainter
+import com.cornellappdev.uplift.util.GRAY01
+import com.cornellappdev.uplift.R
+
+data class PhotoPickerSizes(
+    val outerCircleSize: Dp,
+    val innerCircleSize: Dp,
+    val cameraIconOffset: Offset
+
+)
+
+enum class ScreenType {
+    ONBOARDING,
+    PROFILE
+}
+
+fun getPhotoPickerSizes(screenType: ScreenType): PhotoPickerSizes {
+    return when (screenType) {
+        ScreenType.ONBOARDING -> PhotoPickerSizes(
+            outerCircleSize = 160.dp,
+            innerCircleSize = 144.dp,
+            cameraIconOffset = Offset(
+                x = 60.dp.value,
+                y = 60.dp.value
+            )
+        )
+
+        ScreenType.PROFILE -> PhotoPickerSizes(
+            outerCircleSize = 98.dp,
+            innerCircleSize = 88.dp,
+            cameraIconOffset = Offset(
+                x = 36.dp.value,
+                y = 36.dp.value
+            )
+        )
+    }
+}
+
+@Composable
+fun PhotoPicker(
+    imageUri: Uri? = null,
+    onPhotoSelected: (Uri) -> Unit,
+    screenType: ScreenType = ScreenType.ONBOARDING
+) {
+    val sizes = getPhotoPickerSizes(screenType)
+
+    // Report selections to the caller, which owns the displayed photo and upload state.
+    val pickMedia =
+        rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+            if (uri != null) {
+                onPhotoSelected(uri)
+            }
+        }
+
+    Box(
+        modifier = Modifier.size(sizes.outerCircleSize), contentAlignment = Alignment.Center
+    ) {
+        ElevatedCard(
+            elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
+            colors = CardDefaults.cardColors(containerColor = Color.White),
+            shape = CircleShape,
+            modifier = Modifier.size(sizes.outerCircleSize),
+            onClick = {
+                pickMedia.launch(
+                    PickVisualMediaRequest(
+                        ActivityResultContracts.PickVisualMedia.ImageOnly
+                    )
+                )
+            }
+        ) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                if (imageUri != null) {
+                    // Profile uploads replace the bytes at the same backend URL.
+                    val imageRequest = ImageRequest.Builder(LocalContext.current)
+                        .data(imageUri)
+                        .apply {
+                            if (screenType == ScreenType.PROFILE) {
+                                memoryCachePolicy(CachePolicy.DISABLED)
+                                diskCachePolicy(CachePolicy.DISABLED)
+                                addHeader("Cache-Control", "no-cache")
+                            }
+                        }
+                        .build()
+                    Image(
+                        painter = rememberAsyncImagePainter(imageRequest),
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .size(sizes.innerCircleSize)
+                            .clip(CircleShape)
+                    )
+                } else {
+                    Box(
+                        modifier = Modifier
+                            .size(sizes.innerCircleSize)
+                            .clip(CircleShape)
+                            .background(GRAY01),
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.ic_camera),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(top = 16.dp)
+                        )
+                    }
+                }
+            }
+        }
+        if (imageUri != null || screenType == ScreenType.PROFILE) {
+            Image(
+                painter = painterResource(id = R.drawable.ic_camera_circle),
+                contentDescription = null,
+                modifier = Modifier
+                    .offset(
+                        sizes.cameraIconOffset.x.dp,
+                        sizes.cameraIconOffset.y.dp
+                    )
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun PhotoPickerPreview() {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        PhotoPicker(
+            imageUri = null,
+            onPhotoSelected = { }
+        )
+    }
+}

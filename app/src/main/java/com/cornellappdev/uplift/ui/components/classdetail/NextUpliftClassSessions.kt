@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -16,9 +15,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.cornellappdev.uplift.models.UpliftClass
-import com.cornellappdev.uplift.ui.components.ClassInfoCard
-import com.cornellappdev.uplift.ui.viewmodels.ClassDetailViewModel
+import com.cornellappdev.uplift.data.models.UpliftClass
+import com.cornellappdev.uplift.ui.components.general.ClassInfoCard
 import com.cornellappdev.uplift.util.PRIMARY_BLACK
 import com.cornellappdev.uplift.util.montserratFamily
 
@@ -28,9 +26,9 @@ import com.cornellappdev.uplift.util.montserratFamily
 @Composable
 fun NextUpliftClassSessions(
     navController: NavHostController,
-    classDetailViewModel: ClassDetailViewModel
+    nextSessions: List<UpliftClass>,
+    openClass: (UpliftClass) -> Unit
 ) {
-    val nextSessions = classDetailViewModel.nextSessionsFlow.collectAsState()
 
     // Next Sessions
     Column(
@@ -50,11 +48,11 @@ fun NextUpliftClassSessions(
             fontFamily = montserratFamily
         )
         Spacer(Modifier.height(24.dp))
-        for (nextClass: UpliftClass in nextSessions.value) {
+        for (nextClass: UpliftClass in nextSessions) {
             ClassInfoCard(
                 thisClass = nextClass,
                 navController = navController,
-                classDetailViewModel = classDetailViewModel
+                openClass = openClass
             )
             Spacer(modifier = Modifier.height(12.dp))
         }

@@ -52,7 +52,7 @@ fun DayOfWeekSelector(today: Int, onDaySelected: (Int) -> Unit) {
 
             Box(
                 modifier = Modifier.clickable(
-                    interactionSource = MutableInteractionSource(),
+                    interactionSource = remember { MutableInteractionSource() } ,
                     indication = null
                 ) {
                     selectedDay = i

@@ -5,11 +5,56 @@ type Query {
   getAllGyms: [Gym]
 
   """
+  Get user by Net ID.
+  """
+  getUserByNetId(netId: String): [User]
+
+  """
+  Get all friends of a user by ID.
+  """
+  getUsersFriends(id: Int): [User]
+
+  """
   Get all users given a giveaway ID.
   """
   getUsersByGiveawayId(id: Int): [User]
 
+  """
+  Get the days a user worked out for the current week.
+  """
+  getWeeklyWorkoutDays(id: Int): [String]
+
+  """
+  Get all of a user's workouts by ID.
+  """
+  getWorkoutsById(id: Int): [Workout]
+
   activities: [Activity]
+
+  """
+  Get all reports.
+  """
+  getAllReports: [Report]
+
+  """
+  Get all facility hourly average capacities.
+  """
+  getHourlyAverageCapacitiesByFacilityId(facilityId: Int): [HourlyAverageCapacity]
+
+  """
+  Get all friends for a user.
+  """
+  getUserFriends(userId: Int!): [User]
+
+  """
+  Get a specific capacity reminder by its ID.
+  """
+  getCapacityReminderById(id: Int!): CapacityReminder
+
+  """
+  Get all capacity reminders.
+  """
+  getAllCapacityReminders: [CapacityReminder]
 }
 
 type Gym {
@@ -34,22 +79,9 @@ type Gym {
   hours: [OpenHours]
 
   classes: [ClassInstance]
+
+  reports: [Report]
 }
-
-"""
-The `ID` scalar type represents a unique identifier, often used to refetch an object or as key for a cache. The ID type appears in a JSON response as a String; however, it is not intended to be human-readable. When expected as an input type, any string (such as `"4"`) or integer (such as `4`) input value will be accepted as an ID.
-"""
-scalar ID
-
-"""
-The `String` scalar type represents textual data, represented as UTF-8 character sequences. The String type is most often used by GraphQL to represent free-form human-readable text.
-"""
-scalar String
-
-"""
-The `Float` scalar type represents signed double-precision fractional values as specified by [IEEE 754](http://en.wikipedia.org/wiki/IEEE_floating_point). 
-"""
-scalar Float
 
 type Activity {
   id: ID!
@@ -67,24 +99,14 @@ type Activity {
   pricing: [Price]
 }
 
-"""
-The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31 - 1) and 2^31 - 1 since represented in JSON as double-precision floating point numbers specifiedby [IEEE 754](http://en.wikipedia.org/wiki/IEEE_floating_point).
-"""
-scalar Int
-
-"""
-The `Boolean` scalar type represents `true` or `false`.
-"""
-scalar Boolean
-
 type Price {
   id: ID!
 
   activityId: Int!
 
-  name: String!
-
   cost: Float!
+
+  name: String!
 
   rate: String
 
@@ -169,7 +191,9 @@ type Equipment {
 
   name: String!
 
-  equipmentType: EquipmentType!
+  muscleGroups: [MuscleGroup]!
+
+  cleanName: String!
 
   facilityId: Int!
 
@@ -181,20 +205,30 @@ type Equipment {
 """
 An enumeration.
 """
-enum EquipmentType {
-  CARDIO
+enum MuscleGroup {
+  ABDOMINALS
 
-  RACKS_AND_BENCHES
+  CHEST
 
-  SELECTORIZED
+  BACK
 
-  MULTI_CABLE
+  SHOULDERS
 
-  FREE_WEIGHTS
+  BICEPS
+
+  TRICEPS
+
+  HAMSTRINGS
+
+  QUADS
+
+  GLUTES
+
+  CALVES
 
   MISCELLANEOUS
 
-  PLATE_LOADED
+  CARDIO
 }
 
 """
@@ -276,14 +310,79 @@ type Class {
   classInstances: [ClassInstance]
 }
 
+type Report {
+  id: ID!
+
+  createdAt: DateTime!
+
+  description: String!
+
+  gymId: Int!
+
+  issue: ReportType!
+
+  gym: Gym
+}
+
+"""
+An enumeration.
+"""
+enum ReportType {
+  INACCURATE_EQUIPMENT
+
+  INCORRECT_HOURS
+
+  INACCURATE_DESCRIPTION
+
+  WAIT_TIMES_NOT_UPDATED
+
+  OTHER
+}
+
 type User {
   id: ID!
 
-  instagram: String
+  email: String
 
   netId: String!
 
+  name: String!
+
+  activeStreak: Int!
+
+  maxStreak: Int!
+
+  workoutGoal: Int
+
+  lastGoalChange: DateTime
+
+  lastStreak: Int!
+
+  encodedImage: String
+
   giveaways: [Giveaway]
+
+  goalHistory: [WorkoutGoalHistory]
+
+  friendRequestsSent: [Friendship]
+
+  friendRequestsReceived: [Friendship]
+
+  friendships: [Friendship]
+
+  friends: [User]
+
+  """
+  Get the total number of gym days (unique workout days) for user.
+  """
+  totalGymDays: Int!
+
+  """
+  The start datetime of the most recent active streak (midnight of the day in local timezone), up until the current date.
+  """
+  streakStart: DateTime
+
+  workoutHistory: [Workout]
 }
 
 type Giveaway {
@@ -294,33 +393,219 @@ type Giveaway {
   users: [User]
 }
 
+type WorkoutGoalHistory {
+  id: ID!
+
+  userId: Int!
+
+  workoutGoal: Int!
+
+  effectiveAt: DateTime!
+
+  user: User
+}
+
+type Friendship {
+  id: ID!
+
+  userId: Int!
+
+  friendId: Int!
+
+  createdAt: DateTime
+
+  isAccepted: Boolean
+
+  acceptedAt: DateTime
+
+  user: User
+
+  friend: User
+}
+
+type Workout {
+  id: ID!
+
+  workoutTime: DateTime!
+
+  userId: Int!
+
+  facilityId: Int!
+
+  gymName: String!
+}
+
+type HourlyAverageCapacity {
+  id: ID!
+
+  facilityId: Int!
+
+  averagePercent: Float!
+
+  hourOfDay: Int!
+
+  dayOfWeek: DayOfWeekGraphQLEnum
+
+  history: [Float]!
+}
+
+enum DayOfWeekGraphQLEnum {
+  MONDAY
+
+  TUESDAY
+
+  WEDNESDAY
+
+  THURSDAY
+
+  FRIDAY
+
+  SATURDAY
+
+  SUNDAY
+}
+
+type CapacityReminder {
+  id: ID!
+
+  gyms: [CapacityReminderGym]!
+
+  capacityThreshold: Int!
+
+  daysOfWeek: [DayOfWeekEnum]!
+
+  isActive: Boolean
+}
+
+"""
+An enumeration.
+"""
+enum CapacityReminderGym {
+  TEAGLEUP
+
+  TEAGLEDOWN
+
+  HELENNEWMAN
+
+  TONIMORRISON
+
+  NOYES
+}
+
+"""
+An enumeration.
+"""
+enum DayOfWeekEnum {
+  MONDAY
+
+  TUESDAY
+
+  WEDNESDAY
+
+  THURSDAY
+
+  FRIDAY
+
+  SATURDAY
+
+  SUNDAY
+}
+
 type Mutation {
   """
   Creates a new giveaway.
   """
-  createGiveaway(name: String!): CreateGiveaway
+  createGiveaway(name: String!): Giveaway
 
   """
   Creates a new user.
   """
-  createUser(instagram: String, netId: String!): CreateUser
+  createUser(email: String!, encodedImage: String, name: String!, netId: String!): User
+
+  """
+  Edit a new user.
+  """
+  editUser(email: String, encodedImage: String, name: String, userId: Int!): User
 
   """
   Enters a user into a giveaway.
   """
-  enterGiveaway(giveawayId: Int!, userNetId: String!): EnterGiveaway
-}
+  enterGiveaway(giveawayId: Int!, userNetId: String!): GiveawayInstance
 
-type CreateGiveaway {
-  giveaway: Giveaway
-}
+  """
+  Set a user's workout goals.
+  """
+  setWorkoutGoals("The ID of the user." userId: Int!, "The new workout goal for the user in terms of number of days per week." workoutGoal: Int!): User
 
-type CreateUser {
-  user: User
-}
+  """
+  Log a user's workout.
+  """
+  logWorkout(facilityId: Int!, userId: Int!, workoutTime: DateTime!): Workout
 
-type EnterGiveaway {
-  giveawayInstance: GiveawayInstance
+  """
+  Login a user.
+  """
+  loginUser(netId: String!): LoginUser
+
+  """
+  Logs out a user.
+  """
+  logoutUser: LogoutUser
+
+  """
+  Refreshes the access token.
+  """
+  refreshAccessToken: RefreshAccessToken
+
+  """
+  Creates a new report.
+  """
+  createReport(createdAt: DateTime!, description: String!, gymId: Int!, issue: String!): CreateReport
+
+  """
+  Deletes a report by ID.
+  """
+  deleteReport(reportId: Int!): Report
+
+  """
+  Deletes a user by ID.
+  """
+  deleteUser(userId: Int!): User
+
+  """
+  Create a new capacity reminder.
+  """
+  createCapacityReminder(capacityPercent: Int!, daysOfWeek: [String]!, fcmToken: String!, gyms: [String]!): CapacityReminder
+
+  """
+  Edit capacity reminder.
+  """
+  editCapacityReminder(daysOfWeek: [String]!, newCapacityThreshold: Int!, newGyms: [String]!, reminderId: Int!): CapacityReminder
+
+  """
+  Delete a capacity reminder
+  """
+  deleteCapacityReminder(reminderId: Int!): CapacityReminder
+
+  """
+  Send a friend request to another user.
+  """
+  addFriend(friendId: Int!, userId: Int!): Friendship
+
+  """
+  Accept a friend request.
+  """
+  acceptFriendRequest(friendshipId: Int!): Friendship
+
+  """
+  Remove a friendship.
+  """
+  removeFriend(friendId: Int!, userId: Int!): RemoveFriend
+
+  """
+  Get all pending friend requests for a user.
+  """
+  getPendingFriendRequests(userId: Int!): GetPendingFriendRequests
 }
 
 type GiveawayInstance {
@@ -331,6 +616,32 @@ type GiveawayInstance {
   giveawayId: Int!
 
   numEntries: Int!
+}
+
+type LoginUser {
+  accessToken: String
+
+  refreshToken: String
+}
+
+type LogoutUser {
+  success: Boolean
+}
+
+type RefreshAccessToken {
+  newAccessToken: String
+}
+
+type CreateReport {
+  report: Report
+}
+
+type RemoveFriend {
+  success: Boolean
+}
+
+type GetPendingFriendRequests {
+  pendingRequests: [Friendship]
 }
 
 """

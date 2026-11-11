@@ -1,0 +1,231 @@
+package com.cornellappdev.uplift.ui.viewmodels.profile
+
+import android.net.Uri
+import android.util.Log
+import androidx.lifecycle.viewModelScope
+import com.cornellappdev.uplift.data.repositories.ProfileRepository
+import com.cornellappdev.uplift.data.repositories.WorkoutLogRepository
+import com.cornellappdev.uplift.ui.UpliftRootRoute
+import com.cornellappdev.uplift.ui.components.profile.workouts.HistoryItem
+import com.cornellappdev.uplift.ui.nav.RootNavigationRepository
+import com.cornellappdev.uplift.ui.viewmodels.UpliftViewModel
+import com.cornellappdev.uplift.util.timeAgoString
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.joinAll
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.collectLatest
+import java.time.DayOfWeek
+import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.util.Locale
+import javax.inject.Inject
+
+sealed class HistoryListItem {
+    data class Header(val month: String) : HistoryListItem()
+    data class Workout(
+        val item: HistoryItem,
+        val showDivider: Boolean
+    ) : HistoryListItem()
+    data class SpacerItem(val month: String) : HistoryListItem()
+}
+sealed class ProfileLoadState {
+    data object Loading : ProfileLoadState()
+    data object Error : ProfileLoadState()
+    data object Loaded : ProfileLoadState()
+}
+
+data class ProfileUiState(
+    val loadState: ProfileLoadState = ProfileLoadState.Loading,
+    val name: String = "",
+    val netId: String = "",
+    val profileImage: Uri? = null,
+    val totalGymDays: Int = 0,
+    val activeStreak: Int = 0,
+    val maxStreak: Int = 0,
+    val streakStart: String? = null,
+    val workoutGoal: Int = 0,
+    val historyItems: List<HistoryItem> = emptyList(),
+    val daysOfMonth: List<Int> = emptyList(),
+    val completedDays: List<Boolean> = emptyList(),
+    val workoutsCompleted: Int = 0,
+    val historyListItems: List<HistoryListItem> = emptyList(),
+    val workoutDates: Map<LocalDate, List<HistoryItem>> = emptyMap()
+)
+
+// Start in loading before the reload coroutine runs, preventing an initial empty-profile frame.
+@HiltViewModel
+class ProfileViewModel @Inject constructor(
+    private val profileRepository: ProfileRepository,
+    private val rootNavigationRepository: RootNavigationRepository,
+    private val workoutLogRepository: WorkoutLogRepository,
+) : UpliftViewModel<ProfileUiState>(ProfileUiState()) {
+
+    private var loadingJob: Job? = null
+    private var photoUpdateJob: Job? = null
+
+    init {
+        reload()
+        viewModelScope.launch {
+            workoutLogRepository.workoutLoggedEvent.collectLatest {
+                reload()
+            }
+        }
+        viewModelScope.launch {
+            profileRepository.goalUpdatedEvent.collectLatest {
+                // reload() is a no-op during an active load, which could show the old goal
+                listOfNotNull(loadingJob, photoUpdateJob).joinAll()
+                reload()
+            }
+        }
+    }
+
+    fun reload() {
+        if (loadingJob?.isActive == true || photoUpdateJob?.isActive == true) return
+        loadingJob = loadProfile()
+
+    }
+
+
+    private fun loadProfile(): Job = viewModelScope.launch {
+        applyMutation { copy(loadState = ProfileLoadState.Loading) }
+
+        val result = profileRepository.getProfile()
+
+        val profile = result.getOrNull()
+        if (profile == null) {
+            Log.e("profile VM", "Failed to load profile", result.exceptionOrNull())
+            applyMutation { copy(loadState = ProfileLoadState.Error) }
+            return@launch
+        }
+        val historyItems = profile.workouts.map {
+            val workoutInstant = Instant.ofEpochMilli(it.timestamp)
+            val calendar = java.util.Calendar.getInstance().apply {
+                timeInMillis = it.timestamp
+            }
+            HistoryItem(
+                gymName = it.gymName,
+                time = formatTime.format(workoutInstant),
+                date = formatDate.format(workoutInstant),
+                timestamp = it.timestamp,
+                ago = calendar.timeAgoString(),
+                shortDate = shortDateFormatter.format(workoutInstant)
+            )
+        }
+
+        val now = LocalDate.now()
+        val startOfWeek = now.with(DayOfWeek.MONDAY)
+
+        val weekDates = (0..6).map {
+            startOfWeek.plusDays(it.toLong())
+        }
+
+        val daysOfMonth = weekDates.map { it.dayOfMonth }
+
+        val completedDays = weekDates.map { date ->
+            profile.weeklyWorkoutDays.contains(date.toString())
+        }
+
+        val workoutsCompleted = profile.weeklyWorkoutDays.size
+
+        val grouped = historyItems
+            .sortedByDescending { it.timestamp }
+            .groupBy {
+                Instant.ofEpochMilli(it.timestamp)
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDate()
+                    .format(DateTimeFormatter.ofPattern("MMMM yyyy", Locale.US))
+            }
+
+        val historyListItems = buildList{
+            grouped.forEach { (month, items) ->
+                add(HistoryListItem.Header(month))
+                items.forEachIndexed { index, item ->
+                    add(
+                        HistoryListItem.Workout(
+                            item = item,
+                            showDivider = index < items.lastIndex
+                        )
+                    )
+                }
+                add(HistoryListItem.SpacerItem(month))
+            }
+        }
+
+        val workoutDates = historyItems.groupBy {
+            Instant.ofEpochMilli(it.timestamp)
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate()
+        }
+
+        applyMutation {
+            copy(
+                loadState = ProfileLoadState.Loaded,
+                name = profile.name,
+                netId = profile.netId,
+                profileImage = profile.encodedImage?.let(Uri::parse),
+                totalGymDays = profile.totalGymDays,
+                activeStreak = profile.activeStreak,
+                maxStreak = profile.maxStreak,
+                streakStart = profile.streakStart,
+                workoutGoal = profile.workoutGoal,
+                historyItems = historyItems,
+                daysOfMonth = daysOfMonth,
+                completedDays = completedDays,
+                workoutsCompleted = workoutsCompleted,
+                historyListItems = historyListItems,
+                workoutDates = workoutDates
+            )
+
+        }
+    }
+
+    fun onPhotoSelected(uri: Uri) {
+        val previousUpdate = photoUpdateJob
+        photoUpdateJob = viewModelScope.launch {
+            // Save selections in order so an older upload cannot replace a newer one.
+            previousUpdate?.join()
+            loadingJob?.join()
+            val result = profileRepository.updateProfilePhoto(uri)
+            if (result.isSuccess) {
+                applyMutation { copy(profileImage = uri) }
+            }
+        }
+    }
+
+    fun toSettings() {
+        rootNavigationRepository.navigate(UpliftRootRoute.Settings)
+    }
+
+    fun toGoals() {
+        rootNavigationRepository.navigate(UpliftRootRoute.Goals)
+    }
+
+    fun toHistory() {
+        rootNavigationRepository.navigate(UpliftRootRoute.WorkoutHistory)
+    }
+
+
+
+    private val formatTime = DateTimeFormatter
+        .ofPattern("h:mm a")
+        .withLocale(Locale.US)
+        .withZone(ZoneId.systemDefault())
+
+    private val formatDate = DateTimeFormatter
+        .ofPattern("MMMM d, yyyy")
+        .withLocale(Locale.US)
+        .withZone(ZoneId.systemDefault())
+
+    private val formatDayOfWeek = DateTimeFormatter
+        .ofPattern("EEE")
+        .withLocale(Locale.US)
+        .withZone(ZoneId.systemDefault())
+
+    private val shortDateFormatter = DateTimeFormatter
+        .ofPattern("MMM d")
+        .withLocale(Locale.US)
+        .withZone(ZoneId.systemDefault())
+}

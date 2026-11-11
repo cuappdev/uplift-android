@@ -30,7 +30,8 @@ fragment facilityFields on Facility {
 fragment equipmentFields on Equipment {
   id
   name
-  equipmentType
+  muscleGroups
+  cleanName
   facilityId
   quantity
   accessibility
