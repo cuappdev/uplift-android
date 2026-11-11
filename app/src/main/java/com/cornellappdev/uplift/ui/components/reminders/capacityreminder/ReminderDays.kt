@@ -1,4 +1,4 @@
-package com.cornellappdev.uplift.ui.components.capacityreminder
+package com.cornellappdev.uplift.ui.components.reminders.capacityreminder
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

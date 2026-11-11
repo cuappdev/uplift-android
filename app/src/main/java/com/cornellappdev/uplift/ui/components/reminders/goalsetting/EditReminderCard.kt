@@ -1,4 +1,4 @@
-package com.cornellappdev.uplift.ui.components.goalsetting
+package com.cornellappdev.uplift.ui.components.reminders.goalsetting
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState

@@ -24,13 +24,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.cornellappdev.uplift.ui.components.general.UpliftTopBarWithBack
-import com.cornellappdev.uplift.ui.components.goalsetting.DeleteDialog
-import com.cornellappdev.uplift.ui.components.goalsetting.GoalSettingHeader
-import com.cornellappdev.uplift.ui.components.goalsetting.GoalSlider
-import com.cornellappdev.uplift.ui.components.goalsetting.WorkoutReminders
+import com.cornellappdev.uplift.ui.components.general.NotificationPermissionHandler
 import com.cornellappdev.uplift.ui.components.general.UpliftButton
-import com.cornellappdev.uplift.ui.viewmodels.profile.SettingsViewModel
+import com.cornellappdev.uplift.ui.components.general.UpliftTopBarWithBack
+import com.cornellappdev.uplift.ui.components.reminders.WorkoutReminders
+import com.cornellappdev.uplift.ui.components.reminders.goalsetting.DeleteDialog
+import com.cornellappdev.uplift.ui.viewmodels.reminders.WorkoutRemindersUiState
+import com.cornellappdev.uplift.ui.viewmodels.reminders.WorkoutRemindersViewModel
 import com.cornellappdev.uplift.util.GRAY04
 import com.cornellappdev.uplift.util.montserratFamily
 
@@ -46,25 +46,35 @@ data class Reminder(
     val enabled: Boolean
 )
 
+/**
+ *  WorkoutReminderSettingsScreen is a composable that displays the workout reminder settings screen.
+ */
 @Composable
 fun WorkoutReminderSettingsScreen(
-    viewModel: SettingsViewModel = hiltViewModel(),
+    workoutRemindersViewModel: WorkoutRemindersViewModel = hiltViewModel()
 ) {
-    /* TODO: Connect to view model */
+    val workoutRemindersUiState = workoutRemindersViewModel.collectUiStateValue()
     WorkoutReminderScreen(
-        goalValue = 1,
+        uiState = workoutRemindersUiState,
         isOnboarding = false,
-        // Pass callbacks to update the state defined above
-        onGoalValueChange = {},
-        onBackClick = { viewModel.onBack() },
+        onRemindersChange = workoutRemindersViewModel::onRemindersChange,
+        onSelectedReminderChange = workoutRemindersViewModel::onSelectedReminderChange,
+        onAddNewReminderStateChange = workoutRemindersViewModel::onAddNewReminderStateChange,
+        onDeleteDialogOpenChange = workoutRemindersViewModel::onDeleteDialogOpenChange,
+        onDeleteConfirm = workoutRemindersViewModel::onDeleteConfirmed,
+        onBackClick = workoutRemindersViewModel::onBack
     )
+    NotificationPermissionHandler()
 }
 
 /**
- * @param reminders: list of reminders
+ * @param uiState: UI state containing reminders, goal value, dialog state
  * @param goalValue: the value of the goal slider
  * @param onRemindersChange: callback for when reminders are changed
- * @param onGoalValueChange: callback for when the goal slider value is changed
+ * @param onSelectedReminderChange: callback for when selected reminder changes
+ * @param onAddNewReminderStateChange: callback for when adding reminder state changes
+ * @param onDeleteDialogOpenChange: callback for when delete dialog open state changes
+ * @param onDeleteConfirm: callback for when delete reminder is confirmed
  * @param onBackClick: callback for when the back button is clicked
  * @param isOnboarding: whether the user is in onboarding
  * @param onNext: callback for when the next button is clicked
@@ -73,41 +83,37 @@ fun WorkoutReminderSettingsScreen(
  */
 @Composable
 fun WorkoutReminderScreen(
-    /* TODO: Add view model calls */
-    goalValue: Int,
-    onGoalValueChange: (Int) -> Unit,
-    reminders: List<Reminder> = emptyList(),
+    goalValue: Int = 1,
+    uiState: WorkoutRemindersUiState = WorkoutRemindersUiState(),
+    reminders: List<Reminder> = uiState.reminders,
     onRemindersChange: (List<Reminder>) -> Unit = {},
-    onBackClick: () -> Unit,
+    onSelectedReminderChange: (Reminder?) -> Unit = {},
+    onAddNewReminderStateChange: (Boolean) -> Unit = {},
+    onDeleteDialogOpenChange: (Boolean) -> Unit = {},
+    onDeleteConfirm: () -> Unit = {},
+    onBackClick: () -> Unit = {},
     isOnboarding: Boolean = false,
     onNext: () -> Unit = {},
     onSkip: () -> Unit = {}
 ) {
-
-    // These states are local to this screen
-    var selectedReminder by remember { mutableStateOf<Reminder?>(null) }
-    var addNewReminderState by remember { mutableStateOf(false) }
-    var deleteDialogOpen by remember { mutableStateOf(false) }
+    val activeReminders = reminders.ifEmpty { uiState.reminders }
 
     WorkoutReminderContent(
-        reminders = reminders,
-        selectedReminder = selectedReminder,
-        addNewReminderState = addNewReminderState,
-        deleteDialogOpen = deleteDialogOpen,
-        goalValue = goalValue,
+        reminders = activeReminders,
+        selectedReminder = uiState.selectedReminder,
+        addNewReminderState = uiState.addNewReminderState,
+        deleteDialogOpen = uiState.deleteDialogOpen,
         isOnboarding = isOnboarding,
-        // Pass callbacks to update the state defined above
-        onSelectedReminderChange = { selectedReminder = it },
-        onAddNewReminderStateChange = { addNewReminderState = it },
-        onDeleteDialogOpenChange = { deleteDialogOpen = it },
+        onSelectedReminderChange = onSelectedReminderChange,
+        onAddNewReminderStateChange = onAddNewReminderStateChange,
+        onDeleteDialogOpenChange = onDeleteDialogOpenChange,
+        onDeleteConfirm = onDeleteConfirm,
         onRemindersChange = onRemindersChange,
-        onGoalValueChange = onGoalValueChange,
         onBackClick = onBackClick,
         onNext = onNext,
         onSkip = onSkip
     )
 }
-
 
 @Composable
 private fun WorkoutReminderContent(
@@ -115,13 +121,12 @@ private fun WorkoutReminderContent(
     selectedReminder: Reminder?,
     addNewReminderState: Boolean,
     deleteDialogOpen: Boolean,
-    goalValue: Int,
     isOnboarding: Boolean,
     onSelectedReminderChange: (Reminder?) -> Unit,
     onAddNewReminderStateChange: (Boolean) -> Unit,
     onDeleteDialogOpenChange: (Boolean) -> Unit,
+    onDeleteConfirm: () -> Unit,
     onRemindersChange: (List<Reminder>) -> Unit,
-    onGoalValueChange: (Int) -> Unit = {},
     onBackClick: () -> Unit,
     onNext: () -> Unit = {},
     onSkip: () -> Unit = {}
@@ -129,7 +134,7 @@ private fun WorkoutReminderContent(
     Scaffold(
         topBar = {
             UpliftTopBarWithBack(
-                title = "Goals",
+                title = "WORKOUT REMINDERS",
                 onBackClick = onBackClick,
                 withBack = true
             )
@@ -147,14 +152,8 @@ private fun WorkoutReminderContent(
                 .padding(padding)
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
+                .padding(vertical = 24.dp),
         ) {
-            Column(
-                modifier = Modifier.padding(vertical = 24.dp, horizontal = 18.dp),
-                verticalArrangement = Arrangement.spacedBy(10.dp)
-            ) {
-                GoalSettingHeader(isOnboarding = isOnboarding)
-                GoalSlider(value = goalValue, onValueChange = onGoalValueChange)
-            }
 
             if (!isOnboarding) {
                 WorkoutReminders(
@@ -169,17 +168,11 @@ private fun WorkoutReminderContent(
             }
         }
 
-
         if (deleteDialogOpen) {
             DeleteDialog(
                 deleteDialogOpen = deleteDialogOpen,
                 onConfirm = {
-                    selectedReminder?.let { reminder ->
-                        onRemindersChange(reminders.filter { it != reminder })
-                    }
-                    onDeleteDialogOpenChange(false)
-                    onSelectedReminderChange(null)
-                    onAddNewReminderStateChange(false)
+                    onDeleteConfirm()
                 },
                 onDismiss = { onDeleteDialogOpenChange(false) }
             )
@@ -215,11 +208,12 @@ fun OnboardingButtons(onNext: () -> Unit, onSkip: () -> Unit) {
     }
 }
 
-
 @Preview(showBackground = true)
 @Composable
 private fun WorkoutReminderScreenPreview() {
-    var sliderVal by remember { mutableIntStateOf(1) }
+    var selectedReminder by remember { mutableStateOf<Reminder?>(null) }
+    var addNewReminderState by remember { mutableStateOf(false) }
+    var deleteDialogOpen by remember { mutableStateOf(false) }
     val reminders = remember {
         mutableStateListOf(
             Reminder(time = "9:00 AM", days = setOf("M", "T", "W", "Th", "F"), enabled = true),
@@ -237,15 +231,32 @@ private fun WorkoutReminderScreenPreview() {
             )
         )
     }
-    WorkoutReminderScreen(
+
+    val uiState = WorkoutRemindersUiState(
         reminders = reminders,
-        onRemindersChange = { updatedReminders ->
+        selectedReminder = selectedReminder,
+        addNewReminderState = addNewReminderState,
+        deleteDialogOpen = deleteDialogOpen
+    )
+
+    WorkoutReminderScreen(
+        uiState = uiState,
+        onRemindersChange = { updated ->
             reminders.clear()
-            reminders.addAll(updatedReminders)
+            reminders.addAll(updated)
         },
-        isOnboarding = false,
-        goalValue = sliderVal,
-        onGoalValueChange = { sliderVal = it },
+        onSelectedReminderChange = { selectedReminder = it },
+        onAddNewReminderStateChange = { addNewReminderState = it },
+        onDeleteDialogOpenChange = { deleteDialogOpen = it },
+        onDeleteConfirm = {
+            selectedReminder?.let { reminder ->
+                reminders.remove(reminder)
+            }
+            deleteDialogOpen = false
+            selectedReminder = null
+            addNewReminderState = false
+        },
         onBackClick = {},
+        isOnboarding = false
     )
 }

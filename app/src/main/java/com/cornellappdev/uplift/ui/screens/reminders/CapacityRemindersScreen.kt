@@ -44,11 +44,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.cornellappdev.uplift.R
-import com.cornellappdev.uplift.ui.components.capacityreminder.CapacityReminderLoading
-import com.cornellappdev.uplift.ui.components.capacityreminder.CapacityReminderSwitch
-import com.cornellappdev.uplift.ui.components.capacityreminder.CapacityThreshold
-import com.cornellappdev.uplift.ui.components.capacityreminder.LocationsToRemind
-import com.cornellappdev.uplift.ui.components.capacityreminder.ReminderDays
+import com.cornellappdev.uplift.ui.components.reminders.capacityreminder.CapacityReminderLoading
+import com.cornellappdev.uplift.ui.components.reminders.capacityreminder.CapacityThreshold
+import com.cornellappdev.uplift.ui.components.reminders.DescriptionReminderSwitch
+import com.cornellappdev.uplift.ui.components.reminders.capacityreminder.LocationsToRemind
+import com.cornellappdev.uplift.ui.components.reminders.capacityreminder.ReminderDays
 import com.cornellappdev.uplift.ui.components.general.NotificationPermissionHandler
 import com.cornellappdev.uplift.ui.components.general.UpliftButton
 import com.cornellappdev.uplift.ui.components.general.UpliftTopBarWithBack
@@ -194,7 +194,7 @@ private fun CapacityRemindersContent(
         Scaffold(
             topBar = {
                 UpliftTopBarWithBack(
-                    title = "Capacity Reminder",
+                    title = "CAPACITY REMINDERS",
                     onBackClick = onBack
                 )
             },
@@ -212,7 +212,8 @@ private fun CapacityRemindersContent(
                     modifier = Modifier.fillMaxWidth(),
                     verticalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
-                    CapacityReminderSwitch(
+                    DescriptionReminderSwitch(
+                        text = "Capacity Reminders",
                         checked = switchChecked,
                         onCheckedChange = setToggle
                     )

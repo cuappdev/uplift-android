@@ -18,7 +18,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.cornellappdev.uplift.data.models.gymdetail.UpliftGym
 import com.cornellappdev.uplift.data.repositories.LocationRepository
-import com.cornellappdev.uplift.ui.components.capacityreminder.CapacityReminderTutorial
+import com.cornellappdev.uplift.ui.components.reminders.capacityreminder.CapacityReminderTutorial
 import com.cornellappdev.uplift.ui.screens.gyms.subscreens.MainError
 import com.cornellappdev.uplift.ui.screens.gyms.subscreens.MainLoaded
 import com.cornellappdev.uplift.ui.screens.gyms.subscreens.MainLoading
