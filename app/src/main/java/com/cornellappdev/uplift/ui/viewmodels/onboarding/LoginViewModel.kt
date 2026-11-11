@@ -27,6 +27,10 @@ class LoginViewModel @Inject constructor(
     private val rootNavigationRepository: RootNavigationRepository,
 ) : ViewModel() {
 
+    private companion object {
+        const val TAG = "LoginViewModel"
+    }
+
     // Message for the "Can't sign in" ProfileErrorDialog, or null when it's hidden
     private val _signInErrorMessage = MutableStateFlow<Int?>(null)
     val signInErrorMessage: StateFlow<Int?> = _signInErrorMessage.asStateFlow()
@@ -41,7 +45,7 @@ class LoginViewModel @Inject constructor(
 
     fun onSignInWithGoogle(credential: Credential) {
         if (credential !is CustomCredential || credential.type != TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
-            Log.e("LoginViewModel", "Unexpected credential type: ${credential.type}")
+            Log.e(TAG, "Unexpected credential type: ${credential.type}")
             showSignInError(R.string.sign_in_generic_error_message)
             return
         }
@@ -49,7 +53,7 @@ class LoginViewModel @Inject constructor(
         val idToken = googleIdTokenCredential.idToken
         viewModelScope.launch(CoroutineExceptionHandler { _, throwable ->
             // e.g. Google/Firebase sign-in failing offline
-            Log.e("LoginViewModel", "Sign-in failed", throwable)
+            Log.e(TAG, "Sign-in failed", throwable)
             showSignInError(R.string.sign_in_error_message)
             viewModelScope.launch {
                 try {
@@ -57,7 +61,7 @@ class LoginViewModel @Inject constructor(
                 } catch (e: CancellationException) {
                     throw e
                 } catch (e: Exception) {
-                    Log.e("LoginViewModel", "Sign out after failed sign-in failed", e)
+                    Log.e(TAG, "Sign out after failed sign-in failed", e)
                 }
             }
         }) {
@@ -66,14 +70,14 @@ class LoginViewModel @Inject constructor(
             val email = user?.email.orEmpty()
             val netId = email.substringBefore('@')
             if (!email.endsWith("@cornell.edu") || netId.isEmpty()) {
-                Log.e("LoginViewModel", "Signed in with a non-Cornell account")
+                Log.e(TAG, "Signed in with a non-Cornell account")
                 userInfoRepository.signOut()
                 showSignInError(R.string.sign_in_cornell_error_message)
                 return@launch
             }
             val hasUser = userInfoRepository.hasUser(netId).getOrElse { error ->
                 // Don't send an existing user to onboarding just because the check failed
-                Log.e("LoginViewModel", "Couldn't check for an existing account", error)
+                Log.e(TAG, "Couldn't check for an existing account", error)
                 userInfoRepository.signOut()
                 showSignInError(R.string.sign_in_error_message)
                 return@launch
@@ -82,7 +86,7 @@ class LoginViewModel @Inject constructor(
                 hasUser -> {
                     val success = userInfoRepository.loginUser(netId)
                     if (success) {
-                        Log.d("LoginViewModel", "User logged in successfully")
+                        Log.d(TAG, "User logged in successfully")
                     } else {
                         userInfoRepository.signOut()
                         showSignInError(R.string.sign_in_error_message)
@@ -92,7 +96,7 @@ class LoginViewModel @Inject constructor(
                     rootNavigationRepository.navigate(UpliftRootRoute.ProfileCreation)
                 }
                 else -> {
-                    Log.e("LoginViewModel", "No Firebase user after Google sign-in")
+                    Log.e(TAG, "No Firebase user after Google sign-in")
                     userInfoRepository.signOut()
                     showSignInError(R.string.sign_in_generic_error_message)
                 }

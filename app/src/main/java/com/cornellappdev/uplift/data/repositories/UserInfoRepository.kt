@@ -11,6 +11,8 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import java.io.ByteArrayOutputStream
 import kotlin.math.roundToInt
@@ -51,6 +53,8 @@ class UserInfoRepository @Inject constructor(
         const val TAG = "UserInfoRepository"
     }
 
+    // Guards createdUserFields and createdImageUri across createUser and signOut
+    private val onboardingMutex = Mutex()
     // Backend account created during onboarding whose remaining setup has not yet succeeded
     private var createdUserFields: UserFields? = null
     // Photo the backend account currently has, so a photo changed before resuming can be applied
@@ -63,6 +67,18 @@ class UserInfoRepository @Inject constructor(
         skip: Boolean,
         goal: Int,
         imageUri: Uri? = null
+    ): Boolean {
+        return onboardingMutex.withLock { createUserLocked(email, name, netId, skip, goal, imageUri) }
+    }
+
+    // Caller must hold onboardingMutex
+    private suspend fun createUserLocked(
+        email: String,
+        name: String,
+        netId: String,
+        skip: Boolean,
+        goal: Int,
+        imageUri: Uri?
     ): Boolean {
         try{
             // Resume after a partial failure instead of recreating an account that already exists
@@ -371,16 +387,19 @@ class UserInfoRepository @Inject constructor(
         firebaseAuth.signInWithCredential(firebaseCredential).await()
     }
 
+    // Waits for an in-flight createUser so it can't start a session after this sign-out
     suspend fun signOut() {
-        createdUserFields = null
-        createdImageUri = null
-        try {
-            firebaseAuth.signOut()
-        } catch (e: Exception) {
-            Log.e(TAG, "Firebase signout failed: $e")
-        } finally {
-            sessionManager.logout()
-            dataStore.edit { it.clear() }
+        onboardingMutex.withLock {
+            createdUserFields = null
+            createdImageUri = null
+            try {
+                firebaseAuth.signOut()
+            } catch (e: Exception) {
+                Log.e(TAG, "Firebase signout failed: $e")
+            } finally {
+                sessionManager.logout()
+                dataStore.edit { it.clear() }
+            }
         }
     }
 
