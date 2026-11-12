@@ -20,7 +20,7 @@ android {
     defaultConfig {
         applicationId "com.cornellappdev.uplift"
         minSdk 28
-        targetSdk 35
+        targetSdk 36
         versionCode 16
         versionName "1.6-capacity-reminders"
 
