@@ -21,8 +21,8 @@ android {
         applicationId "com.cornellappdev.uplift"
         minSdk 28
         targetSdk 36
-        versionCode 16
-        versionName "1.6-capacity-reminders"
+        versionCode 18
+        versionName "1.8-profiles"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
