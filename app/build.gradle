@@ -15,7 +15,7 @@ secretsProperties.load(new FileInputStream(secretsPropertiesFile))
 
 android {
     namespace 'com.cornellappdev.uplift'
-    compileSdk 35
+    compileSdk 37
 
     defaultConfig {
         applicationId "com.cornellappdev.uplift"
