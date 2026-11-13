@@ -90,9 +90,7 @@ fun RadioCheckButton(
         Text(
             text = text,
             fontWeight = if (selected) FontWeight.Bold else FontWeight.SemiBold,
-            fontSize = 12.sp,
-            lineHeight = 14.63.sp,
-            letterSpacing = 0.3.sp,
+            fontSize = 14.sp,
             textAlign = TextAlign.Center,
             color = Color.Black,
             fontFamily = montserratFamily
