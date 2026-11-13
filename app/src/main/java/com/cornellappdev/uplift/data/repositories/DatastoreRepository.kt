@@ -37,7 +37,6 @@ object PreferencesKeys {
     val CAPACITY_REMINDERS_SELECTED_DAYS = stringSetPreferencesKey("capacityRemindersSelectedDays")
     val CAPACITY_REMINDERS_SELECTED_GYMS = stringSetPreferencesKey("capacityRemindersSelectedGyms")
     val CAPACITY_REMINDERS_TUTORIAL_SHOWN = booleanPreferencesKey("capacityReminderTutorialShown")
-    val WORKOUT_REMINDERS_TOGGLE = booleanPreferencesKey("workoutRemindersToggle")
     val WORKOUT_REMINDERS_SLIDER_VALUE = intPreferencesKey("workoutRemindersSliderValue")
     val WORKOUT_REMINDERS_REMINDERS = stringSetPreferencesKey("workoutRemindersReminders")
 }
