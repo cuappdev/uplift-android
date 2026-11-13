@@ -42,4 +42,11 @@
         <item quantity="other">%d Days</item>
     </plurals>
     <string name="close">Close</string>
+
+    <!-- Reminders -->
+    <string name="capacity_reminders_title">CAPACITY REMINDERS</string>
+    <string name="capacity_reminders_switch_text">Capacity Reminders</string>
+    <string name="class_reminders_title">Class Reminders</string>
+    <string name="workout_reminders_title">Workout Reminders</string>
+    <string name="reminders_title">Reminders</string>
 </resources>
