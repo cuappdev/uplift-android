@@ -156,9 +156,7 @@ private fun WorkoutReminderContent(
         if (deleteDialogOpen) {
             DeleteDialog(
                 deleteDialogOpen = deleteDialogOpen,
-                onConfirm = {
-                    onDeleteConfirm()
-                },
+                onConfirm = onDeleteConfirm,
                 onDismiss = { onDeleteDialogOpenChange(false) }
             )
         }
