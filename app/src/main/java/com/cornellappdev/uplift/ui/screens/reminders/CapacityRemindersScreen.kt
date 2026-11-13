@@ -106,7 +106,7 @@ private fun UnsavedChangesDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         title = {
-            Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.TopCenter){
+            Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.TopCenter) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_edit),
@@ -123,7 +123,7 @@ private fun UnsavedChangesDialog(
                         .offset(y = (-15).dp, x = 15.dp)
                 ) {
                     Icon(
-                    painter = painterResource(id=R.drawable.ic_close),
+                        painter = painterResource(id = R.drawable.ic_close),
                         contentDescription = "Exit symbol",
                         modifier = Modifier
                             .height(32.dp)
@@ -155,11 +155,13 @@ private fun UnsavedChangesDialog(
                     modifier = Modifier.fillMaxWidth()
                 )
                 Spacer(modifier = Modifier.height(8.dp))
-                UpliftButton(onClick = onDiscard,
+                UpliftButton(
+                    onClick = onDiscard,
                     text = "Continue",
                     containerColor = Color.White,
                     elevation = 0.dp,
-                    modifier = Modifier.fillMaxWidth())
+                    modifier = Modifier.fillMaxWidth()
+                )
             }
         },
     )
@@ -191,7 +193,7 @@ private fun CapacityRemindersContent(
             )
         }
     }
-    Box(modifier = Modifier.fillMaxSize()){
+    Box(modifier = Modifier.fillMaxSize()) {
         Scaffold(
             topBar = {
                 UpliftTopBarWithBack(
@@ -205,7 +207,9 @@ private fun CapacityRemindersContent(
                     .background(Color.White)
                     .fillMaxSize()
                     .padding(
-                        top = padding.calculateTopPadding() + 24.dp, start = 16.dp, end = 16.dp
+                        top = padding.calculateTopPadding() + 24.dp,
+                        start = 24.dp,
+                        end = 24.dp,
                     ), verticalArrangement = Arrangement.spacedBy(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -324,7 +328,7 @@ private fun CapacityRemindersSettings(
             leadingIcon = {
                 if (saveSuccess) {
                     Icon(
-                        painter=painterResource(id=R.drawable.ic_check),
+                        painter = painterResource(id = R.drawable.ic_check),
                         contentDescription = "Saved",
                         tint = Color.White,
                         modifier = Modifier.size(24.dp)
