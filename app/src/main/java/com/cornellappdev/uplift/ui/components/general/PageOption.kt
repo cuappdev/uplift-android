@@ -30,35 +30,35 @@ fun PageOption(
     @DrawableRes icon: Int,
     title: String,
     onClick: () -> Unit,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(
+                onClick = onClick,
+            ),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable(
-                    onClick = onClick,
-                ),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(painterResource(id = icon), contentDescription = title, tint = Color.Unspecified)
-                Text(
-                    text = title,
-                    fontSize = 16.sp,
-                    fontFamily = montserratFamily,
-                    fontWeight = FontWeight.Medium,
-                    color = PRIMARY_BLACK
-                )
-            }
-            Icon(
-                painterResource(id = R.drawable.chevron_right),
-                contentDescription = null,
-                tint = GRAY03
+            Icon(painterResource(id = icon), contentDescription = title, tint = Color.Unspecified)
+            Text(
+                text = title,
+                fontSize = 16.sp,
+                fontFamily = montserratFamily,
+                fontWeight = FontWeight.Medium,
+                color = PRIMARY_BLACK
             )
         }
+        Icon(
+            painterResource(id = R.drawable.chevron_right),
+            contentDescription = null,
+            tint = GRAY03
+        )
+    }
 }
 
 @Preview
@@ -70,14 +70,12 @@ fun PageOptionPreview() {
             .fillMaxSize()
             .background(Color.White)
     ) {
-        Column(
-            Modifier.padding(16.dp)
-        ) {
+        Column(Modifier.padding(16.dp)) {
             PageOption(
-            icon = R.drawable.ic_appdev,
-            title = "About Uplift",
-            onClick = {},
-        )
+                icon = R.drawable.ic_appdev,
+                title = "About Uplift",
+                onClick = {},
+            )
         }
 
     }
