@@ -21,9 +21,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.cornellappdev.uplift.R
 import com.cornellappdev.uplift.ui.components.general.NotificationPermissionHandler
 import com.cornellappdev.uplift.ui.components.general.UpliftButton
 import com.cornellappdev.uplift.ui.components.general.UpliftTopBarWithBack
@@ -48,7 +50,7 @@ data class Reminder(
 )
 
 /**
- *  WorkoutReminderSettingsScreen is a composable that displays the workout reminder settings screen.
+ * WorkoutReminderSettingsScreen is a composable that displays the workout reminder settings screen.
  */
 @Composable
 fun WorkoutReminderSettingsScreen(
@@ -68,23 +70,8 @@ fun WorkoutReminderSettingsScreen(
     NotificationPermissionHandler()
 }
 
-/**
- * @param uiState: UI state containing reminders, goal value, dialog state
- * @param goalValue: the value of the goal slider
- * @param onRemindersChange: callback for when reminders are changed
- * @param onSelectedReminderChange: callback for when selected reminder changes
- * @param onAddNewReminderStateChange: callback for when adding reminder state changes
- * @param onDeleteDialogOpenChange: callback for when delete dialog open state changes
- * @param onDeleteConfirm: callback for when delete reminder is confirmed
- * @param onBackClick: callback for when the back button is clicked
- * @param isOnboarding: whether the user is in onboarding
- * @param onNext: callback for when the next button is clicked
- * @param onSkip: callback for when the skip button is clicked
- * @return WorkoutReminderScreen composable
- */
 @Composable
 fun WorkoutReminderScreen(
-    goalValue: Int = 1,
     uiState: WorkoutRemindersUiState = WorkoutRemindersUiState(),
     reminders: List<Reminder> = uiState.reminders,
     onRemindersChange: (List<Reminder>) -> Unit = {},
@@ -135,7 +122,7 @@ private fun WorkoutReminderContent(
     Scaffold(
         topBar = {
             UpliftTopBarWithBack(
-                title = "WORKOUT REMINDERS",
+                title = stringResource(id = R.string.workout_reminders_title),
                 onBackClick = onBackClick,
                 withBack = true
             )
