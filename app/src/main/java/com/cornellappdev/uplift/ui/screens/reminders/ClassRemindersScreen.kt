@@ -185,8 +185,7 @@ private fun ClassRemindersSettings(
                         enabled = timeOption == ReminderTimeOption.CUSTOM,
                         textValue = customHours,
                         onValueChange = onHoursChanged,
-                        errorState = false,
-                        onErrorStateChange = {}
+                        errorState = false
                     )
 
                     ClassReminderInput(
@@ -195,8 +194,7 @@ private fun ClassRemindersSettings(
                         enabled = timeOption == ReminderTimeOption.CUSTOM,
                         textValue = customMinutes,
                         onValueChange = onMinutesChanged,
-                        errorState = isMinutesError,
-                        onErrorStateChange = {}
+                        errorState = isMinutesError
                     )
                 }
 
