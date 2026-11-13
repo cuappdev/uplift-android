@@ -13,7 +13,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -53,10 +52,6 @@ class DatastoreRepository @Inject constructor(private val dataStore: DataStore<P
         return dataStore.data.map { preferences ->
             preferences[key]
         }.firstOrNull()
-    }
-
-    suspend fun getPreferencesSnapshot(): Preferences {
-        return dataStore.data.first()
     }
 
     suspend fun <T> deletePreference(key: Preferences.Key<T>) {
