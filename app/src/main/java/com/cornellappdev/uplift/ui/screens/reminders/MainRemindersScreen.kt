@@ -2,12 +2,12 @@ package com.cornellappdev.uplift.ui.screens.reminders
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.runtime.Composable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Divider
-import androidx.compose.material.Scaffold
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
@@ -53,7 +53,7 @@ fun MainReminderContent(
             onBackClick = onBack,
             withBack = true
         )
-    }) {  padding ->
+    }) { padding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -65,17 +65,17 @@ fun MainReminderContent(
                 ),
             verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
-                PageOption(
-                    icon = R.drawable.gym_simple,
-                    title = "Workout Reminders",
-                    onClick = onWorkoutRemindersPressed,
-                )
-                Divider(color = GRAY01)
-                PageOption(
-                    icon = R.drawable.capacities,
-                    title = "Capacity Reminders",
-                    onClick = onCapacityRemindersPressed,
-                )
+            PageOption(
+                icon = R.drawable.gym_simple,
+                title = "Workout Reminders",
+                onClick = onWorkoutRemindersPressed,
+            )
+            HorizontalDivider(color = GRAY01)
+            PageOption(
+                icon = R.drawable.capacities,
+                title = "Capacity Reminders",
+                onClick = onCapacityRemindersPressed,
+            )
         }
     }
 }
