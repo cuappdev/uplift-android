@@ -130,12 +130,12 @@ class CapacityRemindersViewModel @Inject constructor(
         applyMutation { copy(showUnsavedChangesDialog = false) }
     }
 
-    fun saveChanges() {
+    fun saveChanges(navigateBackOnSuccess: Boolean = false) {
         applyMutation { copy(isLoading = true, error = null, saveSuccess = false) }
         val currentState = getStateValue()
 
         if (!currentState.toggledOn) {
-            deleteReminder()
+            deleteReminder(navigateBackOnSuccess = navigateBackOnSuccess)
             return
         }
 
@@ -187,6 +187,9 @@ class CapacityRemindersViewModel @Inject constructor(
                             saveSuccess = true
                         )
                     }
+                    if (navigateBackOnSuccess) {
+                        rootNavigationRepository.navigateUp()
+                    }
                 } else {
                     applyMutation {
                         copy(
@@ -216,7 +219,7 @@ class CapacityRemindersViewModel @Inject constructor(
         }
     }
 
-    private fun deleteReminder() {
+    private fun deleteReminder(navigateBackOnSuccess: Boolean = false) {
         viewModelScope.launch {
             applyMutation { copy(isLoading = true, error = null, saveSuccess = false) }
 
@@ -240,6 +243,9 @@ class CapacityRemindersViewModel @Inject constructor(
                                 isLoading = false,
                                 saveSuccess = true
                             )
+                        }
+                        if (navigateBackOnSuccess) {
+                            rootNavigationRepository.navigateUp()
                         }
                     } else {
                         applyMutation {
@@ -268,6 +274,9 @@ class CapacityRemindersViewModel @Inject constructor(
                             hasUnsavedChanges = false,
                             isLoading = false
                         )
+                    }
+                    if (navigateBackOnSuccess) {
+                        rootNavigationRepository.navigateUp()
                     }
                 }
             } catch (e: Exception) {
