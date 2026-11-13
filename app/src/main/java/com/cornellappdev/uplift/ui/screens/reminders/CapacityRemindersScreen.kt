@@ -74,7 +74,7 @@ fun CapacityReminderScreen(
     val initialSelectedGyms = capacityRemindersUiState.selectedGyms
     if (capacityRemindersUiState.showUnsavedChangesDialog) {
         UnsavedChangesDialog(
-            onSave = capacityRemindersViewModel::saveChanges,
+            onSave = { capacityRemindersViewModel.saveChanges(navigateBackOnSuccess = true) },
             onDismiss = capacityRemindersViewModel::onDismissDialog,
             onDiscard = capacityRemindersViewModel::onConfirmDiscard
         )

@@ -31,12 +31,7 @@ class WorkoutRemindersViewModel @Inject constructor(
             } catch (_: Exception) {
                 1
             }
-            val rawRemindersSet = try {
-                dataStoreRepository.getPreference(PreferencesKeys.WORKOUT_REMINDERS_REMINDERS) ?: emptySet()
-            } catch (_: Exception) {
-                emptySet()
-            }
-            val loadedReminders = rawRemindersSet.mapNotNull { it.toReminder() }
+            val loadedReminders = dataStoreRepository.getWorkoutReminders()
 
             applyMutation {
                 copy(
@@ -49,16 +44,11 @@ class WorkoutRemindersViewModel @Inject constructor(
 
     fun onBack() = rootNavigationRepository.navigateUp()
 
-    fun onGoalValueChange(value: Int) {
-        applyMutation { copy(sliderValue = value) }
-        viewModelScope.launch {
-            dataStoreRepository.storePreference(PreferencesKeys.WORKOUT_REMINDERS_SLIDER_VALUE, value)
-        }
-    }
-
     fun onRemindersChange(reminders: List<Reminder>) {
         applyMutation { copy(reminders = reminders) }
-        saveRemindersToDataStore(reminders)
+        viewModelScope.launch {
+            dataStoreRepository.saveWorkoutReminders(reminders)
+        }
     }
 
     fun onSelectedReminderChange(reminder: Reminder?) {
@@ -76,33 +66,15 @@ class WorkoutRemindersViewModel @Inject constructor(
     fun onDeleteConfirmed() {
         applyMutation {
             val updatedReminders = if (selectedReminder != null) reminders.filter { it != selectedReminder } else reminders
-            saveRemindersToDataStore(updatedReminders)
+            viewModelScope.launch {
+                dataStoreRepository.saveWorkoutReminders(updatedReminders)
+            }
             copy(
                 reminders = updatedReminders,
                 selectedReminder = null,
                 deleteDialogOpen = false,
                 addNewReminderState = false
             )
-        }
-    }
-
-    private fun saveRemindersToDataStore(reminders: List<Reminder>) {
-        viewModelScope.launch {
-            val stringSet = reminders.map { it.toStorageString() }.toSet()
-            dataStoreRepository.storePreference(PreferencesKeys.WORKOUT_REMINDERS_REMINDERS, stringSet)
-        }
-    }
-
-    companion object {
-        fun Reminder.toStorageString(): String = "$time|${days.joinToString(",")}|$enabled"
-
-        fun String.toReminder(): Reminder? {
-            val parts = split("|")
-            if (parts.size < 3) return null
-            val time = parts[0]
-            val days = if (parts[1].isEmpty()) emptySet() else parts[1].split(",").toSet()
-            val enabled = parts[2].toBooleanStrictOrNull() ?: true
-            return Reminder(time, days, enabled)
         }
     }
 }
