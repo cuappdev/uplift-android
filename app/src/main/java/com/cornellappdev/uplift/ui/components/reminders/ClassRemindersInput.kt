@@ -46,8 +46,7 @@ fun ClassReminderInput(
     textValue: String,
     onValueChange: (String) -> Unit,
     enabled: Boolean = true,
-    errorState: Boolean = false,
-    onErrorStateChange: (Boolean) -> Unit = {}
+    errorState: Boolean = false
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isFocused by interactionSource.collectIsFocusedAsState()
@@ -122,7 +121,8 @@ private fun ClassReminderInputPreview() {
     var userInput by remember { mutableStateOf("") }
 
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
             .background(Color.White),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
@@ -133,9 +133,7 @@ private fun ClassReminderInputPreview() {
             textValue = userInput,
             onValueChange = { userInput = it },
             enabled = true,
-            errorState = false,
-            onErrorStateChange = {}
+            errorState = false
         )
     }
-
 }
