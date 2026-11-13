@@ -26,14 +26,13 @@ class WorkoutRemindersViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            val prefs = dataStoreRepository.getPreferencesSnapshot()
             val sliderValue = try {
-                prefs[PreferencesKeys.WORKOUT_REMINDERS_SLIDER_VALUE] ?: 1
+                dataStoreRepository.getPreference(PreferencesKeys.WORKOUT_REMINDERS_SLIDER_VALUE) ?: 1
             } catch (_: Exception) {
                 1
             }
             val rawRemindersSet = try {
-                prefs[PreferencesKeys.WORKOUT_REMINDERS_REMINDERS] ?: emptySet()
+                dataStoreRepository.getPreference(PreferencesKeys.WORKOUT_REMINDERS_REMINDERS) ?: emptySet()
             } catch (_: Exception) {
                 emptySet()
             }
