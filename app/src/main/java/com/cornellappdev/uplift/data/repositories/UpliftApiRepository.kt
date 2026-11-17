@@ -73,10 +73,11 @@ class UpliftApiRepository @Inject constructor(
         // Idea: Have cancellable flows in the background that are emitted down classesApiFlow
         //  and gymApiFlow. On retry, cancel the previous flows, then start new ones.
         activeGymJob = CoroutineScope(Dispatchers.IO).launch {
-            gymQuery.toFlowV3().cancellable()
+            gymQuery.toFlow().cancellable()
                 .map {
                     val gymList = it.data?.getAllGyms?.filterNotNull()
                     if (gymList == null) {
+                        it.exception?.let { e -> Log.e("query", e.stackTraceToString()) }
                         ApiResponse.Error
                     } else {
                         ApiResponse.Success(gymList.map { query -> query.toUpliftGyms() }.flatten())
@@ -97,10 +98,11 @@ class UpliftApiRepository @Inject constructor(
         // TODO: Classes taken out for 2024 backend rework. Most of this logic will likely be
         //  invalidated when classes are pushed for real.
         activeClassJob = CoroutineScope(Dispatchers.IO).launch {
-            classQuery.toFlowV3().cancellable()
+            classQuery.toFlow().cancellable()
                 .map {
                     val gyms = it.data?.getAllGyms
                     if (gyms == null) {
+                        it.exception?.let { e -> Log.e("query", e.stackTraceToString()) }
                         ApiResponse.Error
                     } else {
                         val classList =
