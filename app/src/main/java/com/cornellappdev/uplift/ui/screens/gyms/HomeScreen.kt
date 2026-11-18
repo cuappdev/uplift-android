@@ -67,13 +67,13 @@ fun HomeScreen(
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
-        Crossfade(targetState = gymsState, label = "Main") {
+        Crossfade(targetState = gymsState, label = "Main") { gyms ->
             when {
                 gymsLoading -> MainLoading(loadingShimmer)
                 gymsError -> MainError(onReload = homeViewModel::reload)
-                gymsState.isNotEmpty() -> MainLoaded(
+                gyms.isNotEmpty() -> MainLoaded(
                     openGym = openGym,
-                    gymsList = gymsState,
+                    gymsList = gyms,
                     navController = navController,
                     showCapacities = showCapacities,
                     titleText = titleText,
