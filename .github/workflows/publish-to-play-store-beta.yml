@@ -65,14 +65,14 @@ jobs:
         id: createServiceAccount
         run: echo '${{ secrets.PLAY_STORE_JSON }}' > service_account.json
 
-      - name: Deploy to Play Store (BETA)
+      - name: Publish to Google Play Store Beta (Internal)
         id: deploy
         uses: r0adkll/upload-google-play@v1
         with:
           serviceAccountJson: service_account.json
           packageName: ${{ secrets.PACKAGE_NAME }}
           releaseFiles: "app/build/outputs/bundle/release/app-release.aab"
-          track: beta
+          track: internal
           whatsNewDirectory: whatsnew/
 
       - name: Notify on Slack
