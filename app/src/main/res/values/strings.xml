@@ -67,4 +67,11 @@
     <string name="profile_delete_error_title">Can’t delete account</string>
     <string name="profile_delete_error_message">Something went wrong while deleting your account. Tap Retry to try deleting it again.</string>
     <string name="deleting_account">Deleting account…</string>
+
+    <!-- Reminders -->
+    <string name="capacity_reminders_title">CAPACITY REMINDERS</string>
+    <string name="capacity_reminders_switch_text">Capacity Reminders</string>
+    <string name="class_reminders_title">Class Reminders</string>
+    <string name="workout_reminders_title">Workout Reminders</string>
+    <string name="reminders_title">Reminders</string>
 </resources>

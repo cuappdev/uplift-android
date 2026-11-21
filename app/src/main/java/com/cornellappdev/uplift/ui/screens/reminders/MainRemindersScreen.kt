@@ -19,8 +19,6 @@ import com.cornellappdev.uplift.ui.components.general.PageOption
 import com.cornellappdev.uplift.ui.components.general.UpliftTopBarWithBack
 import com.cornellappdev.uplift.ui.viewmodels.reminders.MainRemindersViewModel
 import com.cornellappdev.uplift.util.GRAY01
-import com.google.accompanist.systemuicontroller.SystemUiController
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 /**
  * Screen displaying all reminder page options
@@ -44,12 +42,6 @@ fun MainReminderContent(
     onWorkoutRemindersPressed: () -> Unit,
     onCapacityRemindersPressed: () -> Unit
 ) {
-    val systemUiController: SystemUiController = rememberSystemUiController()
-
-    systemUiController.isStatusBarVisible = false
-    systemUiController.isNavigationBarVisible = false // Navigation bar
-    systemUiController.isSystemBarsVisible = false
-
     Scaffold(topBar = {
         UpliftTopBarWithBack(
             title = stringResource(id = R.string.reminders_title),
