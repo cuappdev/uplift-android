@@ -122,4 +122,8 @@ class DatastoreRepository @Inject constructor(private val dataStore: DataStore<P
             preferences[PreferencesKeys.CAPACITY_REMINDERS_TUTORIAL_SHOWN] ?: false
         }
     }
+
+    val notificationHistoryFlow: Flow<String> = dataStore.data.map { preferences ->
+        preferences[PreferencesKeys.NOTIFICATION_HUB_HISTORY] ?: "[]"
+    }
 }

@@ -48,6 +48,8 @@ import com.cornellappdev.uplift.ui.screens.onboarding.ProfileCreationScreen
 import com.cornellappdev.uplift.ui.screens.onboarding.GoalsOnboardingScreen
 import com.cornellappdev.uplift.ui.screens.onboarding.SignInPromptScreen
 import com.cornellappdev.uplift.ui.screens.profile.GuestProfileScreen
+import com.cornellappdev.uplift.ui.screens.reminders.NotificationHubScreen
+import com.cornellappdev.uplift.ui.viewmodels.notifications.NotificationHubViewModel
 import com.cornellappdev.uplift.ui.screens.profile.MyGoalsScreen
 import com.cornellappdev.uplift.ui.screens.profile.ProfileScreen
 import com.cornellappdev.uplift.ui.screens.profile.SettingsScreen
@@ -312,6 +314,12 @@ fun MainNavigationWrapper(
                 }
                 composable<UpliftRootRoute.Sports> {}
                 composable<UpliftRootRoute.Favorites> {}
+                composable<UpliftRootRoute.NotificationHub> {
+                    NotificationHubScreen(
+                        viewModel = hiltViewModel(),
+                        popBackStack = { navController.popBackStack() }
+                    )
+                }
             }
 
             Box(modifier = Modifier.fillMaxSize()) {
@@ -416,4 +424,7 @@ sealed class UpliftRootRoute {
 
     @Serializable
     data object Goals : UpliftRootRoute()
+
+    @Serializable
+    data object NotificationHub : UpliftRootRoute()
 }

@@ -1,6 +1,7 @@
 package com.cornellappdev.uplift
 
 import android.content.Context
+import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -10,6 +11,8 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.cornellappdev.uplift.data.repositories.DatastoreRepository
 import com.cornellappdev.uplift.data.repositories.LocationRepository
 import com.cornellappdev.uplift.ui.MainNavigationWrapper
+import com.cornellappdev.uplift.ui.UpliftRootRoute
+import com.cornellappdev.uplift.ui.nav.RootNavigationRepository
 import com.cornellappdev.uplift.ui.theme.UpliftTheme
 import com.cornellappdev.uplift.ui.viewmodels.nav.RootNavigationViewModel
 import com.cornellappdev.uplift.ui.viewmodels.profile.CheckInViewModel
@@ -25,6 +28,8 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var injectedDatastoreRepository: DatastoreRepository
 
+    @Inject
+    lateinit var rootNavigationRepository: RootNavigationRepository
 
     private val checkInViewModel: CheckInViewModel by viewModels()
     private val rootNavigationViewModel: RootNavigationViewModel by viewModels()
@@ -38,11 +43,26 @@ class MainActivity : ComponentActivity() {
 
         datastoreRepository = injectedDatastoreRepository
 
+        handleNotificationIntent(intent)
+
         setContent {
             UpliftTheme {
                 LockScreenOrientation(orientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
                 MainNavigationWrapper(rootNavigationViewModel = rootNavigationViewModel)
             }
+        }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        handleNotificationIntent(intent)
+    }
+
+    private fun handleNotificationIntent(intent: Intent?) {
+        val destination = intent?.getStringExtra("destination_route") ?: intent?.getStringExtra("destinationRoute")
+        if (destination == "notification_hub") {
+            rootNavigationRepository.navigate(UpliftRootRoute.NotificationHub)
         }
     }
 
