@@ -6,6 +6,8 @@ import com.cornellappdev.uplift.CreateCapacityReminderMutation
 import com.cornellappdev.uplift.DeleteCapacityReminderMutation
 import com.cornellappdev.uplift.EditCapacityReminderMutation
 import com.cornellappdev.uplift.data.mappers.toResult
+import com.cornellappdev.uplift.data.notifications.AlarmScheduler
+import java.util.Calendar
 import javax.inject.Inject
 import javax.inject.Named
 import javax.inject.Singleton
@@ -15,7 +17,52 @@ import javax.inject.Singleton
 class CapacityRemindersRepository @Inject constructor(
     @Named("main") private val apolloClient: ApolloClient,
     private val dataStoreRepository: DatastoreRepository,
+    private val alarmScheduler: AlarmScheduler
 ) {
+    private fun calculateNextTriggerTime(daysOfWeek: List<String>): Long {
+        if (daysOfWeek.isEmpty()) return System.currentTimeMillis() + 24 * 60 * 60 * 1000L
+
+        val calendar = Calendar.getInstance()
+        val currentDayOfWeek = calendar.get(Calendar.DAY_OF_WEEK)
+
+        fun dayNameToCalendarDay(name: String): Int? {
+            return when (name.uppercase()) {
+                "SUNDAY" -> Calendar.SUNDAY
+                "MONDAY" -> Calendar.MONDAY
+                "TUESDAY" -> Calendar.TUESDAY
+                "WEDNESDAY" -> Calendar.WEDNESDAY
+                "THURSDAY" -> Calendar.THURSDAY
+                "FRIDAY" -> Calendar.FRIDAY
+                "SATURDAY" -> Calendar.SATURDAY
+                else -> null
+            }
+        }
+
+        val targetDays = daysOfWeek.mapNotNull { dayNameToCalendarDay(it) }.toSet()
+        if (targetDays.isEmpty()) return System.currentTimeMillis() + 24 * 60 * 60 * 1000L
+
+        calendar.set(Calendar.HOUR_OF_DAY, 9)
+        calendar.set(Calendar.MINUTE, 0)
+        calendar.set(Calendar.SECOND, 0)
+        calendar.set(Calendar.MILLISECOND, 0)
+
+        for (i in 0..7) {
+            val checkDay = ((currentDayOfWeek - 1 + i) % 7) + 1
+            if (targetDays.contains(checkDay)) {
+                if (i == 0 && calendar.timeInMillis <= System.currentTimeMillis()) {
+                    continue
+                }
+                if (i > 0) {
+                    calendar.add(Calendar.DAY_OF_YEAR, i)
+                }
+                return calendar.timeInMillis
+            }
+        }
+
+        calendar.add(Calendar.DAY_OF_YEAR, 1)
+        return calendar.timeInMillis
+    }
+
     /**
      * Creates a capacity reminder with the given parameters and stores the reminder values to preferences.
      * @param capacityPercent The capacity percentage for the reminder (Should be in the range of 0-100).
@@ -58,6 +105,13 @@ class CapacityRemindersRepository @Inject constructor(
             dataStoreRepository.storePreference(
                 PreferencesKeys.CAPACITY_REMINDERS_SELECTED_GYMS,
                 gyms.toSet()
+            )
+            val triggerTime = calculateNextTriggerTime(daysOfWeek)
+            alarmScheduler.scheduleAlarm(
+                requestCode = id,
+                triggerAtMillis = triggerTime,
+                title = "Gym Capacity Alert",
+                body = "Capacity has reached $capacityPercent% at your selected gyms!"
             )
         } else {
             Log.e("CapacityRemindersRepository", "Failed to create reminder")
@@ -104,6 +158,13 @@ class CapacityRemindersRepository @Inject constructor(
                 PreferencesKeys.CAPACITY_REMINDERS_SELECTED_GYMS,
                 gyms.toSet()
             )
+            val triggerTime = calculateNextTriggerTime(daysOfWeek)
+            alarmScheduler.scheduleAlarm(
+                requestCode = reminderId,
+                triggerAtMillis = triggerTime,
+                title = "Gym Capacity Alert",
+                body = "Capacity has reached $capacityPercent% at your selected gyms!"
+            )
         } else {
             Log.e("CapacityRemindersRepository", "Failed to edit reminder with ID: $reminderId")
             Log.d(
@@ -124,6 +185,7 @@ class CapacityRemindersRepository @Inject constructor(
             DeleteCapacityReminderMutation(reminderId)
         ).execute().toResult()
         if (result.isSuccess) {
+            alarmScheduler.cancelAlarm(reminderId)
             dataStoreRepository.storePreference(PreferencesKeys.CAPACITY_REMINDERS_TOGGLE, false)
             dataStoreRepository.deletePreference(PreferencesKeys.CAPACITY_REMINDERS_ID)
         } else {
