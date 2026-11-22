@@ -27,6 +27,7 @@ class NotificationHelper @Inject constructor(
 
     init {
         createNotificationChannel()
+        createLocalRemindersChannel()
     }
 
     fun showNotification(title: String, body: String, data: Map<String, String> = emptyMap()) {
@@ -62,6 +63,40 @@ class NotificationHelper @Inject constructor(
 
     }
 
+    fun showLocalReminderNotification(
+        title: String,
+        body: String,
+        notificationId: Int = System.currentTimeMillis().toInt(),
+        destinationRoute: String = "notification_hub"
+    ) {
+        val intent = Intent(context, MainActivity::class.java).apply {
+            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+            putExtra("destination_route", destinationRoute)
+        }
+
+        val pendingIntent = PendingIntent.getActivity(
+            context, notificationId, intent,
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        )
+
+        val channelId = context.getString(R.string.local_reminders_channel_id)
+        val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+
+        val notificationBuilder = NotificationCompat.Builder(context, channelId)
+            .setSmallIcon(R.drawable.ic_main_logo)
+            .setContentTitle(title)
+            .setContentText(body)
+            .setAutoCancel(true)
+            .setSound(defaultSoundUri)
+            .setContentIntent(pendingIntent)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+
+        val notificationManager =
+            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+        notificationManager.notify(notificationId, notificationBuilder.build())
+    }
+
     private fun createNotificationChannel() {
         val channelId = context.getString(R.string.default_notification_channel_id)
         val channelName = context.getString(R.string.default_notification_channel_name)
@@ -69,6 +104,21 @@ class NotificationHelper @Inject constructor(
 
         val channel = NotificationChannel(channelId, channelName, importance).apply {
             description = context.getString(R.string.notification_channel_description)
+            enableVibration(true)
+        }
+
+        val notificationManager =
+            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.createNotificationChannel(channel)
+    }
+
+    private fun createLocalRemindersChannel() {
+        val channelId = context.getString(R.string.local_reminders_channel_id)
+        val channelName = context.getString(R.string.local_reminders_channel_name)
+        val importance = NotificationManager.IMPORTANCE_HIGH
+
+        val channel = NotificationChannel(channelId, channelName, importance).apply {
+            description = context.getString(R.string.local_reminders_channel_description)
             enableVibration(true)
         }
 

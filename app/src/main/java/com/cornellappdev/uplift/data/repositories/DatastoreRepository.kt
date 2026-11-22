@@ -36,6 +36,7 @@ object PreferencesKeys {
     val CAPACITY_REMINDERS_SELECTED_DAYS = stringSetPreferencesKey("capacityRemindersSelectedDays")
     val CAPACITY_REMINDERS_SELECTED_GYMS = stringSetPreferencesKey("capacityRemindersSelectedGyms")
     val CAPACITY_REMINDERS_TUTORIAL_SHOWN = booleanPreferencesKey("capacityReminderTutorialShown")
+    val NOTIFICATION_HUB_HISTORY = stringPreferencesKey("notificationHubHistory")
 }
 
 @Singleton
