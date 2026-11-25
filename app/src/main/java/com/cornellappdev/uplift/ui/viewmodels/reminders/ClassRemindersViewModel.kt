@@ -1,7 +1,7 @@
 package com.cornellappdev.uplift.ui.viewmodels.reminders
 
 import androidx.lifecycle.viewModelScope
-import com.cornellappdev.uplift.data.repositories.DatastoreRepository
+import com.cornellappdev.uplift.data.repositories.ClassRemindersRepository
 import com.cornellappdev.uplift.data.repositories.PreferencesKeys
 import com.cornellappdev.uplift.ui.nav.RootNavigationRepository
 import com.cornellappdev.uplift.ui.viewmodels.UpliftViewModel
@@ -25,13 +25,13 @@ data class ClassRemindersUiState(
 
 @HiltViewModel
 class ClassRemindersViewModel @Inject constructor(
-    private val dataStoreRepository: DatastoreRepository,
+    private val classRemindersRepository: ClassRemindersRepository,
     private val rootNavigationRepository: RootNavigationRepository
 ) : UpliftViewModel<ClassRemindersUiState>(ClassRemindersUiState()) {
 
     init {
         viewModelScope.launch {
-            val prefs = dataStoreRepository.getPreferencesSnapshot()
+            val prefs = classRemindersRepository.getPreferencesSnapshot()
             val toggledOn = try { prefs[PreferencesKeys.CLASS_REMINDERS_TOGGLE] ?: false } catch (_: Exception) { false }
             val timeOptionStr = try { prefs[PreferencesKeys.CLASS_REMINDERS_TIME_OPTION] } catch (_: Exception) { null }
             val hours = try { prefs[PreferencesKeys.CLASS_REMINDERS_HOURS] ?: "" } catch (_: Exception) { "" }
@@ -63,14 +63,14 @@ class ClassRemindersViewModel @Inject constructor(
     fun setToggle(toggledOn: Boolean) {
         applyMutation { copy(toggledOn = toggledOn) }
         viewModelScope.launch {
-            dataStoreRepository.storePreference(PreferencesKeys.CLASS_REMINDERS_TOGGLE, toggledOn)
+            classRemindersRepository.setToggle(toggledOn)
         }
     }
 
     fun selectTimeOption(option: ReminderTimeOption) {
         applyMutation { copy(timeOption = option) }
         viewModelScope.launch {
-            dataStoreRepository.storePreference(PreferencesKeys.CLASS_REMINDERS_TIME_OPTION, option.name)
+            classRemindersRepository.setTimeOption(option.name)
         }
     }
 
@@ -78,7 +78,7 @@ class ClassRemindersViewModel @Inject constructor(
         if (input.all { it.isDigit() } && (input.length <= 2)) {
             applyMutation { copy(customHours = input) }
             viewModelScope.launch {
-                dataStoreRepository.storePreference(PreferencesKeys.CLASS_REMINDERS_HOURS, input)
+                classRemindersRepository.setHours(input)
             }
         }
     }
@@ -94,7 +94,7 @@ class ClassRemindersViewModel @Inject constructor(
                 )
             }
             viewModelScope.launch {
-                dataStoreRepository.storePreference(PreferencesKeys.CLASS_REMINDERS_MINUTES, input)
+                classRemindersRepository.setMinutes(input)
             }
         }
     }
