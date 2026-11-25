@@ -1,4 +1,5 @@
 package com.cornellappdev.uplift.data.repositories
+
 import javax.inject.Inject
 import javax.inject.Singleton
 

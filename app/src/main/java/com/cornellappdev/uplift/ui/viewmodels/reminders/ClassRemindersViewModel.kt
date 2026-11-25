@@ -32,10 +32,26 @@ class ClassRemindersViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             val prefs = classRemindersRepository.getPreferencesSnapshot()
-            val toggledOn = try { prefs[PreferencesKeys.CLASS_REMINDERS_TOGGLE] ?: false } catch (_: Exception) { false }
-            val timeOptionStr = try { prefs[PreferencesKeys.CLASS_REMINDERS_TIME_OPTION] } catch (_: Exception) { null }
-            val hours = try { prefs[PreferencesKeys.CLASS_REMINDERS_HOURS] ?: "" } catch (_: Exception) { "" }
-            val minutes = try { prefs[PreferencesKeys.CLASS_REMINDERS_MINUTES] ?: "" } catch (_: Exception) { "" }
+            val toggledOn = try {
+                prefs[PreferencesKeys.CLASS_REMINDERS_TOGGLE] ?: false
+            } catch (_: Exception) {
+                false
+            }
+            val timeOptionStr = try {
+                prefs[PreferencesKeys.CLASS_REMINDERS_TIME_OPTION]
+            } catch (_: Exception) {
+                null
+            }
+            val hours = try {
+                prefs[PreferencesKeys.CLASS_REMINDERS_HOURS] ?: ""
+            } catch (_: Exception) {
+                ""
+            }
+            val minutes = try {
+                prefs[PreferencesKeys.CLASS_REMINDERS_MINUTES] ?: ""
+            } catch (_: Exception) {
+                ""
+            }
 
             val option = try {
                 if (timeOptionStr != null) ReminderTimeOption.valueOf(timeOptionStr) else ReminderTimeOption.THIRTY_MIN
