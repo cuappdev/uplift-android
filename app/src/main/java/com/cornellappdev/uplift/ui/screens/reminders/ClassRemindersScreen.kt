@@ -1,6 +1,5 @@
 package com.cornellappdev.uplift.ui.screens.reminders
 
-import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -23,11 +22,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.cornellappdev.uplift.R
 import com.cornellappdev.uplift.ui.components.general.RadioCheckButton
 import com.cornellappdev.uplift.ui.components.general.UpliftTopBarWithBack
 import com.cornellappdev.uplift.ui.components.reminders.ClassReminderInput
@@ -41,7 +42,6 @@ import com.cornellappdev.uplift.util.montserratFamily
 /**
  * ClassReminderScreen is a composable that displays the class reminder settings screen.
  */
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun ClassRemindersScreen(
     classRemindersViewModel: ClassRemindersViewModel = hiltViewModel()
@@ -69,7 +69,7 @@ private fun ClassReminderContent(
 ) {
     Scaffold(topBar = {
         UpliftTopBarWithBack(
-            title = "Class Reminders",
+            title = stringResource(R.string.class_reminders_screen_title),
             onBackClick = onBack,
             withBack = true
         )
@@ -90,12 +90,12 @@ private fun ClassReminderContent(
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 DescriptionReminderSwitch(
-                    text = "CLASS REMINDERS",
+                    text = stringResource(R.string.class_reminders_header),
                     checked = uiState.toggledOn,
                     onCheckedChange = setToggle
                 )
                 Text(
-                    text = "Uplift will send a notification before your favorite classes.",
+                    text = stringResource(R.string.class_reminders_description),
                     fontFamily = montserratFamily,
                     fontWeight = FontWeight.Normal,
                     fontSize = 12.sp,
@@ -141,7 +141,7 @@ private fun ClassRemindersSettings(
             horizontalAlignment = Alignment.Start
         ) {
             Text(
-                text = "TIME BEFORE CLASS",
+                text = stringResource(R.string.time_before_class),
                 fontFamily = montserratFamily,
                 fontWeight = FontWeight.Bold,
                 fontSize = 12.sp,
@@ -153,20 +153,20 @@ private fun ClassRemindersSettings(
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 RadioCheckButton(
-                    "30 min",
+                    stringResource(R.string.reminder_time_30_min),
                     selected = timeOption == ReminderTimeOption.THIRTY_MIN,
                     onButtonSelected = { onOptionSelected(ReminderTimeOption.THIRTY_MIN) }
                 )
 
                 RadioCheckButton(
-                    "60 min",
+                    stringResource(R.string.reminder_time_60_min),
                     selected = timeOption == ReminderTimeOption.SIXTY_MIN,
                     onButtonSelected = { onOptionSelected(ReminderTimeOption.SIXTY_MIN) }
                 )
             }
 
             RadioCheckButton(
-                "Custom",
+                stringResource(R.string.reminder_time_custom),
                 selected = timeOption == ReminderTimeOption.CUSTOM,
                 onButtonSelected = { onOptionSelected(ReminderTimeOption.CUSTOM) }
             )
@@ -180,8 +180,8 @@ private fun ClassRemindersSettings(
                     horizontalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     ClassReminderInput(
-                        label = "hours",
-                        placeholder = "0",
+                        label = stringResource(R.string.reminder_input_hours),
+                        placeholder = stringResource(R.string.reminder_input_placeholder),
                         enabled = timeOption == ReminderTimeOption.CUSTOM,
                         textValue = customHours,
                         onValueChange = onHoursChanged,
@@ -189,8 +189,8 @@ private fun ClassRemindersSettings(
                     )
 
                     ClassReminderInput(
-                        label = "minutes",
-                        placeholder = "0",
+                        label = stringResource(R.string.reminder_input_minutes),
+                        placeholder = stringResource(R.string.reminder_input_placeholder),
                         enabled = timeOption == ReminderTimeOption.CUSTOM,
                         textValue = customMinutes,
                         onValueChange = onMinutesChanged,
@@ -200,7 +200,7 @@ private fun ClassRemindersSettings(
 
                 if (isMinutesError && timeOption == ReminderTimeOption.CUSTOM) {
                     Text(
-                        text = "Invalid minutes input",
+                        text = stringResource(R.string.reminder_invalid_minutes),
                         color = Color.Red,
                         fontFamily = montserratFamily,
                         fontSize = 12.sp,
