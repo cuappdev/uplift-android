@@ -28,7 +28,7 @@ playServicesLocation = "21.3.0"
 playServicesAuth = "21.3.0"
 googleId = "1.1.1"
 firebaseBom = "35.2.0"
-kotlinxSerializationJson = "1.7.3"
+kotlinxSerializationJson = "1.13.0"
 
 junit = "4.13.2"
 androidxJunit = "1.2.1"
