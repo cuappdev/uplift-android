@@ -2,7 +2,6 @@ package com.cornellappdev.uplift.ui.viewmodels.reminders
 
 import androidx.lifecycle.viewModelScope
 import com.cornellappdev.uplift.data.repositories.ClassRemindersRepository
-import com.cornellappdev.uplift.data.repositories.PreferencesKeys
 import com.cornellappdev.uplift.ui.nav.RootNavigationRepository
 import com.cornellappdev.uplift.ui.viewmodels.UpliftViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -31,27 +30,10 @@ class ClassRemindersViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            val prefs = classRemindersRepository.getPreferencesSnapshot()
-            val toggledOn = try {
-                prefs[PreferencesKeys.CLASS_REMINDERS_TOGGLE] ?: false
-            } catch (_: Exception) {
-                false
-            }
-            val timeOptionStr = try {
-                prefs[PreferencesKeys.CLASS_REMINDERS_TIME_OPTION]
-            } catch (_: Exception) {
-                null
-            }
-            val hours = try {
-                prefs[PreferencesKeys.CLASS_REMINDERS_HOURS] ?: ""
-            } catch (_: Exception) {
-                ""
-            }
-            val minutes = try {
-                prefs[PreferencesKeys.CLASS_REMINDERS_MINUTES] ?: ""
-            } catch (_: Exception) {
-                ""
-            }
+            val toggledOn = classRemindersRepository.getToggle()
+            val timeOptionStr = classRemindersRepository.getTimeOption()
+            val hours = classRemindersRepository.getHours()
+            val minutes = classRemindersRepository.getMinutes()
 
             val option = try {
                 if (timeOptionStr != null) ReminderTimeOption.valueOf(timeOptionStr) else ReminderTimeOption.THIRTY_MIN

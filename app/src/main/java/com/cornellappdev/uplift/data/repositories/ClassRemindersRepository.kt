@@ -7,7 +7,21 @@ import javax.inject.Singleton
 class ClassRemindersRepository @Inject constructor(
     private val dataStoreRepository: DatastoreRepository
 ) {
-    suspend fun getPreferencesSnapshot() = dataStoreRepository.getPreferencesSnapshot()
+    suspend fun getToggle(): Boolean {
+        return dataStoreRepository.getPreference(PreferencesKeys.CLASS_REMINDERS_TOGGLE) ?: false
+    }
+
+    suspend fun getTimeOption(): String? {
+        return dataStoreRepository.getPreference(PreferencesKeys.CLASS_REMINDERS_TIME_OPTION)
+    }
+
+    suspend fun getHours(): String {
+        return dataStoreRepository.getPreference(PreferencesKeys.CLASS_REMINDERS_HOURS) ?: ""
+    }
+
+    suspend fun getMinutes(): String {
+        return dataStoreRepository.getPreference(PreferencesKeys.CLASS_REMINDERS_MINUTES) ?: ""
+    }
 
     suspend fun setToggle(toggledOn: Boolean) {
         dataStoreRepository.storePreference(PreferencesKeys.CLASS_REMINDERS_TOGGLE, toggledOn)
