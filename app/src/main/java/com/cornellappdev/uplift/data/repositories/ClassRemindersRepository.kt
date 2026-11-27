@@ -1,11 +1,13 @@
 package com.cornellappdev.uplift.data.repositories
 
+import com.cornellappdev.uplift.util.AlarmScheduler
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class ClassRemindersRepository @Inject constructor(
-    private val dataStoreRepository: DatastoreRepository
+    private val dataStoreRepository: DatastoreRepository,
+    private val alarmScheduler: AlarmScheduler
 ) {
     suspend fun getToggle(): Boolean {
         return dataStoreRepository.getPreference(PreferencesKeys.CLASS_REMINDERS_TOGGLE) ?: false
