@@ -24,9 +24,6 @@ lateinit var datastoreRepository: DatastoreRepository
 class MainActivity : ComponentActivity() {
     @Inject
     lateinit var injectedDatastoreRepository: DatastoreRepository
-
-
-
     private val checkInViewModel: CheckInViewModel by viewModels()
     private val rootNavigationViewModel: RootNavigationViewModel by viewModels()
 
