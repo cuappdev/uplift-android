@@ -50,15 +50,17 @@ class UserInfoRepository @Inject constructor(
     private val sessionManager: SessionManager,
     @ApplicationContext private val context: Context,
     private val alarmScheduler: AlarmScheduler
-){
+) {
     private companion object {
         const val TAG = "UserInfoRepository"
     }
 
     // Guards createdUserFields and createdImageUri across createUser and signOut
     private val onboardingMutex = Mutex()
+
     // Backend account created during onboarding whose remaining setup has not yet succeeded
     private var createdUserFields: UserFields? = null
+
     // Photo the backend account currently has, so a photo changed before resuming can be applied
     private var createdImageUri: Uri? = null
 
@@ -71,7 +73,7 @@ class UserInfoRepository @Inject constructor(
         imageUri: Uri? = null
     ): Boolean {
         onboardingMutex.withLock {
-            try{
+            try {
                 // Resume after a partial failure instead of recreating an account that already exists
                 val userFields = createdUserFields?.takeIf { it.netId == netId }
                     ?: createOrRecoverAccount(email, name, netId, imageUri)
@@ -102,8 +104,7 @@ class UserInfoRepository @Inject constructor(
                     if (!uploadGoal(id, goal, accessToken)) {
                         return false
                     }
-                }
-                else {
+                } else {
                     Log.d(TAG, "Skipping goal upload")
                 }
                 storeUserFields(
@@ -228,7 +229,7 @@ class UserInfoRepository @Inject constructor(
         }
     }
 
-    suspend fun loginUser(netId: String) : Boolean {
+    suspend fun loginUser(netId: String): Boolean {
         return try {
             val loginResponse = apolloClient.mutation(
                 LoginUserMutation(
@@ -240,7 +241,10 @@ class UserInfoRepository @Inject constructor(
             if (loginData?.accessToken != null && loginData.refreshToken != null && userInfo != null) {
                 val id = userInfo.id.toIntOrNull()
                 if (id == null) {
-                    Log.e(TAG, "Failed to log in: non-numeric user ID resulting in null '${userInfo.id}'")
+                    Log.e(
+                        TAG,
+                        "Failed to log in: non-numeric user ID resulting in null '${userInfo.id}'"
+                    )
                     return false
                 }
                 storeUserFields(
@@ -270,7 +274,7 @@ class UserInfoRepository @Inject constructor(
         }
     }
 
-    suspend fun uploadGoal(id:Int?, goal: Int, manualToken: String? = null): Boolean {
+    suspend fun uploadGoal(id: Int?, goal: Int, manualToken: String? = null): Boolean {
         if (id == null) {
             Log.e(TAG, "Failed to set goal: non-numeric user ID '$id'")
             return false
@@ -298,7 +302,14 @@ class UserInfoRepository @Inject constructor(
     }
 
 
-    suspend fun storeUserFields(id: String, username: String, netId: String, email: String, goalSkip: Boolean, goal: Int) {
+    suspend fun storeUserFields(
+        id: String,
+        username: String,
+        netId: String,
+        email: String,
+        goalSkip: Boolean,
+        goal: Int
+    ) {
         dataStore.edit { preferences ->
             preferences[PreferencesKeys.ID] = id
             preferences[PreferencesKeys.NETID] = netId
@@ -357,14 +368,15 @@ class UserInfoRepository @Inject constructor(
             val response = apolloClient.query(GetUserByNetIdQuery(netId = netId)).execute()
             val fields = response.data?.getUserByNetId?.firstOrNull()?.userFields
             val notFound = response.exception == null && (
-                response.errors.orEmpty().any { it.message.contains("does not exist") } ||
-                    (!response.hasErrors() && response.data != null)
-                )
+                    response.errors.orEmpty().any { it.message.contains("does not exist") } ||
+                            (!response.hasErrors() && response.data != null)
+                    )
             when {
                 fields != null -> Result.success(fields)
                 notFound -> Result.success(null)
                 else -> Result.failure(
-                    response.exception ?: IllegalStateException("User lookup failed: ${response.errors}")
+                    response.exception
+                        ?: IllegalStateException("User lookup failed: ${response.errors}")
                 )
             }
         } catch (e: CancellationException) {

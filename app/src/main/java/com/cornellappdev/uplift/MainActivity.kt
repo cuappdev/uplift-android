@@ -19,7 +19,7 @@ import com.cornellappdev.uplift.util.LockScreenOrientation
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
-lateinit var datastoreRepository : DatastoreRepository
+lateinit var datastoreRepository: DatastoreRepository
 
 @AndroidEntryPoint
 
@@ -27,8 +27,9 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var injectedDatastoreRepository: DatastoreRepository
 
-    @Inject
-    lateinit var alarmScheduler: AlarmScheduler
+    // Notification test [1/2]: fires 5 seconds after app launch. Uncomment to see it work
+//    @Inject
+//    lateinit var alarmScheduler: AlarmScheduler
 
 
     private val checkInViewModel: CheckInViewModel by viewModels()
@@ -49,19 +50,19 @@ class MainActivity : ComponentActivity() {
                 MainNavigationWrapper(rootNavigationViewModel = rootNavigationViewModel)
             }
         }
-        // Temporary test: fires 5 seconds after app launch
-        alarmScheduler.scheduleAlarm(
-            reminderId = 12345,
-            triggerAtMillis = System.currentTimeMillis() + 5000,
-            title = "Uplift Test Reminder",
-            body = "Local notifications are working successfully!"
-        )
+        // Notification test [2/2]: fires 5 seconds after app launch. Uncomment to see it work
+//        alarmScheduler.scheduleAlarm(
+//            reminderId = 12345,
+//            triggerAtMillis = System.currentTimeMillis() + 5000,
+//            title = "Uplift Test Reminder",
+//            body = "Local notifications are working successfully!"
+//        )
     }
 
     override fun onResume() {
         super.onResume()
         LocationRepository.startLocationUpdates(this)
-        if (CHECK_IN_FLAG){
+        if (CHECK_IN_FLAG) {
             checkInViewModel.startLocationUpdates(this)
         }
     }
@@ -69,7 +70,7 @@ class MainActivity : ComponentActivity() {
     override fun onPause() {
         super.onPause()
         LocationRepository.stopLocationUpdates()
-        if (CHECK_IN_FLAG){
+        if (CHECK_IN_FLAG) {
             checkInViewModel.stopLocationUpdates()
         }
     }
