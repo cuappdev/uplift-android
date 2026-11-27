@@ -9,9 +9,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 enum class ReminderTimeOption {
-    THIRTY_MIN,
-    SIXTY_MIN,
-    CUSTOM
+    THIRTY_MIN, SIXTY_MIN, CUSTOM
 }
 
 data class ClassRemindersUiState(
@@ -62,6 +60,11 @@ class ClassRemindersViewModel @Inject constructor(
         applyMutation { copy(toggledOn = toggledOn) }
         viewModelScope.launch {
             classRemindersRepository.setToggle(toggledOn)
+            if (toggledOn) {
+                classRemindersRepository.scheduleClassReminder()
+            } else {
+                classRemindersRepository.cancelClassReminder()
+            }
         }
     }
 
@@ -87,8 +90,7 @@ class ClassRemindersViewModel @Inject constructor(
             val isError = (minutesInt != null) && (minutesInt > 59)
             applyMutation {
                 copy(
-                    customMinutes = input,
-                    isMinutesError = isError
+                    customMinutes = input, isMinutesError = isError
                 )
             }
             viewModelScope.launch {
