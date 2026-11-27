@@ -54,13 +54,22 @@ class ClassRemindersViewModel @Inject constructor(
         }
     }
 
-    fun onBack() = rootNavigationRepository.navigateUp()
+    fun onBack() {
+        viewModelScope.launch {
+            val uiState = uiStateFlow.value
+            if (uiState.toggledOn && !uiState.isMinutesError) {
+                classRemindersRepository.scheduleClassReminder()
+            }
+        }
+        rootNavigationRepository.navigateUp()
+    }
 
     fun setToggle(toggledOn: Boolean) {
         applyMutation { copy(toggledOn = toggledOn) }
         viewModelScope.launch {
             classRemindersRepository.setToggle(toggledOn)
-            if (toggledOn) {
+            val uiState = uiStateFlow.value
+            if (toggledOn && !uiState.isMinutesError) {
                 classRemindersRepository.scheduleClassReminder()
             } else {
                 classRemindersRepository.cancelClassReminder()

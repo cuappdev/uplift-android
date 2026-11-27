@@ -42,14 +42,10 @@ class ClassRemindersRepository @Inject constructor(
     }
 
     suspend fun scheduleClassReminder() {
-        // TODO: Fix 0 hours and 0 seconds issue (Temp fix: if it is 0 hrs 0 mins, it will not run.)
         val hours = getHours().toIntOrNull() ?: 0
         val minutes = getMinutes().toIntOrNull() ?: 0
 
-        val validMinutes = if (minutes >= 0 && minutes <= 60) minutes else 0 // default to 0 if invalid
-        val validHours = if (hours >= 0) hours else 0 // default to 0 if invalid
-
-        val offsetMillis = (validHours * 60 * 60 * 1000L) + (validMinutes * 60 * 1000L)
+        val offsetMillis = (hours * 60 * 60 * 1000L) + (minutes * 60 * 1000L)
         val scheduledTimeMillisec = System.currentTimeMillis() + if (offsetMillis > 0) offsetMillis else (24 * 60 * 60 * 1000L)
 
         alarmScheduler.scheduleAlarm(
