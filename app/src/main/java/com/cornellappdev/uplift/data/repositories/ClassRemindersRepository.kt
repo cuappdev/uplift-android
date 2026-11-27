@@ -40,4 +40,30 @@ class ClassRemindersRepository @Inject constructor(
     suspend fun setMinutes(minutes: String) {
         dataStoreRepository.storePreference(PreferencesKeys.CLASS_REMINDERS_MINUTES, minutes)
     }
+
+    /**
+     * Schedules a local class reminder using AlarmScheduler.
+     */
+    suspend fun scheduleClassReminder() {
+        // TODO: replace scheduledTimeMillisec with actual user input
+        val scheduledTimeMillisec = System.currentTimeMillis() + 24 * 60 * 60 * 1000
+
+        alarmScheduler.scheduleAlarm(
+            reminderId = CLASS_REMINDER_ID,
+            triggerAtMillis = scheduledTimeMillisec,
+            title = "Class Reminder",
+            body = "You have an upcoming class soon!"
+        )
+    }
+
+    /**
+     * Cancels the scheduled class reminder.
+     */
+    suspend fun cancelClassReminder() {
+        alarmScheduler.cancelAlarm(CLASS_REMINDER_ID)
+    }
+
+    companion object {
+        private const val CLASS_REMINDER_ID = 1001 // choose some unique ID
+    }
 }
