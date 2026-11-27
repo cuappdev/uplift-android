@@ -142,13 +142,6 @@ private fun WorkoutReminderContent(
                 .verticalScroll(rememberScrollState())
                 .padding(vertical = 24.dp),
         ) {
-            Column(
-                modifier = Modifier.padding(vertical = 24.dp, horizontal = 18.dp),
-                verticalArrangement = Arrangement.spacedBy(10.dp)
-            ) {
-                GoalSettingHeader(isOnboarding = isOnboarding)
-            }
-
             if (!isOnboarding) {
                 WorkoutReminders(
                     selectedReminder = selectedReminder,

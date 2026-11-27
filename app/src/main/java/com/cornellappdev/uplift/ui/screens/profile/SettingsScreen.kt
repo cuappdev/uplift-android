@@ -129,7 +129,7 @@ private fun SettingsScreenContent(
             SettingsOption(
                 icon = R.drawable.ic_bell,
                 title = "Reminders",
-                onClick = onReportPressed,
+                onClick = onRemindersPressed,
                 enabled = !isDeleting,
             )
             Divider(color = GRAY01)
