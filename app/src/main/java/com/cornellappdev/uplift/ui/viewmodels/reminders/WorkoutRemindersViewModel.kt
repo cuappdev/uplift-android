@@ -60,7 +60,8 @@ class WorkoutRemindersViewModel @Inject constructor(
 
     fun onDeleteConfirmed() {
         applyMutation {
-            val updatedReminders = if (selectedReminder != null) reminders.filter { it != selectedReminder } else reminders
+            val updatedReminders =
+                if (selectedReminder != null) reminders.filter { it != selectedReminder } else reminders
             viewModelScope.launch {
                 workoutRemindersRepository.saveWorkoutReminders(updatedReminders)
             }

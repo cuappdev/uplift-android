@@ -16,7 +16,7 @@ class WorkoutRemindersRepository @Inject constructor(
 
     suspend fun saveWorkoutReminders(reminders: List<Reminder>) {
         dataStoreRepository.saveWorkoutReminders(reminders)
-        // TODO: Schedule/update alarms for reminders
+        updateAlarms(reminders)
     }
 
     suspend fun getSliderValue(): Int {
@@ -29,5 +29,26 @@ class WorkoutRemindersRepository @Inject constructor(
 
     suspend fun saveSliderValue(value: Int) {
         dataStoreRepository.storePreference(PreferencesKeys.WORKOUT_REMINDERS_SLIDER_VALUE, value)
+    }
+
+    private fun updateAlarms(reminders: List<Reminder>) {
+        reminders.forEachIndexed { index, reminder ->
+            val reminderId = WORKOUT_REMINDER_ID_BASE + index
+            if (reminder.enabled) {
+                val scheduledTimeMillisec = System.currentTimeMillis() + 5000L // dummy time for testing
+                alarmScheduler.scheduleAlarm(
+                    reminderId = reminderId,
+                    triggerAtMillis = scheduledTimeMillisec,
+                    title = "Workout Reminder",
+                    body = "Time for your scheduled workout!"
+                )
+            } else {
+                alarmScheduler.cancelAlarm(reminderId)
+            }
+        }
+    }
+
+    companion object {
+        private const val WORKOUT_REMINDER_ID_BASE = 2000
     }
 }
