@@ -1,4 +1,4 @@
-package com.cornellappdev.uplift.ui.components.goalsetting
+package com.cornellappdev.uplift.ui.components.reminders.goalsetting
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer

@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
+import com.cornellappdev.uplift.ui.screens.reminders.Reminder
 import com.cornellappdev.uplift.util.CLASS_FAVORITES_KEY
 import com.cornellappdev.uplift.util.GYM_FAVORITES_KEY
 import kotlinx.coroutines.CoroutineScope
@@ -36,6 +37,8 @@ object PreferencesKeys {
     val CAPACITY_REMINDERS_SELECTED_DAYS = stringSetPreferencesKey("capacityRemindersSelectedDays")
     val CAPACITY_REMINDERS_SELECTED_GYMS = stringSetPreferencesKey("capacityRemindersSelectedGyms")
     val CAPACITY_REMINDERS_TUTORIAL_SHOWN = booleanPreferencesKey("capacityReminderTutorialShown")
+    val WORKOUT_REMINDERS_SLIDER_VALUE = intPreferencesKey("workoutRemindersSliderValue")
+    val WORKOUT_REMINDERS_REMINDERS = stringSetPreferencesKey("workoutRemindersReminders")
 }
 
 @Singleton
@@ -56,6 +59,31 @@ class DatastoreRepository @Inject constructor(private val dataStore: DataStore<P
         dataStore.edit { preferences ->
             preferences.remove(key)
         }
+    }
+
+    suspend fun saveWorkoutReminders(reminders: List<Reminder>) {
+        val stringSet = reminders.map { it.toStorageString() }.toSet()
+        storePreference(PreferencesKeys.WORKOUT_REMINDERS_REMINDERS, stringSet)
+    }
+
+    suspend fun getWorkoutReminders(): List<Reminder> {
+        val rawSet = try {
+            getPreference(PreferencesKeys.WORKOUT_REMINDERS_REMINDERS) ?: emptySet()
+        } catch (_: Exception) {
+            emptySet()
+        }
+        return rawSet.mapNotNull { it.toReminder() }
+    }
+
+    private fun Reminder.toStorageString(): String = "$time|${days.joinToString(",")}|$enabled"
+
+    private fun String.toReminder(): Reminder? {
+        val parts = split("|")
+        if (parts.size < 3) return null
+        val time = parts[0]
+        val days = if (parts[1].isEmpty()) emptySet() else parts[1].split(",").toSet()
+        val enabled = parts[2].toBooleanStrictOrNull() ?: true
+        return Reminder(time, days, enabled)
     }
 
     /**

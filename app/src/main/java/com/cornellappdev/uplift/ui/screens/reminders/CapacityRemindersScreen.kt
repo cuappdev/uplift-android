@@ -37,6 +37,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -44,11 +45,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.cornellappdev.uplift.R
-import com.cornellappdev.uplift.ui.components.capacityreminder.CapacityReminderLoading
-import com.cornellappdev.uplift.ui.components.capacityreminder.CapacityReminderSwitch
-import com.cornellappdev.uplift.ui.components.capacityreminder.CapacityThreshold
-import com.cornellappdev.uplift.ui.components.capacityreminder.LocationsToRemind
-import com.cornellappdev.uplift.ui.components.capacityreminder.ReminderDays
+import com.cornellappdev.uplift.ui.components.reminders.capacityreminder.CapacityReminderLoading
+import com.cornellappdev.uplift.ui.components.reminders.capacityreminder.CapacityThreshold
+import com.cornellappdev.uplift.ui.components.reminders.DescriptionReminderSwitch
+import com.cornellappdev.uplift.ui.components.reminders.capacityreminder.LocationsToRemind
+import com.cornellappdev.uplift.ui.components.reminders.capacityreminder.ReminderDays
 import com.cornellappdev.uplift.ui.components.general.NotificationPermissionHandler
 import com.cornellappdev.uplift.ui.components.general.UpliftButton
 import com.cornellappdev.uplift.ui.components.general.UpliftTopBarWithBack
@@ -73,7 +74,7 @@ fun CapacityReminderScreen(
     val initialSelectedGyms = capacityRemindersUiState.selectedGyms
     if (capacityRemindersUiState.showUnsavedChangesDialog) {
         UnsavedChangesDialog(
-            onSave = capacityRemindersViewModel::saveChanges,
+            onSave = { capacityRemindersViewModel.saveChanges(navigateBackOnSuccess = true) },
             onDismiss = capacityRemindersViewModel::onDismissDialog,
             onDiscard = capacityRemindersViewModel::onConfirmDiscard
         )
@@ -194,7 +195,7 @@ private fun CapacityRemindersContent(
         Scaffold(
             topBar = {
                 UpliftTopBarWithBack(
-                    title = "Capacity Reminder",
+                    title = stringResource(id = R.string.capacity_reminders_title),
                     onBackClick = onBack
                 )
             },
@@ -212,7 +213,8 @@ private fun CapacityRemindersContent(
                     modifier = Modifier.fillMaxWidth(),
                     verticalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
-                    CapacityReminderSwitch(
+                    DescriptionReminderSwitch(
+                        text = stringResource(id = R.string.capacity_reminders_switch_text),
                         checked = switchChecked,
                         onCheckedChange = setToggle
                     )
