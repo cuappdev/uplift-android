@@ -45,13 +45,6 @@
     </plurals>
     <string name="close">Close</string>
 
-    <!-- Reminders -->
-    <string name="capacity_reminders_title">CAPACITY REMINDERS</string>
-    <string name="capacity_reminders_switch_text">Capacity Reminders</string>
-    <string name="class_reminders_title">Class Reminders</string>
-    <string name="workout_reminders_title">Workout Reminders</string>
-    <string name="reminders_title">Reminders</string>
-
     <!-- Profile action errors -->
     <string name="profile_error_dismiss">Dismiss</string>
     <string name="profile_create_error_title">Can’t create profile</string>

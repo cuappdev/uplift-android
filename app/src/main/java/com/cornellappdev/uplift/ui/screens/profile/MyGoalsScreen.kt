@@ -41,7 +41,7 @@ import com.cornellappdev.uplift.R
 import com.cornellappdev.uplift.ui.components.general.UpliftButton
 import com.cornellappdev.uplift.ui.components.general.UpliftTopBarWithBack
 import com.cornellappdev.uplift.ui.components.goalsetting.GoalSettingHeader
-import com.cornellappdev.uplift.ui.components.goalsetting.GoalSlider
+import com.cornellappdev.uplift.ui.components.reminders.goalsetting.GoalSlider
 import com.cornellappdev.uplift.ui.theme.AppTextStyles
 import com.cornellappdev.uplift.ui.theme.UpliftTheme
 import com.cornellappdev.uplift.ui.viewmodels.profile.GoalSaveState
