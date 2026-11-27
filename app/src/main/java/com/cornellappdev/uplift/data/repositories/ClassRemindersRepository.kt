@@ -41,12 +41,16 @@ class ClassRemindersRepository @Inject constructor(
         dataStoreRepository.storePreference(PreferencesKeys.CLASS_REMINDERS_MINUTES, minutes)
     }
 
-    /**
-     * Schedules a local class reminder using AlarmScheduler.
-     */
     suspend fun scheduleClassReminder() {
-        // TODO: replace scheduledTimeMillisec with actual user input
-        val scheduledTimeMillisec = System.currentTimeMillis() + 24 * 60 * 60 * 1000
+        // TODO: Fix 0 hours and 0 seconds issue (Temp fix: if it is 0 hrs 0 mins, it will not run.)
+        val hours = getHours().toIntOrNull() ?: 0
+        val minutes = getMinutes().toIntOrNull() ?: 0
+
+        val validMinutes = if (minutes >= 0 && minutes <= 60) minutes else 0 // default to 0 if invalid
+        val validHours = if (hours >= 0) hours else 0 // default to 0 if invalid
+
+        val offsetMillis = (validHours * 60 * 60 * 1000L) + (validMinutes * 60 * 1000L)
+        val scheduledTimeMillisec = System.currentTimeMillis() + if (offsetMillis > 0) offsetMillis else (24 * 60 * 60 * 1000L)
 
         alarmScheduler.scheduleAlarm(
             reminderId = CLASS_REMINDER_ID,
