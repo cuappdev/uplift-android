@@ -46,7 +46,7 @@ class ClassRemindersRepository @Inject constructor(
         val minutes = getMinutes().toIntOrNull() ?: 0
 
         val offsetMillis = (hours * 60 * 60 * 1000L) + (minutes * 60 * 1000L)
-        val scheduledTimeMillisec = System.currentTimeMillis() + if (offsetMillis > 0) offsetMillis else (24 * 60 * 60 * 1000L)
+        val scheduledTimeMillisec = System.currentTimeMillis() + offsetMillis
 
         alarmScheduler.scheduleAlarm(
             reminderId = CLASS_REMINDER_ID,
