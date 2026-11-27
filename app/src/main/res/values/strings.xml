@@ -45,13 +45,6 @@
     </plurals>
     <string name="close">Close</string>
 
-    <!-- Reminders -->
-    <string name="capacity_reminders_title">CAPACITY REMINDERS</string>
-    <string name="capacity_reminders_switch_text">Capacity Reminders</string>
-    <string name="class_reminders_title">Class Reminders</string>
-    <string name="workout_reminders_title">Workout Reminders</string>
-    <string name="reminders_title">Reminders</string>
-
     <!-- Profile action errors -->
     <string name="profile_error_dismiss">Dismiss</string>
     <string name="profile_create_error_title">Can’t create profile</string>
@@ -67,4 +60,24 @@
     <string name="profile_delete_error_title">Can’t delete account</string>
     <string name="profile_delete_error_message">Something went wrong while deleting your account. Tap Retry to try deleting it again.</string>
     <string name="deleting_account">Deleting account…</string>
+
+    <!-- Reminders -->
+    <string name="capacity_reminders_title">CAPACITY REMINDERS</string>
+    <string name="capacity_reminders_switch_text">Capacity Reminders</string>
+    <string name="class_reminders_title">Class Reminders</string>
+    <string name="workout_reminders_title">Workout Reminders</string>
+    <string name="reminders_title">Reminders</string>
+
+    <!-- Class Reminders Screen -->
+    <string name="class_reminders_screen_title">Class Reminders</string>
+    <string name="class_reminders_header">CLASS REMINDERS</string>
+    <string name="class_reminders_description">Uplift will send a notification before your favorite classes.</string>
+    <string name="time_before_class">TIME BEFORE CLASS</string>
+    <string name="reminder_time_30_min">30 min</string>
+    <string name="reminder_time_60_min">60 min</string>
+    <string name="reminder_time_custom">Custom</string>
+    <string name="reminder_input_hours">hours</string>
+    <string name="reminder_input_placeholder">0</string>
+    <string name="reminder_input_minutes">minutes</string>
+    <string name="reminder_invalid_minutes">Invalid minutes input</string>
 </resources>

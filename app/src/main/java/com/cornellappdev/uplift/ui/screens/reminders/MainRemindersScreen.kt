@@ -2,12 +2,12 @@ package com.cornellappdev.uplift.ui.screens.reminders
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.runtime.Composable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -19,8 +19,6 @@ import com.cornellappdev.uplift.ui.components.general.PageOption
 import com.cornellappdev.uplift.ui.components.general.UpliftTopBarWithBack
 import com.cornellappdev.uplift.ui.viewmodels.reminders.MainRemindersViewModel
 import com.cornellappdev.uplift.util.GRAY01
-import com.google.accompanist.systemuicontroller.SystemUiController
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 /**
  * Screen displaying all reminder page options
@@ -31,6 +29,7 @@ fun MainRemindersScreen(
 ) {
     MainReminderContent(
         onBack = mainRemindersViewModel::onBack,
+        onClassReminderPressed = mainRemindersViewModel::onClassReminderPressed,
         onWorkoutRemindersPressed = mainRemindersViewModel::onWorkoutRemindersPressed,
         onCapacityRemindersPressed = mainRemindersViewModel::onCapacityRemindersPressed,
     )
@@ -39,15 +38,10 @@ fun MainRemindersScreen(
 @Composable
 fun MainReminderContent(
     onBack: () -> Unit,
+    onClassReminderPressed: () -> Unit,
     onWorkoutRemindersPressed: () -> Unit,
     onCapacityRemindersPressed: () -> Unit
 ) {
-    val systemUiController: SystemUiController = rememberSystemUiController()
-
-    systemUiController.isStatusBarVisible = false
-    systemUiController.isNavigationBarVisible = false // Navigation bar
-    systemUiController.isSystemBarsVisible = false
-
     Scaffold(topBar = {
         UpliftTopBarWithBack(
             title = stringResource(id = R.string.reminders_title),
@@ -66,6 +60,12 @@ fun MainReminderContent(
                 ),
             verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
+            PageOption(
+                icon = R.drawable.ic_classes_inactive,
+                title = "Class Reminders",
+                onClick = onClassReminderPressed,
+            )
+            HorizontalDivider(color = GRAY01)
             PageOption(
                 icon = R.drawable.gym_simple,
                 title = stringResource(id = R.string.workout_reminders_title),
@@ -86,6 +86,7 @@ fun MainReminderContent(
 private fun MainReminderScreenPreview() {
     MainReminderContent(
         onBack = {},
+        onClassReminderPressed = {},
         onWorkoutRemindersPressed = {},
         onCapacityRemindersPressed = {},
     )
