@@ -30,6 +30,7 @@ import com.cornellappdev.uplift.SetWorkoutGoalsMutation
 import com.cornellappdev.uplift.UpdateProfilePhotoMutation
 import com.cornellappdev.uplift.data.mappers.toResult
 import com.cornellappdev.uplift.data.auth.SessionManager
+import com.cornellappdev.uplift.util.AlarmScheduler
 import com.cornellappdev.uplift.fragment.UserFields
 import kotlinx.coroutines.flow.map;
 import kotlinx.coroutines.flow.firstOrNull
@@ -47,7 +48,8 @@ class UserInfoRepository @Inject constructor(
     @Named("main") private val apolloClient: ApolloClient,
     private val dataStore: DataStore<Preferences>,
     private val sessionManager: SessionManager,
-    @ApplicationContext private val context: Context
+    @ApplicationContext private val context: Context,
+    private val alarmScheduler: AlarmScheduler
 ){
     private companion object {
         const val TAG = "UserInfoRepository"
@@ -388,6 +390,7 @@ class UserInfoRepository @Inject constructor(
                 Log.e(TAG, "Firebase signout failed: $e")
             } finally {
                 sessionManager.logout()
+                alarmScheduler.cancelAllAlarms()
                 dataStore.edit { it.clear() }
             }
         }
