@@ -13,6 +13,7 @@ import com.cornellappdev.uplift.ui.MainNavigationWrapper
 import com.cornellappdev.uplift.ui.theme.UpliftTheme
 import com.cornellappdev.uplift.ui.viewmodels.nav.RootNavigationViewModel
 import com.cornellappdev.uplift.ui.viewmodels.profile.CheckInViewModel
+import com.cornellappdev.uplift.util.AlarmScheduler
 import com.cornellappdev.uplift.util.CHECK_IN_FLAG
 import com.cornellappdev.uplift.util.LockScreenOrientation
 import dagger.hilt.android.AndroidEntryPoint
@@ -21,9 +22,13 @@ import javax.inject.Inject
 lateinit var datastoreRepository : DatastoreRepository
 
 @AndroidEntryPoint
+
 class MainActivity : ComponentActivity() {
     @Inject
     lateinit var injectedDatastoreRepository: DatastoreRepository
+
+    @Inject
+    lateinit var alarmScheduler: AlarmScheduler
 
 
     private val checkInViewModel: CheckInViewModel by viewModels()
@@ -44,6 +49,13 @@ class MainActivity : ComponentActivity() {
                 MainNavigationWrapper(rootNavigationViewModel = rootNavigationViewModel)
             }
         }
+        // Temporary test: fires 5 seconds after app launch
+        alarmScheduler.scheduleAlarm(
+            reminderId = 12345,
+            triggerAtMillis = System.currentTimeMillis() + 5000,
+            title = "Uplift Test Reminder",
+            body = "Local notifications are working successfully!"
+        )
     }
 
     override fun onResume() {
