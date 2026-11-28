@@ -63,9 +63,6 @@ class ClassRemindersRepository @Inject constructor(
         )
     }
 
-    /**
-     * Cancels the scheduled class reminder.
-     */
     suspend fun cancelClassReminder() {
         alarmScheduler.cancelAlarm(CLASS_REMINDER_ID)
     }
