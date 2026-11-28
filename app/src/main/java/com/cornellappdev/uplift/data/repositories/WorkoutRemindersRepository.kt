@@ -31,24 +31,40 @@ class WorkoutRemindersRepository @Inject constructor(
         }
     }
 
+    private var previousScheduledCount = 0
     private fun updateAlarms(reminders: List<Reminder>) {
-        reminders.forEachIndexed { index, reminder -> // there can be multiple reminders
-            val reminderId = WORKOUT_REMINDER_ID_BASE + index
-            if (reminder.enabled) {
-                val scheduledTimeMillisec = calculateNotificationTime(reminder)
-                    ?: (System.currentTimeMillis() + 24 * 60 * 60 * 1000L) // in case it is null
-                val title = context.getString(R.string.workout_reminder_notification_title)
-                val body =
-                    context.getString(R.string.workout_reminder_notification_body, reminder.time)
-                alarmScheduler.scheduleAlarm(
-                    reminderId = reminderId,
-                    triggerAtMillis = scheduledTimeMillisec,
-                    title = title,
-                    body = body
-                )
-            } else {
-                alarmScheduler.cancelAlarm(reminderId)
+        // cancel leftover alarm IDs if reminders were deleted so old alarms don't linger
+        if (previousScheduledCount > reminders.size) {
+            for (i in reminders.size until previousScheduledCount) {
+                alarmScheduler.cancelAlarm(WORKOUT_REMINDER_ID_BASE + i)
             }
+        }
+        previousScheduledCount = reminders.size
+
+        // each reminder gets a distinct alarm ID, starting at WORKOUT_REMINDER_ID_BASE (5000)
+        for (index in reminders.indices) {
+            val reminder = reminders[index]
+            val reminderId = WORKOUT_REMINDER_ID_BASE + index
+
+            // if the reminder is toggled off or has no days selected, cancel its alarm, skip to
+            // the next reminder index without scheduling a new alarm.
+            if (!reminder.enabled || reminder.days.isEmpty()) {
+                alarmScheduler.cancelAlarm(reminderId)
+                continue
+            }
+
+            // find the next matching day/time
+            val scheduledTimeMillisec = calculateNotificationTime(reminder)
+                ?: (System.currentTimeMillis() + 24 * 60 * 60 * 1000L) // 24 hours fallback
+            val title = context.getString(R.string.workout_reminder_notification_title)
+            val body = context.getString(R.string.workout_reminder_notification_body, reminder.time)
+
+            alarmScheduler.scheduleAlarm(
+                reminderId = reminderId,
+                triggerAtMillis = scheduledTimeMillisec,
+                title = title,
+                body = body
+            )
         }
     }
 

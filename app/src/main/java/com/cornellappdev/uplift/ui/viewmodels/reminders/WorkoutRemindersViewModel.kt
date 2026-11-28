@@ -59,18 +59,28 @@ class WorkoutRemindersViewModel @Inject constructor(
     }
 
     fun onDeleteConfirmed() {
+        var updatedReminders: List<Reminder>? = null
+
         applyMutation {
-            val updatedReminders =
-                if (selectedReminder != null) reminders.filter { it != selectedReminder } else reminders
-            viewModelScope.launch {
-                workoutRemindersRepository.saveWorkoutReminders(updatedReminders)
+            val nextReminders = if (selectedReminder != null) {
+                reminders.filter { it != selectedReminder }
+            } else {
+                reminders
             }
+            updatedReminders = nextReminders
+
             copy(
-                reminders = updatedReminders,
+                reminders = nextReminders,
                 selectedReminder = null,
                 deleteDialogOpen = false,
                 addNewReminderState = false
             )
+        }
+
+        updatedReminders?.let { latestReminders ->
+            viewModelScope.launch {
+                workoutRemindersRepository.saveWorkoutReminders(latestReminders)
+            }
         }
     }
 }
