@@ -28,6 +28,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -35,8 +36,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.app.NotificationManagerCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.cornellappdev.uplift.R
+import com.cornellappdev.uplift.ui.components.general.NotificationRationaleDialog
 import com.cornellappdev.uplift.ui.components.general.RadioCheckButton
 import com.cornellappdev.uplift.ui.components.general.UpliftButton
 import com.cornellappdev.uplift.ui.components.general.UpliftTopBarWithBack
@@ -58,6 +61,8 @@ fun ClassRemindersScreen(
     classRemindersViewModel: ClassRemindersViewModel = hiltViewModel()
 ) {
     val classRemindersUiState = classRemindersViewModel.collectUiStateValue()
+    val context = LocalContext.current
+    val notificationsEnabled = NotificationManagerCompat.from(context).areNotificationsEnabled()
 
     ClassReminderContent(
         uiState = classRemindersUiState,
@@ -66,7 +71,9 @@ fun ClassRemindersScreen(
         onOptionSelected = classRemindersViewModel::selectTimeOption,
         onHoursChanged = classRemindersViewModel::onHoursChanged,
         onMinutesChanged = classRemindersViewModel::onMinutesChanged,
-        onDismissInvalidTimeDialog = classRemindersViewModel::onDismissInvalidTimeDialog
+        onDismissInvalidTimeDialog = classRemindersViewModel::onDismissInvalidTimeDialog,
+        onDismissNotificationDialog = classRemindersViewModel::onDismissNotificationDialog,
+        onOpenNotificationSettings = classRemindersViewModel::onOpenNotificationSettings
     )
 }
 
@@ -78,7 +85,9 @@ private fun ClassReminderContent(
     onOptionSelected: (ReminderTimeOption) -> Unit,
     onHoursChanged: (String) -> Unit,
     onMinutesChanged: (String) -> Unit,
-    onDismissInvalidTimeDialog: () -> Unit
+    onDismissInvalidTimeDialog: () -> Unit,
+    onDismissNotificationDialog: () -> Unit = {},
+    onOpenNotificationSettings: () -> Unit = {}
 ) {
     Scaffold(topBar = {
         UpliftTopBarWithBack(
@@ -134,6 +143,13 @@ private fun ClassReminderContent(
 
         if (uiState.showInvalidTimeDialog) {
             InvalidTimeDialog(onDismiss = onDismissInvalidTimeDialog)
+        }
+
+        if (uiState.showNotificationDialog) {
+            NotificationRationaleDialog(
+                onConfirm = onOpenNotificationSettings,
+                onDismiss = onDismissNotificationDialog
+            )
         }
     }
 }

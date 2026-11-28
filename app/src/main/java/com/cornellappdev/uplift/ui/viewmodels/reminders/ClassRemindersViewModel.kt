@@ -1,12 +1,17 @@
 package com.cornellappdev.uplift.ui.viewmodels.reminders
 
+import android.content.Context
+import android.content.Intent
 import androidx.lifecycle.viewModelScope
 import com.cornellappdev.uplift.data.repositories.ClassRemindersRepository
 import com.cornellappdev.uplift.ui.nav.RootNavigationRepository
 import com.cornellappdev.uplift.ui.viewmodels.UpliftViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import android.provider.Settings
+import androidx.core.app.NotificationManagerCompat
 
 enum class ReminderTimeOption {
     THIRTY_MIN, SIXTY_MIN, CUSTOM
@@ -18,13 +23,15 @@ data class ClassRemindersUiState(
     val customHours: String = "",
     val customMinutes: String = "",
     val isMinutesError: Boolean = false,
-    val showInvalidTimeDialog: Boolean = false
+    val showInvalidTimeDialog: Boolean = false,
+    val showNotificationDialog: Boolean = false
 )
 
 @HiltViewModel
 class ClassRemindersViewModel @Inject constructor(
     private val classRemindersRepository: ClassRemindersRepository,
-    private val rootNavigationRepository: RootNavigationRepository
+    private val rootNavigationRepository: RootNavigationRepository,
+    @ApplicationContext private val context: Context
 ) : UpliftViewModel<ClassRemindersUiState>(ClassRemindersUiState()) {
 
     init {
@@ -66,7 +73,13 @@ class ClassRemindersViewModel @Inject constructor(
 
         if (invalidCustomTime) {
             applyMutation { copy(showInvalidTimeDialog = true) }
-            return // do not go back to reminder screens
+            return
+        }
+
+        val notificationsEnabled = NotificationManagerCompat.from(context).areNotificationsEnabled()
+        if (currentState.toggledOn && !notificationsEnabled) {
+            applyMutation { copy(showNotificationDialog = true) }
+            return
         }
 
         viewModelScope.launch {
@@ -124,4 +137,18 @@ class ClassRemindersViewModel @Inject constructor(
     fun onDismissInvalidTimeDialog() {
         applyMutation { copy(showInvalidTimeDialog = false) }
     }
+
+    fun onOpenNotificationSettings() {
+        applyMutation { copy(showNotificationDialog = false) }
+        val intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+            putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        context.startActivity(intent)
+    }
+
+    fun onDismissNotificationDialog() {
+        applyMutation { copy(showNotificationDialog = false) }
+    }
+
 }
