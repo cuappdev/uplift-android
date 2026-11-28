@@ -1,13 +1,17 @@
 package com.cornellappdev.uplift.data.repositories
 
+import android.content.Context
+import com.cornellappdev.uplift.R
 import com.cornellappdev.uplift.util.AlarmScheduler
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class ClassRemindersRepository @Inject constructor(
     private val dataStoreRepository: DatastoreRepository,
-    private val alarmScheduler: AlarmScheduler
+    private val alarmScheduler: AlarmScheduler,
+    @ApplicationContext private val context: Context
 ) {
     suspend fun getToggle(): Boolean {
         return dataStoreRepository.getPreference(PreferencesKeys.CLASS_REMINDERS_TOGGLE) ?: false
@@ -48,11 +52,14 @@ class ClassRemindersRepository @Inject constructor(
         val offsetMillis = (hours * 60 * 60 * 1000L) + (minutes * 60 * 1000L)
         val scheduledTimeMillisec = System.currentTimeMillis() + offsetMillis
 
+        val title = context.getString(R.string.class_reminder_notification_title)
+        val body = context.getString(R.string.class_reminder_notification_body)
+
         alarmScheduler.scheduleAlarm(
             reminderId = CLASS_REMINDER_ID,
             triggerAtMillis = scheduledTimeMillisec,
-            title = "Class Reminder",
-            body = "You have an upcoming class soon!"
+            title = title,
+            body = body
         )
     }
 
