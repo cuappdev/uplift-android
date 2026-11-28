@@ -46,12 +46,25 @@ class ClassRemindersRepository @Inject constructor(
     }
 
     suspend fun scheduleClassReminder() {
-        val hours = getHours().toIntOrNull() ?: 0
-        val minutes = getMinutes().toIntOrNull() ?: 0
+        val selectedOption = getTimeOption()
 
-        val offsetMillis = (hours * 60 * 60 * 1000L) + (minutes * 60 * 1000L)
+        val offsetMillis = when (selectedOption) {
+            "THIRTY_MIN" -> 30 * 60 * 1000L
+            "SIXTY_MIN" -> 60 * 60 * 1000L
+            "CUSTOM" -> {
+                val hours = getHours().toIntOrNull() ?: 0
+                val minutes = getMinutes().toIntOrNull() ?: 0
+                (hours * 60 * 60 * 1000L) + (minutes * 60 * 1000L)
+            }
+            else -> 30 * 60 * 1000L
+        }
+
+        if (offsetMillis <= 0L) {
+            cancelClassReminder()
+            return
+        }
+
         val scheduledTimeMillisec = System.currentTimeMillis() + offsetMillis
-
         val title = context.getString(R.string.class_reminder_notification_title)
         val body = context.getString(R.string.class_reminder_notification_body)
 
