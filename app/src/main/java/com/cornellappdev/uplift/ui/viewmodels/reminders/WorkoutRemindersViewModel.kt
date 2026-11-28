@@ -1,11 +1,16 @@
 package com.cornellappdev.uplift.ui.viewmodels.reminders
 
+import android.content.Context
+import android.content.Intent
+import android.provider.Settings
+import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.viewModelScope
 import com.cornellappdev.uplift.data.repositories.WorkoutRemindersRepository
 import com.cornellappdev.uplift.ui.nav.RootNavigationRepository
 import com.cornellappdev.uplift.ui.screens.reminders.Reminder
 import com.cornellappdev.uplift.ui.viewmodels.UpliftViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -15,12 +20,14 @@ data class WorkoutRemindersUiState(
     val selectedReminder: Reminder? = null,
     val addNewReminderState: Boolean = false,
     val deleteDialogOpen: Boolean = false,
+    val showNotificationDialog: Boolean = false,
 )
 
 @HiltViewModel
 class WorkoutRemindersViewModel @Inject constructor(
     private val workoutRemindersRepository: WorkoutRemindersRepository,
-    private val rootNavigationRepository: RootNavigationRepository
+    private val rootNavigationRepository: RootNavigationRepository,
+    @ApplicationContext private val context: Context
 ) : UpliftViewModel<WorkoutRemindersUiState>(WorkoutRemindersUiState()) {
 
     init {
@@ -37,7 +44,18 @@ class WorkoutRemindersViewModel @Inject constructor(
         }
     }
 
-    fun onBack() = rootNavigationRepository.navigateUp()
+    fun onBack() {
+        val currentState = uiStateFlow.value
+        val hasEnabledReminder = currentState.reminders.any { it.enabled }
+        val notificationsEnabled = NotificationManagerCompat.from(context).areNotificationsEnabled()
+
+        if (hasEnabledReminder && !notificationsEnabled) {
+            applyMutation { copy(showNotificationDialog = true) }
+            return
+        }
+
+        rootNavigationRepository.navigateUp()
+    }
 
     fun onRemindersChange(reminders: List<Reminder>) {
         applyMutation { copy(reminders = reminders) }
@@ -56,6 +74,19 @@ class WorkoutRemindersViewModel @Inject constructor(
 
     fun onDeleteDialogOpenChange(isOpen: Boolean) {
         applyMutation { copy(deleteDialogOpen = isOpen) }
+    }
+
+    fun onDismissNotificationDialog() {
+        applyMutation { copy(showNotificationDialog = false) }
+    }
+
+    fun onOpenNotificationSettings() {
+        applyMutation { copy(showNotificationDialog = false) }
+        val intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+            putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        context.startActivity(intent)
     }
 
     fun onDeleteConfirmed() {

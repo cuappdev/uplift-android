@@ -27,9 +27,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.cornellappdev.uplift.R
 import com.cornellappdev.uplift.ui.components.general.NotificationPermissionHandler
+import com.cornellappdev.uplift.ui.components.general.NotificationRationaleDialog
 import com.cornellappdev.uplift.ui.components.general.UpliftButton
 import com.cornellappdev.uplift.ui.components.general.UpliftTopBarWithBack
-import com.cornellappdev.uplift.ui.components.goalsetting.GoalSettingHeader
 import com.cornellappdev.uplift.ui.components.reminders.WorkoutReminders
 import com.cornellappdev.uplift.ui.components.reminders.goalsetting.DeleteDialog
 import com.cornellappdev.uplift.ui.viewmodels.reminders.WorkoutRemindersUiState
@@ -65,7 +65,9 @@ fun WorkoutReminderSettingsScreen(
         onAddNewReminderStateChange = workoutRemindersViewModel::onAddNewReminderStateChange,
         onDeleteDialogOpenChange = workoutRemindersViewModel::onDeleteDialogOpenChange,
         onDeleteConfirm = workoutRemindersViewModel::onDeleteConfirmed,
-        onBackClick = workoutRemindersViewModel::onBack
+        onBackClick = workoutRemindersViewModel::onBack,
+        onDismissNotificationDialog = workoutRemindersViewModel::onDismissNotificationDialog,
+        onOpenNotificationSettings = workoutRemindersViewModel::onOpenNotificationSettings
     )
     NotificationPermissionHandler()
 }
@@ -80,6 +82,8 @@ fun WorkoutReminderScreen(
     onDeleteDialogOpenChange: (Boolean) -> Unit = {},
     onDeleteConfirm: () -> Unit = {},
     onBackClick: () -> Unit = {},
+    onDismissNotificationDialog: () -> Unit = {},
+    onOpenNotificationSettings: () -> Unit = {},
     isOnboarding: Boolean = false,
     onNext: () -> Unit = {},
     onSkip: () -> Unit = {}
@@ -91,6 +95,7 @@ fun WorkoutReminderScreen(
         selectedReminder = uiState.selectedReminder,
         addNewReminderState = uiState.addNewReminderState,
         deleteDialogOpen = uiState.deleteDialogOpen,
+        showNotificationDialog = uiState.showNotificationDialog,
         isOnboarding = isOnboarding,
         onSelectedReminderChange = onSelectedReminderChange,
         onAddNewReminderStateChange = onAddNewReminderStateChange,
@@ -98,6 +103,8 @@ fun WorkoutReminderScreen(
         onDeleteConfirm = onDeleteConfirm,
         onRemindersChange = onRemindersChange,
         onBackClick = onBackClick,
+        onDismissNotificationDialog = onDismissNotificationDialog,
+        onOpenNotificationSettings = onOpenNotificationSettings,
         onNext = onNext,
         onSkip = onSkip
     )
@@ -109,6 +116,7 @@ private fun WorkoutReminderContent(
     selectedReminder: Reminder?,
     addNewReminderState: Boolean,
     deleteDialogOpen: Boolean,
+    showNotificationDialog: Boolean,
     isOnboarding: Boolean,
     onSelectedReminderChange: (Reminder?) -> Unit,
     onAddNewReminderStateChange: (Boolean) -> Unit,
@@ -116,6 +124,8 @@ private fun WorkoutReminderContent(
     onDeleteConfirm: () -> Unit,
     onRemindersChange: (List<Reminder>) -> Unit,
     onBackClick: () -> Unit,
+    onDismissNotificationDialog: () -> Unit = {},
+    onOpenNotificationSettings: () -> Unit = {},
     onNext: () -> Unit = {},
     onSkip: () -> Unit = {}
 ) {
@@ -160,6 +170,13 @@ private fun WorkoutReminderContent(
                 deleteDialogOpen = deleteDialogOpen,
                 onConfirm = onDeleteConfirm,
                 onDismiss = { onDeleteDialogOpenChange(false) }
+            )
+        }
+
+        if (showNotificationDialog) {
+            NotificationRationaleDialog(
+                onConfirm = onOpenNotificationSettings,
+                onDismiss = onDismissNotificationDialog
             )
         }
     }
