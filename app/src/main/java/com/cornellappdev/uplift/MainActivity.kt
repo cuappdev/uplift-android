@@ -1,6 +1,5 @@
 package com.cornellappdev.uplift
 
-import android.content.Context
 import android.content.pm.ActivityInfo
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -18,14 +17,13 @@ import com.cornellappdev.uplift.util.LockScreenOrientation
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
-lateinit var datastoreRepository : DatastoreRepository
+lateinit var datastoreRepository: DatastoreRepository
 
 @AndroidEntryPoint
+
 class MainActivity : ComponentActivity() {
     @Inject
     lateinit var injectedDatastoreRepository: DatastoreRepository
-
-
     private val checkInViewModel: CheckInViewModel by viewModels()
     private val rootNavigationViewModel: RootNavigationViewModel by viewModels()
 
@@ -49,7 +47,7 @@ class MainActivity : ComponentActivity() {
     override fun onResume() {
         super.onResume()
         LocationRepository.startLocationUpdates(this)
-        if (CHECK_IN_FLAG){
+        if (CHECK_IN_FLAG) {
             checkInViewModel.startLocationUpdates(this)
         }
     }
@@ -57,7 +55,7 @@ class MainActivity : ComponentActivity() {
     override fun onPause() {
         super.onPause()
         LocationRepository.stopLocationUpdates()
-        if (CHECK_IN_FLAG){
+        if (CHECK_IN_FLAG) {
             checkInViewModel.stopLocationUpdates()
         }
     }
