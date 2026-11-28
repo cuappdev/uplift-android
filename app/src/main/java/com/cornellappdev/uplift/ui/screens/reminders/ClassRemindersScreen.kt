@@ -5,13 +5,19 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,21 +28,26 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.cornellappdev.uplift.R
 import com.cornellappdev.uplift.ui.components.general.RadioCheckButton
+import com.cornellappdev.uplift.ui.components.general.UpliftButton
 import com.cornellappdev.uplift.ui.components.general.UpliftTopBarWithBack
 import com.cornellappdev.uplift.ui.components.reminders.ClassReminderInput
 import com.cornellappdev.uplift.ui.components.reminders.DescriptionReminderSwitch
+import com.cornellappdev.uplift.ui.theme.UpliftTheme
 import com.cornellappdev.uplift.ui.viewmodels.reminders.ClassRemindersUiState
 import com.cornellappdev.uplift.ui.viewmodels.reminders.ClassRemindersViewModel
 import com.cornellappdev.uplift.ui.viewmodels.reminders.ReminderTimeOption
 import com.cornellappdev.uplift.util.GRAY03
+import com.cornellappdev.uplift.util.PRIMARY_BLACK
 import com.cornellappdev.uplift.util.montserratFamily
 
 /**
@@ -54,7 +65,8 @@ fun ClassRemindersScreen(
         setToggle = classRemindersViewModel::setToggle,
         onOptionSelected = classRemindersViewModel::selectTimeOption,
         onHoursChanged = classRemindersViewModel::onHoursChanged,
-        onMinutesChanged = classRemindersViewModel::onMinutesChanged
+        onMinutesChanged = classRemindersViewModel::onMinutesChanged,
+        onDismissInvalidTimeDialog = classRemindersViewModel::onDismissInvalidTimeDialog
     )
 }
 
@@ -65,7 +77,8 @@ private fun ClassReminderContent(
     setToggle: (Boolean) -> Unit,
     onOptionSelected: (ReminderTimeOption) -> Unit,
     onHoursChanged: (String) -> Unit,
-    onMinutesChanged: (String) -> Unit
+    onMinutesChanged: (String) -> Unit,
+    onDismissInvalidTimeDialog: () -> Unit
 ) {
     Scaffold(topBar = {
         UpliftTopBarWithBack(
@@ -117,6 +130,10 @@ private fun ClassReminderContent(
                 )
             }
             Spacer(modifier = Modifier.height(32.dp))
+        }
+
+        if (uiState.showInvalidTimeDialog) {
+            InvalidTimeDialog(onDismiss = onDismissInvalidTimeDialog)
         }
     }
 }
@@ -212,10 +229,71 @@ private fun ClassRemindersSettings(
     }
 }
 
+// Temporary Error Dialog when user wants to exit screen with invalid custom time
+@Composable
+private fun InvalidTimeDialog(
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.TopCenter) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_edit),
+                        contentDescription = "Edit symbol",
+                        tint = Color.Unspecified
+                    )
+                    Spacer(Modifier.height(16.dp))
+                }
+            }
+        },
+        text = {
+            Text(
+                text = "Please input a valid time before saving.",
+                fontFamily = montserratFamily,
+                fontWeight = FontWeight.Medium,
+                fontSize = 16.sp,
+                color = PRIMARY_BLACK,
+                textAlign = TextAlign.Center
+            )
+        },
+        containerColor = Color.White,
+        confirmButton = {
+            Column(modifier = Modifier.fillMaxWidth()) {
+                UpliftButton(
+                    onClick = onDismiss,
+                    text = "Continue",
+                    containerColor = PRIMARY_BLACK,
+                    contentColor = Color.White,
+                    elevation = 0.dp,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        },
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun InvalidTimeDialogPreview() {
+    UpliftTheme {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Gray)
+                .padding(16.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            InvalidTimeDialog(onDismiss = {})
+        }
+    }
+}
+
+
 @Preview(showBackground = true)
 @Composable
 fun ClassRemindersContentPreview() {
-
     var uiState by remember {
         mutableStateOf(
             ClassRemindersUiState(
@@ -223,14 +301,25 @@ fun ClassRemindersContentPreview() {
                 timeOption = ReminderTimeOption.CUSTOM,
                 customHours = "1",
                 customMinutes = "30",
-                isMinutesError = false
+                isMinutesError = false,
+                showInvalidTimeDialog = false
             )
         )
     }
 
     ClassReminderContent(
         uiState = uiState,
-        onBack = {},
+        onBack = {
+            val hours = uiState.customHours.toIntOrNull() ?: 0
+            val minutes = uiState.customMinutes.toIntOrNull() ?: 0
+            val hasInvalidCustomTime = uiState.toggledOn &&
+                    uiState.timeOption == ReminderTimeOption.CUSTOM &&
+                    (uiState.isMinutesError || (hours == 0 && minutes == 0))
+
+            if (hasInvalidCustomTime) {
+                uiState = uiState.copy(showInvalidTimeDialog = true)
+            }
+        },
         setToggle = { uiState = uiState.copy(toggledOn = it) },
         onOptionSelected = { uiState = uiState.copy(timeOption = it) },
         onHoursChanged = { input ->
@@ -247,6 +336,9 @@ fun ClassRemindersContentPreview() {
                     isMinutesError = isError
                 )
             }
+        },
+        onDismissInvalidTimeDialog = {
+            uiState = uiState.copy(showInvalidTimeDialog = false)
         }
     )
 
