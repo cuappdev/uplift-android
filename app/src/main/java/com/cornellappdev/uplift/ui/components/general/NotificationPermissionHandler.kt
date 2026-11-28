@@ -71,7 +71,7 @@ fun NotificationPermissionHandler(
 }
 
 @Composable
-private fun NotificationRationaleDialog(
+fun NotificationRationaleDialog(
     onConfirm: () -> Unit,
     onDismiss: () -> Unit
 ) {

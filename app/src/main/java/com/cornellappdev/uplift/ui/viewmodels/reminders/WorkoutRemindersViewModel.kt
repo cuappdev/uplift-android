@@ -1,8 +1,7 @@
 package com.cornellappdev.uplift.ui.viewmodels.reminders
 
 import androidx.lifecycle.viewModelScope
-import com.cornellappdev.uplift.data.repositories.DatastoreRepository
-import com.cornellappdev.uplift.data.repositories.PreferencesKeys
+import com.cornellappdev.uplift.data.repositories.WorkoutRemindersRepository
 import com.cornellappdev.uplift.ui.nav.RootNavigationRepository
 import com.cornellappdev.uplift.ui.screens.reminders.Reminder
 import com.cornellappdev.uplift.ui.viewmodels.UpliftViewModel
@@ -20,18 +19,14 @@ data class WorkoutRemindersUiState(
 
 @HiltViewModel
 class WorkoutRemindersViewModel @Inject constructor(
-    private val dataStoreRepository: DatastoreRepository,
+    private val workoutRemindersRepository: WorkoutRemindersRepository,
     private val rootNavigationRepository: RootNavigationRepository
 ) : UpliftViewModel<WorkoutRemindersUiState>(WorkoutRemindersUiState()) {
 
     init {
         viewModelScope.launch {
-            val sliderValue = try {
-                dataStoreRepository.getPreference(PreferencesKeys.WORKOUT_REMINDERS_SLIDER_VALUE) ?: 1
-            } catch (_: Exception) {
-                1
-            }
-            val loadedReminders = dataStoreRepository.getWorkoutReminders()
+            val sliderValue = workoutRemindersRepository.getSliderValue()
+            val loadedReminders = workoutRemindersRepository.getWorkoutReminders()
 
             applyMutation {
                 copy(
@@ -47,7 +42,7 @@ class WorkoutRemindersViewModel @Inject constructor(
     fun onRemindersChange(reminders: List<Reminder>) {
         applyMutation { copy(reminders = reminders) }
         viewModelScope.launch {
-            dataStoreRepository.saveWorkoutReminders(reminders)
+            workoutRemindersRepository.saveWorkoutReminders(reminders)
         }
     }
 
@@ -64,17 +59,28 @@ class WorkoutRemindersViewModel @Inject constructor(
     }
 
     fun onDeleteConfirmed() {
+        var updatedReminders: List<Reminder>? = null
+
         applyMutation {
-            val updatedReminders = if (selectedReminder != null) reminders.filter { it != selectedReminder } else reminders
-            viewModelScope.launch {
-                dataStoreRepository.saveWorkoutReminders(updatedReminders)
+            val nextReminders = if (selectedReminder != null) {
+                reminders.filter { it != selectedReminder }
+            } else {
+                reminders
             }
+            updatedReminders = nextReminders
+
             copy(
-                reminders = updatedReminders,
+                reminders = nextReminders,
                 selectedReminder = null,
                 deleteDialogOpen = false,
                 addNewReminderState = false
             )
+        }
+
+        updatedReminders?.let { latestReminders ->
+            viewModelScope.launch {
+                workoutRemindersRepository.saveWorkoutReminders(latestReminders)
+            }
         }
     }
 }

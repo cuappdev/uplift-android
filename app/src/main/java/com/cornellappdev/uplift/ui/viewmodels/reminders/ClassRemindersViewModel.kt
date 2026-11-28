@@ -9,9 +9,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 enum class ReminderTimeOption {
-    THIRTY_MIN,
-    SIXTY_MIN,
-    CUSTOM
+    THIRTY_MIN, SIXTY_MIN, CUSTOM
 }
 
 data class ClassRemindersUiState(
@@ -20,6 +18,7 @@ data class ClassRemindersUiState(
     val customHours: String = "",
     val customMinutes: String = "",
     val isMinutesError: Boolean = false,
+    val showInvalidTimeDialog: Boolean = false
 )
 
 @HiltViewModel
@@ -56,12 +55,38 @@ class ClassRemindersViewModel @Inject constructor(
         }
     }
 
-    fun onBack() = rootNavigationRepository.navigateUp()
+    fun onBack() {
+        val currentState = uiStateFlow.value
+        val hours = currentState.customHours.toIntOrNull() ?: 0
+        val minutes = currentState.customMinutes.toIntOrNull() ?: 0
+
+        val invalidCustomTime = currentState.toggledOn &&
+                currentState.timeOption == ReminderTimeOption.CUSTOM &&
+                (currentState.isMinutesError || (hours == 0 && minutes == 0))
+
+        if (invalidCustomTime) {
+            applyMutation { copy(showInvalidTimeDialog = true) }
+            return // do not go back to reminder screens
+        }
+
+        viewModelScope.launch {
+            if (currentState.toggledOn) {
+                classRemindersRepository.scheduleClassReminder()
+            }
+            rootNavigationRepository.navigateUp()
+        }
+    }
 
     fun setToggle(toggledOn: Boolean) {
+        val hasMinutesError = uiStateFlow.value.isMinutesError
         applyMutation { copy(toggledOn = toggledOn) }
         viewModelScope.launch {
             classRemindersRepository.setToggle(toggledOn)
+            if (toggledOn && !hasMinutesError) {
+                classRemindersRepository.scheduleClassReminder()
+            } else {
+                classRemindersRepository.cancelClassReminder()
+            }
         }
     }
 
@@ -87,13 +112,16 @@ class ClassRemindersViewModel @Inject constructor(
             val isError = (minutesInt != null) && (minutesInt > 59)
             applyMutation {
                 copy(
-                    customMinutes = input,
-                    isMinutesError = isError
+                    customMinutes = input, isMinutesError = isError
                 )
             }
             viewModelScope.launch {
                 classRemindersRepository.setMinutes(input)
             }
         }
+    }
+
+    fun onDismissInvalidTimeDialog() {
+        applyMutation { copy(showInvalidTimeDialog = false) }
     }
 }

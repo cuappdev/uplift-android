@@ -80,4 +80,8 @@
     <string name="reminder_input_placeholder">0</string>
     <string name="reminder_input_minutes">minutes</string>
     <string name="reminder_invalid_minutes">Invalid minutes input</string>
+    <string name="workout_reminder_notification_title">Workout Reminder</string>
+    <string name="workout_reminder_notification_body">Time for your scheduled workout at %1$s!</string>
+    <string name="class_reminder_notification_title">Class Reminder</string>
+    <string name="class_reminder_notification_body">You have an upcoming class soon!</string>
 </resources>
