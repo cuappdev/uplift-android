@@ -35,9 +35,11 @@ class WorkoutRemindersRepository @Inject constructor(
         reminders.forEachIndexed { index, reminder -> // there can be multiple reminders
             val reminderId = WORKOUT_REMINDER_ID_BASE + index
             if (reminder.enabled) {
-                val scheduledTimeMillisec = calculateNotificationTime(reminder) ?: (System.currentTimeMillis() + 24 * 60 * 60 * 1000L) // in case it is null
+                val scheduledTimeMillisec = calculateNotificationTime(reminder)
+                    ?: (System.currentTimeMillis() + 24 * 60 * 60 * 1000L) // in case it is null
                 val title = context.getString(R.string.workout_reminder_notification_title)
-                val body = context.getString(R.string.workout_reminder_notification_body, reminder.time)
+                val body =
+                    context.getString(R.string.workout_reminder_notification_body, reminder.time)
                 alarmScheduler.scheduleAlarm(
                     reminderId = reminderId,
                     triggerAtMillis = scheduledTimeMillisec,
